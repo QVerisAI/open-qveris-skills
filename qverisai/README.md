@@ -1,7 +1,5 @@
 # QVeris Skill for OpenClaw
 
-[中文文档](README.zh-CN.md) | English
-
 A skill that enables OpenClaw to dynamically search and execute tools via the QVeris API.
 
 ## Features
