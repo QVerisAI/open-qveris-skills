@@ -1,0 +1,280 @@
+{
+  "version": 1,
+  "updated_at": "2026-02-15T03:26:06.186Z",
+  "capability_buckets": {
+    "quote": {
+      "tools": {
+        "alphavantage.time-series.intraday.v1": {
+          "tool_id": "alphavantage.time-series.intraday.v1",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:22:49.176Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 19,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "4b945007-ffdc-4cc4-9c87-6e2ea6054409"
+        },
+        "alphavantage.time_series.intraday.retrieve.v1": {
+          "tool_id": "alphavantage.time_series.intraday.retrieve.v1",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:22:49.607Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 19,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "4b945007-ffdc-4cc4-9c87-6e2ea6054409"
+        },
+        "alphavantage.time_series_intraday.retrieve.v1.1e18340d": {
+          "tool_id": "alphavantage.time_series_intraday.retrieve.v1.1e18340d",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:22:49.943Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 19,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "4b945007-ffdc-4cc4-9c87-6e2ea6054409"
+        }
+      },
+      "priority_queue": [
+        "alphavantage.time-series.intraday.v1",
+        "alphavantage.time_series.intraday.retrieve.v1",
+        "alphavantage.time_series_intraday.retrieve.v1.1e18340d"
+      ]
+    },
+    "fundamentals": {
+      "tools": {
+        "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a": {
+          "tool_id": "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:22:51.247Z",
+          "last_success_at": "2026-02-15T03:26:01.828Z",
+          "success_count": 10,
+          "fail_count": 0,
+          "avg_elapsed_ms": 682,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "5ca63240-6d46-486f-add9-036d1fa694c7"
+        }
+      },
+      "priority_queue": [
+        "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a"
+      ]
+    },
+    "technicals": {
+      "tools": {
+        "twelvedata.macdslope.retrieve.v1.a926750b": {
+          "tool_id": "twelvedata.macdslope.retrieve.v1.a926750b",
+          "provider": "twelvedata",
+          "first_seen_at": "2026-02-15T03:22:52.579Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 1,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US"
+          ],
+          "symbols_sample": [
+            "AAPL"
+          ],
+          "last_search_id": "0d23a2e9-8295-4fdc-b3ff-6452173b4e6a"
+        },
+        "twelvedata.macd.retrieve.v1.9735a694": {
+          "tool_id": "twelvedata.macd.retrieve.v1.9735a694",
+          "provider": "twelvedata",
+          "first_seen_at": "2026-02-15T03:22:53.193Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 1,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US"
+          ],
+          "symbols_sample": [
+            "AAPL"
+          ],
+          "last_search_id": "0d23a2e9-8295-4fdc-b3ff-6452173b4e6a"
+        },
+        "alphavantage.technical_indicators.t3.retrieve.v1.7aca3c4a": {
+          "tool_id": "alphavantage.technical_indicators.t3.retrieve.v1.7aca3c4a",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:22:57.089Z",
+          "last_success_at": "2026-02-15T03:26:04.653Z",
+          "success_count": 10,
+          "fail_count": 0,
+          "avg_elapsed_ms": 2543,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "0d23a2e9-8295-4fdc-b3ff-6452173b4e6a"
+        }
+      },
+      "priority_queue": [
+        "alphavantage.technical_indicators.t3.retrieve.v1.7aca3c4a",
+        "twelvedata.macdslope.retrieve.v1.a926750b",
+        "twelvedata.macd.retrieve.v1.9735a694"
+      ]
+    },
+    "sentiment": {
+      "tools": {
+        "alphavantage.news_sentiment.query.v1.7aca3c4a": {
+          "tool_id": "alphavantage.news_sentiment.query.v1.7aca3c4a",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:23:01.162Z",
+          "last_success_at": "2026-02-15T03:26:05.329Z",
+          "success_count": 10,
+          "fail_count": 0,
+          "avg_elapsed_ms": 1279,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "5e5c34fb-f990-453d-9998-4e4cacf47c9b"
+        }
+      },
+      "priority_queue": [
+        "alphavantage.news_sentiment.query.v1.7aca3c4a"
+      ]
+    },
+    "x_sentiment": {
+      "tools": {
+        "alphavantage.news_sentiment.query.v1.7aca3c4a": {
+          "tool_id": "alphavantage.news_sentiment.query.v1.7aca3c4a",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:23:02.073Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 12,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "f6393f1e-837e-47c7-9ec3-d1f52c02e369"
+        },
+        "alphavantage.news_sentiment.query.v1.467a92c0": {
+          "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+          "provider": "alphavantage",
+          "first_seen_at": "2026-02-15T03:23:02.348Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 12,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "f6393f1e-837e-47c7-9ec3-d1f52c02e369"
+        },
+        "qveris_social.x_account_hottest_post_v1": {
+          "tool_id": "qveris_social.x_account_hottest_post_v1",
+          "provider": "qveris_social",
+          "first_seen_at": "2026-02-15T03:23:02.773Z",
+          "last_success_at": null,
+          "success_count": 0,
+          "fail_count": 12,
+          "avg_elapsed_ms": 0,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "f6393f1e-837e-47c7-9ec3-d1f52c02e369"
+        },
+        "x_developer.2.tweets.search.recent.retrieve.v2.f424c8f9": {
+          "tool_id": "x_developer.2.tweets.search.recent.retrieve.v2.f424c8f9",
+          "provider": "x_developer",
+          "first_seen_at": "2026-02-15T03:25:29.361Z",
+          "last_success_at": "2026-02-15T03:26:06.186Z",
+          "success_count": 4,
+          "fail_count": 0,
+          "avg_elapsed_ms": 858,
+          "markets": [
+            "US",
+            "HK",
+            "CN"
+          ],
+          "symbols_sample": [
+            "AAPL",
+            "0700",
+            "600519"
+          ],
+          "last_search_id": "7fd1fd8f-d527-40e3-b4b8-501800076912"
+        }
+      },
+      "priority_queue": [
+        "x_developer.2.tweets.search.recent.retrieve.v2.f424c8f9",
+        "alphavantage.news_sentiment.query.v1.7aca3c4a",
+        "alphavantage.news_sentiment.query.v1.467a92c0",
+        "qveris_social.x_account_hottest_post_v1"
+      ]
+    }
+  }
+}
