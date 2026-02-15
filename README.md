@@ -10,6 +10,8 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
 - **One skill per folder**: Each top-level folder represents a standalone skill.
 - `qverisai/`: The **baseline QVeris skill** (core capabilities).
   - Use it as a starting point: you can modify it (or ask your AI to modify it) to create **novel, useful skills** tailored to your workflow.
+- `stock-copilot-pro/`: A **standalone global stock analysis skill** for ClawHub/OpenClaw style agents.
+  - Includes multi-source routing (quote, fundamentals, technicals, sentiment), quality checks, and structured reports.
 
 ## Getting started
 
