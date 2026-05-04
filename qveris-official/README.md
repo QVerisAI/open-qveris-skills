@@ -9,6 +9,8 @@ QVeris is a capability discovery and tool calling engine. Use `discover` to find
 - Discover tools for real-time data, historical sequences, structured reports, web extraction, PDF workflows, OCR, TTS, translation, image/video generation, and more
 - Route all requests through the QVeris API instead of constructing provider-specific endpoints
 - Return structured JSON results suitable for agent workflows
+- Expose billing-rule and pre-settlement billing fields when the API returns them
+- Support context-safe usage and ledger audit patterns through QVeris CLI/MCP when the user asks about charges
 - Use only built-in Node.js web APIs plus local helper modules
 
 ## Requirements
@@ -65,6 +67,8 @@ node scripts/qveris_tool.mjs call <tool_id> --discovery-id <discovery_id> --para
 - Write discovery queries as English capability descriptions for best results
 - Do not construct API URLs manually; use the provided script
 - Keep sensitive credentials and PII out of discovery queries and tool parameters
+- Do not dump full usage or ledger history into Agent context. Use summaries first, precise filters second, and local JSONL exports for large analysis.
+- Treat legacy `cost` as a fallback signal. Final charge status comes from `usage_history.charge_outcome` and balance movement comes from `credits_ledger`.
 
 ## License
 

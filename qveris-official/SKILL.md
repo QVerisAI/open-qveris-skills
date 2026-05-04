@@ -12,6 +12,15 @@ env:
 network:
   outbound_hosts:
     - qveris.ai
+    - qveris.cn
+persistence:
+  writes_within_skill_dir: false
+  writes_outside_skill_dir: false
+security:
+  child_process: false
+  eval: false
+  filesystem_write: false
+  filesystem_read: false
 metadata: {"openclaw":{"requires":{"env":["QVERIS_API_KEY"]},"primaryEnv":"QVERIS_API_KEY","skillKey":"qveris-official","homepage":"https://qveris.ai"}}
 auto_invoke: true
 source: https://qveris.ai
@@ -32,7 +41,9 @@ To look up facts, answers, or general information, use `web_search` instead.
 
 **Setup**: Requires `QVERIS_API_KEY` from https://qveris.ai.
 
-**Credential**: Only `QVERIS_API_KEY` is used. All requests go to `https://qveris.ai/api/v1` over HTTPS.
+**Credential**: Only `QVERIS_API_KEY` is used.
+
+**Network**: Requests go to the QVeris API (`https://qveris.ai/api/v1` or `https://qveris.cn/api/v1`, auto-detected from the API key) over HTTPS. The script handles URL construction.
 
 ---
 
@@ -74,6 +85,22 @@ Check availability in order and use the first working tier:
 2. **Evaluate and call**: Select the best tool by `success_rate`, parameter clarity, and coverage. Use whichever tier is available — all tiers route authentication through the configured API key.
 3. **Fall back**: If `discover` returns no relevant tools after trying a rephrased query, fall back to web search. Be transparent about the source.
 4. **When everything fails**: Report which tools were tried and what errors occurred. Training-data values are not live results.
+
+### Billing and Audit
+
+QVeris exposes billing in three layers:
+
+- `billing_rule`: rule-level pricing metadata for a capability.
+- `billing` / `pre_settlement_bill`: pre-settlement billing for one call.
+- `usage_history` / `credits_ledger`: final charge outcome and balance movement.
+
+Do not treat legacy `cost` as the final charge truth. If the user asks whether a failed call was charged, query usage history by `execution_id` and inspect `charge_outcome`.
+
+For usage and ledger review, protect the Agent context:
+
+- Use summary mode first.
+- Use precise search filters for row-level investigation, such as `execution_id`, `charge_outcome`, `min_credits`, `max_credits`, or a date range.
+- Use export-file mode for large analysis; read the JSONL file in chunks instead of printing all rows.
 
 ---
 
@@ -270,6 +297,7 @@ node {baseDir}/scripts/qveris_tool.mjs inspect openweathermap.weather.execute.v1
 | Wrong date format | `"date": "01/15/2026"` | `"date": "2026-01-15"` (ISO 8601) |
 | Missing required param | Omitting `symbol` for a stock API | Always check required list |
 | Natural language or wrong format as param | `"query": "what is AAPL price"` or `"symbol": "Apple"` | Extract structured values: `"symbol": "AAPL"` |
-| Constructing API URLs manually | Directly calling `https://api.qveris.com/...` | Use the API reference above or the script |
+| Constructing API URLs manually | Directly calling `https://api.qveris.com/...` or `https://api.qveris.ai/...` | Use the API reference above or the script |
 | Giving up after one failure | "I don't have real-time data" / abandoning after error | Discover first; follow Error Recovery on failure |
 | Not trying http_request when exec fails | Abandoning when node/exec is unavailable | Use http_request tool (Tier 2) — it works without exec |
+| Fabricating data after failures | Presenting training-data values as live results | Report what was tried; fall back transparently |
