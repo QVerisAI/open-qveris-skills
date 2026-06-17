@@ -12,6 +12,8 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
   - Use it as a starting point: you can modify it (or ask your AI to modify it) to create **novel, useful skills** tailored to your workflow.
 - `stock-copilot-pro/`: A **standalone global stock analysis skill** for ClawHub/OpenClaw style agents.
   - Includes multi-source routing (quote, fundamentals, technicals, sentiment), quality checks, and structured reports.
+- `qveris-supply-chain-research/`: A **QVeris-powered supply-chain bottleneck research skill**.
+  - Maps value-chain layers, calls QVeris finance/filings/news/company data capabilities, and ranks source-backed public-company research priorities.
 - **Planned skills**: Development and testing are currently underway.
   - `exchange-rate/` – Real-time forex rate and amount conversion.
   - `stock-analyzer/` – A-share/global quote, fundamentals, history, smart stock picking.
