@@ -14,6 +14,9 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
   - Includes multi-source routing (quote, fundamentals, technicals, sentiment), quality checks, and structured reports.
 - `qveris-supply-chain-research/`: A **QVeris-powered supply-chain bottleneck research skill**.
   - Maps value-chain layers, calls QVeris finance/filings/news/company data capabilities, and ranks source-backed public-company research priorities.
+- `third_party/`: Evaluation area for third-party skills being adapted into QVeris Featured Skills.
+  - Candidates must have a permissive license, visible quality/traction, and a clear QVeris data-acquisition path.
+  - Discovery and tracking are handled by `qcli skill third-party` from the `quaestio-cli` repository.
 - **Planned skills**: Development and testing are currently underway.
   - `exchange-rate/` – Real-time forex rate and amount conversion.
   - `stock-analyzer/` – A-share/global quote, fundamentals, history, smart stock picking.
@@ -60,6 +63,28 @@ commits.
   - What the skill does
   - Required environment variables / credentials
   - Example prompts / usage
+
+## Third-party Skill Discovery
+
+Use `qcli skill third-party` from the `quaestio-cli` repository to search GitHub
+for skill candidates, score them, save the analysis to the `admin` database
+schema, and scaffold evaluation branches:
+
+```bash
+uv run qcli skill third-party apply-db --db-url "$ADMIN_DATABASE_URL"
+
+GITHUB_TOKEN=... \
+uv run qcli skill third-party discover \
+  --min-stars 50 \
+  --per-query 10 \
+  --write-db \
+  --db-url "$ADMIN_DATABASE_URL" \
+  --notify
+```
+
+Candidates are evaluated under `third_party/<category>/<owner-repo>/`. A
+candidate can become a Featured Skill only after direct third-party data access
+has been replaced by QVeris tool search/execute calls and real smoke tests pass.
 
 ## License
 
