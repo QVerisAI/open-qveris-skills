@@ -14,6 +14,18 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
   - Includes multi-source routing (quote, fundamentals, technicals, sentiment), quality checks, and structured reports.
 - `qveris-supply-chain-research/`: A **QVeris-powered supply-chain bottleneck research skill**.
   - Maps value-chain layers, calls QVeris finance/filings/news/company data capabilities, and ranks source-backed public-company research priorities.
+- `qveris-equity-research-report/`: A **QVeris-powered equity research report skill**.
+  - Builds source-backed company reports with fundamentals, valuation, filings, news, risks, and usage trace.
+- `qveris-investment-committee/`: A **multi-lens investment committee skill**.
+  - Debates quality, value, growth, sentiment, technical, macro, and risk evidence before producing a decision memo.
+- `qveris-news-sentiment-radar/`: A **news and sentiment monitoring skill**.
+  - Separates confirmed catalysts from noisy attention with QVeris news, social, filing, and quote calls.
+- `qveris-quant-factor-screen/`: A **transparent factor-screening skill**.
+  - Ranks stock universes by quality, momentum, valuation, liquidity, volatility, and news risk.
+- `qveris-portfolio-risk-monitor/`: A **portfolio risk monitoring skill**.
+  - Reviews concentration, drawdown, volatility, catalyst, news, and liquidity risks.
+- `qveris-earnings-call-brief/`: A **financial results and transcript briefing skill**.
+  - Summarizes earnings releases, transcripts, guidance, Q&A, market reaction, and missing evidence.
 - `third_party/`: Evaluation area for third-party skills being adapted into QVeris Featured Skills.
   - Candidates must have a permissive license, visible quality/traction, and a clear QVeris data-acquisition path.
   - Discovery and tracking are handled by `qcli skill third-party` from the `quaestio-cli` repository.

@@ -1,27 +1,6 @@
 ---
 name: qveris-supply-chain-research
 description: QVeris-powered supply-chain bottleneck research skill for investment agents. Use when the user asks for AI infrastructure, semiconductor, CPO, advanced packaging, data-center power, robotics, industrial, A-share/HK/US stock theme scans, single-company thesis challenges, candidate ranking, or evidence-backed research on scarce supply-chain layers. Requires QVERIS_API_KEY and uses QVeris Discover, Inspect, and Call to fetch live market, filings, financial statement, news, social, and company data. Research support only; no trade execution.
-env:
-  - QVERIS_API_KEY
-requirements:
-  env_vars:
-    - QVERIS_API_KEY
-credentials:
-  required:
-    - QVERIS_API_KEY
-  primary: QVERIS_API_KEY
-  scope: read-only
-  endpoint: https://qveris.ai/api/v1
-network:
-  outbound_hosts:
-    - qveris.ai
-metadata: {"openclaw":{"requires":{"env":["QVERIS_API_KEY"]},"primaryEnv":"QVERIS_API_KEY","skillKey":"qveris-supply-chain-research","homepage":"https://qveris.ai"}}
-auto_invoke: true
-source: https://qveris.ai
-examples:
-  - "Use QVeris to research AI infrastructure bottlenecks and rank the top public-company research priorities"
-  - "用 QVeris 深度调研 A 股 AI 半导体产业链卡点，给出 5 个优先研究标的"
-  - "Challenge this company's CPO supplier thesis using QVeris filings, financials, news, and market data"
 ---
 
 # QVeris Supply Chain Research

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Quant Factor Screen"
+  short_description: "Rank stock universes with QVeris factor evidence."
+  default_prompt: "Use QVeris to screen 50 AI infrastructure stocks by quality, momentum, valuation, liquidity, volatility, and news risk. Return top 10, bottom 5, missing data, factor weights, QVeris calls used, and estimated credits."

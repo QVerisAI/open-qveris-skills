@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Portfolio Risk Monitor"
+  short_description: "Monitor portfolio risk with auditable QVeris data."
+  default_prompt: "Use QVeris to review this portfolio: AAPL 25%, NVDA 25%, MSFT 20%, TSLA 15%, cash 15%. Flag concentration, drawdown, volatility, liquidity, catalyst, and news risks. Include QVeris calls used and estimated credits."

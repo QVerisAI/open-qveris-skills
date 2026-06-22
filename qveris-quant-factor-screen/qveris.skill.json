@@ -1,0 +1,262 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-quant-factor-screen",
+  "status": "published",
+  "name": "qveris-quant-factor-screen",
+  "title": {
+    "en": "Quant factor screen",
+    "zh": "量化因子筛选"
+  },
+  "description": {
+    "en": "Rank a stock universe with transparent QVeris factor evidence across quality, momentum, valuation, liquidity, volatility, and news risk.",
+    "zh": "用 QVeris 因子证据对股票池按质量、动量、估值、流动性、波动和新闻风险进行透明排序。"
+  },
+  "overview": {
+    "en": "Use this skill when a user asks an agent to screen many stocks, build a candidate universe, or explain factor-driven rankings. It does not train a model; it builds a transparent factor table from live QVeris calls and highlights missing data.",
+    "zh": "当用户让 Agent 筛选多只股票、建立候选池或解释因子排序时使用。它不训练模型，而是用 QVeris 实时调用构建透明因子表，并标注缺失数据。"
+  },
+  "icon": "DollarSign",
+  "accent": "green",
+  "scenarios": [
+    "finance"
+  ],
+  "platforms": [
+    "openclaw",
+    "cursor",
+    "claude-code",
+    "cli"
+  ],
+  "tags": [
+    "Finance",
+    "Quant",
+    "Factors",
+    "Screening",
+    "Ranking"
+  ],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-quant-factor-screen"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-quant-factor-screen",
+  "official": true,
+  "prompts": [
+    {
+      "id": "theme-screen",
+      "title": {
+        "en": "Theme screen",
+        "zh": "主题筛选"
+      },
+      "description": {
+        "en": "Rank a theme universe by transparent factors.",
+        "zh": "按透明因子排序主题股票池。"
+      },
+      "prompt": {
+        "en": "Use QVeris to screen 50 AI infrastructure stocks by quality, momentum, valuation, liquidity, volatility, and news risk. Return top 10, bottom 5, missing data, factor weights, QVeris calls used, and estimated credits.",
+        "zh": "用 QVeris 按质量、动量、估值、流动性、波动和新闻风险筛选 50 只 AI 基建股票。返回前 10、后 5、缺失数据、因子权重、QVeris 调用和预计 credits。"
+      }
+    },
+    {
+      "id": "a-share-screen",
+      "title": {
+        "en": "A-share screen",
+        "zh": "A 股筛选"
+      },
+      "description": {
+        "en": "Build an A-share candidate list.",
+        "zh": "建立 A 股候选名单。"
+      },
+      "prompt": {
+        "en": "Use QVeris to screen A-share semiconductor equipment stocks. Rank by growth, profitability, balance-sheet quality, liquidity, valuation, and recent catalysts.",
+        "zh": "用 QVeris 筛选 A 股半导体设备公司。按成长、盈利能力、资产负债质量、流动性、估值和近期催化排序。"
+      }
+    },
+    {
+      "id": "factor-audit",
+      "title": {
+        "en": "Factor audit",
+        "zh": "因子审计"
+      },
+      "description": {
+        "en": "Explain why a name ranked high or low.",
+        "zh": "解释某只股票排序高或低的原因。"
+      },
+      "prompt": {
+        "en": "Use QVeris to audit why this stock ranks high in a factor screen. Show the raw factor evidence, missing fields, and which factor dominates the score.",
+        "zh": "用 QVeris 审计这只股票为何在因子筛选中排名靠前。展示原始因子证据、缺失字段和主导分数的因子。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and screening workflows.",
+        "zh": "为全球研究和筛选工作流补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for source-backed A-share monitoring.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find factor inputs",
+        "zh": "寻找因子输入"
+      },
+      "purpose": {
+        "en": "Find quote, OHLCV, fundamentals, valuation, financial statements, news, and liquidity capabilities.",
+        "zh": "寻找行情、OHLCV、基本面、估值、财务报表、新闻和流动性能力。"
+      },
+      "sources": [
+        "FMP",
+        "Twelve Data",
+        "financial data providers",
+        "news providers"
+      ],
+      "sample_query": "stock factor screening fundamentals OHLCV valuation liquidity API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Inspect universe coverage",
+        "zh": "检查股票池覆盖"
+      },
+      "purpose": {
+        "en": "Check how many tickers each provider covers and estimate cost before batch calls.",
+        "zh": "检查每个供应商覆盖多少股票，并在批量调用前估算成本。"
+      },
+      "sources": [
+        "Capability schemas",
+        "Provider metrics",
+        "Billing rules"
+      ]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call factor inputs",
+        "zh": "调用因子输入"
+      },
+      "purpose": {
+        "en": "Call selected inputs, normalize factors, and return ranks with missing-data warnings.",
+        "zh": "调用选定输入，标准化因子，并返回带缺失数据提示的排序。"
+      },
+      "sources": [
+        "Market data providers",
+        "Financial data providers",
+        "News providers"
+      ]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Expected QVeris usage",
+      "zh": "预计 QVeris 使用量"
+    },
+    "summary": {
+      "en": "This workflow usually needs 8-40 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 8-40 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
+    },
+    "typical_calls": "8-40",
+    "estimated_credits": "8-400 credits",
+    "free_actions": [
+      "Discover",
+      "Inspect"
+    ],
+    "paid_actions": [
+      "Call"
+    ],
+    "note": {
+      "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
+      "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Define universe",
+        "zh": "定义股票池"
+      },
+      "description": {
+        "en": "Set market, theme, tickers, factor set, weights, and maximum paid calls.",
+        "zh": "设定市场、主题、股票、因子、权重和最大付费调用数。"
+      }
+    },
+    {
+      "title": {
+        "en": "Inspect batch cost",
+        "zh": "检查批量成本"
+      },
+      "description": {
+        "en": "Use QVeris Inspect to see coverage and billing before broad execution.",
+        "zh": "用 QVeris Inspect 在大范围执行前查看覆盖和计费。"
+      }
+    },
+    {
+      "title": {
+        "en": "Build factor table",
+        "zh": "建立因子表"
+      },
+      "description": {
+        "en": "Call bounded data, normalize comparable fields, and mark missing data.",
+        "zh": "调用限定数据，标准化可比字段，并标注缺失数据。"
+      }
+    },
+    {
+      "title": {
+        "en": "Rank and explain",
+        "zh": "排序并解释"
+      },
+      "description": {
+        "en": "Return ranks, factor drivers, outliers, and next verification steps.",
+        "zh": "返回排序、因子驱动、异常值和下一步验证。"
+      }
+    }
+  ]
+}
