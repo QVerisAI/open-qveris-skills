@@ -26,6 +26,7 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
   - Reviews concentration, drawdown, volatility, catalyst, news, and liquidity risks.
 - `qveris-earnings-call-brief/`: A **financial results and transcript briefing skill**.
   - Summarizes earnings releases, transcripts, guidance, Q&A, market reaction, and missing evidence.
+- **Additional QVeris finance skill pack**: 38 focused workflows covering macro, rates, inflation, yield curves, sector rotation, ETF flows, options volatility, insider transactions, SEC filings, short interest, dividends, credit spreads, commodities, FX, crypto, bank earnings, biotech catalysts, REITs, energy inventories, China policy, HK markets, emerging markets, analyst revisions, anomalies, liquidity stress, merger arbitrage, buybacks, guidance, earnings readthroughs, customer exposure, valuation comps, scenarios, factor regimes, hedging, risk parity, IPO lockups, ESG controversy, and alternative demand signals.
 - `third_party/`: Evaluation area for third-party skills being adapted into QVeris Featured Skills.
   - Candidates must have a permissive license, visible quality/traction, and a clear QVeris data-acquisition path.
   - Discovery and tracking are handled by `qcli skill third-party` from the `quaestio-cli` repository.

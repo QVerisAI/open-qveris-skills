@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris ESG controversy radar"
+  short_description: "Run esg controversy radar with QVeris data."
+  default_prompt: "Use QVeris to scan ESG controversy risk for this watchlist."

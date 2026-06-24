@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Sector rotation map"
+  short_description: "Run sector rotation map with QVeris data."
+  default_prompt: "Use QVeris to map the strongest sector rotation this week."

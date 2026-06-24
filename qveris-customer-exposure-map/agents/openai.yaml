@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Customer exposure map"
+  short_description: "Run customer exposure map with QVeris data."
+  default_prompt: "Use QVeris to map customer exposure for this semiconductor equipment company."

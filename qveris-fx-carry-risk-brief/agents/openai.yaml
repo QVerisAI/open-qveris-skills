@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris FX carry risk brief"
+  short_description: "Run fx carry risk brief with QVeris data."
+  default_prompt: "Use QVeris to review FX carry risk across USDJPY, EURUSD, and USDCNH."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Credit spread monitor"
+  short_description: "Run credit spread monitor with QVeris data."
+  default_prompt: "Use QVeris to explain whether credit stress is rising this week."

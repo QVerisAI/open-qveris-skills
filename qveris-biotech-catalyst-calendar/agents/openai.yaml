@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Biotech catalyst calendar"
+  short_description: "Run biotech catalyst calendar with QVeris data."
+  default_prompt: "Use QVeris to build a biotech catalyst calendar for the next 60 days."

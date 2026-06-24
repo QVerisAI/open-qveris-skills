@@ -1,0 +1,247 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-yield-curve-monitor",
+  "status": "published",
+  "name": "qveris-yield-curve-monitor",
+  "title": {
+    "en": "Yield curve monitor",
+    "zh": "收益率曲线监控"
+  },
+  "description": {
+    "en": "Analyze yield curve shifts, curve steepening or inversion, credit impact, and equity-sector readthroughs.",
+    "zh": "收益率曲线监控：通过 QVeris 调用实时数据、新闻、公告和市场信号，生成可审计的金融分析工作流。"
+  },
+  "overview": {
+    "en": "Use this skill when an agent needs a source-backed yield curve monitor workflow. It uses QVeris to discover, inspect, and call the required data capabilities, then returns an auditable brief with evidence strength, missing data, estimated usage, and risk notes.",
+    "zh": "当 Agent 需要执行「收益率曲线监控」时使用。它通过 QVeris 发现、检查并调用所需数据能力，返回带证据强度、缺失数据、预计使用量和风险提示的可审计简报。"
+  },
+  "icon": "Megaphone",
+  "accent": "indigo",
+  "scenarios": [
+    "finance"
+  ],
+  "platforms": [
+    "openclaw",
+    "cursor",
+    "claude-code",
+    "cli"
+  ],
+  "tags": [
+    "Finance",
+    "Yield",
+    "curve",
+    "monitor"
+  ],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-yield-curve-monitor"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-yield-curve-monitor",
+  "official": true,
+  "prompts": [
+    {
+      "id": "main-brief",
+      "title": {
+        "en": "Yield curve monitor",
+        "zh": "收益率曲线监控"
+      },
+      "description": {
+        "en": "Run the yield curve monitor workflow with QVeris data.",
+        "zh": "使用 QVeris 运行「收益率曲线监控」工作流。"
+      },
+      "prompt": {
+        "en": "Use QVeris to explain today's yield curve move and risk implications. Include data sources discovered, capabilities inspected, paid Calls used, estimated credits, evidence gaps, and risks.",
+        "zh": "用 QVeris 执行「收益率曲线监控」。包含发现的数据来源、检查过的能力、付费 Call 次数、预计 credits、证据缺口和风险。"
+      }
+    },
+    {
+      "id": "watchlist-scan",
+      "title": {
+        "en": "Watchlist scan",
+        "zh": "观察列表扫描"
+      },
+      "description": {
+        "en": "Run the workflow across a bounded ticker list.",
+        "zh": "在限定股票列表上运行该工作流。"
+      },
+      "prompt": {
+        "en": "Use QVeris to run yield curve monitor for AAPL, NVDA, MSFT, and TSLA. Rank by evidence quality and market relevance.",
+        "zh": "用 QVeris 为 AAPL、NVDA、MSFT、TSLA 运行「收益率曲线监控」。按证据质量和市场相关性排序。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and screening workflows.",
+        "zh": "为全球研究和筛选工作流补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for source-backed A-share monitoring.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find yield curve monitor data",
+        "zh": "寻找收益率曲线监控数据"
+      },
+      "purpose": {
+        "en": "Find Treasury yields, curve spreads, credit, and sector data capabilities needed for this workflow.",
+        "zh": "寻找该工作流需要的收益率曲线监控相关能力。"
+      },
+      "sources": [
+        "QVeris capability index",
+        "financial data providers",
+        "market data providers",
+        "news and filing providers"
+      ],
+      "sample_query": "yield curve treasury rates credit spread sector impact API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Inspect coverage and billing",
+        "zh": "检查覆盖和计费"
+      },
+      "purpose": {
+        "en": "Check coverage, parameters, freshness, latency, success signals, and billing_rule before paid calls.",
+        "zh": "付费调用前检查覆盖、参数、时效、延迟、成功信号和 billing_rule。"
+      },
+      "sources": [
+        "Capability schemas",
+        "Provider metrics",
+        "Billing rules"
+      ]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call yield curve monitor evidence",
+        "zh": "调用收益率曲线监控证据"
+      },
+      "purpose": {
+        "en": "Execute bounded QVeris calls and compose results into a traceable finance brief.",
+        "zh": "执行限定的 QVeris 调用，并把结果组织成可追踪金融简报。"
+      },
+      "sources": [
+        "Market data providers",
+        "Financial data providers",
+        "News providers",
+        "Filing providers"
+      ]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Expected QVeris usage",
+      "zh": "预计 QVeris 使用量"
+    },
+    "summary": {
+      "en": "This workflow usually needs 4-12 paid Calls after free Discover and Inspect preflight. Cost depends on provider billing, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 4-12 次付费 Call。费用取决于供应商计费、股票数量和时间窗口。"
+    },
+    "typical_calls": "4-12",
+    "estimated_credits": "4-120 credits",
+    "free_actions": [
+      "Discover",
+      "Inspect"
+    ],
+    "paid_actions": [
+      "Call"
+    ],
+    "note": {
+      "en": "Ask for explicit approval before paid Calls. Reduce tickers, windows, or source count if the estimate is above budget.",
+      "zh": "付费 Call 前必须获得明确确认。如果预计成本超过预算，减少股票、时间窗口或来源数量。"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Set scope",
+        "zh": "设定范围"
+      },
+      "description": {
+        "en": "Define market, tickers, time window, output format, and maximum paid-call budget.",
+        "zh": "定义市场、股票、时间窗口、输出格式和最大付费调用预算。"
+      }
+    },
+    {
+      "title": {
+        "en": "Discover and inspect",
+        "zh": "发现并检查"
+      },
+      "description": {
+        "en": "Use QVeris Discover and Inspect to choose sources before paid execution.",
+        "zh": "使用 QVeris Discover 和 Inspect，在付费执行前选择来源。"
+      }
+    },
+    {
+      "title": {
+        "en": "Call bounded evidence",
+        "zh": "调用限定证据"
+      },
+      "description": {
+        "en": "Call only the required data capabilities and preserve source traceability.",
+        "zh": "只调用必要数据能力，并保留来源可追踪性。"
+      }
+    },
+    {
+      "title": {
+        "en": "Brief with caveats",
+        "zh": "生成带限制说明的简报"
+      },
+      "description": {
+        "en": "Return findings, evidence strength, missing proof, usage trace, and not-investment-advice language.",
+        "zh": "返回发现、证据强度、缺失证明、使用记录和非投资建议说明。"
+      }
+    }
+  ]
+}

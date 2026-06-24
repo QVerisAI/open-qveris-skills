@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Insider transaction watch"
+  short_description: "Run insider transaction watch with QVeris data."
+  default_prompt: "Use QVeris to check insider transaction signals for this watchlist."

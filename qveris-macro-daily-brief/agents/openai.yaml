@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Macro daily brief"
+  short_description: "Run macro daily brief with QVeris data."
+  default_prompt: "Create a macro daily brief for US markets today."
