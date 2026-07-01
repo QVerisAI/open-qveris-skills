@@ -111,6 +111,21 @@ class TestValidateTimeline(unittest.TestCase):
         self.assertTrue(any(c["status"] == "OK" for c in checks))
         self.assertEqual(len(self.v.validation_report["warnings"]), 1)
 
+    def test_tweetclaw_integer_ids_adapt_to_timeline(self):
+        export = {
+            "tweets": [
+                {
+                    "tweet_id": 1870000000000000000,
+                    "author_handle": "founder",
+                    "text": "Integer IDs from JSON exports stay usable",
+                }
+            ]
+        }
+
+        timeline = self.v.adapt_tweetclaw_timeline(export)
+
+        self.assertEqual(timeline["tweets"][0]["id"], "1870000000000000000")
+
 
 # ---------------------------------------------------------------------------
 # validate_tweet_details
@@ -202,6 +217,18 @@ class TestValidateTweetDetails(unittest.TestCase):
         self.assertEqual(tweet["metrics"]["quoteCount"], 0)
         self.assertEqual(tweet["metrics"]["impressionCount"], 500)
         self.assertTrue(any(c["status"] == "OK" for c in checks))
+
+    def test_tweetclaw_integer_id_adapts_to_detail(self):
+        detail = self.v.adapt_tweetclaw_detail({"tweet_id": 1870000000000000000})
+
+        self.assertTrue(detail["ok"])
+        self.assertEqual(detail["tweet"]["id"], "1870000000000000000")
+
+    def test_tweetclaw_invalid_detail_row_is_rejected(self):
+        detail = self.v.adapt_tweetclaw_detail(["not", "a", "row"])
+
+        self.assertFalse(detail["ok"])
+        self.assertEqual(detail["error"], "invalid_tweetclaw_export_row")
 
 
 # ---------------------------------------------------------------------------

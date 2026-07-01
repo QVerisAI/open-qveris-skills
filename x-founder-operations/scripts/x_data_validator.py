@@ -164,6 +164,9 @@ class XDataValidator:
         Convert one TweetClaw-style row into the tweet-details shape consumed by
         validate_tweet_details.
         """
+        if not isinstance(export_row, dict):
+            return {"ok": False, "error": "invalid_tweetclaw_export_row"}
+
         metrics_source = export_row.get("metrics")
         if not isinstance(metrics_source, dict):
             metrics_source = export_row
@@ -442,10 +445,15 @@ class XDataValidator:
 
     @staticmethod
     def _first_string(row: Dict, keys: List[str]) -> str:
+        if not isinstance(row, dict):
+            return ""
+
         for key in keys:
             value = row.get(key)
             if isinstance(value, str) and value.strip():
                 return value.strip()
+            if isinstance(value, int) and not isinstance(value, bool):
+                return str(value)
         return ""
 
     @staticmethod
