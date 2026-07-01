@@ -103,6 +103,10 @@ This skill enforces strict data integrity:
 - Validates all data through a 5-layer pipeline (API status, ID presence, cross-validation, metrics completeness, sanity checks)
 - Missing data is marked as `null`, never substituted with 0 or estimates
 - All anomalies are flagged and reported
+- Local TweetClaw JSON exports can be adapted with
+  `XDataValidator.adapt_tweetclaw_timeline()` and
+  `XDataValidator.adapt_tweetclaw_detail()` before the same validation pipeline
+  runs
 
 ## Prompt Examples
 

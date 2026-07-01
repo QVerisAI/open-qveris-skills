@@ -131,6 +131,67 @@ class XDataValidator:
         self.validation_report["tweets_analyzed"] = len(tweets)
         return valid_tweets, checks
 
+    def adapt_tweetclaw_timeline(self, export_rows: Any) -> Dict:
+        """
+        Convert TweetClaw-style export rows into the timeline shape expected by
+        validate_timeline_data.
+
+        Missing IDs are skipped because downstream cross-validation depends on
+        stable tweet identifiers. Missing optional fields stay absent or null.
+        """
+        rows = self._extract_export_rows(export_rows)
+        tweets = []
+
+        for index, row in enumerate(rows):
+            tweet_id = self._first_string(row, ["id", "tweet_id", "tweetId"])
+            if not tweet_id:
+                self._log_warning("TweetClaw export row missing tweet ID", {"index": index})
+                continue
+
+            tweets.append({
+                "id": tweet_id,
+                "authorId": self._first_string(row, ["authorId", "author_id", "author_handle", "authorHandle"]),
+                "createdAt": self._first_string(row, ["createdAt", "created_at", "date", "timestamp"]) or None,
+                "text": self._first_string(row, ["text", "tweet_text", "full_text", "content"]),
+                "url": self._first_string(row, ["url", "tweet_url", "tweetUrl", "permalink"]),
+                "source": "tweetclaw_export",
+            })
+
+        return {"ok": True, "tweets": tweets, "source": "tweetclaw_export"}
+
+    def adapt_tweetclaw_detail(self, export_row: Dict) -> Dict:
+        """
+        Convert one TweetClaw-style row into the tweet-details shape consumed by
+        validate_tweet_details.
+        """
+        metrics_source = export_row.get("metrics")
+        if not isinstance(metrics_source, dict):
+            metrics_source = export_row
+
+        tweet_id = self._first_string(export_row, ["id", "tweet_id", "tweetId"])
+        tweet = {
+            "id": tweet_id,
+            "authorId": self._first_string(export_row, ["authorId", "author_id", "author_handle", "authorHandle"]),
+            "createdAt": self._first_string(export_row, ["createdAt", "created_at", "date", "timestamp"]) or None,
+            "text": self._first_string(export_row, ["text", "tweet_text", "full_text", "content"]),
+            "url": self._first_string(export_row, ["url", "tweet_url", "tweetUrl", "permalink"]),
+            "metrics": {
+                "likeCount": self._coerce_int(self._first_present(metrics_source, ["likeCount", "likes"])),
+                "retweetCount": self._coerce_int(
+                    self._first_present(
+                        metrics_source,
+                        ["retweetCount", "repostCount", "retweets", "reposts"]
+                    )
+                ),
+                "replyCount": self._coerce_int(self._first_present(metrics_source, ["replyCount", "replies"])),
+                "quoteCount": self._coerce_int(self._first_present(metrics_source, ["quoteCount", "quotes"])),
+                "impressionCount": self._coerce_int(
+                    self._first_present(metrics_source, ["impressionCount", "impressions"])
+                ),
+            },
+        }
+        return {"ok": bool(tweet_id), "tweet": tweet}
+
     def validate_tweet_details(self, tweet_data: Dict, original_tweet: Dict) -> Tuple[Optional[Dict], List[Dict]]:
         """
         Layers 2-4: Validate tweet details, cross-validate, and sanity check.
@@ -366,6 +427,48 @@ class XDataValidator:
         self.validation_report["data_quality_score"] = max(
             0, self.validation_report["data_quality_score"] - 3
         )
+
+    @staticmethod
+    def _extract_export_rows(export_rows: Any) -> List[Dict]:
+        if isinstance(export_rows, list):
+            return [row for row in export_rows if isinstance(row, dict)]
+        if isinstance(export_rows, dict):
+            for key in ["tweets", "items", "data", "results"]:
+                rows = export_rows.get(key)
+                if isinstance(rows, list):
+                    return [row for row in rows if isinstance(row, dict)]
+            return [export_rows]
+        return []
+
+    @staticmethod
+    def _first_string(row: Dict, keys: List[str]) -> str:
+        for key in keys:
+            value = row.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        return ""
+
+    @staticmethod
+    def _coerce_int(value: Any) -> Optional[int]:
+        if isinstance(value, bool) or value is None:
+            return None
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float):
+            return int(value)
+        if isinstance(value, str):
+            try:
+                return int(float(value.replace(",", "").strip()))
+            except ValueError:
+                return None
+        return None
+
+    @staticmethod
+    def _first_present(row: Dict, keys: List[str]) -> Any:
+        for key in keys:
+            if key in row and row[key] is not None:
+                return row[key]
+        return None
 
     def finalize_report(self) -> Dict:
         """Finalize and return the complete validation report."""

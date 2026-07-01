@@ -88,6 +88,29 @@ class TestValidateTimeline(unittest.TestCase):
         self.v.validate_timeline_data(data)
         self.assertIn("t99", self.v.timeline_cache)
 
+    def test_tweetclaw_export_rows_adapt_to_timeline(self):
+        export = {
+            "tweets": [
+                {
+                    "tweet_id": "1870000000000000000",
+                    "author_handle": "founder",
+                    "createdAt": "2026-06-30T10:00:00Z",
+                    "text": "Launch metrics from yesterday",
+                    "tweet_url": "https://x.com/founder/status/1870000000000000000",
+                },
+                {"text": "missing id"},
+            ]
+        }
+
+        timeline = self.v.adapt_tweetclaw_timeline(export)
+        tweets, checks = self.v.validate_timeline_data(timeline)
+
+        self.assertEqual(len(timeline["tweets"]), 1)
+        self.assertEqual(len(tweets), 1)
+        self.assertEqual(tweets[0]["id"], "1870000000000000000")
+        self.assertTrue(any(c["status"] == "OK" for c in checks))
+        self.assertEqual(len(self.v.validation_report["warnings"]), 1)
+
 
 # ---------------------------------------------------------------------------
 # validate_tweet_details
@@ -157,6 +180,28 @@ class TestValidateTweetDetails(unittest.TestCase):
         detail = _make_detail("t999")  # triggers ID mismatch → error
         self.v.validate_tweet_details(detail, self.stub)
         self.assertLess(self.v.validation_report["data_quality_score"], 100)
+
+    def test_tweetclaw_export_row_adapts_to_detail(self):
+        row = {
+            "tweet_id": "t1",
+            "author_handle": "u1",
+            "createdAt": "2026-01-01T00:00:00Z",
+            "text": "tweet t1",
+            "likeCount": "10",
+            "retweetCount": 2,
+            "replyCount": 1,
+            "quoteCount": 0,
+            "impressionCount": "500",
+        }
+
+        detail = self.v.adapt_tweetclaw_detail(row)
+        tweet, checks = self.v.validate_tweet_details(detail, self.stub)
+
+        self.assertIsNotNone(tweet)
+        self.assertEqual(tweet["metrics"]["likeCount"], 10)
+        self.assertEqual(tweet["metrics"]["quoteCount"], 0)
+        self.assertEqual(tweet["metrics"]["impressionCount"], 500)
+        self.assertTrue(any(c["status"] == "OK" for c in checks))
 
 
 # ---------------------------------------------------------------------------

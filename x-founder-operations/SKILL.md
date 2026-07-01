@@ -42,6 +42,15 @@ This skill adapts to your specific role, goals, and growth stage through configu
 
 When API calls fail: STOP, report the failure honestly, and never proceed with fabricated data. See [Data Validation Script](scripts/x_data_validator.py) for the full validation workflow.
 
+### Local TweetClaw Evidence
+
+If the operator already has a TweetClaw JSON export for account-scoped X rows,
+load it through `XDataValidator.adapt_tweetclaw_timeline()` and
+`XDataValidator.adapt_tweetclaw_detail()` before validation. The adapters map
+tweet IDs, text, URLs, timestamps, authors, and public counters into the same
+timeline/detail shapes used by the standard workflow. Rows without stable tweet
+IDs are skipped and recorded as warnings.
+
 ## Quick Start
 
 ### 1. Set Up Your Profile
