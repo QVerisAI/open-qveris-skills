@@ -1,7 +1,7 @@
 {
   "schema_version": "2026-06-17",
   "id": "qveris-portfolio-risk-monitor",
-  "status": "published",
+  "status": "preview",
   "name": "qveris-portfolio-risk-monitor",
   "title": {
     "en": "Portfolio risk monitor",
@@ -22,9 +22,6 @@
     "operations"
   ],
   "platforms": [
-    "openclaw",
-    "cursor",
-    "claude-code",
     "cli"
   ],
   "tags": [
@@ -216,6 +213,10 @@
     "note": {
       "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
       "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    },
+    "evidence": {
+      "en": "Updated from QVeris Discover / Inspect preflight on 2026-07-02; live smoke traces are stored under artifacts after execution.",
+      "zh": "?? 2026-07-02 ? QVeris Discover / Inspect ??????? smoke trace ?????? artifacts?"
     }
   },
   "execution_flow": [
@@ -259,5 +260,20 @@
         "zh": "返回风险分数、主要变化、使用记录和可考虑的中性动作。"
       }
     }
-  ]
+  ],
+  "validation": {
+    "source_review": "qveris-portfolio-risk-monitor/references/source-review.md",
+    "qveris_tool_map": "qveris-portfolio-risk-monitor/references/qveris-tool-map.md",
+    "runner": "qveris-portfolio-risk-monitor/scripts/run.mjs",
+    "fixture_test": "qveris-portfolio-risk-monitor/tests/runner.fixture.test.mjs",
+    "examples": "qveris-portfolio-risk-monitor/examples/README.md",
+    "live_smoke_report": "qveris-portfolio-risk-monitor/artifacts/live-smoke.md",
+    "live_smoke_trace": "qveris-portfolio-risk-monitor/artifacts/live-smoke-trace.json",
+    "codex_e2e": "qveris-portfolio-risk-monitor/artifacts/codex-e2e.md",
+    "openclaw_e2e": "pending"
+  },
+  "status_note": {
+    "en": "Preview until deterministic scripts, fixture tests, live QVeris smoke traces, Codex validation, and OpenClaw validation are complete.",
+    "zh": "???????fixture ????? QVeris smoke trace?Codex ??? OpenClaw ??????? preview?"
+  }
 }

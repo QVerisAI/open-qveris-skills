@@ -5,6 +5,17 @@ description: Monitor a portfolio for concentration, drawdown, volatility, cataly
 
 # Portfolio risk monitor
 
+## Deterministic Runner
+
+Prefer the local runner before composing a free-form answer:
+
+```bash
+node qveris-portfolio-risk-monitor/scripts/run.mjs --dry-run --holdings AAPL:25,NVDA:25,MSFT:20,TSLA:15,CASH:15 --benchmark SPY --window-days 30
+node qveris-portfolio-risk-monitor/scripts/run.mjs --live --holdings AAPL:25,NVDA:25,MSFT:20,TSLA:15,CASH:15 --benchmark SPY --window-days 30 --max-paid-calls 4 --max-credits 60 --output qveris-portfolio-risk-monitor/artifacts/live-smoke.md --trace qveris-portfolio-risk-monitor/artifacts/live-smoke-trace.json
+```
+
+The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
+
 ## Workflow
 
 1. Clarify ticker, market, time window, user objective, and maximum paid QVeris Call budget.
@@ -34,7 +45,7 @@ Return these sections unless the user asks for a narrower format:
 
 ## Methodology Reference
 
-Read `references/methodology.md` when the user asks where the workflow comes from or how to adapt it.
+Read `references/methodology.md` when the user asks where the workflow comes from or how to adapt it. Read `references/source-review.md` for GitHub research and `references/qveris-tool-map.md` before changing QVeris data routing.
 
 ## Source Inspiration
 

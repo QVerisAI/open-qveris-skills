@@ -1,7 +1,7 @@
 {
   "schema_version": "2026-06-17",
   "id": "qveris-sector-rotation-map",
-  "status": "published",
+  "status": "preview",
   "name": "qveris-sector-rotation-map",
   "title": {
     "en": "Sector rotation map",
@@ -21,9 +21,6 @@
     "finance"
   ],
   "platforms": [
-    "openclaw",
-    "cursor",
-    "claude-code",
     "cli"
   ],
   "tags": [
@@ -200,6 +197,10 @@
     "note": {
       "en": "Ask for explicit approval before paid Calls. Reduce tickers, windows, or source count if the estimate is above budget.",
       "zh": "付费 Call 前必须获得明确确认。如果预计成本超过预算，减少股票、时间窗口或来源数量。"
+    },
+    "evidence": {
+      "en": "Updated from QVeris Discover / Inspect preflight on 2026-07-02; live smoke traces are stored under artifacts after execution.",
+      "zh": "?? 2026-07-02 ? QVeris Discover / Inspect ??????? smoke trace ?????? artifacts?"
     }
   },
   "execution_flow": [
@@ -243,5 +244,20 @@
         "zh": "返回发现、证据强度、缺失证明、使用记录和非投资建议说明。"
       }
     }
-  ]
+  ],
+  "validation": {
+    "source_review": "qveris-sector-rotation-map/references/source-review.md",
+    "qveris_tool_map": "qveris-sector-rotation-map/references/qveris-tool-map.md",
+    "runner": "qveris-sector-rotation-map/scripts/run.mjs",
+    "fixture_test": "qveris-sector-rotation-map/tests/runner.fixture.test.mjs",
+    "examples": "qveris-sector-rotation-map/examples/README.md",
+    "live_smoke_report": "qveris-sector-rotation-map/artifacts/live-smoke.md",
+    "live_smoke_trace": "qveris-sector-rotation-map/artifacts/live-smoke-trace.json",
+    "codex_e2e": "qveris-sector-rotation-map/artifacts/codex-e2e.md",
+    "openclaw_e2e": "pending"
+  },
+  "status_note": {
+    "en": "Preview until deterministic scripts, fixture tests, live QVeris smoke traces, Codex validation, and OpenClaw validation are complete.",
+    "zh": "???????fixture ????? QVeris smoke trace?Codex ??? OpenClaw ??????? preview?"
+  }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "2026-06-17",
   "id": "qveris-quant-factor-screen",
-  "status": "published",
+  "status": "preview",
   "name": "qveris-quant-factor-screen",
   "title": {
     "en": "Quant factor screen",
@@ -21,9 +21,6 @@
     "finance"
   ],
   "platforms": [
-    "openclaw",
-    "cursor",
-    "claude-code",
     "cli"
   ],
   "tags": [
@@ -215,6 +212,10 @@
     "note": {
       "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
       "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    },
+    "evidence": {
+      "en": "Updated from QVeris Discover / Inspect preflight on 2026-07-02; live smoke traces are stored under artifacts after execution.",
+      "zh": "?? 2026-07-02 ? QVeris Discover / Inspect ??????? smoke trace ?????? artifacts?"
     }
   },
   "execution_flow": [
@@ -258,5 +259,20 @@
         "zh": "返回排序、因子驱动、异常值和下一步验证。"
       }
     }
-  ]
+  ],
+  "validation": {
+    "source_review": "qveris-quant-factor-screen/references/source-review.md",
+    "qveris_tool_map": "qveris-quant-factor-screen/references/qveris-tool-map.md",
+    "runner": "qveris-quant-factor-screen/scripts/run.mjs",
+    "fixture_test": "qveris-quant-factor-screen/tests/runner.fixture.test.mjs",
+    "examples": "qveris-quant-factor-screen/examples/README.md",
+    "live_smoke_report": "qveris-quant-factor-screen/artifacts/live-smoke.md",
+    "live_smoke_trace": "qveris-quant-factor-screen/artifacts/live-smoke-trace.json",
+    "codex_e2e": "qveris-quant-factor-screen/artifacts/codex-e2e.md",
+    "openclaw_e2e": "pending"
+  },
+  "status_note": {
+    "en": "Preview until deterministic scripts, fixture tests, live QVeris smoke traces, Codex validation, and OpenClaw validation are complete.",
+    "zh": "???????fixture ????? QVeris smoke trace?Codex ??? OpenClaw ??????? preview?"
+  }
 }
