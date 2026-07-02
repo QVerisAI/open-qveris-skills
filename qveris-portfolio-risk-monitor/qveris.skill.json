@@ -1,0 +1,279 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-portfolio-risk-monitor",
+  "status": "preview",
+  "name": "qveris-portfolio-risk-monitor",
+  "title": {
+    "en": "Portfolio risk monitor",
+    "zh": "组合风险监控"
+  },
+  "description": {
+    "en": "Monitor a portfolio for concentration, drawdown, volatility, catalyst, news, and liquidity risks with auditable QVeris calls.",
+    "zh": "用可审计的 QVeris 调用监控组合集中度、回撤、波动、催化、新闻和流动性风险。"
+  },
+  "overview": {
+    "en": "Use this skill for daily portfolio reviews and risk alerts. The agent reads holdings, discovers relevant QVeris market and news capabilities, asks before paid calls, and returns a risk dashboard with recommended checks.",
+    "zh": "用于每日组合复盘和风险提醒。Agent 读取持仓，发现相关 QVeris 行情和新闻能力，在付费调用前确认，并返回风险看板和建议检查项。"
+  },
+  "icon": "FileBarChart",
+  "accent": "amber",
+  "scenarios": [
+    "finance",
+    "operations"
+  ],
+  "platforms": [
+    "cli"
+  ],
+  "tags": [
+    "Finance",
+    "Portfolio",
+    "Risk",
+    "Monitoring",
+    "Alerts"
+  ],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-portfolio-risk-monitor"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-portfolio-risk-monitor",
+  "official": true,
+  "prompts": [
+    {
+      "id": "portfolio-review",
+      "title": {
+        "en": "Portfolio review",
+        "zh": "组合复盘"
+      },
+      "description": {
+        "en": "Review a portfolio for risk and catalysts.",
+        "zh": "检查组合风险和催化。"
+      },
+      "prompt": {
+        "en": "Use QVeris to review this portfolio: AAPL 25%, NVDA 25%, MSFT 20%, TSLA 15%, cash 15%. Flag concentration, drawdown, volatility, liquidity, catalyst, and news risks. Include QVeris calls used and estimated credits.",
+        "zh": "用 QVeris 复盘这个组合：AAPL 25%、NVDA 25%、MSFT 20%、TSLA 15%、现金 15%。标记集中度、回撤、波动、流动性、催化和新闻风险。包含 QVeris 调用和预计 credits。"
+      }
+    },
+    {
+      "id": "daily-risk-alert",
+      "title": {
+        "en": "Daily risk alert",
+        "zh": "每日风险提醒"
+      },
+      "description": {
+        "en": "Find what changed in portfolio risk today.",
+        "zh": "找出今日组合风险变化。"
+      },
+      "prompt": {
+        "en": "Use QVeris to create a daily risk alert for this watchlist. Focus on price gaps, unusual volatility, major news, earnings dates, and liquidity changes.",
+        "zh": "用 QVeris 为这个观察列表生成每日风险提醒。关注价格跳空、异常波动、重大新闻、财报日期和流动性变化。"
+      }
+    },
+    {
+      "id": "rebalance-check",
+      "title": {
+        "en": "Rebalance check",
+        "zh": "再平衡检查"
+      },
+      "description": {
+        "en": "Check whether risk suggests trimming or adding exposure.",
+        "zh": "检查风险是否提示减仓或增配。"
+      },
+      "prompt": {
+        "en": "Use QVeris to check whether this portfolio needs rebalancing. Do not give personalized investment advice; show risk drivers, evidence, and neutral actions to consider.",
+        "zh": "用 QVeris 检查这个组合是否需要再平衡。不要给个性化投资建议；展示风险驱动、证据和可考虑的中性动作。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and screening workflows.",
+        "zh": "为全球研究和筛选工作流补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for source-backed A-share monitoring.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find portfolio risk data",
+        "zh": "寻找组合风险数据"
+      },
+      "purpose": {
+        "en": "Find quote, historical price, volatility, liquidity, earnings calendar, filings, and news capabilities.",
+        "zh": "寻找行情、历史价格、波动、流动性、财报日历、公告和新闻能力。"
+      },
+      "sources": [
+        "FMP",
+        "Twelve Data",
+        "market data providers",
+        "news providers"
+      ],
+      "sample_query": "portfolio risk volatility liquidity earnings calendar news API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Inspect portfolio coverage",
+        "zh": "检查组合覆盖"
+      },
+      "purpose": {
+        "en": "Check coverage for every holding and show estimated calls before execution.",
+        "zh": "检查每个持仓的覆盖范围，并在执行前展示预计调用数。"
+      },
+      "sources": [
+        "Capability schemas",
+        "Provider metrics",
+        "Billing rules"
+      ]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call risk signals",
+        "zh": "调用风险信号"
+      },
+      "purpose": {
+        "en": "Call market, calendar, and news sources to generate risk alerts and concentration summaries.",
+        "zh": "调用行情、日历和新闻来源，生成风险提醒和集中度摘要。"
+      },
+      "sources": [
+        "Market data providers",
+        "Calendar providers",
+        "News providers"
+      ]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Expected QVeris usage",
+      "zh": "预计 QVeris 使用量"
+    },
+    "summary": {
+      "en": "This workflow usually needs 6-24 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 6-24 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
+    },
+    "typical_calls": "6-24",
+    "estimated_credits": "6-220 credits",
+    "free_actions": [
+      "Discover",
+      "Inspect"
+    ],
+    "paid_actions": [
+      "Call"
+    ],
+    "note": {
+      "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
+      "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    },
+    "evidence": {
+      "en": "Updated from QVeris Discover / Inspect preflight on 2026-07-02; live smoke traces are stored under artifacts after execution.",
+      "zh": "?? 2026-07-02 ? QVeris Discover / Inspect ??????? smoke trace ?????? artifacts?"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Parse holdings",
+        "zh": "解析持仓"
+      },
+      "description": {
+        "en": "Normalize tickers, weights, cash, benchmark, and alert threshold.",
+        "zh": "标准化股票、权重、现金、基准和提醒阈值。"
+      }
+    },
+    {
+      "title": {
+        "en": "Discover coverage",
+        "zh": "发现覆盖"
+      },
+      "description": {
+        "en": "Use QVeris to find data for each holding and inspect paid-call cost.",
+        "zh": "用 QVeris 为每个持仓寻找数据，并检查付费调用成本。"
+      }
+    },
+    {
+      "title": {
+        "en": "Call risk data",
+        "zh": "调用风险数据"
+      },
+      "description": {
+        "en": "Call bounded quote, volatility, liquidity, catalyst, and news data.",
+        "zh": "调用限定的行情、波动、流动性、催化和新闻数据。"
+      }
+    },
+    {
+      "title": {
+        "en": "Return dashboard",
+        "zh": "返回看板"
+      },
+      "description": {
+        "en": "Return risk scores, top changes, usage trace, and neutral actions to consider.",
+        "zh": "返回风险分数、主要变化、使用记录和可考虑的中性动作。"
+      }
+    }
+  ],
+  "validation": {
+    "source_review": "qveris-portfolio-risk-monitor/references/source-review.md",
+    "qveris_tool_map": "qveris-portfolio-risk-monitor/references/qveris-tool-map.md",
+    "runner": "qveris-portfolio-risk-monitor/scripts/run.mjs",
+    "fixture_test": "qveris-portfolio-risk-monitor/tests/runner.fixture.test.mjs",
+    "examples": "qveris-portfolio-risk-monitor/examples/README.md",
+    "live_smoke_report": "qveris-portfolio-risk-monitor/artifacts/live-smoke.md",
+    "live_smoke_trace": "qveris-portfolio-risk-monitor/artifacts/live-smoke-trace.json",
+    "codex_e2e": "qveris-portfolio-risk-monitor/artifacts/codex-e2e.md",
+    "openclaw_e2e": "pending"
+  },
+  "status_note": {
+    "en": "Preview until deterministic scripts, fixture tests, live QVeris smoke traces, Codex validation, and OpenClaw validation are complete.",
+    "zh": "???????fixture ????? QVeris smoke trace?Codex ??? OpenClaw ??????? preview?"
+  }
+}

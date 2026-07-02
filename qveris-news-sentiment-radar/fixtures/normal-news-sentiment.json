@@ -1,0 +1,46 @@
+{
+  "inputs": {
+    "ticker": "NVDA",
+    "market": "US",
+    "windowDays": 7,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "market_news_sentiment",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "raw_result": {
+        "result": {
+          "feed": [
+            {
+              "title": "NVDA supplier update supports AI infrastructure demand",
+              "overall_sentiment_label": "Bullish"
+            },
+            {
+              "title": "Analyst warns valuation expectations remain elevated",
+              "overall_sentiment_label": "Neutral"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "role": "price_reaction",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": true,
+      "cost": 1,
+      "raw_result": {
+        "result": {
+          "c": 150.25,
+          "dp": 1.4
+        }
+      }
+    }
+  ],
+  "usage": {
+    "paid_calls": 2,
+    "estimated_credits": 3
+  }
+}

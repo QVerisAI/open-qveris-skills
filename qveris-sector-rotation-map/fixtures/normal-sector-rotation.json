@@ -1,0 +1,36 @@
+{
+  "inputs": {
+    "sectors": ["XLK", "XLF", "XLV", "XLE", "XLI", "XLY", "XLP", "XLU"],
+    "market": "US",
+    "benchmark": "SPY",
+    "windowDays": 30,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "sector_performance_snapshot",
+      "tool_id": "financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "sector": "Technology", "changesPercentage": 1.2 },
+          { "sector": "Energy", "changesPercentage": -0.4 }
+        ]
+      }
+    },
+    {
+      "role": "available_sectors",
+      "tool_id": "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": ["Technology", "Financial Services", "Healthcare", "Energy"]
+      }
+    }
+  ],
+  "usage": {
+    "paid_calls": 2,
+    "estimated_credits": 48.4
+  }
+}

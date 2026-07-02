@@ -1,0 +1,281 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-news-sentiment-radar",
+  "status": "preview",
+  "name": "qveris-news-sentiment-radar",
+  "title": {
+    "en": "News sentiment radar",
+    "zh": "新闻情绪雷达"
+  },
+  "description": {
+    "en": "Monitor market-moving news, social sentiment, filings, and price reaction with QVeris so agents can separate confirmed catalysts from noisy attention.",
+    "zh": "用 QVeris 监控影响市场的新闻、社媒情绪、公告和价格反应，帮助 Agent 区分已确认催化与噪音。"
+  },
+  "overview": {
+    "en": "Use this skill for daily watchlists, catalyst scans, and event-driven risk checks. It discovers news, social, filing, and quote capabilities, inspects source quality, calls bounded windows, and returns a signal table with confidence and next checks.",
+    "zh": "用于每日观察列表、催化扫描和事件驱动风险检查。它发现新闻、社媒、公告和行情能力，检查来源质量，调用限定时间窗口，并返回带信心度和下一步检查的信号表。"
+  },
+  "icon": "Megaphone",
+  "accent": "sky",
+  "scenarios": [
+    "finance",
+    "content"
+  ],
+  "platforms": [
+    "cli"
+  ],
+  "tags": [
+    "Finance",
+    "News",
+    "Sentiment",
+    "Catalysts",
+    "Monitoring"
+  ],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-news-sentiment-radar"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-news-sentiment-radar",
+  "official": true,
+  "prompts": [
+    {
+      "id": "ticker-radar",
+      "title": {
+        "en": "Ticker radar",
+        "zh": "单股票雷达"
+      },
+      "description": {
+        "en": "Summarize news and sentiment for one ticker.",
+        "zh": "汇总单只股票新闻和情绪。"
+      },
+      "prompt": {
+        "en": "Use QVeris to build a 7-day news and sentiment radar for TSLA. Separate confirmed news, filing events, analyst or media narratives, social momentum, price reaction, and unresolved rumors. Include QVeris calls used and estimated credits.",
+        "zh": "用 QVeris 为 TSLA 建立 7 日新闻情绪雷达。区分已确认新闻、公告事件、分析师或媒体叙事、社媒热度、价格反应和未证实传闻。包含使用的 QVeris 调用和预计 credits。"
+      }
+    },
+    {
+      "id": "watchlist-radar",
+      "title": {
+        "en": "Watchlist radar",
+        "zh": "观察列表雷达"
+      },
+      "description": {
+        "en": "Scan a list for what changed today.",
+        "zh": "扫描列表里今天发生的变化。"
+      },
+      "prompt": {
+        "en": "Use QVeris to scan AAPL, NVDA, MSFT, AMD, and TSLA for the strongest news and sentiment changes today. Rank by market relevance, not article count.",
+        "zh": "用 QVeris 扫描 AAPL、NVDA、MSFT、AMD、TSLA 今天最强的新闻和情绪变化。按市场相关性排序，而不是文章数量。"
+      }
+    },
+    {
+      "id": "rumor-check",
+      "title": {
+        "en": "Rumor check",
+        "zh": "传闻核验"
+      },
+      "description": {
+        "en": "Check whether a market rumor has enough evidence.",
+        "zh": "检查市场传闻是否有足够证据。"
+      },
+      "prompt": {
+        "en": "Use QVeris to check whether the rumor about this company has credible support. Call news, filings, quote reaction, and social signals, then label it confirmed, weak, or unsupported.",
+        "zh": "用 QVeris 检查这家公司相关传闻是否有可信支持。调用新闻、公告、价格反应和社媒信号，然后标记为已确认、弱证据或无支持。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and screening workflows.",
+        "zh": "为全球研究和筛选工作流补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for source-backed A-share monitoring.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find news and sentiment sources",
+        "zh": "寻找新闻和情绪来源"
+      },
+      "purpose": {
+        "en": "Find company news, filings, social posts, search trend, and market reaction capabilities.",
+        "zh": "寻找公司新闻、公告、社媒帖子、搜索趋势和市场反应能力。"
+      },
+      "sources": [
+        "news providers",
+        "X",
+        "Reddit",
+        "filing providers",
+        "market data providers"
+      ],
+      "sample_query": "company news social sentiment filings quote reaction API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Inspect source quality",
+        "zh": "检查来源质量"
+      },
+      "purpose": {
+        "en": "Check source recency, result fields, pagination, market coverage, and billing_rule before calling.",
+        "zh": "调用前检查来源时效、返回字段、分页、市场覆盖和 billing_rule。"
+      },
+      "sources": [
+        "Capability schemas",
+        "Provider metrics",
+        "Billing rules"
+      ]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call bounded windows",
+        "zh": "调用限定窗口"
+      },
+      "purpose": {
+        "en": "Call only the requested lookback window and convert raw items into signal categories.",
+        "zh": "只调用指定回看窗口，并把原始结果转换成信号类别。"
+      },
+      "sources": [
+        "News providers",
+        "Social providers",
+        "Filing providers",
+        "Market data providers"
+      ]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Expected QVeris usage",
+      "zh": "预计 QVeris 使用量"
+    },
+    "summary": {
+      "en": "This workflow usually needs 5-20 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 5-20 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
+    },
+    "typical_calls": "5-20",
+    "estimated_credits": "5-150 credits",
+    "free_actions": [
+      "Discover",
+      "Inspect"
+    ],
+    "paid_actions": [
+      "Call"
+    ],
+    "note": {
+      "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
+      "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    },
+    "evidence": {
+      "en": "Updated from QVeris Discover / Inspect preflight on 2026-07-02; live smoke traces are stored under artifacts after execution.",
+      "zh": "?? 2026-07-02 ? QVeris Discover / Inspect ??????? smoke trace ?????? artifacts?"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Set watch scope",
+        "zh": "设定监控范围"
+      },
+      "description": {
+        "en": "Define tickers, market, lookback window, and whether the task is daily radar or rumor check.",
+        "zh": "定义股票、市场、回看窗口，以及任务是每日雷达还是传闻核验。"
+      }
+    },
+    {
+      "title": {
+        "en": "Discover source mix",
+        "zh": "发现来源组合"
+      },
+      "description": {
+        "en": "Use QVeris to find news, social, filings, and quote reaction capabilities.",
+        "zh": "用 QVeris 寻找新闻、社媒、公告和价格反应能力。"
+      }
+    },
+    {
+      "title": {
+        "en": "Call and cluster",
+        "zh": "调用并聚类"
+      },
+      "description": {
+        "en": "Call bounded sources, dedupe events, and cluster signals by catalyst type.",
+        "zh": "调用限定来源，去重事件，并按催化类型聚类信号。"
+      }
+    },
+    {
+      "title": {
+        "en": "Rank confidence",
+        "zh": "排序信心度"
+      },
+      "description": {
+        "en": "Rank market relevance, confidence, what changed, and what needs verification.",
+        "zh": "排序市场相关性、信心度、变化内容和待验证事项。"
+      }
+    }
+  ],
+  "validation": {
+    "source_review": "qveris-news-sentiment-radar/references/source-review.md",
+    "qveris_tool_map": "qveris-news-sentiment-radar/references/qveris-tool-map.md",
+    "runner": "qveris-news-sentiment-radar/scripts/run.mjs",
+    "fixture_test": "qveris-news-sentiment-radar/tests/runner.fixture.test.mjs",
+    "examples": "qveris-news-sentiment-radar/examples/README.md",
+    "live_smoke_report": "qveris-news-sentiment-radar/artifacts/live-smoke.md",
+    "live_smoke_trace": "qveris-news-sentiment-radar/artifacts/live-smoke-trace.json",
+    "codex_e2e": "qveris-news-sentiment-radar/artifacts/codex-e2e.md",
+    "openclaw_e2e": "pending"
+  },
+  "status_note": {
+    "en": "Preview until deterministic scripts, fixture tests, live QVeris smoke traces, Codex validation, and OpenClaw validation are complete.",
+    "zh": "???????fixture ????? QVeris smoke trace?Codex ??? OpenClaw ??????? preview?"
+  }
+}
