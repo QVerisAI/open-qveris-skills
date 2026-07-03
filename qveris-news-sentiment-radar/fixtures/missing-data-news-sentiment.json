@@ -1,0 +1,52 @@
+{
+  "inputs": {
+    "ticker": "ZZZZ",
+    "market": "US",
+    "windowDays": 7,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "market_news_sentiment",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "raw_result": {
+        "result": {
+          "data": []
+        }
+      }
+    },
+    {
+      "role": "filings_check",
+      "tool_id": "finnhub.stock.filings.retrieve.v1.b6619ba1",
+      "ok": false,
+      "cost": 1,
+      "error": "provider returned no filings for ticker",
+      "raw_result": null
+    }
+  ],
+  "trace": [
+    {
+      "type": "call",
+      "role": "market_news_sentiment",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "record_count": 0
+    },
+    {
+      "type": "call_error",
+      "role": "filings_check",
+      "tool_id": "finnhub.stock.filings.retrieve.v1.b6619ba1",
+      "ok": false,
+      "cost": 1,
+      "record_count": 0,
+      "error": "provider returned no filings for ticker"
+    }
+  ],
+  "usage": {
+    "paid_calls": 2,
+    "estimated_credits": 3
+  }
+}
