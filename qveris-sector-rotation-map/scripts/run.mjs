@@ -18,6 +18,7 @@ function analyze({ opts, calls }) {
   const proxies = sectors(opts);
   const evidence = calls.map(genericEvidence);
   const totalRecords = evidence.reduce((sum, row) => sum + (row.record_count || 0), 0);
+  const signalFramework = ["relative_strength", "momentum", "volatility", "drawdown", "liquidity", "catalyst_context"];
   return {
     scope: {
       sector_proxies: proxies,
@@ -39,6 +40,18 @@ function analyze({ opts, calls }) {
       "Flow, earnings-revision, and valuation coverage can be provider-dependent.",
       "Rotation labels are not trading instructions.",
     ],
+    result: {
+      sector_proxies: proxies,
+      benchmark: opts.benchmark,
+      total_records: totalRecords,
+      signal_framework: signalFramework,
+      phase_labels_ready: false,
+      evidence_roles: evidence.map((row) => row.role),
+      missing_outputs: ["relative_strength_scores", "momentum_scores", "rotation_quadrants"],
+      missing_data: evidence
+        .filter((row) => row.ok === false)
+        .map((row) => `${row.role}: ${row.error || "provider returned unsuccessful status"}`),
+    },
   };
 }
 

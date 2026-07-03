@@ -22,13 +22,14 @@ Skills:
 | QVeris adapter | Done | `qveris-finance-common/runner.mjs` handles Discover, Inspect, Execute, retries, budgets, reports, traces |
 | Transform / analysis / render | Done | Per-skill `analyze` functions in `*/scripts/run.mjs`, shared Markdown rendering in `qveris-finance-common/runner.mjs` |
 | Trace output | Done | `*/artifacts/dry-run-trace.json`, `*/artifacts/live-smoke-trace.json` |
+| Business output schema | Done | `*/schemas/output.schema.json`, `*/artifacts/fixture-output.json`, `--json-output` |
 | Fixtures | Done | `*/fixtures/*.json` |
 | Tests | Done | `*/tests/runner.fixture.test.mjs` |
 | Examples | Done | `*/examples/README.md` |
 | Live QVeris smoke test | Done | `*/artifacts/live-smoke.md`, `*/artifacts/live-smoke-trace.json` |
 | Codex E2E | Done | `*/artifacts/codex-e2e.md` |
 | qveris.skill.json update | Done | Status set to `preview`; validation pointers added; platforms narrowed to `cli` until additional platform validation |
-| OpenClaw E2E | Pending | User indicated Codex validation is sufficient for this pass |
+| OpenClaw E2E | Pending | Local `openclaw` command is not the Skill Hub platform CLI; blocker recorded in `references/openclaw-skillhub-e2e-check.md` |
 
 ## Test Commands
 

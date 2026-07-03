@@ -249,11 +249,14 @@
     "source_review": "qveris-sector-rotation-map/references/source-review.md",
     "qveris_tool_map": "qveris-sector-rotation-map/references/qveris-tool-map.md",
     "runner": "qveris-sector-rotation-map/scripts/run.mjs",
+    "output_schema": "qveris-sector-rotation-map/schemas/output.schema.json",
+    "fixture_output": "qveris-sector-rotation-map/artifacts/fixture-output.json",
     "fixture_test": "qveris-sector-rotation-map/tests/runner.fixture.test.mjs",
     "examples": "qveris-sector-rotation-map/examples/README.md",
     "live_smoke_report": "qveris-sector-rotation-map/artifacts/live-smoke.md",
     "live_smoke_trace": "qveris-sector-rotation-map/artifacts/live-smoke-trace.json",
     "codex_e2e": "qveris-sector-rotation-map/artifacts/codex-e2e.md",
+    "openclaw_e2e_blocker": "references/openclaw-skillhub-e2e-check.md",
     "openclaw_e2e": "pending"
   },
   "status_note": {

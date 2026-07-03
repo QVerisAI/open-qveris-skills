@@ -10,6 +10,7 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --window-days 30 \
   --max-paid-calls 0 \
   --output qveris-sector-rotation-map/artifacts/sector-dry-run.md \
+  --json-output qveris-sector-rotation-map/artifacts/sector-dry-run-output.json \
   --trace qveris-sector-rotation-map/artifacts/sector-dry-run-trace.json
 ```
 
@@ -19,6 +20,7 @@ node qveris-sector-rotation-map/scripts/run.mjs \
 node qveris-sector-rotation-map/scripts/run.mjs \
   --fixture qveris-sector-rotation-map/fixtures/normal-sector-rotation.json \
   --output qveris-sector-rotation-map/artifacts/fixture-report.md \
+  --json-output qveris-sector-rotation-map/artifacts/fixture-output.json \
   --trace qveris-sector-rotation-map/artifacts/fixture-trace.json
 ```
 
@@ -33,5 +35,6 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --max-paid-calls 4 \
   --max-credits 80 \
   --output qveris-sector-rotation-map/artifacts/sector-live-smoke.md \
+  --json-output qveris-sector-rotation-map/artifacts/sector-live-smoke-output.json \
   --trace qveris-sector-rotation-map/artifacts/sector-live-smoke-trace.json
 ```

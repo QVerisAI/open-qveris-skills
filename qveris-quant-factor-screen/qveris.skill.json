@@ -264,11 +264,14 @@
     "source_review": "qveris-quant-factor-screen/references/source-review.md",
     "qveris_tool_map": "qveris-quant-factor-screen/references/qveris-tool-map.md",
     "runner": "qveris-quant-factor-screen/scripts/run.mjs",
+    "output_schema": "qveris-quant-factor-screen/schemas/output.schema.json",
+    "fixture_output": "qveris-quant-factor-screen/artifacts/fixture-output.json",
     "fixture_test": "qveris-quant-factor-screen/tests/runner.fixture.test.mjs",
     "examples": "qveris-quant-factor-screen/examples/README.md",
     "live_smoke_report": "qveris-quant-factor-screen/artifacts/live-smoke.md",
     "live_smoke_trace": "qveris-quant-factor-screen/artifacts/live-smoke-trace.json",
     "codex_e2e": "qveris-quant-factor-screen/artifacts/codex-e2e.md",
+    "openclaw_e2e_blocker": "references/openclaw-skillhub-e2e-check.md",
     "openclaw_e2e": "pending"
   },
   "status_note": {

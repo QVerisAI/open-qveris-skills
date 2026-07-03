@@ -168,7 +168,7 @@
 
 它负责：
 
-1. 参数解析：`--dry-run`、`--live`、`--fixture`、`--max-paid-calls`、`--max-credits`、`--output`、`--trace`。
+1. 参数解析：`--dry-run`、`--live`、`--fixture`、`--max-paid-calls`、`--max-credits`、`--output`、`--json-output`、`--trace`。
 2. QVeris Discover：按 skill 配置的查询发现候选工具。
 3. QVeris Inspect：执行前检查工具参数、费用、成功率和候选能力。
 4. QVeris Execute：只在 `--live` 模式下执行付费 Call。
@@ -360,6 +360,8 @@ OpenClaw E2E 没有跑。原因是本轮你明确说“第八个用 Codex 跑就
 | fixture | `*/fixtures/*.json` |
 | test | `*/tests/runner.fixture.test.mjs` |
 | examples | `*/examples/README.md` |
+| output schema | `*/schemas/output.schema.json` |
+| fixture business output | `*/artifacts/fixture-output.json` |
 | dry-run report/trace | `*/artifacts/dry-run.md`, `*/artifacts/dry-run-trace.json` |
 | live smoke report/trace | `*/artifacts/live-smoke.md`, `*/artifacts/live-smoke-trace.json` |
 | Codex E2E | `*/artifacts/codex-e2e.md` |
@@ -383,6 +385,7 @@ OpenClaw E2E 没有跑。原因是本轮你明确说“第八个用 Codex 跑就
 - deterministic runner
 - dry-run preflight
 - fixture regression
+- output JSON schema and fixture business output
 - live QVeris smoke test
 - report and trace artifacts
 - Codex E2E

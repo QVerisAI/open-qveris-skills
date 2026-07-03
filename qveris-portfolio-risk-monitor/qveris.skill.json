@@ -265,11 +265,14 @@
     "source_review": "qveris-portfolio-risk-monitor/references/source-review.md",
     "qveris_tool_map": "qveris-portfolio-risk-monitor/references/qveris-tool-map.md",
     "runner": "qveris-portfolio-risk-monitor/scripts/run.mjs",
+    "output_schema": "qveris-portfolio-risk-monitor/schemas/output.schema.json",
+    "fixture_output": "qveris-portfolio-risk-monitor/artifacts/fixture-output.json",
     "fixture_test": "qveris-portfolio-risk-monitor/tests/runner.fixture.test.mjs",
     "examples": "qveris-portfolio-risk-monitor/examples/README.md",
     "live_smoke_report": "qveris-portfolio-risk-monitor/artifacts/live-smoke.md",
     "live_smoke_trace": "qveris-portfolio-risk-monitor/artifacts/live-smoke-trace.json",
     "codex_e2e": "qveris-portfolio-risk-monitor/artifacts/codex-e2e.md",
+    "openclaw_e2e_blocker": "references/openclaw-skillhub-e2e-check.md",
     "openclaw_e2e": "pending"
   },
   "status_note": {

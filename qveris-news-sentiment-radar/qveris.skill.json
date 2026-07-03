@@ -267,11 +267,14 @@
     "source_review": "qveris-news-sentiment-radar/references/source-review.md",
     "qveris_tool_map": "qveris-news-sentiment-radar/references/qveris-tool-map.md",
     "runner": "qveris-news-sentiment-radar/scripts/run.mjs",
+    "output_schema": "qveris-news-sentiment-radar/schemas/output.schema.json",
+    "fixture_output": "qveris-news-sentiment-radar/artifacts/fixture-output.json",
     "fixture_test": "qveris-news-sentiment-radar/tests/runner.fixture.test.mjs",
     "examples": "qveris-news-sentiment-radar/examples/README.md",
     "live_smoke_report": "qveris-news-sentiment-radar/artifacts/live-smoke.md",
     "live_smoke_trace": "qveris-news-sentiment-radar/artifacts/live-smoke-trace.json",
     "codex_e2e": "qveris-news-sentiment-radar/artifacts/codex-e2e.md",
+    "openclaw_e2e_blocker": "references/openclaw-skillhub-e2e-check.md",
     "openclaw_e2e": "pending"
   },
   "status_note": {
