@@ -10,12 +10,19 @@ function holdings(opts) {
 }
 
 function topHolding(rows) {
-  return [...rows].sort((a, b) => b.weight - a.weight)[0] || { symbol: "N/A", weight: 0 };
+  const nonCash = rows.filter((row) => row.symbol.toUpperCase() !== "CASH");
+  return [...(nonCash.length ? nonCash : rows)].sort((a, b) => b.weight - a.weight)[0] || { symbol: "N/A", weight: 0 };
 }
 
 function concentration(rows) {
   const total = rows.reduce((sum, row) => sum + row.weight, 0) || 1;
   return rows.reduce((sum, row) => sum + (row.weight / total) ** 2, 0);
+}
+
+function concentrationLevel(hhi) {
+  if (hhi >= 0.25) return "high";
+  if (hhi >= 0.15) return "medium";
+  return "low";
 }
 
 function analyze({ opts, calls }) {
@@ -44,6 +51,17 @@ function analyze({ opts, calls }) {
       "Historical volatility and drawdown depend on lookback window and provider coverage.",
       "News/catalyst risk can be stale or incomplete without filings and earnings-calendar checks.",
     ],
+    result: {
+      top_holding: top,
+      concentration_hhi: Number(hhi.toFixed(3)),
+      concentration_level: concentrationLevel(hhi),
+      evidence_roles: evidence.map((row) => row.role),
+      measurable_risks: ["concentration", "top_holding_exposure", "provider_coverage"],
+      missing_metrics: ["volatility", "drawdown", "correlation", "VaR"],
+      missing_data: evidence
+        .filter((row) => row.ok === false)
+        .map((row) => `${row.role}: ${row.error || "provider returned unsuccessful status"}`),
+    },
   };
 }
 

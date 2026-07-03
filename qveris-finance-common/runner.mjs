@@ -27,6 +27,7 @@ Common options:
   --max-paid-calls N           Paid call cap
   --max-credits N              Credit cap
   --output PATH                Markdown report path
+  --json-output PATH           Business result JSON path
   --trace PATH                 JSON trace path
   --fixture PATH               Use saved fixture instead of QVeris
   --as-of YYYY-MM-DD           As-of date for date-sensitive tools
@@ -66,6 +67,7 @@ export function parseArgs(argv = process.argv.slice(2), defaults = {}) {
     maxPaidCalls: defaults.maxPaidCalls || 3,
     maxCredits: defaults.maxCredits || 30,
     output: defaults.output || null,
+    jsonOutput: defaults.jsonOutput || null,
     trace: defaults.trace || null,
     fixture: null,
     asOf: defaults.asOf || new Date().toISOString().slice(0, 10),
@@ -90,6 +92,7 @@ export function parseArgs(argv = process.argv.slice(2), defaults = {}) {
     else if (arg === "--max-paid-calls") opts.maxPaidCalls = Number(argv[++i]);
     else if (arg === "--max-credits") opts.maxCredits = Number(argv[++i]);
     else if (arg === "--output") opts.output = argv[++i];
+    else if (arg === "--json-output") opts.jsonOutput = argv[++i];
     else if (arg === "--trace") opts.trace = argv[++i];
     else if (arg === "--fixture") opts.fixture = argv[++i];
     else if (arg === "--as-of") opts.asOf = argv[++i];
@@ -250,7 +253,7 @@ function countRecords(value, depth = 0) {
   if (typeof value === "object") {
     let total = 0;
     for (const v of Object.values(value)) total += countRecords(v, depth + 1);
-    return total;
+    return total || (Object.keys(value).length ? 1 : 0);
   }
   return 0;
 }
@@ -396,6 +399,21 @@ export function renderMarkdown(config, opts, analysis, context) {
   return lines.join("\n");
 }
 
+export function buildBusinessOutput(config, opts, analysis, context) {
+  return {
+    schema_version: config.outputSchemaVersion || "2026-07-03",
+    skill_id: config.id,
+    generated_at: context.generated_at,
+    mode: context.mode,
+    scope: analysis.scope || inputSummary(config, opts),
+    findings: analysis.findings || [],
+    evidence: analysis.evidence || [],
+    risks: analysis.risks || [],
+    usage: context.usage || { paid_calls: 0, estimated_credits: 0 },
+    result: analysis.result || {},
+  };
+}
+
 export async function runSkill(config, opts) {
   const generatedAt = isoNow();
   let mode = opts.fixture ? "fixture" : opts.live ? "live" : "dry-run";
@@ -431,16 +449,21 @@ export async function runSkill(config, opts) {
     trace: [...preflightResult.trace, ...callResult.trace],
   };
   const markdown = renderMarkdown(config, opts, analysis, context);
+  const businessOutput = buildBusinessOutput(config, opts, analysis, context);
 
   if (opts.output) {
     await fs.mkdir(path.dirname(opts.output), { recursive: true });
     await fs.writeFile(opts.output, markdown, "utf8");
   }
+  if (opts.jsonOutput) {
+    await fs.mkdir(path.dirname(opts.jsonOutput), { recursive: true });
+    await fs.writeFile(opts.jsonOutput, JSON.stringify(businessOutput, null, 2), "utf8");
+  }
   if (opts.trace) {
     await fs.mkdir(path.dirname(opts.trace), { recursive: true });
     await fs.writeFile(opts.trace, JSON.stringify(context, null, 2), "utf8");
   }
-  return { markdown, trace: context, analysis };
+  return { markdown, trace: context, analysis, businessOutput };
 }
 
 export async function runCli(config, defaults = {}) {
@@ -449,6 +472,7 @@ export async function runCli(config, defaults = {}) {
     const result = await runSkill(config, opts);
     if (!opts.output) console.log(result.markdown);
     else console.log(`Wrote report: ${opts.output}`);
+    if (opts.jsonOutput) console.log(`Wrote business JSON: ${opts.jsonOutput}`);
     if (opts.trace) console.log(`Wrote trace: ${opts.trace}`);
   } catch (error) {
     console.error(error?.stack || error?.message || String(error));

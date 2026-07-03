@@ -10,6 +10,7 @@ function analyze({ opts, calls }) {
   const names = universe(opts);
   const evidence = calls.map(genericEvidence);
   const calledRoles = new Set(calls.map((call) => call.role));
+  const factorSet = ["momentum", "valuation", "liquidity", "volatility", "quality", "news_risk"];
   const findings = [
     `Screen universe contains ${names.length} tickers: ${names.join(", ")}.`,
     `Factor coverage attempted: ${[...calledRoles].join(", ") || "none"}.`,
@@ -21,7 +22,7 @@ function analyze({ opts, calls }) {
       universe: names,
       market: opts.market,
       window_days: opts.windowDays,
-      factor_set: ["momentum", "valuation", "liquidity", "volatility", "quality", "news_risk"],
+      factor_set: factorSet,
     },
     findings,
     evidence,
@@ -30,6 +31,17 @@ function analyze({ opts, calls }) {
       "Provider coverage can vary by market and ticker.",
       "This is a research screen, not a buy/sell recommendation.",
     ],
+    result: {
+      universe: names,
+      factor_set: factorSet,
+      coverage_roles: [...calledRoles],
+      scoring_version: "preview-2026-07-03",
+      ranking_ready: false,
+      missing_outputs: ["normalized_scores", "ranking_table", "factor_weights", "tie_break_rules"],
+      missing_data: evidence
+        .filter((row) => row.ok === false)
+        .map((row) => `${row.role}: ${row.error || "provider returned unsuccessful status"}`),
+    },
   };
 }
 

@@ -50,7 +50,7 @@
 
 这个文件是四个 skill 的公共执行底座，负责：
 
-- 解析 CLI 参数：`--dry-run`、`--live`、`--fixture`、`--max-paid-calls`、`--max-credits`、`--output`、`--trace`
+- 解析 CLI 参数：`--dry-run`、`--live`、`--fixture`、`--max-paid-calls`、`--max-credits`、`--output`、`--json-output`、`--trace`
 - 读取 `QVERIS_API_KEY`
 - 调 QVeris `/search` 做 Discover
 - 调 QVeris `/tools/by-ids` 做 Inspect
@@ -229,6 +229,7 @@
 - runner / adapter / transform / analysis / render / trace
 - dry-run
 - fixture regression test
+- 正式业务 output JSON schema、`--json-output` 和 fixture output 样例
 - 真实 QVeris smoke test
 - Codex E2E 记录
 - skill metadata 降级为 `preview`
@@ -236,7 +237,6 @@
 尚未完成：
 
 - OpenClaw / Skill Hub 平台端到端验证
-- 正式上线级 output JSON schema
 - 更多真实业务场景样例
 - quant factor 的完整 ranking table、score normalization、tie-break rule
 - sector rotation 的完整 relative strength / momentum quadrant

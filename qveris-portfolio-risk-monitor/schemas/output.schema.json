@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/QVerisAI/open-qveris-skills/qveris-portfolio-risk-monitor/schemas/output.schema.json",
+  "title": "Portfolio Risk Monitor Business Output",
+  "type": "object",
+  "required": ["schema_version", "skill_id", "generated_at", "mode", "scope", "findings", "evidence", "risks", "usage", "result"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "skill_id": { "type": "string", "enum": ["qveris-portfolio-risk-monitor"] },
+    "generated_at": { "type": "string" },
+    "mode": { "type": "string", "enum": ["dry-run", "fixture", "live"] },
+    "scope": {
+      "type": "object",
+      "required": ["holdings", "market", "benchmark", "window_days", "from", "to"],
+      "properties": {
+        "holdings": { "type": "array", "items": { "type": "object" } },
+        "market": { "type": "string" },
+        "benchmark": { "type": "string" },
+        "window_days": { "type": "number" },
+        "from": { "type": "string" },
+        "to": { "type": "string" }
+      }
+    },
+    "findings": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "usage": {
+      "type": "object",
+      "required": ["paid_calls", "estimated_credits"],
+      "properties": {
+        "paid_calls": { "type": "number" },
+        "estimated_credits": { "type": "number" }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": ["top_holding", "concentration_hhi", "concentration_level", "evidence_roles", "measurable_risks", "missing_metrics", "missing_data"],
+      "properties": {
+        "top_holding": {
+          "type": "object",
+          "required": ["symbol", "weight"],
+          "properties": {
+            "symbol": { "type": "string" },
+            "weight": { "type": "number" }
+          }
+        },
+        "concentration_hhi": { "type": "number" },
+        "concentration_level": { "type": "string", "enum": ["low", "medium", "high"] },
+        "evidence_roles": { "type": "array", "items": { "type": "string" } },
+        "measurable_risks": { "type": "array", "items": { "type": "string" } },
+        "missing_metrics": { "type": "array", "items": { "type": "string" } },
+        "missing_data": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

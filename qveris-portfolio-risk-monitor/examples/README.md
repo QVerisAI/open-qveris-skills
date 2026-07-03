@@ -10,6 +10,7 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --window-days 30 \
   --max-paid-calls 0 \
   --output qveris-portfolio-risk-monitor/artifacts/portfolio-dry-run.md \
+  --json-output qveris-portfolio-risk-monitor/artifacts/portfolio-dry-run-output.json \
   --trace qveris-portfolio-risk-monitor/artifacts/portfolio-dry-run-trace.json
 ```
 
@@ -19,6 +20,7 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
 node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --fixture qveris-portfolio-risk-monitor/fixtures/normal-portfolio-risk.json \
   --output qveris-portfolio-risk-monitor/artifacts/fixture-report.md \
+  --json-output qveris-portfolio-risk-monitor/artifacts/fixture-output.json \
   --trace qveris-portfolio-risk-monitor/artifacts/fixture-trace.json
 ```
 
@@ -33,5 +35,6 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --max-paid-calls 4 \
   --max-credits 60 \
   --output qveris-portfolio-risk-monitor/artifacts/portfolio-live-smoke.md \
+  --json-output qveris-portfolio-risk-monitor/artifacts/portfolio-live-smoke-output.json \
   --trace qveris-portfolio-risk-monitor/artifacts/portfolio-live-smoke-trace.json
 ```

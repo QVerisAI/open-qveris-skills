@@ -20,6 +20,13 @@ function extractSentimentLabels(calls) {
   return { positive, negative, neutral };
 }
 
+function sentimentLevel(labels, totalRecords) {
+  if (!totalRecords) return "insufficient_data";
+  if (labels.positive > labels.negative * 1.25) return "positive";
+  if (labels.negative > labels.positive * 1.25) return "negative";
+  return "mixed";
+}
+
 function analyze({ opts, calls }) {
   const evidence = calls.map(genericEvidence);
   const labels = extractSentimentLabels(calls);
@@ -46,6 +53,17 @@ function analyze({ opts, calls }) {
     findings,
     evidence,
     risks,
+    result: {
+      ticker: primaryTicker(opts),
+      sentiment_counts: labels,
+      total_records: totalRecords,
+      signal_level: sentimentLevel(labels, totalRecords),
+      catalyst_status: totalRecords ? "needs_confirmation" : "insufficient_data",
+      evidence_roles: evidence.map((row) => row.role),
+      missing_data: evidence
+        .filter((row) => row.ok === false || !row.record_count)
+        .map((row) => `${row.role}: ${row.error || "no returned records or provider returned unsuccessful status"}`),
+    },
   };
 }
 
