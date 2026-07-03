@@ -1,0 +1,32 @@
+Completed the live QVeris run with the installed `qveris-sector-rotation-map` skill.
+
+Artifacts written:
+- [Markdown report](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-sector-rotation-map/artifacts/codex-cli-natural-e2e-20260703.md)
+- [JSON output](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-sector-rotation-map/artifacts/codex-cli-natural-e2e-20260703-output.json)
+- [Trace JSON](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-sector-rotation-map/artifacts/codex-cli-natural-e2e-20260703-trace.json)
+
+Validation: `qveris-sector-rotation-map/artifacts/codex-cli-natural-e2e-20260703-output.json valid` against `qveris-sector-rotation-map/schemas/output.schema.json`.
+
+Run summary:
+- Mode: `live`
+- Scope: `XLK`, `XLE` vs `SPY`, 30-day window, `2026-06-02` to `2026-07-02`
+- Paid calls: `7` of `8`
+- Credits: `147.2` of `220`
+- `phase_labels_ready`: `true`
+- Missing data: `[]`
+- Missing outputs: `[]`
+
+Benchmark-relative history:
+- `XLK`: proxy return `-8.8896%`, SPY return `-1.9472%`, relative return `-6.9424%`, quadrant `lagging`
+- `XLE`: proxy return `-8.1781%`, SPY return `-1.9472%`, relative return `-6.2309%`, quadrant `lagging`
+
+Execution IDs:
+- `sector_performance_snapshot`: `3a60e139-b94b-41df-af2a-486b4d7fac1e`
+- `available_sectors`: `fbca2a89-928c-46a3-a8c6-da66b6b1dfeb`
+- `proxy_price_history XLK`: `cf3fd212-db8c-4889-83f4-ec1284396cbd`
+- `proxy_price_history XLE`: `8de12eaf-ee42-4d52-bb1d-31ee80effd0e`
+- `benchmark_price_history SPY`: `042dc4da-fdf4-4464-973b-670b5fd3940a`
+- `flow_or_revision_confirmation`: `ed118317-19f1-426c-a087-026eb0a3fee7`
+- `etf_symbol_search`: `b991e6c8-3889-4d71-aef0-8f29948d124b`
+
+One noncritical route, `etf_performance`, was skipped because no inspected tool candidate was available; proxy price history filled the ETF history requirement. Not investment advice.

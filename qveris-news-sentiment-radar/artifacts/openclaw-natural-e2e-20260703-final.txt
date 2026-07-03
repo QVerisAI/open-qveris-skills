@@ -1,0 +1,35 @@
+openclaw-natural-e2e-20260703 — Final Validation Summary
+=========================================================
+
+Schema Validation Result: PASSED
+  - Validated against output.schema.json (draft 2020-12)
+  - All required top-level properties present: schema_version, skill_id, generated_at, mode, scope, findings, evidence, risks, usage, result
+  - All required result sub-properties present: ticker, sentiment_counts, total_records, signal_level, catalyst_status, evidence_roles, missing_data
+  - Enum constraints satisfied: skill_id, mode, signal_level
+
+Paid Calls: 6
+Estimated Credits: 33.82 (within max-credits budget of 40)
+
+Execution IDs:
+  2b6c4faf-77a5-4bdf-aa70-aeffe435e440  (market_news_sentiment)
+  f7bf2b69-7660-4c0d-8561-6c0700b87634  (aggregate_sentiment)
+  f26dff0f-62d2-49e0-afcb-7d18ccf0b250  (filings_check #1)
+  987eb30e-281f-4efc-a9c8-6d8aa3f01af0  (filings_check #2 - fallback)
+  2147d444-3593-4932-bea4-2fafffe4d281  (price_reaction)
+  ca140d40-6de4-4fa4-81a8-92ad9f029247  (issuer_confirmation)
+
+Missing Data:
+  - filings_or_issuer_confirmation: no filings, issuer-news, or press-release confirmation records returned
+    (Both finnhub filings attempts returned 0 records; the FMP issuer confirmation fallback returned 3 records but with status indicating failure)
+
+Conclusion:
+  NVDA (US, 7-day window ending 2026-07-03) shows mixed sentiment —
+  32 positive / 38 negative / 11 neutral mentions. The catalyst confidence
+  score is 0.638 (below the 0.65 threshold), placing it in watchlist mode.
+  Market news sentiment, aggregate sentiment, and price reaction all returned
+  usable data (corroborating roles: 3 of 5). However, filings and issuer
+  confirmation roles failed to return usable records, preventing a
+  "confirmed_evidence_set" label. Catalyst status: needs_confirmation.
+
+  This was a real QVeris live run. No dry-run, fixtures, mocks, or cached
+  output were used.
