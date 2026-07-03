@@ -220,7 +220,160 @@
 | 元数据 | 每个 skill 的 `qveris.skill.json` 从 `published` 改为 `preview`，并补 validation 指针 |
 | Agent 指令 | 每个 skill 的 `SKILL.md` / `agent.md` 改为优先使用 runner，不再只靠自由发挥 |
 
-## 七、当前状态
+## 七、后续追加工作
+
+在完成初版 runner、tool map、fixture、live smoke 和报告后，又继续补了几块上线前更关键的东西。
+
+### 1. 补正式业务 output JSON
+
+之前只有两类产物：
+
+- Markdown 报告：给人读。
+- trace JSON：给审计和排查调用链读。
+
+后续补了第三类产物：
+
+- business output JSON：给平台、前端或下游系统稳定消费。
+
+具体修改：
+
+- `qveris-finance-common/runner.mjs`
+  - 新增 `--json-output PATH`
+  - 新增 `buildBusinessOutput`
+  - 每次运行可以同时生成 Markdown report、business output JSON、trace JSON
+- `qveris-finance-common/schema-validator.mjs`
+  - 新增轻量 schema 校验器
+  - 测试时不用额外引入依赖，也能校验 required、type、enum、array items 等基础 schema 规则
+- 每个 skill 新增：
+  - `schemas/output.schema.json`
+  - `artifacts/fixture-output.json`
+- 每个 skill 的 `tests/runner.fixture.test.mjs` 都升级为：
+  - 跑 fixture
+  - 生成 report
+  - 生成 trace
+  - 生成 business output JSON
+  - 按 `schemas/output.schema.json` 校验 business output
+- 每个 skill 的 `examples/README.md` 都补了 `--json-output`
+- 每个 skill 的 `qveris.skill.json` 都补了：
+  - `output_schema`
+  - `fixture_output`
+
+这一步解决的是：平台不能只靠 Markdown 或 trace 上线，必须有稳定业务结果合同。
+
+### 2. 四个 skill 的业务 JSON 现在长什么样
+
+四个 skill 的 business output 都有共同外壳：
+
+```json
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "...",
+  "generated_at": "...",
+  "mode": "fixture | dry-run | live",
+  "scope": {},
+  "findings": [],
+  "evidence": [],
+  "risks": [],
+  "usage": {
+    "paid_calls": 0,
+    "estimated_credits": 0
+  },
+  "result": {}
+}
+```
+
+各 skill 的 `result` 字段不同：
+
+| Skill | `result` 重点字段 |
+| --- | --- |
+| `qveris-news-sentiment-radar` | `ticker`、`sentiment_counts`、`total_records`、`signal_level`、`catalyst_status`、`missing_data` |
+| `qveris-portfolio-risk-monitor` | `top_holding`、`concentration_hhi`、`concentration_level`、`measurable_risks`、`missing_metrics`、`missing_data` |
+| `qveris-quant-factor-screen` | `universe`、`factor_set`、`coverage_roles`、`ranking_ready`、`missing_outputs`、`missing_data` |
+| `qveris-sector-rotation-map` | `sector_proxies`、`benchmark`、`total_records`、`signal_framework`、`phase_labels_ready`、`missing_outputs`、`missing_data` |
+
+### 3. OpenClaw / Skill Hub 检查结果
+
+本机 WSL 里有一个 `openclaw` 命令，但它不是 Skill Hub 平台 CLI，而是另一个会启动并查找 `CLAW.REZ` 的程序。因此没有把 OpenClaw / Skill Hub E2E 伪装成已完成。
+
+新增记录：
+
+- `references/openclaw-skillhub-e2e-check.md`
+
+结论：
+
+- QVeris CLI 可用。
+- Codex CLI 可用。
+- 但本机没有可用的 OpenClaw / Skill Hub 平台调度入口。
+- 四个 skill 的 `qveris.skill.json` 里保留 `openclaw_e2e: pending`，并补 `openclaw_e2e_blocker` 指针。
+
+### 4. 用 WSL Codex CLI 做了四个真实 E2E
+
+按用户要求，不再管 Skill Hub，改用 WSL 里的 `codex exec` 做真实使用方验证。
+
+执行方式：
+
+- Codex CLI：`/home/wjh/.local/opt/node-v24.15.0-linux-x64/bin/codex`
+- Codex 版本：`codex-cli 0.130.0`
+- 模型：`gpt-5.5`
+- 每个 skill 一个独立 `CODEX_HOME`
+- 每个 `CODEX_HOME/skills` 里只安装一个目标 skill
+- 四个 Codex 会话并行跑
+- 工作目录：`/home/wjh/matecode/open-qveris-skills-qveris-research`
+- 模式：真实 QVeris live，不是 dry-run，也不是 fixture
+
+隔离目录：
+
+- `/home/wjh/matecode/qveris-codex-skill-e2e/qveris-news-sentiment-radar`
+- `/home/wjh/matecode/qveris-codex-skill-e2e/qveris-portfolio-risk-monitor`
+- `/home/wjh/matecode/qveris-codex-skill-e2e/qveris-quant-factor-screen`
+- `/home/wjh/matecode/qveris-codex-skill-e2e/qveris-sector-rotation-map`
+
+新增总报告：
+
+- `references/codex-cli-four-skill-e2e-report.md`
+
+每个 skill 新增三份 Codex CLI live artifact：
+
+- `artifacts/codex-cli-live.md`
+- `artifacts/codex-cli-live-output.json`
+- `artifacts/codex-cli-live-trace.json`
+
+### 5. WSL Codex CLI E2E 结果
+
+| Skill | Codex CLI E2E 结论 | Paid calls | Credits | 主要缺口 |
+| --- | --- | ---: | ---: | --- |
+| `qveris-news-sentiment-radar` | 跑通 | 4 | 6.81 | `filings_check` 和 `price_reaction` 返回 no records / unsuccessful |
+| `qveris-portfolio-risk-monitor` | 跑通 | 3 | 49.4 | `news_catalyst` 被跳过；`quote_snapshot` provider unsuccessful |
+| `qveris-quant-factor-screen` | 跑通 | 4 | 51.4 | 当前只验证首个 ticker 的因子证据；还没有完整 ranking table |
+| `qveris-sector-rotation-map` | 跑通 | 3 | 72.6 | `etf_performance` 被跳过；还没有 rotation quadrant |
+
+执行 ID：
+
+| Skill | execution_id |
+| --- | --- |
+| `qveris-news-sentiment-radar` | `fe656bd3-5e73-42d0-922a-9d0498e7dd1c`, `f4321b89-8b22-42d0-b4f9-ea36db694f80`, `5ff86d84-869a-45d2-afd7-8548331126f2`, `13cc8685-c772-4eb8-9405-7862a5b72576` |
+| `qveris-portfolio-risk-monitor` | `47d85aeb-230f-4618-82a4-c7efbaf54fd0`, `3ce118f8-cd6d-48f2-b0d6-5c16d9290023`, `7771d7a5-3a9c-4804-a887-d15fa91242d4` |
+| `qveris-quant-factor-screen` | `f97575ad-d0c8-4127-9c78-6d344ba82dc5`, `1e23402a-8938-4cc0-86c6-87086729e9e1`, `86895d55-09f9-4ff5-9029-968c83ce2ed6`, `c23225cc-a30a-40dd-be19-75c22f7d386c` |
+| `qveris-sector-rotation-map` | `5701f6fb-8279-4bc8-a1e6-75b8a04104a8`, `c7ac9d90-288c-4829-9753-0a949e9add7f`, `cb738819-7bd7-4a03-96af-1b7df814de66` |
+
+这一步证明的是：
+
+- Codex CLI 能在隔离安装环境里识别并使用单个 skill。
+- Codex 能按 skill 指令调用真实 QVeris live 流程。
+- 每个 skill 都能产出 Markdown、business JSON、trace。
+- 每个 `codex-cli-live-output.json` 都通过对应 `schemas/output.schema.json` 校验。
+
+### 6. 后续新增 commit
+
+| Commit | 内容 |
+| --- | --- |
+| `aefb49f` | 新增完整报告和 GitHub 参考/修改说明文档 |
+| `7123caf` | 新增 business output schema、`--json-output`、schema validator、fixture output 和 schema 测试 |
+| `6e02c92` | 新增 WSL Codex CLI 四 skill 真实 E2E 证据 |
+
+当前本地分支比远端同名分支 ahead 7。之前尝试 push 失败过：一次是当前 GitHub 凭据没有 `QVerisAI/open-qveris-skills` 写权限，后续又遇到连接 reset。因此这些本地 commit 还没有更新到远端 PR。
+
+## 八、当前状态
 
 已经完成：
 
@@ -232,6 +385,7 @@
 - 正式业务 output JSON schema、`--json-output` 和 fixture output 样例
 - 真实 QVeris smoke test
 - Codex E2E 记录
+- WSL Codex CLI 四实例真实 E2E
 - skill metadata 降级为 `preview`
 
 尚未完成：
@@ -241,5 +395,6 @@
 - quant factor 的完整 ranking table、score normalization、tie-break rule
 - sector rotation 的完整 relative strength / momentum quadrant
 - portfolio risk 的更完整 volatility、drawdown、correlation、VaR 计算
+- 推送本地 ahead 7 commit 到远端 PR 分支
 
 因此这四个 skill 当前适合标记为 `preview`，不适合直接标记为 `published`。
