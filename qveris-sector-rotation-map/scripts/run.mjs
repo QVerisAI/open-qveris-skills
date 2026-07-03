@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { countRecords, dateNDaysBefore, genericEvidence, resultPayload, runCli } from "../../qveris-finance-common/runner.mjs";
+import { countRecords, dateNDaysBefore, genericEvidence, resultPayload, runCli, toAlphaVantageTimestamp, usTicker } from "../../qveris-finance-common/runner.mjs";
 
 function sectors(opts) {
   return opts.sectors?.length ? opts.sectors : ["XLK", "XLF", "XLV", "XLE", "XLI", "XLY", "XLP", "XLU"];
@@ -98,6 +98,35 @@ function numeric(row, keys) {
   return null;
 }
 
+function callTarget(call) {
+  return String(call?.target || call?.parameters?.symbol || call?.parameters?.s || "").replace(".US", "").toUpperCase();
+}
+
+function historicalCloses(calls, symbol) {
+  const wanted = String(symbol || "").toUpperCase();
+  const call = calls.find(
+    (row) =>
+      ["proxy_price_history", "benchmark_price_history", "etf_performance"].includes(row.role) &&
+      row.ok !== false &&
+      callTarget(row) === wanted,
+  );
+  return payloadRecords(call)
+    .map((row, index) => ({
+      date: row.date || row.datetime || row.timestamp || String(index).padStart(5, "0"),
+      close: numeric(row, ["adjClose", "close", "c", "price"]),
+    }))
+    .filter((row) => Number.isFinite(row.close) && row.close > 0)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+}
+
+function totalReturnPct(closes) {
+  if (closes.length < 2) return null;
+  const first = closes[0].close;
+  const last = closes.at(-1).close;
+  if (!first || !last) return null;
+  return Number(((last / first - 1) * 100).toFixed(4));
+}
+
 function median(values) {
   const sorted = values.filter(Number.isFinite).sort((a, b) => a - b);
   if (!sorted.length) return 0;
@@ -139,6 +168,22 @@ function rotationRows(opts, calls) {
         rowsWithKeys.find((item) => wantedKeys.some((key) => item.keys.includes(key))) ||
         rowsWithKeys.find((item) => wantedKeys.some((key) => item.keys.some((candidate) => candidate.includes(key) || key.includes(candidate))));
       if (!row) {
+        const closes = historicalCloses(calls, proxy);
+        const historyReturn = totalReturnPct(closes);
+        const benchmarkReturn = totalReturnPct(historicalCloses(calls, opts.benchmark));
+        if (historyReturn != null) {
+          const relativeStrength = benchmarkReturn == null ? historyReturn : Number((historyReturn - benchmarkReturn).toFixed(4));
+          return {
+            proxy,
+            sector,
+            performance_pct: historyReturn,
+            benchmark_return_pct: benchmarkReturn,
+            momentum_score: historyReturn,
+            relative_strength_score: relativeStrength,
+            quadrant: quadrant(relativeStrength, historyReturn),
+            data_status: benchmarkReturn == null ? "history_scored_without_benchmark" : "history_relative_scored",
+          };
+        }
         return {
           proxy,
           sector,
@@ -151,14 +196,20 @@ function rotationRows(opts, calls) {
       }
       const relativeStrength = Number((row.performance_pct - benchmark).toFixed(4));
       const momentumScore = Number(row.performance_pct.toFixed(4));
+      const closes = historicalCloses(calls, proxy);
+      const historyReturn = totalReturnPct(closes);
+      const benchmarkReturn = totalReturnPct(historicalCloses(calls, opts.benchmark));
+      const finalMomentum = historyReturn ?? momentumScore;
+      const finalRelative = historyReturn == null ? relativeStrength : Number((historyReturn - (benchmarkReturn ?? 0)).toFixed(4));
       return {
         proxy,
         sector: row.sector,
         performance_pct: Number(row.performance_pct.toFixed(4)),
-        momentum_score: momentumScore,
-        relative_strength_score: relativeStrength,
-        quadrant: quadrant(relativeStrength, momentumScore),
-        data_status: "snapshot_scored",
+        benchmark_return_pct: benchmarkReturn,
+        momentum_score: finalMomentum,
+        relative_strength_score: finalRelative,
+        quadrant: quadrant(finalRelative, finalMomentum),
+        data_status: historyReturn == null ? "snapshot_scored" : benchmarkReturn == null ? "snapshot_and_history_scored" : "benchmark_relative_scored",
       };
     });
 }
@@ -169,18 +220,24 @@ function analyze({ opts, calls }) {
   const totalRecords = evidence.reduce((sum, row) => sum + (row.record_count || 0), 0);
   const signalFramework = ["relative_strength", "momentum", "volatility", "drawdown", "liquidity", "catalyst_context"];
   const rows = rotationRows(opts, calls);
-  const phaseLabelsReady = rows.some((row) => row.data_status === "snapshot_scored");
+  const phaseLabelsReady = rows.some((row) => row.data_status !== "missing_sector_snapshot");
+  const proxyHistoryReady = proxies.every((proxy) => historicalCloses(calls, proxy).length > 1);
+  const benchmarkHistoryReady = historicalCloses(calls, opts.benchmark).length > 1;
+  const relativeHistoryReady = proxyHistoryReady && benchmarkHistoryReady;
   const missingOutputs = [
     phaseLabelsReady ? null : "relative_strength_scores",
     phaseLabelsReady ? null : "momentum_scores",
     phaseLabelsReady ? null : "rotation_quadrants",
-    roleSatisfied(calls, "etf_performance") ? null : "etf_price_history",
-    "benchmark_relative_history",
-    "flow_or_revision_confirmation",
+    proxyHistoryReady ? null : "etf_price_history",
+    relativeHistoryReady ? null : "benchmark_relative_history",
+    roleSatisfied(calls, "flow_or_revision_confirmation") ? null : "flow_or_revision_confirmation",
   ].filter(Boolean);
-  const missingData = ["sector_performance_snapshot", "available_sectors", "etf_performance", "etf_symbol_search"]
+  const missingData = ["sector_performance_snapshot", "available_sectors", "etf_symbol_search", "benchmark_price_history", "flow_or_revision_confirmation"]
     .map((role) => missingRole(calls, role))
     .filter(Boolean);
+  if (!roleSatisfied(calls, "etf_performance") && !roleSatisfied(calls, "proxy_price_history")) {
+    missingData.push("etf_performance: no ETF performance or proxy price history returned usable records");
+  }
   return {
     scope: {
       sector_proxies: proxies,
@@ -214,6 +271,14 @@ function analyze({ opts, calls }) {
       rotation_quadrants: rows.map(({ proxy, sector, quadrant, data_status }) => ({ proxy, sector, quadrant, data_status })),
       momentum_scores: rows.map(({ proxy, sector, momentum_score }) => ({ proxy, sector, score: momentum_score })),
       relative_strength_scores: rows.map(({ proxy, sector, relative_strength_score }) => ({ proxy, sector, score: relative_strength_score })),
+      benchmark_relative_history: rows.map(({ proxy, sector, momentum_score, benchmark_return_pct, relative_strength_score, data_status }) => ({
+        proxy,
+        sector,
+        proxy_return_pct: momentum_score,
+        benchmark_return_pct: benchmark_return_pct ?? null,
+        relative_return_pct: relative_strength_score,
+        data_status,
+      })),
       evidence_roles: evidence.map((row) => row.role),
       missing_outputs: missingOutputs,
       missing_data: missingData,
@@ -232,6 +297,12 @@ const config = {
       inspectLimit: 5,
     },
     {
+      key: "sector_price_history",
+      query: "historical price EOD full chart stock ETF OHLCV FMP API",
+      limit: 5,
+      inspectLimit: 5,
+    },
+    {
       key: "sector_snapshot",
       query: "market sector performance snapshot available sectors API",
       limit: 5,
@@ -240,6 +311,12 @@ const config = {
     {
       key: "sector_flows",
       query: "sector performance ETF flows earnings revisions valuation API",
+      limit: 5,
+      inspectLimit: 5,
+    },
+    {
+      key: "sector_confirmation",
+      query: "sector ETF news sentiment flow earnings revision confirmation API",
       limit: 5,
       inspectLimit: 5,
     },
@@ -260,11 +337,64 @@ const config = {
     },
     {
       role: "etf_performance",
-      category: "sector_flows",
-      preferredToolIds: ["twelvedata.etfs.world.performance.retrieve.v1.792b716e"],
+      category: "sector_performance",
+      preferredToolIds: ["twelvedata.etfs.world.performance.retrieve.v1.792b716e", "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22"],
       strictPreferred: true,
       fallbackOnEmpty: true,
-      buildParams: (opts) => ({ symbol: sectors(opts)[0], dp: 2 }),
+      maxAttempts: 2,
+      target: (item, index, opts) => sectors(opts)[0],
+      buildParams: (opts, tool) =>
+        String(tool.tool_id).includes("historicalprice")
+          ? { symbol: sectors(opts)[0], from: dateNDaysBefore(opts.asOf, opts.windowDays), to: opts.asOf }
+          : { symbol: sectors(opts)[0], dp: 2 },
+    },
+    {
+      role: "proxy_price_history",
+      category: "sector_price_history",
+      preferredToolIds: ["financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22"],
+      strictPreferred: true,
+      repeatFor: (opts) => sectors(opts),
+      target: (proxy) => proxy,
+      buildParams: (opts, tool, proxy) => ({
+        symbol: proxy,
+        from: dateNDaysBefore(opts.asOf, opts.windowDays),
+        to: opts.asOf,
+      }),
+    },
+    {
+      role: "benchmark_price_history",
+      category: "sector_price_history",
+      preferredToolIds: ["financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22"],
+      strictPreferred: true,
+      target: (item, index, opts) => opts.benchmark,
+      buildParams: (opts) => ({
+        symbol: opts.benchmark,
+        from: dateNDaysBefore(opts.asOf, opts.windowDays),
+        to: opts.asOf,
+      }),
+    },
+    {
+      role: "flow_or_revision_confirmation",
+      category: "sector_confirmation",
+      preferredToolIds: ["alphavantage.news_sentiment.query.v1.467a92c0", "eodhd.news.retrieve.v1.fe8bf94c"],
+      fallbackOnEmpty: true,
+      buildParams: (opts, tool) =>
+        String(tool.tool_id).startsWith("eodhd.")
+          ? {
+              s: usTicker(sectors(opts)[0]),
+              from: dateNDaysBefore(opts.asOf, opts.windowDays),
+              to: opts.asOf,
+              limit: opts.limit || 10,
+              fmt: "json",
+            }
+          : {
+              function: "NEWS_SENTIMENT",
+              tickers: sectors(opts).slice(0, 6).join(","),
+              time_from: toAlphaVantageTimestamp(dateNDaysBefore(opts.asOf, opts.windowDays)),
+              time_to: toAlphaVantageTimestamp(opts.asOf),
+              sort: "LATEST",
+              limit: String(opts.limit || 10),
+            },
     },
     {
       role: "etf_symbol_search",
@@ -289,6 +419,6 @@ runCli(config, {
   benchmark: "SPY",
   market: "US",
   windowDays: 30,
-  maxPaidCalls: 4,
-  maxCredits: 80,
+  maxPaidCalls: 15,
+  maxCredits: 360,
 });

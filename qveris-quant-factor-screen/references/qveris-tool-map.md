@@ -94,3 +94,18 @@ Artifact set: `artifacts/hardening-live-20260703.*`
 | Momentum / volatility | `alphavantage.technical-indicators.bbands.v1` | Success. |
 
 Final live artifact cost: 4 paid calls / 53.21 credits. Output status: `ranking_table`, `factor_weights`, and `tie_break_rules` populated; `coverage_level=partial` and `ranking_ready=false` because the current budgeted runner scores only the first ticker in the universe.
+
+## Skill-side Repair Update - 2026-07-03
+
+- Added repeated factor calls across the bounded universe for valuation ratios, quality overview, shares float/liquidity, historical price momentum, and news risk.
+- The deterministic factor set is now valuation, quality, liquidity, momentum, and news risk. Quality is derived from ROE or margin fields; momentum is derived from historical price return first, with technical indicator and quote reaction as lower-priority fallbacks; news risk is derived from returned sentiment evidence.
+- `ranking_ready=true` now means every ticker in the requested universe has all required factor components. Partial rows still include raw fields, normalized scores, and per-row `missing_factors`.
+- Default live guardrail is now 25 paid calls / 520 credits for a five-name universe; larger universes should be staged or explicitly approved.
+
+## Repair Live Verification - 2026-07-03
+
+Artifact set: `artifacts/repair-live-20260703-v4.*`
+
+- Cost: 10 paid calls / 153.2 credits for the AAPL/MSFT two-name universe.
+- Result: `ranking_ready=true`, `coverage_level=complete`, complete valuation/quality/liquidity/price-momentum/news-risk rows, and no `missing_outputs`.
+- Implementation note: a previous technical-indicator momentum route returned records but no comparable parsed value, so live v4 uses FMP historical price returns as the primary deterministic momentum factor.

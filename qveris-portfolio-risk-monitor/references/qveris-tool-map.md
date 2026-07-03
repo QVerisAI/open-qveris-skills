@@ -90,3 +90,18 @@ Artifact set: `artifacts/hardening-live-20260703.*`
 | News catalyst | `eodhd.news.retrieve.v1.fe8bf94c` | Success. |
 
 Final live artifact cost: 4 paid calls / 54.02 credits. Output status: top-holding `risk_metrics` populated with 21 observations, annualized volatility, max drawdown, and historical VaR. Remaining missing metric is correlation.
+
+## Skill-side Repair Update - 2026-07-03
+
+- Added repeated `historical_prices` calls for the top non-cash holding and the benchmark, using `target` in evidence and trace to keep the two histories separate.
+- `risk_metrics` now computes `correlation_to_benchmark` when both histories have at least three overlapping return observations.
+- `missing_metrics` no longer includes `correlation` when benchmark history is available; if the benchmark route is skipped or over budget, correlation is still explicitly marked missing.
+- Default live guardrail is now 5 paid calls / 100 credits to cover quote, top-holding history, benchmark history, profile, and news catalyst.
+
+## Repair Live Verification - 2026-07-03
+
+Artifact set: `artifacts/repair-live-20260703.*`
+
+- Cost: 5 paid calls / 78.22 credits.
+- Result: top-holding and SPY benchmark histories both returned usable rows; `risk_metrics.correlation_to_benchmark=0.1667`.
+- Remaining gap: none in `missing_metrics` or `missing_data` for the repaired live scenario.

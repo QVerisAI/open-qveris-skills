@@ -11,7 +11,7 @@ Prefer the local runner before composing a free-form answer:
 
 ```bash
 node qveris-news-sentiment-radar/scripts/run.mjs --dry-run --ticker NVDA --window-days 7
-node qveris-news-sentiment-radar/scripts/run.mjs --live --ticker NVDA --window-days 7 --max-paid-calls 5 --max-credits 35 --output qveris-news-sentiment-radar/artifacts/live-smoke.md --trace qveris-news-sentiment-radar/artifacts/live-smoke-trace.json
+node qveris-news-sentiment-radar/scripts/run.mjs --live --ticker NVDA --window-days 7 --max-paid-calls 6 --max-credits 40 --output qveris-news-sentiment-radar/artifacts/live-smoke.md --trace qveris-news-sentiment-radar/artifacts/live-smoke-trace.json
 ```
 
 The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
@@ -37,7 +37,7 @@ Return these sections unless the user asks for a narrower format:
 - QVeris calls used and estimated credits
 - Not investment advice
 
-The JSON artifact must include `catalyst_confidence_score`, `corroborating_roles`, role-level `missing_data`, evidence roles, paid-call usage, and traceable execution IDs. A catalyst can be labelled `confirmed_evidence_set` only when news, aggregate sentiment, filings, and price reaction all return usable evidence.
+The JSON artifact must include `catalyst_confidence_score`, `corroborating_roles`, `confirmation_roles`, role-level `missing_data`, evidence roles, paid-call usage, and traceable execution IDs. A catalyst can be labelled `confirmed_evidence_set` only when news, aggregate sentiment, price reaction, and either filings or issuer/company-news confirmation return usable evidence.
 
 ## Cost Guardrails
 

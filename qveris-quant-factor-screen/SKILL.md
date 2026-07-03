@@ -1,6 +1,6 @@
 ---
 name: qveris-quant-factor-screen
-description: Rank a stock universe with transparent QVeris factor evidence across quality, momentum, valuation, liquidity, volatility, and news risk. Use when an agent needs QVeris-powered finance research, live market data, filings/news evidence, cost-aware tool calls, or source-backed investment analysis for this workflow.
+description: Rank a stock universe with transparent QVeris factor evidence across valuation, quality, liquidity, momentum, and news risk. Use when an agent needs QVeris-powered finance research, live market data, filings/news evidence, cost-aware tool calls, or source-backed investment analysis for this workflow.
 ---
 
 # Quant factor screen
@@ -11,7 +11,7 @@ Prefer the local runner before composing a free-form answer:
 
 ```bash
 node qveris-quant-factor-screen/scripts/run.mjs --dry-run --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90
-node qveris-quant-factor-screen/scripts/run.mjs --live --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90 --max-paid-calls 5 --max-credits 85 --output qveris-quant-factor-screen/artifacts/live-smoke.md --trace qveris-quant-factor-screen/artifacts/live-smoke-trace.json
+node qveris-quant-factor-screen/scripts/run.mjs --live --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90 --max-paid-calls 25 --max-credits 520 --output qveris-quant-factor-screen/artifacts/live-smoke.md --trace qveris-quant-factor-screen/artifacts/live-smoke-trace.json
 ```
 
 The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
@@ -37,7 +37,7 @@ Return these sections unless the user asks for a narrower format:
 - QVeris calls used and estimated credits
 - Not investment advice
 
-The JSON artifact must include `ranking_table`, `factor_weights`, `tie_break_rules`, `coverage_level`, role-level `missing_data`, and explicit `missing_outputs`. The runner may return a partial ranking when only the first ticker is fetched under budget; do not present partial coverage as a complete universe ranking.
+The JSON artifact must include `ranking_table`, `factor_weights`, `tie_break_rules`, `coverage_level`, role-level `missing_data`, and explicit `missing_outputs`. The runner attempts a complete bounded universe factor panel; return `ranking_ready=false` only when budget limits or provider gaps leave one or more tickers with missing required factors.
 
 ## Cost Guardrails
 

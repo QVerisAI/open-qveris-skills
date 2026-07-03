@@ -280,6 +280,7 @@ export function genericEvidence(result) {
   const payload = resultPayload(result.raw_result);
   return {
     role: result.role,
+    target: result.target || null,
     tool_id: result.tool_id,
     ok: result.ok,
     cost: result.cost,
@@ -295,22 +296,39 @@ function hasUsablePayload(call, plan) {
   return countRecords(resultPayload(call.raw_result)) > 0;
 }
 
+function expandCallPlan(callPlan, opts) {
+  const expanded = [];
+  for (const plan of callPlan || []) {
+    const items = plan.repeatFor ? plan.repeatFor(opts) : [null];
+    for (let index = 0; index < items.length; index++) {
+      const item = items[index];
+      const role = typeof plan.role === "function" ? plan.role(item, index, opts) : plan.role;
+      const target =
+        typeof plan.target === "function"
+          ? plan.target(item, index, opts)
+          : plan.target || item?.symbol || item?.ticker || item?.proxy || item?.benchmark || null;
+      expanded.push({ ...plan, role, target, repeatFor: undefined, _repeatItem: item, _repeatIndex: index });
+    }
+  }
+  return expanded;
+}
+
 export async function executePlan(config, opts, preflightResult) {
   const calls = [];
   const trace = [];
   let paidCalls = 0;
   let credits = 0;
 
-  for (const plan of config.callPlan) {
+  for (const plan of expandCallPlan(config.callPlan, opts)) {
     if (paidCalls >= opts.maxPaidCalls) break;
     const category = preflightResult.categories[plan.category];
     if (!category) {
-      trace.push({ type: "call_skipped", role: plan.role, reason: `missing category ${plan.category}` });
+      trace.push({ type: "call_skipped", role: plan.role, target: plan.target, reason: `missing category ${plan.category}` });
       continue;
     }
     const candidates = chooseTools(category, plan);
     if (!candidates.length) {
-      trace.push({ type: "call_skipped", role: plan.role, reason: "no inspected tool candidate" });
+      trace.push({ type: "call_skipped", role: plan.role, target: plan.target, reason: "no inspected tool candidate" });
       continue;
     }
 
@@ -318,7 +336,7 @@ export async function executePlan(config, opts, preflightResult) {
     const maxAttempts = Math.min(candidates.length, plan.maxAttempts ?? candidates.length);
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       if (paidCalls >= opts.maxPaidCalls) {
-        trace.push({ type: "call_skipped", role: plan.role, reason: "paid call budget exhausted before fallback" });
+        trace.push({ type: "call_skipped", role: plan.role, target: plan.target, reason: "paid call budget exhausted before fallback" });
         break;
       }
       const tool = { ...candidates[attempt], tool_id: toolId(candidates[attempt]) };
@@ -327,13 +345,14 @@ export async function executePlan(config, opts, preflightResult) {
         trace.push({
           type: "call_skipped",
           role: plan.role,
+          target: plan.target,
           tool_id: tool.tool_id,
           reason: "credit budget would be exceeded",
           expected_cost: expectedCost,
         });
         continue;
       }
-      const params = plan.buildParams(opts, tool);
+      const params = plan.buildParams(opts, tool, plan._repeatItem, plan._repeatIndex);
       const started = isoNow();
       let call = null;
       try {
@@ -348,6 +367,7 @@ export async function executePlan(config, opts, preflightResult) {
         credits += actualCost;
         call = {
           role: plan.role,
+          target: plan.target,
           category: plan.category,
           tool_id: tool.tool_id,
           provider: tool.provider,
@@ -365,6 +385,7 @@ export async function executePlan(config, opts, preflightResult) {
         credits += expectedCost;
         call = {
           role: plan.role,
+          target: plan.target,
           category: plan.category,
           tool_id: tool.tool_id,
           provider: tool.provider,
@@ -394,6 +415,7 @@ export async function executePlan(config, opts, preflightResult) {
         trace.push({
           type: "fallback_attempt",
           role: plan.role,
+          target: plan.target,
           failed_tool_id: call.tool_id,
           next_tool_id: candidates[attempt + 1].tool_id,
         });
@@ -403,6 +425,7 @@ export async function executePlan(config, opts, preflightResult) {
       trace.push({
         type: "fallback_skipped",
         role: plan.role,
+        target: plan.target,
         reason: "role fallback attempt cap reached",
         max_attempts: maxAttempts,
         remaining_candidates: candidates.length - maxAttempts,

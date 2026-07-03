@@ -35,12 +35,14 @@ test("quant factor runner renders fixture report and trace", () => {
   assert.equal(traceJson.skill_id, "qveris-quant-factor-screen");
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.skill_id, "qveris-quant-factor-screen");
-  assert.equal(businessOutput.result.ranking_ready, false);
+  assert.equal(businessOutput.result.ranking_ready, true);
+  assert.equal(businessOutput.result.coverage_level, "complete");
   assert.ok(Array.isArray(businessOutput.result.ranking_table));
-  assert.equal(businessOutput.result.ranking_table[0].symbol, "AAPL");
+  assert.equal(businessOutput.result.ranking_table.length, 2);
+  assert.ok(businessOutput.result.ranking_table.every((row) => row.data_status === "complete"));
   assert.ok(businessOutput.result.factor_weights.valuation > 0);
   assert.ok(businessOutput.result.tie_break_rules.length > 0);
-  assert.ok(!businessOutput.result.missing_outputs.includes("ranking_table"));
+  assert.deepEqual(businessOutput.result.missing_outputs, []);
 });
 
 test("quant factor runner surfaces missing provider data", () => {

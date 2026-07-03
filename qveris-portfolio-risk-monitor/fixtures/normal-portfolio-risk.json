@@ -33,6 +33,7 @@
     },
     {
       "role": "historical_prices",
+      "target": "AAPL",
       "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
       "ok": true,
       "cost": 24.2,
@@ -45,10 +46,26 @@
           { "date": "2026-07-02", "close": 180.2 }
         ]
       }
+    },
+    {
+      "role": "historical_prices",
+      "target": "SPY",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "date": "2026-06-26", "close": 610.0 },
+          { "date": "2026-06-29", "close": 612.4 },
+          { "date": "2026-06-30", "close": 611.1 },
+          { "date": "2026-07-01", "close": 615.2 },
+          { "date": "2026-07-02", "close": 618.7 }
+        ]
+      }
     }
   ],
   "usage": {
-    "paid_calls": 3,
-    "estimated_credits": 49.4
+    "paid_calls": 4,
+    "estimated_credits": 73.6
   }
 }

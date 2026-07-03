@@ -1,6 +1,14 @@
 #!/usr/bin/env node
 
-import { countRecords, genericEvidence, resultPayload, runCli, usTicker } from "../../qveris-finance-common/runner.mjs";
+import {
+  countRecords,
+  dateNDaysBefore,
+  genericEvidence,
+  resultPayload,
+  runCli,
+  toAlphaVantageTimestamp,
+  usTicker,
+} from "../../qveris-finance-common/runner.mjs";
 
 function universe(opts) {
   return opts.universe?.length ? opts.universe : opts.tickers?.length ? opts.tickers : ["AAPL", "MSFT", "NVDA", "AMD", "AVGO"];
@@ -9,6 +17,8 @@ function universe(opts) {
 function payloadRecords(call) {
   const payload = resultPayload(call?.raw_result);
   if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.historical)) return payload.historical;
+  if (Array.isArray(payload?.prices)) return payload.prices;
   if (Array.isArray(payload?.data)) return payload.data;
   if (Array.isArray(payload?.results)) return payload.results;
   return payload && typeof payload === "object" ? [payload] : [];
@@ -16,30 +26,46 @@ function payloadRecords(call) {
 
 function numberField(row, keys) {
   for (const key of keys) {
-    const value = Number(row?.[key]);
+    const raw = row?.[key];
+    const value = Number(typeof raw === "string" ? raw.replace("%", "") : raw);
     if (Number.isFinite(value)) return value;
   }
   return null;
 }
 
-function findSuccessfulCall(calls, role) {
-  return calls.find((call) => call.role === role && call.ok !== false && countRecords(resultPayload(call.raw_result)) > 0);
+function callTarget(call) {
+  return String(call?.target || call?.parameters?.symbol || call?.parameters?.s || call?.parameters?.tickers || "").replace(".US", "").toUpperCase();
 }
 
-function roleSatisfied(calls, role) {
-  return Boolean(findSuccessfulCall(calls, role));
+function findSuccessfulCall(calls, role, symbol = null) {
+  const wanted = symbol ? String(symbol).toUpperCase() : null;
+  return calls.find(
+    (call) =>
+      call.role === role &&
+      call.ok !== false &&
+      countRecords(resultPayload(call.raw_result)) > 0 &&
+      (!wanted || callTarget(call) === wanted),
+  );
 }
 
-function missingRole(calls, role) {
-  if (roleSatisfied(calls, role)) return null;
-  const last = [...calls].reverse().find((call) => call.role === role);
-  return `${role}: ${last?.error || "provider returned unsuccessful status"}`;
+function roleSatisfied(calls, role, symbol = null) {
+  return Boolean(findSuccessfulCall(calls, role, symbol));
+}
+
+function missingRole(calls, role, symbol) {
+  if (roleSatisfied(calls, role, symbol)) return null;
+  const last = [...calls].reverse().find((call) => call.role === role && (!symbol || callTarget(call) === String(symbol).toUpperCase()));
+  return `${role}${symbol ? `:${symbol}` : ""}: ${last?.error || "provider returned unsuccessful status"}`;
 }
 
 function extractTechnicalValue(call) {
   const text = JSON.stringify(resultPayload(call?.raw_result));
   const rocr = Number(text.match(/"ROCR"\s*:\s*"?(?<value>[0-9.-]+)/)?.groups?.value);
   if (Number.isFinite(rocr)) return { raw: rocr, score: Math.max(0, Math.min(1, (rocr - 0.9) / 0.25)) };
+  const momentum = Number(text.match(/"(?:MOM|CMO|MACD|MACD_Hist|histogram)"\s*:\s*"?(?<value>[0-9.-]+)/i)?.groups?.value);
+  if (Number.isFinite(momentum)) {
+    return { raw: momentum, score: Number(Math.max(0, Math.min(1, 0.5 + momentum / 20)).toFixed(3)) };
+  }
   const upper = Number(text.match(/Real Upper Band"\s*:\s*"?(?<value>[0-9.-]+)/)?.groups?.value);
   const lower = Number(text.match(/Real Lower Band"\s*:\s*"?(?<value>[0-9.-]+)/)?.groups?.value);
   if (Number.isFinite(upper) && Number.isFinite(lower) && upper > lower) {
@@ -48,66 +74,105 @@ function extractTechnicalValue(call) {
   return { raw: null, score: null };
 }
 
+function sentimentScore(call) {
+  const text = JSON.stringify(resultPayload(call?.raw_result));
+  const positive = (text.match(/positive|bullish|optimistic|outperform/gi) || []).length;
+  const negative = (text.match(/negative|bearish|pessimistic|downgrade|risk/gi) || []).length;
+  const total = positive + negative;
+  if (!total) return { raw: null, score: null };
+  return {
+    raw: { positive, negative },
+    score: Number(Math.max(0, Math.min(1, 0.5 + (positive - negative) / total / 2)).toFixed(3)),
+  };
+}
+
+function priceMomentum(call) {
+  const closes = payloadRecords(call)
+    .map((row, index) => ({
+      date: row.date || row.datetime || row.timestamp || String(index).padStart(5, "0"),
+      close: numberField(row, ["adjClose", "close", "c", "price"]),
+    }))
+    .filter((row) => Number.isFinite(row.close) && row.close > 0)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  if (closes.length < 2) return { raw: null, score: null };
+  const raw = Number(((closes.at(-1).close / closes[0].close - 1) * 100).toFixed(4));
+  return { raw, score: Number(Math.max(0, Math.min(1, 0.5 + raw / 30)).toFixed(3)) };
+}
+
 function scoredRows(opts, calls) {
   const names = universe(opts);
-  const scoredSymbol = names[0];
-  const ratios = payloadRecords(findSuccessfulCall(calls, "valuation_ratios"))[0] || {};
-  const floatData = payloadRecords(findSuccessfulCall(calls, "liquidity_float"))[0] || {};
-  const quote = payloadRecords(findSuccessfulCall(calls, "quote_snapshot"))[0] || {};
-  const technical = extractTechnicalValue(findSuccessfulCall(calls, "momentum_or_volatility"));
-  const pe = numberField(ratios, ["priceEarningsRatio", "peRatio", "priceToEarningsRatio", "priceEarnings"]);
-  const roe = numberField(ratios, ["returnOnEquity", "roe", "returnOnEquityRatio"]);
-  const floatShares = numberField(floatData, ["floatShares", "freeFloat", "sharesFloat"]);
-  const quoteChange = numberField(quote, ["dp", "change_p", "changePercent", "percent_change"]);
-  const valuationScore = pe == null || pe <= 0 ? null : Math.max(0, Math.min(1, 1 - pe / 60));
-  const qualityScore = roe == null ? null : Math.max(0, Math.min(1, roe > 2 ? roe / 200 : roe));
-  const liquidityScore = floatShares == null ? null : Math.max(0, Math.min(1, Math.log10(Math.max(floatShares, 10)) / 10));
-  const quoteScore = quoteChange == null ? null : Math.max(0, Math.min(1, 0.5 + quoteChange / 20));
-  const components = {
-    valuation: valuationScore,
-    quality: qualityScore,
-    liquidity: liquidityScore,
-    momentum: technical.score,
-    quote_reaction: quoteScore,
-  };
   const weights = {
     valuation: 0.25,
     quality: 0.25,
-    liquidity: 0.2,
+    liquidity: 0.15,
     momentum: 0.2,
-    quote_reaction: 0.1,
+    news_risk: 0.15,
   };
-  const present = Object.entries(components).filter(([, value]) => Number.isFinite(value));
-  const weightedTotal = present.reduce((sum, [key, value]) => sum + value * weights[key], 0);
-  const usedWeight = present.reduce((sum, [key]) => sum + weights[key], 0);
-  const score = usedWeight ? Number((weightedTotal / usedWeight).toFixed(3)) : null;
-  const firstRow = {
-    rank: score == null ? null : 1,
-    symbol: scoredSymbol,
-    score,
-    data_status: score == null ? "missing" : names.length === 1 ? "complete" : "partial",
-    raw_fields: {
-      pe,
-      roe,
-      float_shares: floatShares,
-      quote_change_pct: quoteChange,
-      technical: technical.raw,
-    },
-    normalized_scores: components,
-    missing_factors: Object.entries(components).filter(([, value]) => !Number.isFinite(value)).map(([key]) => key),
-  };
-  const rows = [
-    firstRow,
-    ...names.slice(1).map((symbol) => ({
+  const rows = names.map((symbol) => {
+    const ratios = payloadRecords(findSuccessfulCall(calls, "valuation_ratios", symbol))[0] || {};
+    const overview = payloadRecords(findSuccessfulCall(calls, "quality_overview", symbol))[0] || {};
+    const floatData = payloadRecords(findSuccessfulCall(calls, "liquidity_float", symbol))[0] || {};
+    const quote = payloadRecords(findSuccessfulCall(calls, "quote_snapshot", symbol))[0] || {};
+    const technical = extractTechnicalValue(findSuccessfulCall(calls, "momentum_or_volatility", symbol));
+    const historyMomentum = priceMomentum(findSuccessfulCall(calls, "price_momentum", symbol));
+    const news = sentimentScore(findSuccessfulCall(calls, "news_risk", symbol));
+    const pe = numberField(ratios, ["priceEarningsRatio", "peRatio", "priceToEarningsRatio", "priceEarnings"]);
+    const roe =
+      numberField(ratios, ["returnOnEquity", "roe", "returnOnEquityRatio"]) ??
+      numberField(overview, ["ReturnOnEquityTTM", "returnOnEquityTTM", "returnOnEquity", "roe"]);
+    const profitMargin = numberField(overview, ["ProfitMargin", "profitMargin", "NetProfitMarginTTM", "netProfitMarginTTM"]);
+    const floatShares = numberField(floatData, ["floatShares", "freeFloat", "sharesFloat"]);
+    const volume = numberField(quote, ["volume", "v"]);
+    const quoteChange = numberField(quote, ["dp", "change_p", "changePercent", "percent_change", "change_p"]);
+    const valuationScore = pe == null || pe <= 0 ? null : Math.max(0, Math.min(1, 1 - pe / 60));
+    const qualityScore =
+      roe != null
+        ? Math.max(0, Math.min(1, roe > 2 ? roe / 200 : roe))
+        : profitMargin == null
+        ? null
+        : Math.max(0, Math.min(1, profitMargin > 2 ? profitMargin / 100 : profitMargin));
+    const liquidityBase = floatShares ?? volume;
+    const liquidityScore = liquidityBase == null ? null : Math.max(0, Math.min(1, Math.log10(Math.max(liquidityBase, 10)) / 10));
+    const quoteMomentumScore = quoteChange == null ? null : Math.max(0, Math.min(1, 0.5 + quoteChange / 20));
+    const components = {
+      valuation: valuationScore,
+      quality: qualityScore,
+      liquidity: liquidityScore,
+      momentum: historyMomentum.score ?? technical.score ?? quoteMomentumScore,
+      news_risk: news.score,
+    };
+    const present = Object.entries(components).filter(([, value]) => Number.isFinite(value));
+    const weightedTotal = present.reduce((sum, [key, value]) => sum + value * weights[key], 0);
+    const usedWeight = present.reduce((sum, [key]) => sum + weights[key], 0);
+    const score = usedWeight ? Number((weightedTotal / usedWeight).toFixed(3)) : null;
+    const missingFactors = Object.entries(components).filter(([, value]) => !Number.isFinite(value)).map(([key]) => key);
+    return {
       rank: null,
       symbol,
-      score: null,
-      data_status: "not_fetched_under_budget",
-      raw_fields: {},
-      normalized_scores: {},
-      missing_factors: ["valuation", "quality", "liquidity", "momentum", "quote_reaction"],
-    })),
-  ];
+      score,
+      data_status: score == null ? "missing" : missingFactors.length ? "partial" : "complete",
+      raw_fields: {
+        pe,
+        roe,
+        profit_margin: profitMargin,
+        float_shares: floatShares,
+        volume,
+        quote_change_pct: quoteChange,
+        technical: technical.raw,
+        price_momentum_return_pct: historyMomentum.raw,
+        news_sentiment: news.raw,
+      },
+      normalized_scores: components,
+      missing_factors: missingFactors,
+    };
+  });
+  rows
+    .filter((row) => row.score != null)
+    .sort((a, b) => b.score - a.score || Object.keys(b.normalized_scores).length - Object.keys(a.normalized_scores).length)
+    .forEach((row, index) => {
+      row.rank = index + 1;
+    });
+  rows.sort((a, b) => (a.rank ?? Number.MAX_SAFE_INTEGER) - (b.rank ?? Number.MAX_SAFE_INTEGER) || a.symbol.localeCompare(b.symbol));
   return { rows, weights };
 }
 
@@ -115,16 +180,28 @@ function analyze({ opts, calls }) {
   const names = universe(opts);
   const evidence = calls.map(genericEvidence);
   const calledRoles = new Set(calls.map((call) => call.role));
-  const factorSet = ["momentum", "valuation", "liquidity", "volatility", "quality", "news_risk"];
+  const factorSet = ["valuation", "quality", "liquidity", "momentum", "news_risk"];
   const { rows, weights } = scoredRows(opts, calls);
   const rankingReady = rows.length > 0 && rows.every((row) => row.data_status === "complete");
   const missingOutputs = [
     rankingReady ? null : "complete_universe_factor_panel",
-    roleSatisfied(calls, "quote_snapshot") ? null : "quote_reaction_scores",
-    "news_risk_factor",
+    rows.every((row) => Number.isFinite(row.normalized_scores?.momentum)) ? null : "momentum_scores",
+    rows.every((row) => Number.isFinite(row.normalized_scores?.news_risk)) ? null : "news_risk_factor",
   ].filter(Boolean);
-  const missingData = ["valuation_ratios", "liquidity_float", "quote_snapshot", "momentum_or_volatility"]
-    .map((role) => missingRole(calls, role))
+  const missingData = rows
+    .flatMap((row) =>
+      row.missing_factors.map((factor) => {
+        const roleByFactor = {
+          valuation: "valuation_ratios",
+          quality: "quality_overview",
+          liquidity: "liquidity_float",
+          momentum: "price_momentum",
+          news_risk: "news_risk",
+        };
+        const role = roleByFactor[factor];
+        return missingRole(calls, role, row.symbol) || `${factor}:${row.symbol}: returned payload lacked comparable field`;
+      }),
+    )
     .filter(Boolean);
   const findings = [
     `Screen universe contains ${names.length} tickers: ${names.join(", ")}.`,
@@ -159,6 +236,7 @@ function analyze({ opts, calls }) {
         "Prefer higher total score.",
         "If scores tie, prefer more non-missing factors.",
         "If still tied, prefer higher liquidity score.",
+        "If still tied, prefer lower news-risk burden.",
         "Do not promote a ticker with missing fundamentals above a fully covered ticker on model judgement alone.",
       ],
       missing_outputs: missingOutputs,
@@ -184,8 +262,14 @@ const config = {
       inspectLimit: 5,
     },
     {
-      key: "technical_momentum",
-      query: "technical indicators momentum volatility stock API",
+      key: "price_history",
+      query: "historical price EOD full chart stock OHLCV FMP API",
+      limit: 5,
+      inspectLimit: 5,
+    },
+    {
+      key: "news_risk",
+      query: "stock news sentiment catalyst risk API",
       limit: 5,
       inspectLimit: 5,
     },
@@ -195,56 +279,73 @@ const config = {
       role: "valuation_ratios",
       category: "fundamentals_valuation",
       preferredToolIds: ["financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef"],
-      buildParams: (opts) => ({ symbol: universe(opts)[0], limit: 1, period: "annual" }),
+      repeatFor: (opts) => universe(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) => ({ symbol, limit: 1, period: "annual" }),
+    },
+    {
+      role: "quality_overview",
+      category: "fundamentals_valuation",
+      preferredToolIds: ["alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a", "caidazi.analyze_fundamentals_financial.execute.v1.7a43f96e"],
+      fallbackOnEmpty: true,
+      repeatFor: (opts) => universe(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) =>
+        String(tool.tool_id).startsWith("alphavantage.")
+          ? { function: "OVERVIEW", symbol, datatype: "json" }
+          : { symbol },
     },
     {
       role: "liquidity_float",
       category: "quote_liquidity",
       preferredToolIds: ["financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f"],
-      buildParams: (opts) => ({ symbol: universe(opts)[0] }),
+      repeatFor: (opts) => universe(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) => ({ symbol }),
     },
     {
-      role: "quote_snapshot",
-      category: "quote_liquidity",
-      preferredToolIds: [
-        "eodhd.live_v2.us_quote_delayed.retrieve.v1.f0e13d45",
-        "eodhd.live_data.real_time.retrieve.v1.b60a4285",
-        "finnhub_io_api.stock.quote",
-      ],
-      buildParams: (opts, tool) =>
-        String(tool.tool_id).includes("live_v2")
-          ? { s: usTicker(universe(opts)[0]), "page[limit]": 1, fmt: "json" }
-          : String(tool.tool_id).startsWith("eodhd.")
-          ? { symbol: usTicker(universe(opts)[0]), fmt: "json" }
-          : { symbol: universe(opts)[0] },
-    },
-    {
-      role: "momentum_or_volatility",
-      category: "technical_momentum",
-      preferredToolIds: ["alphavantage.technical-indicators.bbands.v1", "alphavantage.rocr.list.v1.467a92c0", "alphavantage.mom.retrieve.v1.467a92c0"],
+      role: "price_momentum",
+      category: "price_history",
+      preferredToolIds: ["financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22"],
       strictPreferred: true,
-      buildParams: (opts, tool) =>
-        String(tool.tool_id).includes("bbands")
+      repeatFor: (opts) => universe(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) => ({
+        symbol,
+        from: dateNDaysBefore(opts.asOf, opts.windowDays),
+        to: opts.asOf,
+      }),
+    },
+    {
+      role: "news_risk",
+      category: "news_risk",
+      preferredToolIds: ["alphavantage.news_sentiment.query.v1.467a92c0", "eodhd.news.retrieve.v1.fe8bf94c"],
+      fallbackOnEmpty: true,
+      repeatFor: (opts) => universe(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) =>
+        String(tool.tool_id).startsWith("eodhd.")
           ? {
-              function: "BBANDS",
-              symbol: universe(opts)[0],
-              interval: "daily",
-              time_period: 20,
-              series_type: "close",
+              s: usTicker(symbol),
+              from: dateNDaysBefore(opts.asOf, opts.windowDays),
+              to: opts.asOf,
+              limit: opts.limit || 5,
+              fmt: "json",
             }
           : {
-              function: "ROCR",
-              symbol: universe(opts)[0],
-              interval: "daily",
-              time_period: 60,
-              series_type: "close",
+              function: "NEWS_SENTIMENT",
+              tickers: symbol,
+              time_from: toAlphaVantageTimestamp(dateNDaysBefore(opts.asOf, opts.windowDays)),
+              time_to: toAlphaVantageTimestamp(opts.asOf),
+              sort: "LATEST",
+              limit: String(opts.limit || 5),
             },
     },
   ],
   inputSummary: (opts) => ({
     universe: universe(opts),
     market: opts.market,
-    factor_set: ["momentum", "valuation", "liquidity", "volatility", "quality", "news_risk"],
+    factor_set: ["valuation", "quality", "liquidity", "momentum", "news_risk"],
     max_paid_calls: opts.maxPaidCalls,
     max_credits: opts.maxCredits,
   }),
@@ -255,6 +356,6 @@ runCli(config, {
   universe: ["AAPL", "MSFT", "NVDA", "AMD", "AVGO"],
   market: "US",
   windowDays: 90,
-  maxPaidCalls: 4,
-  maxCredits: 80,
+  maxPaidCalls: 25,
+  maxCredits: 520,
 });

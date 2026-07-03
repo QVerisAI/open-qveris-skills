@@ -101,3 +101,18 @@ Artifact set: `artifacts/hardening-live-20260703.*`
 | Price reaction | `eodhd.live_data.real_time.retrieve.v1.b60a4285` | Success; no longer skipped after filing-provider failures. |
 
 Final live artifact cost: 5 paid calls / 9.62 credits. Output status: `catalyst_confidence_score=0.601`; corroborating roles are news, aggregate sentiment, and price reaction. Remaining missing data is filings confirmation.
+
+## Skill-side Repair Update - 2026-07-03
+
+- Added `issuer_confirmation` as a paid fallback route after filings attempts. It prefers EODHD company news, then Alpha Vantage news sentiment, and is traced separately from `filings_check`.
+- Catalyst confirmation now accepts either `filings_check` or `issuer_confirmation`; `confirmed_evidence_set` still requires market news, aggregate sentiment, price reaction, and one confirmation role.
+- Output contract now includes `confirmation_roles` so downstream agents can distinguish SEC/filings evidence from issuer/news fallback evidence.
+- Default live guardrail is now 6 paid calls / 40 credits to leave budget for the issuer-confirmation fallback without starving price reaction.
+
+## Repair Live Verification - 2026-07-03
+
+Artifact set: `artifacts/repair-live-20260703.*`
+
+- Cost: 6 paid calls / 33.82 credits.
+- Result: market news, aggregate sentiment, price reaction, and fallback issuer-confirmation routes executed within budget.
+- Remaining gap: `filings_or_issuer_confirmation` still missing because the live providers returned no usable filings/issuer-confirmation records for the selected NVDA window. This is now a provider/data availability gap, not a skipped skill route.

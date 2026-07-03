@@ -50,6 +50,7 @@
         "catalyst_status": { "type": "string" },
         "catalyst_confidence_score": { "type": "number" },
         "corroborating_roles": { "type": "array", "items": { "type": "string" } },
+        "confirmation_roles": { "type": "array", "items": { "type": "string" } },
         "evidence_roles": { "type": "array", "items": { "type": "string" } },
         "missing_data": { "type": "array", "items": { "type": "string" } }
       }

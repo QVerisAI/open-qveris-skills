@@ -1,7 +1,7 @@
 {
   "schema_version": "2026-07-03",
   "skill_id": "qveris-news-sentiment-radar",
-  "generated_at": "2026-07-03T02:48:30.616Z",
+  "generated_at": "2026-07-03T08:07:22.791Z",
   "mode": "fixture",
   "scope": {
     "ticker": "NVDA",
@@ -11,25 +11,50 @@
     "to": "2026-07-02"
   },
   "findings": [
-    "Reviewed NVDA over a 7-day window with 2 QVeris call attempts.",
-    "Observed 3 raw records or nested payload rows across selected sources.",
-    "Sentiment text mentions in returned payload: 1 positive, 0 negative, 1 neutral.",
+    "Reviewed NVDA over a 7-day window with 4 QVeris call attempts.",
+    "Observed 5 raw records or nested payload rows across selected sources.",
+    "Sentiment text mentions in returned payload: 3 positive, 0 negative, 1 neutral.",
+    "Composite catalyst confidence score is 0.925; scores below 0.65 should stay in watchlist mode.",
     "Use strong labels only when news, filings, or quote reaction agree; otherwise mark the catalyst as weak or unresolved."
   ],
   "evidence": [
     {
       "role": "market_news_sentiment",
+      "target": null,
       "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
       "ok": true,
       "cost": 2,
+      "execution_id": null,
       "record_count": 2,
       "error": null
     },
     {
+      "role": "aggregate_sentiment",
+      "target": null,
+      "tool_id": "eodhd.sentiments.list.v1.9ba159a0",
+      "ok": true,
+      "cost": 2.81,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
       "role": "price_reaction",
+      "target": null,
       "tool_id": "finnhub_io_api.stock.quote",
       "ok": true,
       "cost": 1,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "issuer_confirmation",
+      "target": null,
+      "tool_id": "eodhd.news.retrieve.v1.fe8bf94c",
+      "ok": true,
+      "cost": 2.81,
+      "execution_id": null,
       "record_count": 1,
       "error": null
     }
@@ -40,22 +65,34 @@
     "Missing provider coverage should be shown explicitly rather than filled by model memory."
   ],
   "usage": {
-    "paid_calls": 2,
-    "estimated_credits": 3
+    "paid_calls": 4,
+    "estimated_credits": 8.62
   },
   "result": {
     "ticker": "NVDA",
     "sentiment_counts": {
-      "positive": 1,
+      "positive": 3,
       "negative": 0,
       "neutral": 1
     },
-    "total_records": 3,
+    "total_records": 5,
     "signal_level": "positive",
-    "catalyst_status": "needs_confirmation",
+    "catalyst_status": "confirmed_evidence_set",
+    "catalyst_confidence_score": 0.925,
+    "corroborating_roles": [
+      "market_news_sentiment",
+      "aggregate_sentiment",
+      "issuer_confirmation",
+      "price_reaction"
+    ],
+    "confirmation_roles": [
+      "issuer_confirmation"
+    ],
     "evidence_roles": [
       "market_news_sentiment",
-      "price_reaction"
+      "aggregate_sentiment",
+      "price_reaction",
+      "issuer_confirmation"
     ],
     "missing_data": []
   }

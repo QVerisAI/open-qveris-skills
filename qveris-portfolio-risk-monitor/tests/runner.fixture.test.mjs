@@ -40,6 +40,9 @@ test("portfolio risk runner renders fixture report and trace", () => {
   assert.equal(businessOutput.result.risk_metrics.observation_count, 5);
   assert.ok(!businessOutput.result.missing_metrics.includes("volatility"));
   assert.ok(!businessOutput.result.missing_metrics.includes("drawdown"));
+  assert.ok(!businessOutput.result.missing_metrics.includes("correlation"));
+  assert.equal(typeof businessOutput.result.risk_metrics.correlation_to_benchmark, "number");
+  assert.ok(businessOutput.result.measurable_risks.includes("benchmark_correlation"));
 });
 
 test("portfolio risk runner surfaces missing provider data", () => {

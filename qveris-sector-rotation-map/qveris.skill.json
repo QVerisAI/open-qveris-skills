@@ -182,11 +182,11 @@
       "zh": "预计 QVeris 使用量"
     },
     "summary": {
-      "en": "This workflow usually needs 6-20 paid Calls after free Discover and Inspect preflight. Cost depends on provider billing, ticker count, and time window.",
+      "en": "This workflow usually needs 6-24 paid Calls after free Discover and Inspect preflight. Cost depends on provider billing, sector proxy count, benchmark history, and time window.",
       "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 6-20 次付费 Call。费用取决于供应商计费、股票数量和时间窗口。"
     },
-    "typical_calls": "6-20",
-    "estimated_credits": "6-200 credits",
+    "typical_calls": "6-24",
+    "estimated_credits": "6-360 credits",
     "free_actions": [
       "Discover",
       "Inspect"
