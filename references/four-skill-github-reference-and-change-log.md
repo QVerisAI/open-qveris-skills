@@ -450,3 +450,246 @@ node --test qveris-news-sentiment-radar/tests/runner.fixture.test.mjs qveris-por
 ```
 
 All four final hardening live outputs passed their corresponding `schemas/output.schema.json` validation.
+
+## 九、2026-07-03 重新自然语言安装态 E2E
+
+本节是最新准线，覆盖前面 `codex-cli-live` 旧结果里的若干 preview 缺口。区别是：
+
+- 旧 `codex-cli-live`：在初版 runner 和初版输出契约后跑，暴露了 quote、ranking、quadrant、correlation 等 skill 侧缺口。
+- `hardening-live` / `repair-live`：直接用 runner 修复并验证这些 skill 侧缺口。
+- 最新 `codex-cli-natural-e2e-20260703`：重新用四个独立 Codex CLI 安装单个 skill，再用自然语言任务触发真实 QVeris live 流程，验证“安装后的 skill 能不能被 Codex 按说明真实使用”。
+
+这轮不是主会话直接手工调用脚本，而是四个 Codex CLI 子会话各自读取安装到 `CODEX_HOME/skills/<skill>/SKILL.md` 的 skill 指令，然后按 skill 指令调用确定性 runner。runner 仍然是 skill 的标准执行入口，因为四个 `SKILL.md` 都明确要求优先使用它来保证 trace、预算、schema 和报告可复现。
+
+执行环境：
+
+- Codex CLI：`/home/wjh/.local/opt/node-v24.15.0-linux-x64/bin/codex`
+- 模型：`gpt-5.5`
+- 工作目录：`/home/wjh/matecode/open-qveris-skills-qveris-research`
+- 安装方式：每个 skill 一个独立 `CODEX_HOME`，每个 `CODEX_HOME/skills` 里只放一个目标 skill
+- 数据模式：真实 QVeris live，不是 dry-run，不是 fixture
+- 产物前缀：`artifacts/codex-cli-natural-e2e-20260703.*`
+
+### 1. 最新 E2E 汇总
+
+| Skill | 场景 | 结论 | Paid calls | Credits | Schema | Trace |
+| --- | --- | --- | ---: | ---: | --- | --- |
+| `qveris-news-sentiment-radar` | NVDA，US，7 天新闻/情绪/价格反应 | 跑通；情绪和价格反应有证据，但 issuer/filing confirmation 缺失 | 6 | 33.82 | 通过 | 6/6 calls 有 `execution_id` |
+| `qveris-portfolio-risk-monitor` | AAPL/NVDA/MSFT/TSLA/CASH 组合，SPY benchmark，30 天 | 跑通；VaR、drawdown、volatility、correlation 均有结构化结果 | 5 | 78.22 | 通过 | 5/5 calls 有 `execution_id` |
+| `qveris-quant-factor-screen` | AAPL/MSFT，valuation/quality/liquidity/momentum/news risk | 跑通；完整 two-name ranking table、factor weights、tie-break rules 均已生成 | 10 | 153.20 | 通过 | 10/10 calls 有 `execution_id` |
+| `qveris-sector-rotation-map` | XLK/XLE vs SPY，30 天 | 跑通；rotation quadrants、momentum scores、relative strength scores 均已生成 | 7 | 147.20 | 通过 | 7/7 calls 有 `execution_id` |
+| **Total** | 四个 skill | 全部完成安装态自然语言 E2E | **28** | **412.44** | 全部通过 | 全部 paid calls 有 `execution_id` |
+
+### 2. 最新 E2E 结构化输出重点
+
+`qveris-news-sentiment-radar`：
+
+- Scope：`NVDA`，`US`，`2026-06-25` 到 `2026-07-02`
+- Findings：5 条
+- Evidence：6 条
+- Risks：3 条
+- 结构化结果：
+  - `signal_level=positive`
+  - `catalyst_status=needs_confirmation`
+  - `catalyst_confidence_score=0.705`
+  - `corroborating_roles=["market_news_sentiment","aggregate_sentiment","price_reaction"]`
+  - `confirmation_roles=[]`
+  - `missing_data=["filings_or_issuer_confirmation: no filings, issuer-news, or press-release confirmation records returned"]`
+
+`qveris-portfolio-risk-monitor`：
+
+- Scope：AAPL 25%、NVDA 25%、MSFT 20%、TSLA 15%、CASH 15%，benchmark `SPY`，30 天
+- Findings：5 条
+- Evidence：5 条
+- Risks：3 条
+- 结构化结果：
+  - `concentration_hhi=0.21`
+  - `concentration_level=medium`
+  - `daily_volatility=0.0239`
+  - `annualized_volatility=0.3786`
+  - `max_drawdown=-0.1271`
+  - `historical_var_95=-0.0364`
+  - `correlation_to_benchmark=0.1667`
+  - `missing_metrics=[]`
+  - `missing_data=[]`
+
+`qveris-quant-factor-screen`：
+
+- Scope：`AAPL`、`MSFT`，US，90 天
+- Findings：4 条
+- Evidence：10 条
+- Risks：3 条
+- 结构化结果：
+  - `ranking_ready=true`
+  - `coverage_level=complete`
+  - `ranking_table` 已包含 AAPL、MSFT 两行
+  - `factor_weights={"valuation":0.25,"quality":0.25,"liquidity":0.15,"momentum":0.2,"news_risk":0.15}`
+  - `tie_break_rules` 已生成
+  - `missing_outputs=[]`
+  - `missing_data=[]`
+
+`qveris-sector-rotation-map`：
+
+- Scope：`XLK`、`XLE` vs `SPY`，US，30 天
+- Findings：5 条
+- Evidence：7 条
+- Risks：3 条
+- 结构化结果：
+  - `phase_labels_ready=true`
+  - `rotation_quadrants` 已包含 XLK、XLE
+  - `momentum_scores` 已包含 XLK、XLE
+  - `relative_strength_scores` 已包含 XLK、XLE
+  - `benchmark_relative_history` 已生成
+  - `missing_outputs=[]`
+  - `missing_data=[]`
+
+### 3. 最新 E2E artifacts
+
+每个 skill 都新增四类最新自然语言 E2E 产物：
+
+| Skill | Markdown report | Business JSON | Trace JSON | Codex final |
+| --- | --- | --- | --- | --- |
+| `qveris-news-sentiment-radar` | `artifacts/codex-cli-natural-e2e-20260703.md` | `artifacts/codex-cli-natural-e2e-20260703-output.json` | `artifacts/codex-cli-natural-e2e-20260703-trace.json` | `artifacts/codex-cli-natural-e2e-20260703-final.txt` |
+| `qveris-portfolio-risk-monitor` | `artifacts/codex-cli-natural-e2e-20260703.md` | `artifacts/codex-cli-natural-e2e-20260703-output.json` | `artifacts/codex-cli-natural-e2e-20260703-trace.json` | `artifacts/codex-cli-natural-e2e-20260703-final.txt` |
+| `qveris-quant-factor-screen` | `artifacts/codex-cli-natural-e2e-20260703.md` | `artifacts/codex-cli-natural-e2e-20260703-output.json` | `artifacts/codex-cli-natural-e2e-20260703-trace.json` | `artifacts/codex-cli-natural-e2e-20260703-final.txt` |
+| `qveris-sector-rotation-map` | `artifacts/codex-cli-natural-e2e-20260703.md` | `artifacts/codex-cli-natural-e2e-20260703-output.json` | `artifacts/codex-cli-natural-e2e-20260703-trace.json` | `artifacts/codex-cli-natural-e2e-20260703-final.txt` |
+
+### 4. 最新 E2E execution_id
+
+| Skill | execution_id |
+| --- | --- |
+| `qveris-news-sentiment-radar` | `2ce523a2-aa64-4214-a548-8efe281b8db2`, `c07fd605-9eee-4224-a1e6-0467448ba99a`, `f55969a6-a93a-4304-b771-17cc643a6018`, `7fbac52e-ad23-42e8-9a79-885922ab16ce`, `9df97fae-f798-4d69-87f1-92507c617e27`, `26c3c253-875d-4838-bba3-3bb39f5a1bec` |
+| `qveris-portfolio-risk-monitor` | `4ceefbb9-909c-4c48-8aa6-1cdb7174bfd2`, `d12a23c4-1594-4545-a46a-d0db68a89988`, `99d32666-b5e3-4117-b279-2fe728e4efc8`, `7f18bf5a-428d-429f-b436-ecbc812ffd53`, `0b75ea32-c018-4fad-91a0-f502d5f353b0` |
+| `qveris-quant-factor-screen` | `03f39f8a-9fd5-48a4-9df5-cf07d9f537a9`, `4ba5ae6d-8871-41fa-bacf-fc9e371289a8`, `ca2ed60d-a513-4ad1-a819-d2d0fc21ee1c`, `73476508-c584-4982-80d9-e362f30e3b92`, `b0aa6b19-da8b-4d43-be5e-48e8cff23312`, `955a545a-44aa-4cdf-abd7-ed37dd5fdd2b`, `6c997a3c-d64c-4ccf-b34b-b70c3569efce`, `1ef61662-601b-4a93-9d11-b09e39420d67`, `f8a6c4f0-8205-4443-9260-8bf8301dc67a`, `4878f166-f434-4480-ab3e-408d522b3c99` |
+| `qveris-sector-rotation-map` | `3a60e139-b94b-41df-af2a-486b4d7fac1e`, `fbca2a89-928c-46a3-a8c6-da66b6b1dfeb`, `cf3fd212-db8c-4889-83f4-ec1284396cbd`, `8de12eaf-ee42-4d52-bb1d-31ee80effd0e`, `042dc4da-fdf4-4464-973b-670b5fd3940a`, `ed118317-19f1-426c-a087-026eb0a3fee7`, `b991e6c8-3889-4d71-aef0-8f29948d124b` |
+
+### 5. Schema 校验命令和结果
+
+最新四个 `codex-cli-natural-e2e-20260703-output.json` 均通过对应 `schemas/output.schema.json`：
+
+```bash
+cd /home/wjh/matecode/open-qveris-skills-qveris-research
+node --input-type=module <<'NODE'
+import { readFileSync } from 'node:fs';
+import { validateSchema } from './qveris-finance-common/schema-validator.mjs';
+
+const skills = [
+  'qveris-news-sentiment-radar',
+  'qveris-portfolio-risk-monitor',
+  'qveris-quant-factor-screen',
+  'qveris-sector-rotation-map'
+];
+
+for (const skill of skills) {
+  const schema = JSON.parse(readFileSync(`${skill}/schemas/output.schema.json`, 'utf8'));
+  const output = JSON.parse(readFileSync(`${skill}/artifacts/codex-cli-natural-e2e-20260703-output.json`, 'utf8'));
+  const errors = validateSchema(schema, output);
+  if (errors.length) throw new Error(`${skill}: ${errors.join('; ')}`);
+  console.log(`${skill}: schema ok`);
+}
+NODE
+```
+
+结果：
+
+```text
+qveris-news-sentiment-radar: schema ok
+qveris-portfolio-risk-monitor: schema ok
+qveris-quant-factor-screen: schema ok
+qveris-sector-rotation-map: schema ok
+```
+
+## 十、GitHub 参考到实际修改的深化映射
+
+这一节把“参考了 GitHub 什么”进一步落到“实际改了本仓库哪里”。所有参考都只使用公开方法论和产品形态，不复制外部代码、prompt、README 文案、数据或模型。
+
+| 参考来源 | 借鉴的抽象能力 | 本仓库落点 | 验证方式 |
+| --- | --- | --- | --- |
+| FinGPT | 金融新闻/情绪/事件证据分层 | `qveris-news-sentiment-radar/scripts/run.mjs` 拆出 `market_news_sentiment`、`aggregate_sentiment`、`filings_check`、`price_reaction`、`issuer_confirmation` | live trace 记录六个角色，输出 `catalyst_confidence_score`、`corroborating_roles`、`confirmation_roles` |
+| FinRobot | evidence-backed analyst report | 公共 runner 输出 Scope、Findings、Evidence、Risks、QVeris Usage；四个 skill 的 Markdown report 和 business JSON 都保留 evidence/risk 分层 | 四个 natural E2E report 均生成 Markdown、JSON、trace |
+| ClarityFinance | skill-style artifacts 和 agent 可读工作流 | 每个 skill 都有 `examples/`、`artifacts/`、`references/`、`fixtures/`、`tests/`，`SKILL.md` 指向确定性 runner | 四个隔离 Codex CLI 能读安装后的 `SKILL.md` 并完成 live 调用 |
+| ai-hedge-fund | 多视角投资/风险 lens | portfolio 拆 quote/history/profile/news；sector 拆 snapshot/sector list/proxy history/benchmark/news confirmation | portfolio 生成 risk metrics；sector 生成 quadrants 和 benchmark-relative history |
+| qlib | pipeline、实验、fixture、schema 纪律 | `qveris-finance-common/runner.mjs` 固化 preflight、execute、transform、analysis、render、trace；每个 skill 有 schema 和 fixture regression | `node --test` fixture 测试和 output schema 校验 |
+| FinRL | risk control、evaluation framing、guardrails | runner 支持 `--max-paid-calls`、`--max-credits`，报告里声明 not investment advice 和 missing-data policy | dry-run、fixture、live smoke、natural E2E 都保留 usage 和 missing flags |
+| Quantropy | factor/risk module 边界 | quant 输出 factor weights、ranking table、tie-break rules；portfolio 输出 concentration、VaR、drawdown、volatility、correlation | quant natural E2E `ranking_ready=true`；portfolio natural E2E `missing_metrics=[]` |
+| Quant_Sector_Rotation_Strategy / sector-rotation-screener | sector proxy、relative strength、rotation map 形态 | sector 输出 `rotation_quadrants`、`momentum_scores`、`relative_strength_scores`、`benchmark_relative_history` | sector natural E2E `phase_labels_ready=true` 且无 `missing_outputs` |
+
+## 十一、当前剩余问题归因
+
+按最新自然语言 E2E，四个 skill 的 skill 侧主流程已经没有新的阻塞问题。剩余事项分三类：
+
+| 类别 | 当前问题 | 影响 | 归因 | 当前处理 |
+| --- | --- | --- | --- | --- |
+| QVeris/provider 数据覆盖 | news 的 filing 或 issuer confirmation 没返回可用记录 | `catalyst_status=needs_confirmation`，不能把新闻催化剂标成 fully confirmed | QVeris provider 在该 NVDA 窗口没有返回 filing/issuer confirmation 记录 | skill 已正确调用 fallback 并在 `missing_data` 明确标出 |
+| 平台验证 | Hosted Skill Hub / ClawHub 发布路径未跑 | 不能声明 hosted Skill Hub UI、ClawHub 发布或远端生产调度路径已验证 | 本轮验证的是 OpenClaw CLI 本地安装和 natural-language agent 路径 | `qveris.skill.json` 保持 `preview`；OpenClaw CLI E2E 已完成，hosted path 仍 pending |
+| 交付流程 | 最新 natural E2E artifacts 尚未提交到远端 PR | 远端 PR 不会自动包含最新证据 | 用户暂时要求不提 PR；之前 push 也遇到权限/连接问题 | 本地 artifacts 已落盘，后续可选择性 stage/commit/push |
+
+以前的 skill 侧缺口已经被修复或显式降级：
+
+- portfolio：VaR、drawdown、volatility、correlation 已在最新 natural E2E 中生成。
+- quant：ranking table、factor weights、tie-break rules、complete coverage 已在 AAPL/MSFT 场景生成。
+- sector：rotation quadrants、momentum scores、relative strength scores、benchmark-relative history 已生成。
+- news：不是流程没跑，而是 confirmation provider 没返回可确认记录，所以保留 `needs_confirmation` 是正确输出。
+
+## 十二、SOP 状态按最新准线更新
+
+| SOP 项 | 当前状态 |
+| --- | --- |
+| 每个 skill 完成 GitHub `source-review.md` | 已完成 |
+| 每个 skill 完成 `references/qveris-tool-map.md` | 已完成，并补了 fallback、repair live、natural E2E 后的 provider 行为 |
+| runner、QVeris adapter、transform、analysis、render、trace | 已完成，公共 runner 承担主流程 |
+| dry-run、预算限制、输出文件 | 已完成 |
+| schema 校验、mock/fixture 回归、缺失数据和预算不足场景 | 已完成 |
+| 小额或受控真实 QVeris smoke test | 已完成 |
+| examples/artifacts 至少 2 个可复制场景 | 已完成基础场景；最新 live 场景也已落盘 |
+| 更新 `SKILL.md` 输出契约和成本 guardrails | 已完成 |
+| 更新 `qveris.skill.json`，status 与实际阶段一致 | 已完成，保持 `preview` |
+| Codex 自然语言端到端测试 | 已完成，四个隔离 Codex CLI 安装态 live E2E 通过 |
+| OpenClaw 安装和运行测试 | 已完成 OpenClaw CLI 本地安装态自然语言 E2E；Hosted Skill Hub / ClawHub 发布验证仍 pending |
+| PR 附测试命令、费用、execution_id、样例输出和已知限制 | 未完成，因暂不提 PR |
+
+当前结论：
+
+- 从 Codex CLI 使用路径看，四个 skill 已经能真实安装、读取指令、调用 QVeris、生成结构化 JSON 和 trace。
+- 从上线流程看，仍应保留 `preview`，原因不是四个 skill 主流程失败，而是 hosted Skill Hub / ClawHub 发布验证和 PR 流程尚未完成。
+- 从业务数据看，news 的 external confirmation 仍取决于 provider 返回；skill 已做到可追踪、可降级、可解释。
+
+## 十三、2026-07-03 OpenClaw CLI 自然语言 E2E
+
+在发现 `/home/wjh/.local/bin/openclaw` 是游戏 runtime wrapper 之后，又继续找到真正的平台 CLI：
+
+- `/home/wjh/matecode/QVerisAI-openclaw/node_modules/.bin/openclaw`
+- Version：`OpenClaw 2026.5.28 (e932160)`
+
+使用该 CLI 建了隔离 profile：
+
+- Profile：`qveris-skill-e2e-20260703`
+- Agent：`main`
+- Model：`deepseek/deepseek-chat`
+- Workspace：`/home/wjh/matecode/open-qveris-skills-qveris-research`
+
+四个 skill 均通过 `openclaw skills install` 从本地目录安装，并在 `openclaw skills list --agent main` 中显示为 `ready`。
+
+随后用 `openclaw agent --local` 分别发送自然语言任务，要求 agent 读取对应 `SKILL.md`、使用真实 QVeris live、保存 Markdown report、business JSON、trace JSON 和 final validation summary。产物前缀：
+
+- `artifacts/openclaw-natural-e2e-20260703.*`
+
+最新 OpenClaw CLI E2E 结果：
+
+| Skill | Paid calls | Credits | Schema | Trace | 结论 |
+| --- | ---: | ---: | --- | --- | --- |
+| `qveris-news-sentiment-radar` | 6 | 33.82 | 通过 | 6/6 有 `execution_id` | 跑通；`catalyst_status=needs_confirmation`，缺 filing/issuer confirmation |
+| `qveris-portfolio-risk-monitor` | 5 | 78.22 | 通过 | 5/5 有 `execution_id` | 跑通；volatility、drawdown、VaR、correlation 均生成 |
+| `qveris-quant-factor-screen` | 10 | 153.20 | 通过 | 10/10 有 `execution_id` | 跑通；`ranking_ready=true`，`coverage_level=complete` |
+| `qveris-sector-rotation-map` | 7 | 147.20 | 通过 | 7/7 有 `execution_id` | 跑通；`phase_labels_ready=true`，quadrants 和 relative-strength scores 均生成 |
+| **Total** | **28** | **412.44** | 全部通过 | 全部有 | 四个 OpenClaw natural-language live E2E 完成 |
+
+详细报告：
+
+- `references/openclaw-four-skill-natural-e2e-report.md`
+
+边界：
+
+- 这次完成的是 OpenClaw CLI 本地安装和自然语言 agent 调用验证。
+- 还没有验证 hosted Skill Hub UI、ClawHub publication 或远端生产 Skill Hub 调度路径。
+- OpenClaw 安装过程在 repo 下创建了 `skills/` workspace copy，目前是本地未跟踪安装产物。

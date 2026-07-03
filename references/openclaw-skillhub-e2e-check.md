@@ -49,3 +49,41 @@ To finish this step, provide one of the following:
 - A desktop automation path for OpenClaw that can install the branch version of this repo and run a skill with captured output.
 
 Until then, the four skills should remain `preview`, not `published`.
+
+## Update - 2026-07-03
+
+The earlier blocker was narrowed after a second WSL inspection:
+
+- `/home/wjh/.local/bin/openclaw` is still the OpenClaw game wrapper and is not the platform CLI.
+- The platform CLI exists at `/home/wjh/matecode/QVerisAI-openclaw/node_modules/.bin/openclaw`.
+- Version: `OpenClaw 2026.5.28 (e932160)`.
+
+Using that platform CLI, the four skills were installed and run through OpenClaw's local natural-language agent path.
+
+Validation profile:
+
+- OpenClaw profile: `qveris-skill-e2e-20260703`
+- Agent: `main`
+- Model: `deepseek/deepseek-chat`
+- Workspace: `/home/wjh/matecode/open-qveris-skills-qveris-research`
+
+Result:
+
+- OpenClaw CLI install test: complete.
+- OpenClaw local natural-language agent test: complete.
+- Real QVeris live calls: complete.
+- Business JSON schema validation: passed for all four skills.
+
+Detailed report:
+
+- `references/openclaw-four-skill-natural-e2e-report.md`
+
+Remaining distinction:
+
+- This completes OpenClaw CLI local install-and-run validation.
+- It still does not prove hosted Skill Hub UI discovery, ClawHub publication, or a remote Skill Hub production path.
+
+Therefore the status is now:
+
+- OpenClaw CLI E2E: complete.
+- Skill Hub / ClawHub hosted E2E: pending unless a hosted test environment or publish/verify path is required.
