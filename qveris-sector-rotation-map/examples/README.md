@@ -38,3 +38,37 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --json-output qveris-sector-rotation-map/artifacts/sector-live-smoke-output.json \
   --trace qveris-sector-rotation-map/artifacts/sector-live-smoke-trace.json
 ```
+
+## Live scenario: risk-on/risk-off sectors
+
+```bash
+node qveris-sector-rotation-map/scripts/run.mjs \
+  --live \
+  --sectors XLK,XLY,XLF,XLU,XLP,XLV \
+  --market US \
+  --benchmark SPY \
+  --window-days 30 \
+  --as-of 2026-07-03 \
+  --max-paid-calls 4 \
+  --max-credits 80 \
+  --output qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off.md \
+  --json-output qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off-output.json \
+  --trace qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off-trace.json
+```
+
+## Live scenario: cyclicals versus defensives
+
+```bash
+node qveris-sector-rotation-map/scripts/run.mjs \
+  --live \
+  --sectors XLI,XLE,XLB,XLP,XLU,XLV \
+  --market US \
+  --benchmark SPY \
+  --window-days 30 \
+  --as-of 2026-07-03 \
+  --max-paid-calls 4 \
+  --max-credits 80 \
+  --output qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives.md \
+  --json-output qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives-output.json \
+  --trace qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives-trace.json
+```

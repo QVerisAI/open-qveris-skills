@@ -53,3 +53,19 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 - If ETF performance fails, call quote/history for the first proxy and mark full rotation map as partial.
 - If flow/revision coverage is missing, rank by performance/momentum only and flag missing confirmation.
 - For non-US markets, first validate sector proxy mapping before scoring rotation.
+
+## Live Scenario Verification Update - 2026-07-03
+
+Additional live scenarios were run for risk-on/risk-off sectors and cyclicals versus defensives. Total incremental cost was 6 paid calls and 145.2 credits.
+
+| Scenario | Successful routes | Failed or skipped routes | Cost |
+| --- | --- | --- | --- |
+| Risk-on/risk-off | FMP sector snapshot, FMP available sectors, FMP ETF list | ETF performance skipped due no inspected tool candidate | 3 calls / 72.6 credits |
+| Cyclicals/defensives | FMP sector snapshot, FMP available sectors, FMP ETF list | ETF performance skipped due no inspected tool candidate | 3 calls / 72.6 credits |
+
+Observed fallback policy:
+
+- FMP sector snapshot, available sectors, and ETF list are the verified minimum viable US-sector route.
+- Do not claim relative strength, momentum score, or rotation quadrant until an ETF price/history route is verified.
+- If ETF performance remains unavailable, use the sector snapshot as a partial map and mark ETF-derived momentum as missing.
+- Production hardening should add a quote/history route for sector ETF proxies before broad release.

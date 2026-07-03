@@ -1,0 +1,108 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-quant-factor-screen",
+  "generated_at": "2026-07-03T06:00:03.874Z",
+  "mode": "live",
+  "scope": {
+    "universe": [
+      "NVDA",
+      "AMD",
+      "AVGO",
+      "INTC",
+      "QCOM"
+    ],
+    "market": "US",
+    "window_days": 90,
+    "factor_set": [
+      "momentum",
+      "valuation",
+      "liquidity",
+      "volatility",
+      "quality",
+      "news_risk"
+    ]
+  },
+  "findings": [
+    "Screen universe contains 5 tickers: NVDA, AMD, AVGO, INTC, QCOM.",
+    "Factor coverage attempted: valuation_ratios, liquidity_float, quote_snapshot, momentum_or_volatility.",
+    "Initial deterministic factor set is momentum, valuation, liquidity, volatility, quality, and news-risk penalty.",
+    "Ranking must expose raw fields, normalized scores, missing-field flags, factor weights, and tie-break rules."
+  ],
+  "evidence": [
+    {
+      "role": "valuation_ratios",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "liquidity_float",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "quote_snapshot",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": false,
+      "cost": 1,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "momentum_or_volatility",
+      "tool_id": "alphavantage.technical-indicators.bbands.v1",
+      "ok": true,
+      "cost": 2,
+      "record_count": 6702,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Do not rank missing fundamentals as neutral without flagging the gap.",
+    "Provider coverage can vary by market and ticker.",
+    "This is a research screen, not a buy/sell recommendation."
+  ],
+  "usage": {
+    "paid_calls": 4,
+    "estimated_credits": 51.4
+  },
+  "result": {
+    "universe": [
+      "NVDA",
+      "AMD",
+      "AVGO",
+      "INTC",
+      "QCOM"
+    ],
+    "factor_set": [
+      "momentum",
+      "valuation",
+      "liquidity",
+      "volatility",
+      "quality",
+      "news_risk"
+    ],
+    "coverage_roles": [
+      "valuation_ratios",
+      "liquidity_float",
+      "quote_snapshot",
+      "momentum_or_volatility"
+    ],
+    "scoring_version": "preview-2026-07-03",
+    "ranking_ready": false,
+    "missing_outputs": [
+      "normalized_scores",
+      "ranking_table",
+      "factor_weights",
+      "tie_break_rules"
+    ],
+    "missing_data": [
+      "quote_snapshot: provider returned unsuccessful status"
+    ]
+  }
+}

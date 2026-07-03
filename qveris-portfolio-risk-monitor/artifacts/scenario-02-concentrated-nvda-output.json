@@ -1,0 +1,95 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-portfolio-risk-monitor",
+  "generated_at": "2026-07-03T05:59:10.838Z",
+  "mode": "live",
+  "scope": {
+    "holdings": [
+      {
+        "symbol": "NVDA",
+        "weight": 60
+      },
+      {
+        "symbol": "AMD",
+        "weight": 20
+      },
+      {
+        "symbol": "CASH",
+        "weight": 20
+      }
+    ],
+    "market": "US",
+    "benchmark": "QQQ",
+    "window_days": 30,
+    "from": "2026-06-03",
+    "to": "2026-07-03"
+  },
+  "findings": [
+    "Largest non-cash holding is NVDA at 60%.",
+    "Portfolio concentration HHI is 0.440; values above 0.25 deserve concentration review.",
+    "Collected 3 QVeris call attempts across market, profile, historical, and news/catalyst roles.",
+    "Risk interpretation should separate measurable exposure from narrative catalyst risk."
+  ],
+  "evidence": [
+    {
+      "role": "quote_snapshot",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": false,
+      "cost": 1,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "historical_prices",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 21,
+      "error": null
+    },
+    {
+      "role": "profile_sector",
+      "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 1,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Weights must be normalized before comparing portfolios.",
+    "Historical volatility and drawdown depend on lookback window and provider coverage.",
+    "News/catalyst risk can be stale or incomplete without filings and earnings-calendar checks."
+  ],
+  "usage": {
+    "paid_calls": 3,
+    "estimated_credits": 49.4
+  },
+  "result": {
+    "top_holding": {
+      "symbol": "NVDA",
+      "weight": 60
+    },
+    "concentration_hhi": 0.44,
+    "concentration_level": "high",
+    "evidence_roles": [
+      "quote_snapshot",
+      "historical_prices",
+      "profile_sector"
+    ],
+    "measurable_risks": [
+      "concentration",
+      "top_holding_exposure",
+      "provider_coverage"
+    ],
+    "missing_metrics": [
+      "volatility",
+      "drawdown",
+      "correlation",
+      "VaR"
+    ],
+    "missing_data": [
+      "quote_snapshot: provider returned unsuccessful status"
+    ]
+  }
+}
