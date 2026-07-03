@@ -57,3 +57,19 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 - If technical indicator calls fail, use quote/history fallback where available.
 - Never impute missing fundamentals as neutral.
 - For large universes, run staged sampling first and expand only after budget approval.
+
+## Live Scenario Verification Update - 2026-07-03
+
+Additional live scenarios were run for a semiconductor universe and a defensive-quality universe. Total incremental cost was 8 paid calls and 102.8 credits.
+
+| Scenario | Successful routes | Failed routes | Cost |
+| --- | --- | --- | --- |
+| Semiconductors | FMP ratios, FMP shares float, Alpha Vantage BBANDS | Finnhub quote | 4 calls / 51.4 credits |
+| Defensive quality | FMP ratios, FMP shares float, Alpha Vantage BBANDS | Finnhub quote | 4 calls / 51.4 credits |
+
+Observed fallback policy:
+
+- FMP ratios and shares float are reliable but expensive; keep them behind explicit budget guardrails.
+- Alpha Vantage BBANDS is a verified low-cost technical context route.
+- Finnhub quote returned unsuccessful in both new scenarios. Before production, prefer EODHD live data for quote/liquidity fallback when budget allows.
+- Current runner output remains preview-level for ranking: normalized scores, factor weights, ranking table, and tie-break rules are not yet complete.

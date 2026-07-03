@@ -56,3 +56,19 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 - If profile/sector is missing, classify exposure as unknown rather than redistributing weights.
 - If news fails, return numeric portfolio risk with catalyst-risk gap.
 - If a holding lacks provider coverage, keep its weight in concentration but mark its data status as missing.
+
+## Live Scenario Verification Update - 2026-07-03
+
+Additional live scenarios were run for a concentrated NVDA portfolio and a defensive stock portfolio. Total incremental cost was 6 paid calls and 98.8 credits.
+
+| Scenario | Successful routes | Failed or skipped routes | Cost |
+| --- | --- | --- | --- |
+| Concentrated NVDA | FMP historical prices, FMP profile/sector | Finnhub quote failed; news catalyst skipped due no inspected tool candidate | 3 calls / 49.4 credits |
+| Defensive stocks | FMP historical prices, FMP profile/sector | Finnhub quote failed; news catalyst skipped due no inspected tool candidate | 3 calls / 49.4 credits |
+
+Observed fallback policy:
+
+- Prioritize FMP historical prices and profile/sector when the goal is exposure and risk decomposition.
+- Finnhub quote returned unsuccessful in both new scenarios. Before production, use EODHD live data as the quote fallback when budget allows.
+- If quote fallback is unavailable, keep concentration and sector exposure but mark quote-dependent metrics as missing.
+- Current runner does not yet compute full VaR, drawdown, volatility, or correlation from returned history; those remain implementation hardening items, not provider gaps.

@@ -63,3 +63,19 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 - If filings fail or have zero records, do not infer confirmation from news alone.
 - If quote data fails, return catalyst evidence without price-reaction scoring.
 - If cost exceeds budget, keep Alpha Vantage news as first call and skip lower-priority signals.
+
+## Live Scenario Verification Update - 2026-07-03
+
+Additional live scenarios were run for TSLA 14d and AAPL 30d. Total incremental cost was 8 paid calls and 13.62 credits.
+
+| Scenario | Successful routes | Failed or empty routes | Cost |
+| --- | --- | --- | --- |
+| TSLA 14d | Alpha Vantage news sentiment, EODHD aggregate sentiment | Finnhub filings, Finnhub quote | 4 calls / 6.81 credits |
+| AAPL 30d | Alpha Vantage news sentiment, EODHD aggregate sentiment | Finnhub filings, Finnhub quote | 4 calls / 6.81 credits |
+
+Observed fallback policy:
+
+- Treat Alpha Vantage news plus EODHD aggregate sentiment as the verified minimum viable signal set.
+- Treat Finnhub filings as optional confirmation only; an empty or unsuccessful response means "not verified", not "no catalyst".
+- Finnhub quote returned unsuccessful in both new scenarios. Before production, add a verified quote fallback such as EODHD live data and only compute price reaction when a quote route succeeds.
+- Keep the budget order as news sentiment, aggregate sentiment, filings, then quote fallback.
