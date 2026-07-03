@@ -1,8 +1,8 @@
 {
   "schema_version": "2026-07-03",
   "skill_id": "qveris-quant-factor-screen",
-  "generated_at": "2026-07-03T08:07:23.165Z",
-  "mode": "fixture",
+  "generated_at": "2026-07-03T08:07:38.504Z",
+  "mode": "live",
   "scope": {
     "universe": [
       "AAPL",
@@ -20,7 +20,7 @@
   },
   "findings": [
     "Screen universe contains 2 tickers: AAPL, MSFT.",
-    "Factor coverage attempted: valuation_ratios, liquidity_float, quality_overview, momentum_or_volatility, price_momentum, quote_snapshot, news_risk.",
+    "Factor coverage attempted: valuation_ratios, quality_overview, liquidity_float, price_momentum, news_risk.",
     "Generated a 2-row ranking table with 2 scored ticker(s).",
     "Ranking exposes raw fields, normalized scores, missing-field flags, factor weights, and tie-break rules."
   ],
@@ -31,7 +31,7 @@
       "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
       "ok": true,
       "cost": 24.2,
-      "execution_id": null,
+      "execution_id": "13512a0f-4cb0-4899-822e-027a504b74bf",
       "record_count": 1,
       "error": null
     },
@@ -41,27 +41,7 @@
       "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
       "ok": true,
       "cost": 24.2,
-      "execution_id": null,
-      "record_count": 1,
-      "error": null
-    },
-    {
-      "role": "liquidity_float",
-      "target": "AAPL",
-      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
-      "ok": true,
-      "cost": 24.2,
-      "execution_id": null,
-      "record_count": 1,
-      "error": null
-    },
-    {
-      "role": "liquidity_float",
-      "target": "MSFT",
-      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
-      "ok": true,
-      "cost": 24.2,
-      "execution_id": null,
+      "execution_id": "53155763-5fc6-449d-854c-c3be1a66670e",
       "record_count": 1,
       "error": null
     },
@@ -71,7 +51,7 @@
       "tool_id": "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a",
       "ok": true,
       "cost": 2,
-      "execution_id": null,
+      "execution_id": "95f89f1a-02ec-4e3c-98fd-17f81ae36f66",
       "record_count": 1,
       "error": null
     },
@@ -81,27 +61,27 @@
       "tool_id": "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a",
       "ok": true,
       "cost": 2,
-      "execution_id": null,
+      "execution_id": "7b6e1da0-88cc-448e-99ae-da300178154d",
       "record_count": 1,
       "error": null
     },
     {
-      "role": "momentum_or_volatility",
+      "role": "liquidity_float",
       "target": "AAPL",
-      "tool_id": "alphavantage.rocr.list.v1.467a92c0",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
       "ok": true,
-      "cost": 2,
-      "execution_id": null,
+      "cost": 24.2,
+      "execution_id": "2ac09f6a-450b-44ca-8fdf-6973a7dadf5e",
       "record_count": 1,
       "error": null
     },
     {
-      "role": "momentum_or_volatility",
+      "role": "liquidity_float",
       "target": "MSFT",
-      "tool_id": "alphavantage.rocr.list.v1.467a92c0",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
       "ok": true,
-      "cost": 2,
-      "execution_id": null,
+      "cost": 24.2,
+      "execution_id": "5a17d0f8-a4bd-47c8-ad53-4cac96de1363",
       "record_count": 1,
       "error": null
     },
@@ -111,8 +91,8 @@
       "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
       "ok": true,
       "cost": 24.2,
-      "execution_id": null,
-      "record_count": 5,
+      "execution_id": "b9a31ff8-70d9-4e59-a7b0-eaa562830a0e",
+      "record_count": 62,
       "error": null
     },
     {
@@ -121,28 +101,8 @@
       "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
       "ok": true,
       "cost": 24.2,
-      "execution_id": null,
-      "record_count": 5,
-      "error": null
-    },
-    {
-      "role": "quote_snapshot",
-      "target": "AAPL",
-      "tool_id": "eodhd.live_v2.us_quote_delayed.retrieve.v1.f0e13d45",
-      "ok": true,
-      "cost": 2.81,
-      "execution_id": null,
-      "record_count": 1,
-      "error": null
-    },
-    {
-      "role": "quote_snapshot",
-      "target": "MSFT",
-      "tool_id": "eodhd.live_v2.us_quote_delayed.retrieve.v1.f0e13d45",
-      "ok": true,
-      "cost": 2.81,
-      "execution_id": null,
-      "record_count": 1,
+      "execution_id": "6d6a9d9d-4646-447d-a92f-14442cfbde3d",
+      "record_count": 62,
       "error": null
     },
     {
@@ -151,8 +111,8 @@
       "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
       "ok": true,
       "cost": 2,
-      "execution_id": null,
-      "record_count": 2,
+      "execution_id": "74f3650a-ad3f-41aa-9ab0-f3d73c154e38",
+      "record_count": 8,
       "error": null
     },
     {
@@ -161,8 +121,8 @@
       "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
       "ok": true,
       "cost": 2,
-      "execution_id": null,
-      "record_count": 2,
+      "execution_id": "cb4dcfb3-cf00-47a8-9292-ca2d3cf6fdfb",
+      "record_count": 8,
       "error": null
     }
   ],
@@ -172,8 +132,8 @@
     "This is a research screen, not a buy/sell recommendation."
   ],
   "usage": {
-    "paid_calls": 14,
-    "estimated_credits": 162.82
+    "paid_calls": 10,
+    "estimated_credits": 153.2
   },
   "result": {
     "universe": [
@@ -189,11 +149,9 @@
     ],
     "coverage_roles": [
       "valuation_ratios",
-      "liquidity_float",
       "quality_overview",
-      "momentum_or_volatility",
+      "liquidity_float",
       "price_momentum",
-      "quote_snapshot",
       "news_risk"
     ],
     "scoring_version": "deterministic-preview-2026-07-03",
@@ -203,56 +161,56 @@
       {
         "rank": 1,
         "symbol": "AAPL",
-        "score": 0.76,
+        "score": 0.84,
         "data_status": "complete",
         "raw_fields": {
-          "pe": 31.2,
-          "roe": 1.42,
-          "profit_margin": 0.24,
-          "float_shares": 15340000000,
-          "volume": 58100000,
-          "quote_change_pct": 1.1,
-          "technical": 1.08,
-          "price_momentum_return_pct": 6,
+          "pe": 34.1068090787717,
+          "roe": 1.415,
+          "profit_margin": 0.272,
+          "float_shares": 14662534368,
+          "volume": null,
+          "quote_change_pct": null,
+          "technical": null,
+          "price_momentum_return_pct": 19.2266,
           "news_sentiment": {
-            "positive": 2,
-            "negative": 1
+            "positive": 44,
+            "negative": 6
           }
         },
         "normalized_scores": {
-          "valuation": 0.48,
+          "valuation": 0.43155318202047177,
           "quality": 1,
           "liquidity": 1,
-          "momentum": 0.7,
-          "news_risk": 0.667
+          "momentum": 1,
+          "news_risk": 0.88
         },
         "missing_factors": []
       },
       {
         "rank": 2,
         "symbol": "MSFT",
-        "score": 0.591,
+        "score": 0.594,
         "data_status": "complete",
         "raw_fields": {
-          "pe": 28.4,
-          "roe": 0.38,
-          "profit_margin": 0.36,
-          "float_shares": 7420000000,
-          "volume": 24100000,
-          "quote_change_pct": 0.4,
-          "technical": 1.04,
-          "price_momentum_return_pct": 2.449,
+          "pe": 36.307299270072996,
+          "roe": 0.34,
+          "profit_margin": 0.393,
+          "float_shares": 7417514905,
+          "volume": null,
+          "quote_change_pct": null,
+          "technical": null,
+          "price_momentum_return_pct": 4.7227,
           "news_sentiment": {
-            "positive": 2,
-            "negative": 1
+            "positive": 68,
+            "negative": 10
           }
         },
         "normalized_scores": {
-          "valuation": 0.5266666666666666,
-          "quality": 0.38,
-          "liquidity": 0.9870403905279026,
-          "momentum": 0.582,
-          "news_risk": 0.667
+          "valuation": 0.3948783454987834,
+          "quality": 0.34,
+          "liquidity": 0.9870258427675465,
+          "momentum": 0.657,
+          "news_risk": 0.872
         },
         "missing_factors": []
       }

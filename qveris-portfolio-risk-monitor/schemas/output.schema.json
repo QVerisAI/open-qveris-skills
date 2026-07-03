@@ -56,7 +56,9 @@
             "daily_volatility": { "type": ["number", "null"] },
             "annualized_volatility": { "type": ["number", "null"] },
             "max_drawdown": { "type": "number" },
-            "historical_var_95": { "type": ["number", "null"] }
+            "historical_var_95": { "type": ["number", "null"] },
+            "correlation_to_benchmark": { "type": ["number", "null"] },
+            "benchmark_observation_count": { "type": "number" }
           }
         },
         "missing_metrics": { "type": "array", "items": { "type": "string" } },

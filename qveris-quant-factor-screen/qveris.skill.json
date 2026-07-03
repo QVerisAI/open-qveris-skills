@@ -8,7 +8,7 @@
     "zh": "量化因子筛选"
   },
   "description": {
-    "en": "Rank a stock universe with transparent QVeris factor evidence across quality, momentum, valuation, liquidity, volatility, and news risk.",
+    "en": "Rank a stock universe with transparent QVeris factor evidence across valuation, quality, liquidity, momentum, and news risk.",
     "zh": "用 QVeris 因子证据对股票池按质量、动量、估值、流动性、波动和新闻风险进行透明排序。"
   },
   "overview": {
@@ -54,7 +54,7 @@
         "zh": "按透明因子排序主题股票池。"
       },
       "prompt": {
-        "en": "Use QVeris to screen 50 AI infrastructure stocks by quality, momentum, valuation, liquidity, volatility, and news risk. Return top 10, bottom 5, missing data, factor weights, QVeris calls used, and estimated credits.",
+        "en": "Use QVeris to screen 50 AI infrastructure stocks by valuation, quality, liquidity, momentum, and news risk. Return top 10, bottom 5, missing data, factor weights, QVeris calls used, and estimated credits.",
         "zh": "用 QVeris 按质量、动量、估值、流动性、波动和新闻风险筛选 50 只 AI 基建股票。返回前 10、后 5、缺失数据、因子权重、QVeris 调用和预计 credits。"
       }
     },
@@ -200,8 +200,8 @@
       "en": "This workflow usually needs 8-40 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
       "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 8-40 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
     },
-    "typical_calls": "8-40",
-    "estimated_credits": "8-400 credits",
+    "typical_calls": "10-40",
+    "estimated_credits": "10-520 credits",
     "free_actions": [
       "Discover",
       "Inspect"

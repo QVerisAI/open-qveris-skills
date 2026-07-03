@@ -43,8 +43,14 @@ function numberField(row, keys) {
   return null;
 }
 
-function historicalCloses(calls) {
-  const call = calls.find((row) => row.role === "historical_prices" && row.ok !== false);
+function callTarget(call) {
+  return String(call?.target || call?.parameters?.symbol || "").toUpperCase();
+}
+
+function historicalCloses(calls, symbol = null) {
+  const wanted = symbol ? String(symbol).toUpperCase() : null;
+  const candidates = calls.filter((row) => row.role === "historical_prices" && row.ok !== false);
+  const call = wanted ? candidates.find((row) => callTarget(row) === wanted) || candidates[0] : candidates[0];
   return payloadRecords(call)
     .map((row, index) => ({
       date: row.date || row.datetime || row.timestamp || String(index).padStart(5, "0"),
@@ -52,6 +58,36 @@ function historicalCloses(calls) {
     }))
     .filter((row) => Number.isFinite(row.close) && row.close > 0)
     .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+}
+
+function closeReturns(closes) {
+  const rows = [];
+  for (let i = 1; i < closes.length; i++) {
+    const prev = closes[i - 1];
+    const curr = closes[i];
+    if (prev.close > 0 && curr.close > 0) rows.push({ date: curr.date, value: curr.close / prev.close - 1 });
+  }
+  return rows;
+}
+
+function pearsonCorrelation(left, right) {
+  const rightByDate = new Map(right.map((row) => [row.date, row.value]));
+  const pairs = left
+    .map((row) => [row.value, rightByDate.get(row.date)])
+    .filter(([, b]) => Number.isFinite(b));
+  if (pairs.length < 3) return null;
+  const meanA = pairs.reduce((sum, [a]) => sum + a, 0) / pairs.length;
+  const meanB = pairs.reduce((sum, [, b]) => sum + b, 0) / pairs.length;
+  let numerator = 0;
+  let denomA = 0;
+  let denomB = 0;
+  for (const [a, b] of pairs) {
+    numerator += (a - meanA) * (b - meanB);
+    denomA += (a - meanA) ** 2;
+    denomB += (b - meanB) ** 2;
+  }
+  if (!denomA || !denomB) return null;
+  return Number((numerator / Math.sqrt(denomA * denomB)).toFixed(4));
 }
 
 function percentile(values, pct) {
@@ -68,10 +104,8 @@ function stddev(values) {
   return Math.sqrt(variance);
 }
 
-function riskMetrics(calls) {
-  const closes = historicalCloses(calls);
-  const returns = [];
-  for (let i = 1; i < closes.length; i++) returns.push(closes[i].close / closes[i - 1].close - 1);
+function riskMetrics(closes, benchmarkCloses = []) {
+  const returns = closeReturns(closes).map((row) => row.value);
   let peak = closes[0]?.close || 0;
   let maxDrawdown = 0;
   for (const row of closes) {
@@ -81,6 +115,7 @@ function riskMetrics(calls) {
   const dailyVol = stddev(returns);
   const var95 = percentile(returns, 0.05);
   if (!closes.length || !returns.length) return null;
+  const correlationToBenchmark = pearsonCorrelation(closeReturns(closes), closeReturns(benchmarkCloses));
   return {
     observation_count: closes.length,
     latest_close: Number(closes.at(-1).close.toFixed(4)),
@@ -88,6 +123,8 @@ function riskMetrics(calls) {
     annualized_volatility: dailyVol == null ? null : Number((dailyVol * Math.sqrt(252)).toFixed(4)),
     max_drawdown: Number(maxDrawdown.toFixed(4)),
     historical_var_95: var95 == null ? null : Number(Math.min(0, var95).toFixed(4)),
+    correlation_to_benchmark: correlationToBenchmark,
+    benchmark_observation_count: benchmarkCloses.length,
   };
 }
 
@@ -106,11 +143,13 @@ function analyze({ opts, calls }) {
   const top = topHolding(rows);
   const hhi = concentration(rows);
   const evidence = calls.map(genericEvidence);
-  const metrics = riskMetrics(calls);
+  const topCloses = historicalCloses(calls, top.symbol);
+  const benchmarkCloses = historicalCloses(calls, opts.benchmark);
+  const metrics = riskMetrics(topCloses, benchmarkCloses);
   const missingMetrics = [
     metrics?.annualized_volatility == null ? "volatility" : null,
     metrics?.max_drawdown == null ? "drawdown" : null,
-    "correlation",
+    metrics?.correlation_to_benchmark == null ? "correlation" : null,
     metrics?.historical_var_95 == null ? "VaR" : null,
   ].filter(Boolean);
   const missingData = ["quote_snapshot", "historical_prices", "profile_sector", "news_catalyst"]
@@ -129,7 +168,7 @@ function analyze({ opts, calls }) {
       `Largest non-cash holding is ${top.symbol} at ${top.weight}%.`,
       `Portfolio concentration HHI is ${hhi.toFixed(3)}; values above 0.25 deserve concentration review.`,
       metrics
-        ? `Top holding history produced ${metrics.observation_count} observations, annualized volatility ${metrics.annualized_volatility}, max drawdown ${metrics.max_drawdown}, and 95% historical VaR ${metrics.historical_var_95}.`
+        ? `Top holding history produced ${metrics.observation_count} observations, annualized volatility ${metrics.annualized_volatility}, max drawdown ${metrics.max_drawdown}, 95% historical VaR ${metrics.historical_var_95}, and benchmark correlation ${metrics.correlation_to_benchmark ?? "unavailable"}.`
         : "Top holding historical risk metrics are unavailable because historical prices were missing or too sparse.",
       `Collected ${calls.length} QVeris call attempts across market, profile, historical, and news/catalyst roles.`,
       "Risk interpretation should separate measurable exposure from narrative catalyst risk.",
@@ -150,6 +189,7 @@ function analyze({ opts, calls }) {
         "top_holding_exposure",
         "provider_coverage",
         ...(metrics ? ["top_holding_volatility", "top_holding_drawdown", "top_holding_historical_var"] : []),
+        ...(metrics?.correlation_to_benchmark == null ? [] : ["benchmark_correlation"]),
       ],
       risk_metrics: metrics,
       missing_metrics: missingMetrics,
@@ -207,8 +247,13 @@ const config = {
       category: "historical_prices",
       preferredToolIds: ["financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22"],
       strictPreferred: true,
-      buildParams: (opts) => ({
-        symbol: topHolding(holdings(opts)).symbol,
+      repeatFor: (opts) => [
+        { symbol: topHolding(holdings(opts)).symbol, kind: "top_holding" },
+        { symbol: opts.benchmark, kind: "benchmark" },
+      ],
+      target: (item) => item.symbol,
+      buildParams: (opts, tool, item) => ({
+        symbol: item.symbol,
         from: dateNDaysBefore(opts.asOf, opts.windowDays),
         to: opts.asOf,
       }),
@@ -265,6 +310,6 @@ runCli(config, {
   benchmark: "SPY",
   market: "US",
   windowDays: 30,
-  maxPaidCalls: 4,
-  maxCredits: 60,
+  maxPaidCalls: 5,
+  maxCredits: 100,
 });

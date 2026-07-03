@@ -91,3 +91,18 @@ Artifact set: `artifacts/hardening-live-20260703.*`
 Final live artifact cost: 4 paid calls / 74.97 credits. A one-off debug call also verified the raw FMP snapshot shape and cost 24.2 credits (`execution_id=7f2fcdde-340d-46df-bedb-5d8fa46d1396`).
 
 Output status: `phase_labels_ready=true`; `rotation_quadrants`, `momentum_scores`, and `relative_strength_scores` are populated from FMP snapshot data. Remaining missing outputs are `etf_price_history`, `benchmark_relative_history`, and `flow_or_revision_confirmation`.
+
+## Skill-side Repair Update - 2026-07-03
+
+- Added repeated `proxy_price_history` calls for each sector ETF and a separate `benchmark_price_history` call for the benchmark.
+- `benchmark_relative_history` is now populated when proxy and benchmark histories return usable closes; snapshot-only labels remain available as a lower-confidence fallback.
+- Added `flow_or_revision_confirmation`, preferring Alpha Vantage news sentiment or EODHD news as a catalyst/confirmation fallback when direct flow or revision routes are unavailable.
+- Default live guardrail is now 15 paid calls / 360 credits for the eight-sector US ETF map plus benchmark and confirmation routes.
+
+## Repair Live Verification - 2026-07-03
+
+Artifact set: `artifacts/repair-live-20260703-v2.*`
+
+- Cost: 7 paid calls / 147.2 credits for the XLK/XLE plus SPY scenario.
+- Result: `phase_labels_ready=true`, `benchmark_relative_history` populated from proxy and benchmark closes, flow/revision confirmation populated, and no `missing_outputs` or `missing_data`.
+- Implementation note: ETF historical prices now use a dedicated `sector_price_history` discovery category so the FMP historical-price route is not missed by the broader sector-performance search.

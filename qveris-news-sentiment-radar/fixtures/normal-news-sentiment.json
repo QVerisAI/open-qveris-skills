@@ -27,6 +27,17 @@
       }
     },
     {
+      "role": "aggregate_sentiment",
+      "tool_id": "eodhd.sentiments.list.v1.9ba159a0",
+      "ok": true,
+      "cost": 2.81,
+      "raw_result": {
+        "result": [
+          { "date": "2026-07-01", "count": 4, "normalized": 0.42, "sentiment": "positive" }
+        ]
+      }
+    },
+    {
       "role": "price_reaction",
       "tool_id": "finnhub_io_api.stock.quote",
       "ok": true,
@@ -37,10 +48,21 @@
           "dp": 1.4
         }
       }
+    },
+    {
+      "role": "issuer_confirmation",
+      "tool_id": "eodhd.news.retrieve.v1.fe8bf94c",
+      "ok": true,
+      "cost": 2.81,
+      "raw_result": {
+        "result": [
+          { "title": "NVDA official partner update confirms demand signal", "sentiment": "positive" }
+        ]
+      }
     }
   ],
   "usage": {
-    "paid_calls": 2,
-    "estimated_credits": 3
+    "paid_calls": 4,
+    "estimated_credits": 8.62
   }
 }

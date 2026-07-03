@@ -44,6 +44,7 @@
         "rotation_quadrants": { "type": "array", "items": { "type": "object" } },
         "momentum_scores": { "type": "array", "items": { "type": "object" } },
         "relative_strength_scores": { "type": "array", "items": { "type": "object" } },
+        "benchmark_relative_history": { "type": "array", "items": { "type": "object" } },
         "evidence_roles": { "type": "array", "items": { "type": "string" } },
         "missing_outputs": { "type": "array", "items": { "type": "string" } },
         "missing_data": { "type": "array", "items": { "type": "string" } }

@@ -39,6 +39,10 @@ test("sector rotation runner renders fixture report and trace", () => {
   assert.ok(Array.isArray(businessOutput.result.rotation_quadrants));
   assert.ok(Array.isArray(businessOutput.result.momentum_scores));
   assert.ok(!businessOutput.result.missing_outputs.includes("rotation_quadrants"));
+  assert.ok(!businessOutput.result.missing_outputs.includes("benchmark_relative_history"));
+  assert.ok(!businessOutput.result.missing_outputs.includes("flow_or_revision_confirmation"));
+  assert.ok(Array.isArray(businessOutput.result.benchmark_relative_history));
+  assert.equal(businessOutput.result.benchmark_relative_history.length, 2);
 });
 
 test("sector rotation runner surfaces missing provider data", () => {

@@ -31,11 +31,13 @@ test("news sentiment runner renders fixture report and trace", () => {
   const traceJson = JSON.parse(readFileSync(trace, "utf8"));
   const schema = JSON.parse(readFileSync(path.join(root, "qveris-news-sentiment-radar/schemas/output.schema.json"), "utf8"));
   assert.match(report, /News Sentiment Radar/);
-  assert.match(report, /Paid calls: 2/);
+  assert.match(report, /Paid calls: 4/);
   assert.equal(traceJson.skill_id, "qveris-news-sentiment-radar");
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.skill_id, "qveris-news-sentiment-radar");
   assert.equal(businessOutput.result.ticker, "NVDA");
+  assert.equal(businessOutput.result.catalyst_status, "confirmed_evidence_set");
+  assert.deepEqual(businessOutput.result.confirmation_roles, ["issuer_confirmation"]);
 });
 
 test("news sentiment runner surfaces missing provider data", () => {
