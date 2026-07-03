@@ -270,7 +270,7 @@ export function genericEvidence(result) {
   };
 }
 
-async function executePlan(config, opts, preflightResult) {
+export async function executePlan(config, opts, preflightResult) {
   const calls = [];
   const trace = [];
   let paidCalls = 0;
