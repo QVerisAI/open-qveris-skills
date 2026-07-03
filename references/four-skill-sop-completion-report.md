@@ -27,7 +27,7 @@ Skills:
 | Tests | Done | `*/tests/runner.fixture.test.mjs` |
 | Examples | Done | `*/examples/README.md` |
 | Live QVeris smoke test | Done | `*/artifacts/live-smoke.md`, `*/artifacts/live-smoke-trace.json` |
-| Codex E2E | Done | `*/artifacts/codex-e2e.md` |
+| Codex E2E | Done | `*/artifacts/codex-e2e.md`, `*/artifacts/codex-cli-live*.json`, `references/codex-cli-four-skill-e2e-report.md` |
 | qveris.skill.json update | Done | Status set to `preview`; validation pointers added; platforms narrowed to `cli` until additional platform validation |
 | OpenClaw E2E | Pending | Local `openclaw` command is not the Skill Hub platform CLI; blocker recorded in `references/openclaw-skillhub-e2e-check.md` |
 
