@@ -30,10 +30,25 @@
       "raw_result": {
         "result": [{ "symbol": "AAPL", "sector": "Technology", "industry": "Consumer Electronics" }]
       }
+    },
+    {
+      "role": "historical_prices",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "date": "2026-06-26", "close": 170.0 },
+          { "date": "2026-06-29", "close": 173.2 },
+          { "date": "2026-06-30", "close": 171.5 },
+          { "date": "2026-07-01", "close": 176.3 },
+          { "date": "2026-07-02", "close": 180.2 }
+        ]
+      }
     }
   ],
   "usage": {
-    "paid_calls": 2,
-    "estimated_credits": 25.2
+    "paid_calls": 3,
+    "estimated_credits": 49.4
   }
 }

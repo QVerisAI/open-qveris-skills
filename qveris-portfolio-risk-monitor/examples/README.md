@@ -32,8 +32,8 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --holdings AAPL:25,NVDA:25,MSFT:20,TSLA:15,CASH:15 \
   --benchmark SPY \
   --window-days 30 \
-  --max-paid-calls 4 \
-  --max-credits 60 \
+  --max-paid-calls 5 \
+  --max-credits 70 \
   --output qveris-portfolio-risk-monitor/artifacts/portfolio-live-smoke.md \
   --json-output qveris-portfolio-risk-monitor/artifacts/portfolio-live-smoke-output.json \
   --trace qveris-portfolio-risk-monitor/artifacts/portfolio-live-smoke-trace.json
@@ -49,8 +49,8 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --benchmark QQQ \
   --window-days 30 \
   --as-of 2026-07-03 \
-  --max-paid-calls 4 \
-  --max-credits 60 \
+  --max-paid-calls 5 \
+  --max-credits 70 \
   --output qveris-portfolio-risk-monitor/artifacts/scenario-02-concentrated-nvda.md \
   --json-output qveris-portfolio-risk-monitor/artifacts/scenario-02-concentrated-nvda-output.json \
   --trace qveris-portfolio-risk-monitor/artifacts/scenario-02-concentrated-nvda-trace.json
@@ -66,8 +66,8 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --benchmark SPY \
   --window-days 30 \
   --as-of 2026-07-03 \
-  --max-paid-calls 4 \
-  --max-credits 60 \
+  --max-paid-calls 5 \
+  --max-credits 70 \
   --output qveris-portfolio-risk-monitor/artifacts/scenario-03-defensive-stocks.md \
   --json-output qveris-portfolio-risk-monitor/artifacts/scenario-03-defensive-stocks-output.json \
   --trace qveris-portfolio-risk-monitor/artifacts/scenario-03-defensive-stocks-trace.json

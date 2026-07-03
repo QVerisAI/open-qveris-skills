@@ -48,6 +48,17 @@
         "concentration_level": { "type": "string", "enum": ["low", "medium", "high"] },
         "evidence_roles": { "type": "array", "items": { "type": "string" } },
         "measurable_risks": { "type": "array", "items": { "type": "string" } },
+        "risk_metrics": {
+          "type": ["object", "null"],
+          "properties": {
+            "observation_count": { "type": "number" },
+            "latest_close": { "type": "number" },
+            "daily_volatility": { "type": ["number", "null"] },
+            "annualized_volatility": { "type": ["number", "null"] },
+            "max_drawdown": { "type": "number" },
+            "historical_var_95": { "type": ["number", "null"] }
+          }
+        },
         "missing_metrics": { "type": "array", "items": { "type": "string" } },
         "missing_data": { "type": "array", "items": { "type": "string" } }
       }

@@ -30,8 +30,8 @@ node qveris-quant-factor-screen/scripts/run.mjs \
   --live \
   --universe AAPL,MSFT,NVDA,AMD,AVGO \
   --window-days 90 \
-  --max-paid-calls 4 \
-  --max-credits 80 \
+  --max-paid-calls 5 \
+  --max-credits 85 \
   --output qveris-quant-factor-screen/artifacts/factor-live-smoke.md \
   --json-output qveris-quant-factor-screen/artifacts/factor-live-smoke-output.json \
   --trace qveris-quant-factor-screen/artifacts/factor-live-smoke-trace.json
@@ -46,8 +46,8 @@ node qveris-quant-factor-screen/scripts/run.mjs \
   --market US \
   --window-days 90 \
   --as-of 2026-07-03 \
-  --max-paid-calls 4 \
-  --max-credits 80 \
+  --max-paid-calls 5 \
+  --max-credits 85 \
   --output qveris-quant-factor-screen/artifacts/scenario-02-semis.md \
   --json-output qveris-quant-factor-screen/artifacts/scenario-02-semis-output.json \
   --trace qveris-quant-factor-screen/artifacts/scenario-02-semis-trace.json
@@ -62,8 +62,8 @@ node qveris-quant-factor-screen/scripts/run.mjs \
   --market US \
   --window-days 90 \
   --as-of 2026-07-03 \
-  --max-paid-calls 4 \
-  --max-credits 80 \
+  --max-paid-calls 5 \
+  --max-credits 85 \
   --output qveris-quant-factor-screen/artifacts/scenario-03-defensive-quality.md \
   --json-output qveris-quant-factor-screen/artifacts/scenario-03-defensive-quality-output.json \
   --trace qveris-quant-factor-screen/artifacts/scenario-03-defensive-quality-trace.json

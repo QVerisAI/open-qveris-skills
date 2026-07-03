@@ -19,8 +19,9 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 | News sentiment | Alpha Vantage | `alphavantage.news_sentiment.query.v1.467a92c0` | `function=NEWS_SENTIMENT`, optional `tickers`, `time_from`, `time_to`, `sort`, `limit` | 2 credits/call | Success rate 0.944, avg 593 ms | Primary market-news sentiment feed. |
 | Sentiment score | EODHD | `eodhd.sentiments.list.v1.9ba159a0` | `s`, optional `from`, `to` | 2.81 credits/call | Success rate 1.0, avg 885 ms | Aggregate ticker sentiment check. |
 | Insider sentiment | Finnhub | `finnhub.stock.insidersentiment.retrieve.v1.dff02940` | `symbol`, `from`, `to` | 1 credit/call | Success rate 0.548, avg 363 ms | Secondary sentiment signal, not a news substitute. |
-| Filings | Finnhub | `finnhub.stock.filings.retrieve.v1.b6619ba1` | optional `symbol`, `cik`, `form`, `from`, `to` | 1 credit/call | Current success sample weak; inspect before use | Filing-event confirmation when available. |
-| Quote | Finnhub | `finnhub_io_api.stock.quote` | `symbol` | 1 credit/call | Success rate 0.916, avg 477 ms | Price-reaction sanity check. |
+| Filings | Finnhub | `finnhub.stock.filings.retrieve.v1`, `finnhub.stock.filings.retrieve.v1.27aa1125`, `finnhub.stock.filings.retrieve.v1.b6619ba1` | optional `symbol`, `cik`, `form`, `from`, `to` | 1 credit/call | Current success sample weak; fallback on empty enabled | Filing-event confirmation when available. |
+| Live quote | EODHD | `eodhd.live_data.real_time.retrieve.v1.b60a4285` | `symbol`, optional `fmt` | 2.81 credits/call | Success rate 0.995, avg 1215 ms | Primary price-reaction sanity check after hardening. |
+| Quote | Finnhub | `finnhub_io_api.stock.quote`, `finnhub.quote.retrieve.v1.f72cf5ef` | `symbol` | 1 credit/call | Finnhub quote failed in 2026-07-03 live smoke | Low-cost quote fallback only. |
 
 ## Parameter Templates
 
@@ -45,7 +46,8 @@ This map records QVeris Discover / Inspect preflight results for the first produ
     "to": "2026-07-02"
   },
   "price_reaction": {
-    "symbol": "NVDA"
+    "symbol": "NVDA.US",
+    "fmt": "json"
   }
 }
 ```
@@ -60,9 +62,10 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 ## Fallback Strategy
 
 - If news sentiment fails, use aggregate sentiment and quote reaction, then mark missing article evidence.
-- If filings fail or have zero records, do not infer confirmation from news alone.
-- If quote data fails, return catalyst evidence without price-reaction scoring.
+- If filings fail or have zero records, try the next Finnhub filings variant; do not infer confirmation from news alone if all variants fail or return empty.
+- If quote data fails, try EODHD live data before Finnhub quote; return catalyst evidence without price-reaction scoring only when all quote routes fail.
 - If cost exceeds budget, keep Alpha Vantage news as first call and skip lower-priority signals.
+- Compute `catalyst_confidence_score` from sentiment balance and corroborating roles. Label `confirmed_evidence_set` only when all required roles return usable payloads.
 
 ## Live Scenario Verification Update - 2026-07-03
 
@@ -77,5 +80,24 @@ Observed fallback policy:
 
 - Treat Alpha Vantage news plus EODHD aggregate sentiment as the verified minimum viable signal set.
 - Treat Finnhub filings as optional confirmation only; an empty or unsuccessful response means "not verified", not "no catalyst".
-- Finnhub quote returned unsuccessful in both new scenarios. Before production, add a verified quote fallback such as EODHD live data and only compute price reaction when a quote route succeeds.
-- Keep the budget order as news sentiment, aggregate sentiment, filings, then quote fallback.
+- Finnhub quote returned unsuccessful in both new scenarios. The hardened runner now prioritizes EODHD live data for price reaction, then falls back to Finnhub variants.
+- Keep the budget order as news sentiment, aggregate sentiment, filings, then quote fallback; allow one extra paid call when fallback is expected.
+
+## Skill-side Hardening Update - 2026-07-03
+
+- Runner fallback is role-scoped: unsuccessful or empty filings/quote calls remain in trace, then the next verified candidate is attempted while budget remains. Filings fallback is capped at two attempts so price reaction is not starved by repeated filing-provider failures.
+- Missing data is reported once per role instead of once per failed provider attempt.
+- Structured output now includes `catalyst_confidence_score` and `corroborating_roles`; these are deterministic summaries of returned evidence, not provider-native scores.
+
+## Hardening Live Verification - 2026-07-03
+
+Artifact set: `artifacts/hardening-live-20260703.*`
+
+| Route | Tool | Result |
+| --- | --- | --- |
+| Market news sentiment | `alphavantage.news_sentiment.query.v1.467a92c0` | Success. |
+| Aggregate sentiment | `eodhd.sentiments.list.v1.9ba159a0` | Success. |
+| Filings check | `finnhub.stock.filings.retrieve.v1`, `finnhub.stock.filings.retrieve.v1.27aa1125` | Provider unsuccessful; fallback capped after two attempts. |
+| Price reaction | `eodhd.live_data.real_time.retrieve.v1.b60a4285` | Success; no longer skipped after filing-provider failures. |
+
+Final live artifact cost: 5 paid calls / 9.62 credits. Output status: `catalyst_confidence_score=0.601`; corroborating roles are news, aggregate sentiment, and price reaction. Remaining missing data is filings confirmation.

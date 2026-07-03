@@ -39,6 +39,10 @@
         "coverage_roles": { "type": "array", "items": { "type": "string" } },
         "scoring_version": { "type": "string" },
         "ranking_ready": { "type": "boolean" },
+        "coverage_level": { "type": "string", "enum": ["none", "partial", "complete"] },
+        "ranking_table": { "type": "array", "items": { "type": "object" } },
+        "factor_weights": { "type": "object" },
+        "tie_break_rules": { "type": "array", "items": { "type": "string" } },
         "missing_outputs": { "type": "array", "items": { "type": "string" } },
         "missing_data": { "type": "array", "items": { "type": "string" } }
       }

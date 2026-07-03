@@ -19,7 +19,7 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 | Sector snapshot | FMP | `financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159` | `date`, optional `exchange`, `sector` | 24.2 credits/call | Success rate 0.879, avg 1069 ms | Primary US sector performance snapshot. |
 | Available sectors | FMP | `financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9` | none | 24.2 credits/call | Success rate 1.0, avg 1066 ms | Validate sector naming and coverage. |
 | ETF list | FMP | `financialmodelingprep.stable.etflist.retrieve.v1.85cd2c31` | none | 24.2 credits/call | Success rate 1.0, avg 1250 ms | ETF universe discovery and proxy validation. |
-| ETF performance | Twelve Data | `twelvedata.etfs.world.performance.retrieve.v1.792b716e` | optional `symbol`, `country`, `dp` | 2.37 credits/call | Current sample success 0; inspect before use | Low-cost specialist ETF route when coverage improves. |
+| ETF performance | Twelve Data | `twelvedata.etfs.world.performance.retrieve.v1.792b716e` | optional `symbol`, `country`, `dp` | 2.37 credits/call | Current sample success 0; fallback on empty enabled | Low-cost specialist ETF route when coverage improves. |
 | CN adjusted price | CN Financial Pro | `cn_financial_pro.adjusted_price.v1` | `codes`, `startdate`, `enddate`, optional `cps`, `interval` | 1 credit/result | Success rate 0.975, avg 545 ms | China sector/index proxy price history. |
 | CN industry flow | Gildata | `mcp_gildata.industryrealsectorfundflow.v1` | natural-language `query` | 1 credit/call | Success rate 0.962, avg 5396 ms | China sector flow route. |
 
@@ -42,17 +42,18 @@ This map records QVeris Discover / Inspect preflight results for the first produ
 
 ## Returned Fields To Normalize
 
-- Sector name, exchange, date, and percent performance.
+- Sector name, exchange, date, and percent performance. FMP sector snapshot uses `averageChange` for the snapshot performance value.
 - ETF symbols, names, exchange, and category where available.
 - ETF or sector proxy performance, volume/liquidity, and benchmark comparison.
 - Flow, revision, valuation, or macro/catalyst notes when provider coverage exists.
 
 ## Fallback Strategy
 
-- If sector snapshot fails, use ETF proxy list and quote/history calls by sector ETF.
+- If sector snapshot fails, use ETF proxy list and quote/history calls by sector ETF where discovered.
 - If ETF performance fails, call quote/history for the first proxy and mark full rotation map as partial.
 - If flow/revision coverage is missing, rank by performance/momentum only and flag missing confirmation.
 - For non-US markets, first validate sector proxy mapping before scoring rotation.
+- Compute snapshot-derived `rotation_quadrants`, `momentum_scores`, and `relative_strength_scores` when sector performance rows are available. Keep ETF price history, benchmark-relative history, and flow/revision confirmation marked missing until those routes return usable payloads.
 
 ## Live Scenario Verification Update - 2026-07-03
 
@@ -66,6 +67,27 @@ Additional live scenarios were run for risk-on/risk-off sectors and cyclicals ve
 Observed fallback policy:
 
 - FMP sector snapshot, available sectors, and ETF list are the verified minimum viable US-sector route.
-- Do not claim relative strength, momentum score, or rotation quadrant until an ETF price/history route is verified.
-- If ETF performance remains unavailable, use the sector snapshot as a partial map and mark ETF-derived momentum as missing.
-- Production hardening should add a quote/history route for sector ETF proxies before broad release.
+- Snapshot-derived relative strength, momentum score, and rotation quadrant are now allowed when FMP sector performance rows are present. These are labelled as snapshot scores, not ETF history scores.
+- If ETF performance remains unavailable, use the sector snapshot as a partial map and mark ETF price history, benchmark-relative history, and flow/revision confirmation as missing.
+- Production hardening should still add a verified quote/history route for sector ETF proxies before broad release.
+
+## Skill-side Hardening Update - 2026-07-03
+
+- Structured output now includes snapshot-derived `rotation_quadrants`, `momentum_scores`, and `relative_strength_scores`.
+- `phase_labels_ready` is true only when at least one sector proxy is scored from returned snapshot data.
+- ETF performance is now searched in the flows/revisions category and uses empty-payload fallback tracing rather than being silently skipped.
+
+## Hardening Live Verification - 2026-07-03
+
+Artifact set: `artifacts/hardening-live-20260703.*`
+
+| Route | Tool | Result |
+| --- | --- | --- |
+| Sector snapshot | `financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159` | Success; `averageChange` parsed into snapshot momentum and relative-strength scores. |
+| Available sectors | `financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9` | Success. |
+| ETF performance | `twelvedata.etfs.world.performance.retrieve.v1.792b716e` | Provider unsuccessful; keep ETF price history missing. |
+| ETF symbol search | `financialmodelingprep.stable.etflist.retrieve.v1.85cd2c31` | Success. |
+
+Final live artifact cost: 4 paid calls / 74.97 credits. A one-off debug call also verified the raw FMP snapshot shape and cost 24.2 credits (`execution_id=7f2fcdde-340d-46df-bedb-5d8fa46d1396`).
+
+Output status: `phase_labels_ready=true`; `rotation_quadrants`, `momentum_scores`, and `relative_strength_scores` are populated from FMP snapshot data. Remaining missing outputs are `etf_price_history`, `benchmark_relative_history`, and `flow_or_revision_confirmation`.

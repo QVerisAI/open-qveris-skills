@@ -35,7 +35,10 @@ test("sector rotation runner renders fixture report and trace", () => {
   assert.equal(traceJson.skill_id, "qveris-sector-rotation-map");
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.skill_id, "qveris-sector-rotation-map");
-  assert.equal(businessOutput.result.phase_labels_ready, false);
+  assert.equal(businessOutput.result.phase_labels_ready, true);
+  assert.ok(Array.isArray(businessOutput.result.rotation_quadrants));
+  assert.ok(Array.isArray(businessOutput.result.momentum_scores));
+  assert.ok(!businessOutput.result.missing_outputs.includes("rotation_quadrants"));
 });
 
 test("sector rotation runner surfaces missing provider data", () => {
@@ -59,6 +62,7 @@ test("sector rotation runner surfaces missing provider data", () => {
   const schema = JSON.parse(readFileSync(path.join(root, "qveris-sector-rotation-map/schemas/output.schema.json"), "utf8"));
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.result.phase_labels_ready, false);
+  assert.ok(businessOutput.result.missing_outputs.includes("rotation_quadrants"));
   assert.ok(businessOutput.result.missing_data.some((item) => item.includes("etf_performance")));
   assert.ok(traceJson.trace.some((row) => row.type === "call_error" && row.role === "etf_performance"));
 });
