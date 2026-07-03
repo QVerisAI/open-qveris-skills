@@ -11,7 +11,7 @@ Prefer the local runner before composing a free-form answer:
 
 ```bash
 node qveris-quant-factor-screen/scripts/run.mjs --dry-run --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90
-node qveris-quant-factor-screen/scripts/run.mjs --live --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90 --max-paid-calls 4 --max-credits 80 --output qveris-quant-factor-screen/artifacts/live-smoke.md --trace qveris-quant-factor-screen/artifacts/live-smoke-trace.json
+node qveris-quant-factor-screen/scripts/run.mjs --live --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90 --max-paid-calls 5 --max-credits 85 --output qveris-quant-factor-screen/artifacts/live-smoke.md --trace qveris-quant-factor-screen/artifacts/live-smoke-trace.json
 ```
 
 The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
@@ -37,10 +37,13 @@ Return these sections unless the user asks for a narrower format:
 - QVeris calls used and estimated credits
 - Not investment advice
 
+The JSON artifact must include `ranking_table`, `factor_weights`, `tie_break_rules`, `coverage_level`, role-level `missing_data`, and explicit `missing_outputs`. The runner may return a partial ranking when only the first ticker is fetched under budget; do not present partial coverage as a complete universe ranking.
+
 ## Cost Guardrails
 
 - Discover and Inspect are treated as free preflight actions.
 - Paid actions are QVeris Call executions.
+- Provider fallback attempts are also paid actions and must remain inside `--max-paid-calls` and `--max-credits`; fallback attempts are recorded in the trace.
 - If estimated credits exceed the user's budget, reduce tickers, shorten windows, or ask for approval before continuing.
 
 ## Methodology Reference

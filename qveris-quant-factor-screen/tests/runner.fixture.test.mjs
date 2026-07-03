@@ -36,6 +36,11 @@ test("quant factor runner renders fixture report and trace", () => {
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.skill_id, "qveris-quant-factor-screen");
   assert.equal(businessOutput.result.ranking_ready, false);
+  assert.ok(Array.isArray(businessOutput.result.ranking_table));
+  assert.equal(businessOutput.result.ranking_table[0].symbol, "AAPL");
+  assert.ok(businessOutput.result.factor_weights.valuation > 0);
+  assert.ok(businessOutput.result.tie_break_rules.length > 0);
+  assert.ok(!businessOutput.result.missing_outputs.includes("ranking_table"));
 });
 
 test("quant factor runner surfaces missing provider data", () => {
@@ -59,6 +64,7 @@ test("quant factor runner surfaces missing provider data", () => {
   const schema = JSON.parse(readFileSync(path.join(root, "qveris-quant-factor-screen/schemas/output.schema.json"), "utf8"));
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.result.ranking_ready, false);
+  assert.ok(Array.isArray(businessOutput.result.ranking_table));
   assert.ok(businessOutput.result.missing_data.some((item) => item.includes("valuation_ratios")));
   assert.ok(traceJson.trace.some((row) => row.type === "call_error" && row.role === "valuation_ratios"));
 });

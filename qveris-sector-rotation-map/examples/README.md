@@ -32,8 +32,8 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU \
   --benchmark SPY \
   --window-days 30 \
-  --max-paid-calls 4 \
-  --max-credits 80 \
+  --max-paid-calls 5 \
+  --max-credits 85 \
   --output qveris-sector-rotation-map/artifacts/sector-live-smoke.md \
   --json-output qveris-sector-rotation-map/artifacts/sector-live-smoke-output.json \
   --trace qveris-sector-rotation-map/artifacts/sector-live-smoke-trace.json
@@ -49,8 +49,8 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --benchmark SPY \
   --window-days 30 \
   --as-of 2026-07-03 \
-  --max-paid-calls 4 \
-  --max-credits 80 \
+  --max-paid-calls 5 \
+  --max-credits 85 \
   --output qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off.md \
   --json-output qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off-output.json \
   --trace qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off-trace.json
@@ -66,8 +66,8 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --benchmark SPY \
   --window-days 30 \
   --as-of 2026-07-03 \
-  --max-paid-calls 4 \
-  --max-credits 80 \
+  --max-paid-calls 5 \
+  --max-credits 85 \
   --output qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives.md \
   --json-output qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives-output.json \
   --trace qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives-trace.json

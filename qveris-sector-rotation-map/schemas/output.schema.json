@@ -41,6 +41,9 @@
         "total_records": { "type": "number" },
         "signal_framework": { "type": "array", "items": { "type": "string" } },
         "phase_labels_ready": { "type": "boolean" },
+        "rotation_quadrants": { "type": "array", "items": { "type": "object" } },
+        "momentum_scores": { "type": "array", "items": { "type": "object" } },
+        "relative_strength_scores": { "type": "array", "items": { "type": "object" } },
         "evidence_roles": { "type": "array", "items": { "type": "string" } },
         "missing_outputs": { "type": "array", "items": { "type": "string" } },
         "missing_data": { "type": "array", "items": { "type": "string" } }

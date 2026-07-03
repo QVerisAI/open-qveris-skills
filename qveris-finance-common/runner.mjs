@@ -191,20 +191,38 @@ function normalizeInspectResults(result) {
   return [];
 }
 
-function chooseTool(category, plan) {
+function toolId(tool) {
+  return tool?.tool_id || tool?.id || "";
+}
+
+function uniqueTools(tools) {
+  const seen = new Set();
+  const out = [];
+  for (const tool of tools) {
+    const id = toolId(tool);
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    out.push(tool);
+  }
+  return out;
+}
+
+function chooseTools(category, plan) {
   const inspected = category.inspected || [];
   const discovered = category.discovered || [];
   const all = [...inspected, ...discovered];
+  const candidates = [];
   for (const preferred of plan.preferredToolIds || []) {
-    const hit = all.find((tool) => (tool.tool_id || tool.id) === preferred);
-    if (hit) return hit;
+    const hit = all.find((tool) => toolId(tool) === preferred);
+    if (hit) candidates.push(hit);
   }
-  if (plan.strictPreferred) return null;
+  if (plan.strictPreferred) return uniqueTools(candidates);
   if (plan.provider) {
-    const hit = all.find((tool) => String(tool.tool_id || tool.id || "").startsWith(`${plan.provider}.`));
-    if (hit) return hit;
+    const hits = all.filter((tool) => String(toolId(tool)).startsWith(`${plan.provider}.`));
+    candidates.push(...hits);
   }
-  return all[0] || null;
+  candidates.push(...all);
+  return uniqueTools(candidates);
 }
 
 export async function preflight(config, opts) {
@@ -243,11 +261,11 @@ export async function preflight(config, opts) {
   return { categories, trace };
 }
 
-function resultPayload(raw) {
+export function resultPayload(raw) {
   return raw?.result?.data ?? raw?.data ?? raw?.result ?? raw ?? {};
 }
 
-function countRecords(value, depth = 0) {
+export function countRecords(value, depth = 0) {
   if (depth > 4 || value == null) return 0;
   if (Array.isArray(value)) return value.length;
   if (typeof value === "object") {
@@ -265,9 +283,16 @@ export function genericEvidence(result) {
     tool_id: result.tool_id,
     ok: result.ok,
     cost: result.cost,
+    execution_id: result.execution_id || null,
     record_count: countRecords(payload),
     error: result.error || null,
   };
+}
+
+function hasUsablePayload(call, plan) {
+  if (call.ok === false) return false;
+  if (!plan.fallbackOnEmpty) return true;
+  return countRecords(resultPayload(call.raw_result)) > 0;
 }
 
 export async function executePlan(config, opts, preflightResult) {
@@ -283,66 +308,107 @@ export async function executePlan(config, opts, preflightResult) {
       trace.push({ type: "call_skipped", role: plan.role, reason: `missing category ${plan.category}` });
       continue;
     }
-    const tool = chooseTool(category, plan);
-    if (!tool) {
+    const candidates = chooseTools(category, plan);
+    if (!candidates.length) {
       trace.push({ type: "call_skipped", role: plan.role, reason: "no inspected tool candidate" });
       continue;
     }
-    const expectedCost = costOf(tool);
-    if (credits + expectedCost > opts.maxCredits) {
+
+    let completedRole = false;
+    const maxAttempts = Math.min(candidates.length, plan.maxAttempts ?? candidates.length);
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      if (paidCalls >= opts.maxPaidCalls) {
+        trace.push({ type: "call_skipped", role: plan.role, reason: "paid call budget exhausted before fallback" });
+        break;
+      }
+      const tool = { ...candidates[attempt], tool_id: toolId(candidates[attempt]) };
+      const expectedCost = costOf(tool);
+      if (credits + expectedCost > opts.maxCredits) {
+        trace.push({
+          type: "call_skipped",
+          role: plan.role,
+          tool_id: tool.tool_id,
+          reason: "credit budget would be exceeded",
+          expected_cost: expectedCost,
+        });
+        continue;
+      }
+      const params = plan.buildParams(opts, tool);
+      const started = isoNow();
+      let call = null;
+      try {
+        const raw = await qverisPost(
+          "/tools/execute",
+          { search_id: category.search_id, parameters: params, max_response_size: plan.maxResponseSize || 30_000 },
+          { tool_id: tool.tool_id },
+          plan.timeoutMs || 120_000,
+        );
+        const actualCost = Number(raw.cost ?? raw.credits ?? expectedCost ?? 0) || expectedCost;
+        paidCalls += 1;
+        credits += actualCost;
+        call = {
+          role: plan.role,
+          category: plan.category,
+          tool_id: tool.tool_id,
+          provider: tool.provider,
+          parameters: params,
+          expected_cost: expectedCost,
+          cost: actualCost,
+          ok: raw.success !== false,
+          execution_id: raw.execution_id || raw.id || raw.request_id || null,
+          raw_result: raw,
+        };
+        calls.push(call);
+        trace.push({ type: "call", started_at: started, finished_at: isoNow(), ...genericEvidence(call) });
+      } catch (error) {
+        paidCalls += 1;
+        credits += expectedCost;
+        call = {
+          role: plan.role,
+          category: plan.category,
+          tool_id: tool.tool_id,
+          provider: tool.provider,
+          parameters: params,
+          expected_cost: expectedCost,
+          cost: expectedCost,
+          ok: false,
+          execution_id: null,
+          error: error?.message || String(error),
+          raw_result: null,
+        };
+        calls.push(call);
+        trace.push({ type: "call_error", started_at: started, finished_at: isoNow(), ...genericEvidence(call) });
+      }
+
+      if (hasUsablePayload(call, plan)) {
+        completedRole = true;
+        break;
+      }
+      const shouldFallback =
+        (plan.fallbackOnUnsuccessful !== false && call.ok === false) ||
+        (plan.fallbackOnEmpty && countRecords(resultPayload(call.raw_result)) === 0);
+      if (!shouldFallback) {
+        break;
+      }
+      if (attempt < maxAttempts - 1) {
+        trace.push({
+          type: "fallback_attempt",
+          role: plan.role,
+          failed_tool_id: call.tool_id,
+          next_tool_id: candidates[attempt + 1].tool_id,
+        });
+      }
+    }
+    if (!completedRole && maxAttempts < candidates.length) {
       trace.push({
-        type: "call_skipped",
+        type: "fallback_skipped",
         role: plan.role,
-        tool_id: tool.tool_id,
-        reason: "credit budget would be exceeded",
-        expected_cost: expectedCost,
+        reason: "role fallback attempt cap reached",
+        max_attempts: maxAttempts,
+        remaining_candidates: candidates.length - maxAttempts,
       });
-      continue;
     }
-    const params = plan.buildParams(opts, tool);
-    const started = isoNow();
-    try {
-      const raw = await qverisPost(
-        "/tools/execute",
-        { search_id: category.search_id, parameters: params, max_response_size: plan.maxResponseSize || 30_000 },
-        { tool_id: tool.tool_id },
-        plan.timeoutMs || 120_000,
-      );
-      const actualCost = Number(raw.cost ?? raw.credits ?? expectedCost ?? 0) || expectedCost;
-      paidCalls += 1;
-      credits += actualCost;
-      const call = {
-        role: plan.role,
-        category: plan.category,
-        tool_id: tool.tool_id,
-        provider: tool.provider,
-        parameters: params,
-        expected_cost: expectedCost,
-        cost: actualCost,
-        ok: raw.success !== false,
-        execution_id: raw.execution_id || raw.id || raw.request_id || null,
-        raw_result: raw,
-      };
-      calls.push(call);
-      trace.push({ type: "call", started_at: started, finished_at: isoNow(), ...genericEvidence(call) });
-    } catch (error) {
-      paidCalls += 1;
-      credits += expectedCost;
-      const call = {
-        role: plan.role,
-        category: plan.category,
-        tool_id: tool.tool_id,
-        provider: tool.provider,
-        parameters: params,
-        expected_cost: expectedCost,
-        cost: expectedCost,
-        ok: false,
-        error: error?.message || String(error),
-        raw_result: null,
-      };
-      calls.push(call);
-      trace.push({ type: "call_error", started_at: started, finished_at: isoNow(), ...genericEvidence(call) });
-    }
+    if (!completedRole && paidCalls >= opts.maxPaidCalls) break;
   }
 
   return { calls, trace, usage: { paid_calls: paidCalls, estimated_credits: Number(credits.toFixed(2)) } };

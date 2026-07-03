@@ -36,6 +36,10 @@ test("portfolio risk runner renders fixture report and trace", () => {
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.skill_id, "qveris-portfolio-risk-monitor");
   assert.equal(businessOutput.result.top_holding.symbol, "AAPL");
+  assert.ok(businessOutput.result.risk_metrics);
+  assert.equal(businessOutput.result.risk_metrics.observation_count, 5);
+  assert.ok(!businessOutput.result.missing_metrics.includes("volatility"));
+  assert.ok(!businessOutput.result.missing_metrics.includes("drawdown"));
 });
 
 test("portfolio risk runner surfaces missing provider data", () => {

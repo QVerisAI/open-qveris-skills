@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
 import {
+  countRecords,
   dateNDaysBefore,
   genericEvidence,
+  resultPayload,
   runCli,
   toAlphaVantageTimestamp,
   usTicker,
@@ -27,14 +29,40 @@ function sentimentLevel(labels, totalRecords) {
   return "mixed";
 }
 
+function roleSatisfied(calls, role) {
+  return calls.some((call) => call.role === role && call.ok !== false && countRecords(resultPayload(call.raw_result)) > 0);
+}
+
+function missingRole(calls, role) {
+  if (roleSatisfied(calls, role)) return null;
+  const last = [...calls].reverse().find((call) => call.role === role);
+  return `${role}: ${last?.error || "no returned records or provider returned unsuccessful status"}`;
+}
+
+function catalystScore(labels, calls) {
+  const sentimentTotal = labels.positive + labels.negative + labels.neutral;
+  const sentimentBias = sentimentTotal ? (labels.positive - labels.negative) / sentimentTotal : 0;
+  const evidenceScore =
+    Number(roleSatisfied(calls, "market_news_sentiment")) * 0.35 +
+    Number(roleSatisfied(calls, "aggregate_sentiment")) * 0.25 +
+    Number(roleSatisfied(calls, "filings_check")) * 0.2 +
+    Number(roleSatisfied(calls, "price_reaction")) * 0.2;
+  return Number(Math.max(0, Math.min(1, 0.5 + sentimentBias * 0.3 + evidenceScore * 0.2)).toFixed(3));
+}
+
 function analyze({ opts, calls }) {
   const evidence = calls.map(genericEvidence);
   const labels = extractSentimentLabels(calls);
   const totalRecords = evidence.reduce((sum, row) => sum + (row.record_count || 0), 0);
+  const missingData = ["market_news_sentiment", "aggregate_sentiment", "filings_check", "price_reaction"]
+    .map((role) => missingRole(calls, role))
+    .filter(Boolean);
+  const score = catalystScore(labels, calls);
   const findings = [
     `Reviewed ${primaryTicker(opts)} over a ${opts.windowDays}-day window with ${calls.length} QVeris call attempts.`,
     `Observed ${totalRecords} raw records or nested payload rows across selected sources.`,
     `Sentiment text mentions in returned payload: ${labels.positive} positive, ${labels.negative} negative, ${labels.neutral} neutral.`,
+    `Composite catalyst confidence score is ${score}; scores below 0.65 should stay in watchlist mode.`,
     "Use strong labels only when news, filings, or quote reaction agree; otherwise mark the catalyst as weak or unresolved.",
   ];
   const risks = [
@@ -58,11 +86,11 @@ function analyze({ opts, calls }) {
       sentiment_counts: labels,
       total_records: totalRecords,
       signal_level: sentimentLevel(labels, totalRecords),
-      catalyst_status: totalRecords ? "needs_confirmation" : "insufficient_data",
+      catalyst_status: totalRecords && !missingData.length ? "confirmed_evidence_set" : totalRecords ? "needs_confirmation" : "insufficient_data",
+      catalyst_confidence_score: score,
+      corroborating_roles: ["market_news_sentiment", "aggregate_sentiment", "filings_check", "price_reaction"].filter((role) => roleSatisfied(calls, role)),
       evidence_roles: evidence.map((row) => row.role),
-      missing_data: evidence
-        .filter((row) => row.ok === false || !row.record_count)
-        .map((row) => `${row.role}: ${row.error || "no returned records or provider returned unsuccessful status"}`),
+      missing_data: missingData,
     },
   };
 }
@@ -117,7 +145,13 @@ const config = {
     {
       role: "filings_check",
       category: "filings",
-      preferredToolIds: ["finnhub.stock.filings.retrieve.v1.b6619ba1"],
+      preferredToolIds: [
+        "finnhub.stock.filings.retrieve.v1",
+        "finnhub.stock.filings.retrieve.v1.27aa1125",
+        "finnhub.stock.filings.retrieve.v1.b6619ba1",
+      ],
+      fallbackOnEmpty: true,
+      maxAttempts: 2,
       buildParams: (opts) => ({
         symbol: primaryTicker(opts),
         from: dateNDaysBefore(opts.asOf, opts.windowDays),
@@ -127,7 +161,7 @@ const config = {
     {
       role: "price_reaction",
       category: "market_reaction",
-      preferredToolIds: ["finnhub_io_api.stock.quote", "eodhd.live_data.real_time.retrieve.v1.b60a4285"],
+      preferredToolIds: ["eodhd.live_data.real_time.retrieve.v1.b60a4285", "finnhub_io_api.stock.quote", "finnhub.quote.retrieve.v1.f72cf5ef"],
       buildParams: (opts, tool) =>
         String(tool.tool_id).startsWith("eodhd.")
           ? { symbol: usTicker(primaryTicker(opts)), fmt: "json" }

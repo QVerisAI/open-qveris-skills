@@ -11,7 +11,7 @@ Prefer the local runner before composing a free-form answer:
 
 ```bash
 node qveris-portfolio-risk-monitor/scripts/run.mjs --dry-run --holdings AAPL:25,NVDA:25,MSFT:20,TSLA:15,CASH:15 --benchmark SPY --window-days 30
-node qveris-portfolio-risk-monitor/scripts/run.mjs --live --holdings AAPL:25,NVDA:25,MSFT:20,TSLA:15,CASH:15 --benchmark SPY --window-days 30 --max-paid-calls 4 --max-credits 60 --output qveris-portfolio-risk-monitor/artifacts/live-smoke.md --trace qveris-portfolio-risk-monitor/artifacts/live-smoke-trace.json
+node qveris-portfolio-risk-monitor/scripts/run.mjs --live --holdings AAPL:25,NVDA:25,MSFT:20,TSLA:15,CASH:15 --benchmark SPY --window-days 30 --max-paid-calls 5 --max-credits 70 --output qveris-portfolio-risk-monitor/artifacts/live-smoke.md --trace qveris-portfolio-risk-monitor/artifacts/live-smoke-trace.json
 ```
 
 The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
@@ -37,10 +37,13 @@ Return these sections unless the user asks for a narrower format:
 - QVeris calls used and estimated credits
 - Not investment advice
 
+The JSON artifact must include concentration HHI, top holding exposure, role-level `missing_data`, `measurable_risks`, and `risk_metrics` when historical prices are available. `risk_metrics` covers observation count, latest close, daily and annualized volatility, max drawdown, and 95% historical VaR for the top non-cash holding; correlation remains missing unless a multi-asset history route is added.
+
 ## Cost Guardrails
 
 - Discover and Inspect are treated as free preflight actions.
 - Paid actions are QVeris Call executions.
+- Provider fallback attempts are also paid actions and must remain inside `--max-paid-calls` and `--max-credits`; fallback attempts are recorded in the trace.
 - If estimated credits exceed the user's budget, reduce tickers, shorten windows, or ask for approval before continuing.
 
 ## Methodology Reference

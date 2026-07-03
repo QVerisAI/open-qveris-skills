@@ -13,7 +13,7 @@ Prefer the local runner before composing a free-form answer:
 
 ```bash
 node qveris-sector-rotation-map/scripts/run.mjs --dry-run --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30
-node qveris-sector-rotation-map/scripts/run.mjs --live --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30 --max-paid-calls 4 --max-credits 80 --output qveris-sector-rotation-map/artifacts/live-smoke.md --trace qveris-sector-rotation-map/artifacts/live-smoke-trace.json
+node qveris-sector-rotation-map/scripts/run.mjs --live --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30 --max-paid-calls 5 --max-credits 85 --output qveris-sector-rotation-map/artifacts/live-smoke.md --trace qveris-sector-rotation-map/artifacts/live-smoke-trace.json
 ```
 
 The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
@@ -36,6 +36,15 @@ The runner performs QVeris Discover / Inspect preflight, enforces paid-call and 
 - Risks, dissenting evidence, and missing proof
 - QVeris calls used and estimated credits
 - Not investment advice
+
+The JSON artifact must include `rotation_quadrants`, `momentum_scores`, `relative_strength_scores`, role-level `missing_data`, and explicit `missing_outputs`. Snapshot-derived quadrants are allowed when sector snapshot data is present, but benchmark-relative history and flow/revision confirmation must remain marked missing until those routes return usable evidence.
+
+## Cost Guardrails
+
+- Discover and Inspect are treated as free preflight actions.
+- Paid actions are QVeris Call executions.
+- Provider fallback attempts are also paid actions and must remain inside `--max-paid-calls` and `--max-credits`; fallback attempts are recorded in the trace.
+- If estimated credits exceed the user's budget, reduce sector proxies, shorten windows, or ask for approval before continuing.
 
 ## Methodology Reference
 

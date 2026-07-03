@@ -398,3 +398,55 @@
 - 推送本地 ahead 7 commit 到远端 PR 分支
 
 因此这四个 skill 当前适合标记为 `preview`，不适合直接标记为 `published`。
+
+## 2026-07-03 Skill-side hardening addendum
+
+This addendum records the later skill-side fixes after the initial SOP delivery. It is intentionally appended in ASCII because the earlier Chinese text in this file is already stored with mojibake in this checkout.
+
+### Common runner changes
+
+- `qveris-finance-common/runner.mjs`
+  - Added ordered provider fallback across preferred, provider, inspected, and discovered tools.
+  - Added `fallbackOnEmpty`, `fallbackOnUnsuccessful`, and per-role `maxAttempts`.
+  - Added trace rows for `fallback_attempt` and `fallback_skipped`.
+  - Preserved unsuccessful provider calls in evidence instead of hiding them.
+  - Normalized tool IDs from either `tool_id` or `id`.
+  - Exported `resultPayload` and `countRecords` for deterministic transforms.
+- `qveris-finance-common/schema-validator.mjs`
+  - Added `null` type support for structured fields such as `risk_metrics`.
+
+### Skill-specific fixes
+
+| Skill | Fix |
+| --- | --- |
+| `qveris-news-sentiment-radar` | Added capped filings fallback, EODHD price-reaction fallback, `catalyst_confidence_score`, and `corroborating_roles`. Filings can fail without starving the price-reaction role. |
+| `qveris-portfolio-risk-monitor` | Split historical prices into a strict historical-price discovery category, preventing quote tools from filling the history role. Added top-holding volatility, max drawdown, and historical VaR from returned closes. |
+| `qveris-quant-factor-screen` | Added deterministic partial `ranking_table`, `factor_weights`, `tie_break_rules`, `coverage_level`, and EODHD quote fallback. |
+| `qveris-sector-rotation-map` | Added snapshot-derived `rotation_quadrants`, `momentum_scores`, `relative_strength_scores`, nested payload extraction, sector-name aliases, and FMP `averageChange` parsing. |
+
+### Hardening live verification
+
+Artifact prefix for each skill: `artifacts/hardening-live-20260703.*`.
+
+| Skill | Result | Paid calls | Credits | Execution IDs |
+| --- | --- | ---: | ---: | --- |
+| `qveris-news-sentiment-radar` | News, aggregate sentiment, and EODHD price reaction succeeded; filings remained missing. | 5 | 9.62 | `2d9c86b4-eda6-4c81-afba-005b6f6f99eb`, `5aedd7ae-ce90-4045-afb8-6521aa63c825`, `2789fe2a-148e-4946-9a1f-0730d282ac93`, `feda7e34-4644-4244-ae44-0bdb4934ccad`, `51c7d248-4d5c-4059-952a-561b9369127a` |
+| `qveris-portfolio-risk-monitor` | Quote, FMP historical prices, profile, and EODHD news all succeeded; risk metrics populated; correlation remains missing. | 4 | 54.02 | `38fa36b7-952c-4dfb-9828-892328a084ec`, `6170f7cb-7b04-44fb-aace-8c7bc4cf70f3`, `59c3bddf-ef86-4b4e-9316-523d89974bd2`, `e1224f9b-bf32-40e9-9e23-ca4045545763` |
+| `qveris-quant-factor-screen` | Valuation, float, EODHD quote, and BBANDS succeeded; partial ranking output is populated; complete-universe ranking remains missing. | 4 | 53.21 | `354836bf-efc6-4fd4-9494-7b629f764212`, `12566c61-8cc1-48bf-bd90-5c0b728f8715`, `1e798482-8966-4ca5-a096-f9fffec8f3ab`, `0e816a4d-225e-446a-a178-c547edf4bd57` |
+| `qveris-sector-rotation-map` | FMP sector snapshot, available sectors, and ETF list succeeded; Twelve Data ETF performance failed; snapshot quadrants and scores are populated. | 4 | 74.97 | `5557d60b-9208-4806-9e39-c50ab5b3c49e`, `c526e7e5-71df-4da2-8005-f470b0184711`, `ff55839d-3f73-44ff-841b-e21c8b8d64b8`, `f492783d-0a61-4cca-b9a3-707b863af1a8` |
+
+Additional paid debug call for sector transform: `financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159`, 24.2 credits, `execution_id=7f2fcdde-340d-46df-bedb-5d8fa46d1396`. It identified the FMP `averageChange` field used by the final sector parser.
+
+### Verification commands
+
+```bash
+node --check qveris-finance-common/runner.mjs
+node --check qveris-finance-common/schema-validator.mjs
+node --check qveris-news-sentiment-radar/scripts/run.mjs
+node --check qveris-portfolio-risk-monitor/scripts/run.mjs
+node --check qveris-quant-factor-screen/scripts/run.mjs
+node --check qveris-sector-rotation-map/scripts/run.mjs
+node --test qveris-news-sentiment-radar/tests/runner.fixture.test.mjs qveris-portfolio-risk-monitor/tests/runner.fixture.test.mjs qveris-quant-factor-screen/tests/runner.fixture.test.mjs qveris-sector-rotation-map/tests/runner.fixture.test.mjs
+```
+
+All four final hardening live outputs passed their corresponding `schemas/output.schema.json` validation.
