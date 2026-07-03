@@ -271,6 +271,9 @@
     "live_smoke_report": "qveris-quant-factor-screen/artifacts/live-smoke.md",
     "live_smoke_trace": "qveris-quant-factor-screen/artifacts/live-smoke-trace.json",
     "codex_e2e": "qveris-quant-factor-screen/artifacts/codex-e2e.md",
+    "codex_cli_e2e_report": "qveris-quant-factor-screen/artifacts/codex-cli-live.md",
+    "codex_cli_e2e_output": "qveris-quant-factor-screen/artifacts/codex-cli-live-output.json",
+    "codex_cli_e2e_trace": "qveris-quant-factor-screen/artifacts/codex-cli-live-trace.json",
     "openclaw_e2e_blocker": "references/openclaw-skillhub-e2e-check.md",
     "openclaw_e2e": "pending"
   },
