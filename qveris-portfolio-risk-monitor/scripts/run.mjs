@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { countRecords, dateNDaysBefore, genericEvidence, resultPayload, runCli, usTicker } from "../../qveris-finance-common/runner.mjs";
+import { pathToFileURL } from "node:url";
+import { countRecords, dateNDaysBefore, genericEvidence, resultPayload, runCli, usTicker } from "./lib/qveris-runtime.mjs";
 
 function holdings(opts) {
   if (opts.holdings?.length) return opts.holdings;
@@ -12,6 +13,10 @@ function holdings(opts) {
 function topHolding(rows) {
   const nonCash = rows.filter((row) => row.symbol.toUpperCase() !== "CASH");
   return [...(nonCash.length ? nonCash : rows)].sort((a, b) => b.weight - a.weight)[0] || { symbol: "N/A", weight: 0 };
+}
+
+function nonCashHoldings(rows) {
+  return rows.filter((row) => row.symbol.toUpperCase() !== "CASH" && row.weight > 0);
 }
 
 function concentration(rows) {
@@ -128,6 +133,106 @@ function riskMetrics(closes, benchmarkCloses = []) {
   };
 }
 
+function riskMetricsFromReturns(returnRows, benchmarkRows = []) {
+  const returns = returnRows.map((row) => row.value);
+  if (!returns.length) return null;
+  let equity = 1;
+  let peak = 1;
+  let maxDrawdown = 0;
+  for (const value of returns) {
+    equity *= 1 + value;
+    peak = Math.max(peak, equity);
+    maxDrawdown = Math.min(maxDrawdown, equity / peak - 1);
+  }
+  const dailyVol = stddev(returns);
+  const var95 = percentile(returns, 0.05);
+  return {
+    observation_count: returns.length,
+    cumulative_return: Number((equity - 1).toFixed(4)),
+    daily_volatility: dailyVol == null ? null : Number(dailyVol.toFixed(4)),
+    annualized_volatility: dailyVol == null ? null : Number((dailyVol * Math.sqrt(252)).toFixed(4)),
+    max_drawdown: Number(maxDrawdown.toFixed(4)),
+    historical_var_95: var95 == null ? null : Number(Math.min(0, var95).toFixed(4)),
+    correlation_to_benchmark: pearsonCorrelation(returnRows, benchmarkRows),
+    benchmark_observation_count: benchmarkRows.length,
+  };
+}
+
+function portfolioReturnRows(rows, calls) {
+  const totalWeight = rows.reduce((sum, row) => sum + row.weight, 0) || 100;
+  const seriesBySymbol = new Map();
+  for (const holding of nonCashHoldings(rows)) {
+    const returns = closeReturns(historicalCloses(calls, holding.symbol));
+    if (returns.length) seriesBySymbol.set(holding.symbol.toUpperCase(), returns);
+  }
+  const dateSets = [...seriesBySymbol.values()].map((series) => new Set(series.map((row) => row.date)));
+  if (!dateSets.length) return [];
+  let dates = dateSets[0];
+  for (const set of dateSets.slice(1)) {
+    dates = new Set([...dates].filter((date) => set.has(date)));
+  }
+  if (!dates.size) return [];
+  return [...dates]
+    .sort()
+    .map((date) => {
+      let value = 0;
+      for (const holding of nonCashHoldings(rows)) {
+        const series = seriesBySymbol.get(holding.symbol.toUpperCase());
+        const row = series?.find((item) => item.date === date);
+        if (row) value += (holding.weight / totalWeight) * row.value;
+      }
+      return { date, value: Number(value.toFixed(6)) };
+    });
+}
+
+function firstRecord(calls, role, symbol) {
+  const wanted = String(symbol || "").toUpperCase();
+  const call = calls.find((row) => row.role === role && row.ok !== false && (!wanted || callTarget(row) === wanted));
+  const records = payloadRecords(call);
+  return records.find((row) => !wanted || String(row.symbol || row.code || row.ticker || "").toUpperCase().replace(/\.US$/, "") === wanted) || records[0] || null;
+}
+
+function quoteSnapshot(calls, symbol) {
+  const row = firstRecord(calls, "quote_snapshot", symbol);
+  if (!row) return null;
+  return {
+    price: numberField(row, ["close", "c", "price", "last", "previousClose"]),
+    change: numberField(row, ["change", "d"]),
+    change_percent: numberField(row, ["change_p", "dp", "changesPercentage"]),
+  };
+}
+
+function profileInfo(calls, symbol) {
+  const row = firstRecord(calls, "profile_sector", symbol);
+  if (!row) return { sector: null, industry: null, market_cap: null };
+  return {
+    sector: row.sector || row.gicSector || null,
+    industry: row.industry || row.gicIndustry || null,
+    market_cap: numberField(row, ["marketCap", "mktCap", "marketCapitalization"]),
+  };
+}
+
+function newsRecordCount(calls, symbol) {
+  const wanted = String(symbol || "").toUpperCase();
+  return calls
+    .filter((row) => row.role === "news_catalyst" && row.ok !== false && callTarget(row) === wanted)
+    .reduce((sum, row) => sum + payloadRecords(row).length, 0);
+}
+
+function sectorExposure(rows, calls) {
+  const exposure = new Map();
+  for (const row of rows) {
+    const sector =
+      row.symbol.toUpperCase() === "CASH"
+        ? "Cash"
+        : profileInfo(calls, row.symbol).sector || "Unknown";
+    exposure.set(sector, Number(((exposure.get(sector) || 0) + row.weight).toFixed(4)));
+  }
+  return [...exposure.entries()]
+    .map(([sector, weight]) => ({ sector, weight }))
+    .sort((a, b) => b.weight - a.weight);
+}
+
 function roleSatisfied(calls, role) {
   return calls.some((call) => call.role === role && call.ok !== false && countRecords(resultPayload(call.raw_result)) > 0);
 }
@@ -138,23 +243,90 @@ function missingRole(calls, role) {
   return `${role}: ${last?.error || "provider returned unsuccessful status"}`;
 }
 
+function missingRoleTargets(calls, role, targets) {
+  return targets
+    .filter((target) => !roleSatisfied(calls.filter((call) => callTarget(call) === String(target).toUpperCase()), role))
+    .map((target) => {
+      const last = [...calls].reverse().find((call) => call.role === role && callTarget(call) === String(target).toUpperCase());
+      return `${role}/${target}: ${last?.error || "provider returned no usable records"}`;
+    });
+}
+
 function analyze({ opts, calls }) {
   const rows = holdings(opts);
+  const investableRows = nonCashHoldings(rows);
   const top = topHolding(rows);
-  const hhi = concentration(rows);
+  const concentrationRows = investableRows.length ? investableRows : rows;
+  const hhi = concentration(concentrationRows);
   const evidence = calls.map(genericEvidence);
   const topCloses = historicalCloses(calls, top.symbol);
   const benchmarkCloses = historicalCloses(calls, opts.benchmark);
   const metrics = riskMetrics(topCloses, benchmarkCloses);
+  const benchmarkReturns = closeReturns(benchmarkCloses);
+  const portfolioMetrics = riskMetricsFromReturns(portfolioReturnRows(rows, calls), benchmarkReturns);
+  const holdingsRisk = investableRows.map((row) => {
+    const closes = historicalCloses(calls, row.symbol);
+    const rowMetrics = riskMetrics(closes, benchmarkCloses);
+    const profile = profileInfo(calls, row.symbol);
+    const quote = quoteSnapshot(calls, row.symbol);
+    const newsCount = newsRecordCount(calls, row.symbol);
+    const missing = [
+      rowMetrics ? null : "historical_prices",
+      profile.sector ? null : "profile_sector",
+      quote ? null : "quote_snapshot",
+      newsCount > 0 ? null : "news_catalyst",
+    ].filter(Boolean);
+    return {
+      symbol: row.symbol,
+      weight: row.weight,
+      sector: profile.sector,
+      industry: profile.industry,
+      market_cap: profile.market_cap,
+      quote,
+      risk_metrics: rowMetrics,
+      news_record_count: newsCount,
+      data_status: missing.length ? "partial" : "complete",
+      missing_data: missing,
+    };
+  });
+  const riskLeaders = {
+    volatility: [...holdingsRisk]
+      .filter((row) => Number.isFinite(row.risk_metrics?.annualized_volatility))
+      .sort((a, b) => b.risk_metrics.annualized_volatility - a.risk_metrics.annualized_volatility)
+      .slice(0, 3)
+      .map((row) => ({ symbol: row.symbol, weight: row.weight, annualized_volatility: row.risk_metrics.annualized_volatility })),
+    drawdown: [...holdingsRisk]
+      .filter((row) => Number.isFinite(row.risk_metrics?.max_drawdown))
+      .sort((a, b) => a.risk_metrics.max_drawdown - b.risk_metrics.max_drawdown)
+      .slice(0, 3)
+      .map((row) => ({ symbol: row.symbol, weight: row.weight, max_drawdown: row.risk_metrics.max_drawdown })),
+    var_95: [...holdingsRisk]
+      .filter((row) => Number.isFinite(row.risk_metrics?.historical_var_95))
+      .sort((a, b) => a.risk_metrics.historical_var_95 - b.risk_metrics.historical_var_95)
+      .slice(0, 3)
+      .map((row) => ({ symbol: row.symbol, weight: row.weight, historical_var_95: row.risk_metrics.historical_var_95 })),
+  };
   const missingMetrics = [
     metrics?.annualized_volatility == null ? "volatility" : null,
     metrics?.max_drawdown == null ? "drawdown" : null,
     metrics?.correlation_to_benchmark == null ? "correlation" : null,
     metrics?.historical_var_95 == null ? "VaR" : null,
+    portfolioMetrics ? null : "portfolio_metrics",
   ].filter(Boolean);
-  const missingData = ["quote_snapshot", "historical_prices", "profile_sector", "news_catalyst"]
+  const expectedHoldingTargets = investableRows.map((row) => row.symbol);
+  const missingData = [
+    ...missingRoleTargets(calls, "quote_snapshot", expectedHoldingTargets),
+    ...missingRoleTargets(calls, "historical_prices", [...expectedHoldingTargets, opts.benchmark]),
+    ...missingRoleTargets(calls, "profile_sector", expectedHoldingTargets),
+    ...missingRoleTargets(calls, "news_catalyst", expectedHoldingTargets),
+    ...["quote_snapshot", "historical_prices", "profile_sector", "news_catalyst"]
     .map((role) => missingRole(calls, role))
-    .filter(Boolean);
+    .filter(Boolean),
+  ];
+  const coverageLevel =
+    holdingsRisk.every((row) => row.data_status === "complete") && portfolioMetrics && missingData.length === 0
+      ? "complete"
+      : "partial";
   return {
     scope: {
       holdings: rows,
@@ -167,6 +339,9 @@ function analyze({ opts, calls }) {
     findings: [
       `Largest non-cash holding is ${top.symbol} at ${top.weight}%.`,
       `Portfolio concentration HHI is ${hhi.toFixed(3)}; values above 0.25 deserve concentration review.`,
+      portfolioMetrics
+        ? `Portfolio history produced ${portfolioMetrics.observation_count} aligned return observations, annualized volatility ${portfolioMetrics.annualized_volatility}, max drawdown ${portfolioMetrics.max_drawdown}, 95% historical VaR ${portfolioMetrics.historical_var_95}, and benchmark correlation ${portfolioMetrics.correlation_to_benchmark ?? "unavailable"}.`
+        : "Portfolio-level historical risk metrics are unavailable because not enough holding histories aligned by date.",
       metrics
         ? `Top holding history produced ${metrics.observation_count} observations, annualized volatility ${metrics.annualized_volatility}, max drawdown ${metrics.max_drawdown}, 95% historical VaR ${metrics.historical_var_95}, and benchmark correlation ${metrics.correlation_to_benchmark ?? "unavailable"}.`
         : "Top holding historical risk metrics are unavailable because historical prices were missing or too sparse.",
@@ -182,23 +357,32 @@ function analyze({ opts, calls }) {
     result: {
       top_holding: top,
       concentration_hhi: Number(hhi.toFixed(3)),
+      concentration_scope: investableRows.length ? "non_cash_holdings" : "all_holdings",
       concentration_level: concentrationLevel(hhi),
       evidence_roles: evidence.map((row) => row.role),
       measurable_risks: [
         "concentration",
+        "portfolio_volatility",
+        "portfolio_drawdown",
+        "portfolio_historical_var",
         "top_holding_exposure",
         "provider_coverage",
         ...(metrics ? ["top_holding_volatility", "top_holding_drawdown", "top_holding_historical_var"] : []),
         ...(metrics?.correlation_to_benchmark == null ? [] : ["benchmark_correlation"]),
       ],
       risk_metrics: metrics,
+      portfolio_risk_metrics: portfolioMetrics,
+      holdings_risk: holdingsRisk,
+      sector_exposure: sectorExposure(rows, calls),
+      risk_leaders: riskLeaders,
+      coverage_level: coverageLevel,
       missing_metrics: missingMetrics,
       missing_data: missingData,
     },
   };
 }
 
-const config = {
+export const config = {
   id: "qveris-portfolio-risk-monitor",
   title: "Portfolio Risk Monitor",
   toolCategories: [
@@ -236,8 +420,10 @@ const config = {
         "eodhd.live_v2.us_quote_delayed.retrieve.v1.f0e13d45",
         "finnhub_io_api.stock.quote",
       ],
-      buildParams: (opts, tool) => {
-        const symbol = topHolding(holdings(opts)).symbol;
+      repeatFor: (opts) => nonCashHoldings(holdings(opts)),
+      target: (item) => item.symbol,
+      buildParams: (opts, tool, item) => {
+        const symbol = item.symbol;
         if (String(tool.tool_id).includes("live_v2")) return { s: usTicker(symbol), "page[limit]": 1, fmt: "json" };
         return String(tool.tool_id).startsWith("eodhd.") ? { symbol: usTicker(symbol), fmt: "json" } : { symbol };
       },
@@ -248,7 +434,7 @@ const config = {
       preferredToolIds: ["financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22"],
       strictPreferred: true,
       repeatFor: (opts) => [
-        { symbol: topHolding(holdings(opts)).symbol, kind: "top_holding" },
+        ...nonCashHoldings(holdings(opts)).map((row) => ({ symbol: row.symbol, kind: "holding" })),
         { symbol: opts.benchmark, kind: "benchmark" },
       ],
       target: (item) => item.symbol,
@@ -262,15 +448,19 @@ const config = {
       role: "profile_sector",
       category: "profile_sector",
       preferredToolIds: ["financialmodelingprep.stable.profile.retrieve.v1.0b443195"],
-      buildParams: (opts) => ({ symbol: topHolding(holdings(opts)).symbol }),
+      repeatFor: (opts) => nonCashHoldings(holdings(opts)),
+      target: (item) => item.symbol,
+      buildParams: (opts, tool, item) => ({ symbol: item.symbol }),
     },
     {
       role: "news_catalyst",
       category: "news_calendar",
       preferredToolIds: ["eodhd.news.retrieve.v1.fe8bf94c", "alphavantage.news_sentiment.query.v1.467a92c0"],
       fallbackOnEmpty: true,
-      buildParams: (opts, tool) => {
-        const symbol = topHolding(holdings(opts)).symbol;
+      repeatFor: (opts) => nonCashHoldings(holdings(opts)),
+      target: (item) => item.symbol,
+      buildParams: (opts, tool, item) => {
+        const symbol = item.symbol;
         if (String(tool.tool_id).startsWith("eodhd.")) {
           return {
             s: usTicker(symbol),
@@ -299,7 +489,7 @@ const config = {
   analyze,
 };
 
-runCli(config, {
+export const defaults = {
   holdings: [
     { symbol: "AAPL", weight: 25 },
     { symbol: "NVDA", weight: 25 },
@@ -310,6 +500,10 @@ runCli(config, {
   benchmark: "SPY",
   market: "US",
   windowDays: 30,
-  maxPaidCalls: 5,
-  maxCredits: 100,
-});
+  maxPaidCalls: 25,
+  maxCredits: 520,
+};
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  runCli(config, defaults);
+}

@@ -200,10 +200,10 @@
       "zh": "预计 QVeris 使用量"
     },
     "summary": {
-      "en": "This workflow usually needs 5-20 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
-      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 5-20 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
+      "en": "This workflow usually needs 5-25 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 5-25 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
     },
-    "typical_calls": "5-20",
+    "typical_calls": "5-25",
     "estimated_credits": "5-150 credits",
     "free_actions": [
       "Discover",
@@ -218,7 +218,7 @@
     },
     "evidence": {
       "en": "Updated from QVeris Discover / Inspect preflight on 2026-07-02; live smoke traces are stored under artifacts after execution.",
-      "zh": "?? 2026-07-02 ? QVeris Discover / Inspect ??????? smoke trace ?????? artifacts?"
+      "zh": "已根据 2026-07-02 的 QVeris Discover / Inspect 预检更新；live smoke trace 会在执行后保存到 artifacts。"
     }
   },
   "execution_flow": [
@@ -264,24 +264,25 @@
     }
   ],
   "validation": {
-    "source_review": "qveris-news-sentiment-radar/references/source-review.md",
-    "qveris_tool_map": "qveris-news-sentiment-radar/references/qveris-tool-map.md",
-    "runner": "qveris-news-sentiment-radar/scripts/run.mjs",
-    "output_schema": "qveris-news-sentiment-radar/schemas/output.schema.json",
-    "fixture_output": "qveris-news-sentiment-radar/artifacts/fixture-output.json",
-    "fixture_test": "qveris-news-sentiment-radar/tests/runner.fixture.test.mjs",
-    "examples": "qveris-news-sentiment-radar/examples/README.md",
-    "live_smoke_report": "qveris-news-sentiment-radar/artifacts/live-smoke.md",
-    "live_smoke_trace": "qveris-news-sentiment-radar/artifacts/live-smoke-trace.json",
-    "codex_e2e": "qveris-news-sentiment-radar/artifacts/codex-e2e.md",
-    "codex_cli_e2e_report": "qveris-news-sentiment-radar/artifacts/codex-cli-live.md",
-    "codex_cli_e2e_output": "qveris-news-sentiment-radar/artifacts/codex-cli-live-output.json",
-    "codex_cli_e2e_trace": "qveris-news-sentiment-radar/artifacts/codex-cli-live-trace.json",
-    "openclaw_e2e_blocker": "references/openclaw-skillhub-e2e-check.md",
-    "openclaw_e2e": "pending"
+    "source_review": "references/source-review.md",
+    "qveris_tool_map": "references/qveris-tool-map.md",
+    "runner": "scripts/run.mjs",
+    "runtime": "scripts/lib/qveris-runtime.mjs",
+    "output_schema": "schemas/output.schema.json",
+    "fixture_output": "artifacts/fixture-output.json",
+    "fixture_test": "tests/runner.fixture.test.mjs",
+    "examples": "examples/README.md",
+    "live_smoke_report": "artifacts/live-smoke.md",
+    "live_smoke_trace": "artifacts/live-smoke-trace.json",
+    "codex_e2e": "artifacts/codex-e2e.md",
+    "codex_cli_e2e_report": "artifacts/codex-cli-live.md",
+    "codex_cli_e2e_output": "artifacts/codex-cli-live-output.json",
+    "codex_cli_e2e_trace": "artifacts/codex-cli-live-trace.json",
+    "openclaw_e2e": "complete-local-cli",
+    "hosted_skillhub_e2e": "pending"
   },
   "status_note": {
-    "en": "Preview until deterministic scripts, fixture tests, live QVeris smoke traces, Codex validation, and OpenClaw validation are complete.",
-    "zh": "???????fixture ????? QVeris smoke trace?Codex ??? OpenClaw ??????? preview?"
+    "en": "Preview until hosted Skill Hub validation and release approval are complete. Deterministic scripts, fixture tests, QVeris live smoke traces, Codex validation, and local OpenClaw validation have been exercised.",
+    "zh": "预览状态：已完成确定性脚本、fixture 测试、QVeris live smoke trace、Codex 验证和本地 OpenClaw 验证；Hosted Skill Hub 验证和发布审批完成前不得标记为上线。"
   }
 }

@@ -15,6 +15,6 @@ Use QVeris Discover and Inspect before paid Calls. Tell the user the expected us
 Preferred deterministic path:
 
 ```bash
-node qveris-sector-rotation-map/scripts/run.mjs --dry-run --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30
-node qveris-sector-rotation-map/scripts/run.mjs --live --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30 --max-paid-calls 4 --max-credits 80 --output qveris-sector-rotation-map/artifacts/live-smoke.md --trace qveris-sector-rotation-map/artifacts/live-smoke-trace.json
+node scripts/run.mjs --dry-run --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30
+node scripts/run.mjs --live --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30 --max-paid-calls 15 --max-credits 360 --output artifacts/live-smoke.md --json-output artifacts/live-smoke.json --trace artifacts/live-smoke-trace.json
 ```

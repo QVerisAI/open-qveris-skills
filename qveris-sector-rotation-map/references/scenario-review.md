@@ -15,7 +15,7 @@ Purpose: SOP evidence for reproducible live business scenarios. Each scenario wa
 ## Repro Commands
 
 ```bash
-node qveris-sector-rotation-map/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --sectors XLK,XLY,XLF,XLU,XLP,XLV \
   --market US \
@@ -24,11 +24,11 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 80 \
-  --output qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off.md \
-  --json-output qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off-output.json \
-  --trace qveris-sector-rotation-map/artifacts/scenario-02-risk-on-off-trace.json
+  --output artifacts/scenario-02-risk-on-off.md \
+  --json-output artifacts/scenario-02-risk-on-off-output.json \
+  --trace artifacts/scenario-02-risk-on-off-trace.json
 
-node qveris-sector-rotation-map/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --sectors XLI,XLE,XLB,XLP,XLU,XLV \
   --market US \
@@ -37,9 +37,9 @@ node qveris-sector-rotation-map/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 80 \
-  --output qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives.md \
-  --json-output qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives-output.json \
-  --trace qveris-sector-rotation-map/artifacts/scenario-03-cyclicals-defensives-trace.json
+  --output artifacts/scenario-03-cyclicals-defensives.md \
+  --json-output artifacts/scenario-03-cyclicals-defensives-output.json \
+  --trace artifacts/scenario-03-cyclicals-defensives-trace.json
 ```
 
 ## Execution Evidence

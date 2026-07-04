@@ -693,3 +693,170 @@ qveris-sector-rotation-map: schema ok
 - 这次完成的是 OpenClaw CLI 本地安装和自然语言 agent 调用验证。
 - 还没有验证 hosted Skill Hub UI、ClawHub publication 或远端生产 Skill Hub 调度路径。
 - OpenClaw 安装过程在 repo 下创建了 `skills/` workspace copy，目前是本地未跟踪安装产物。
+
+## 14. 2026-07-04 standalone skill packaging hardening
+
+Goal: make each of the four QVeris skills runnable when installed or copied as a single skill directory, without requiring the repository-level `qveris-finance-common/` folder.
+
+Changes:
+- Vendored `qveris-finance-common/runner.mjs` into each skill as `scripts/lib/runner.mjs`.
+- Vendored `qveris-finance-common/schema-validator.mjs` into each skill as `scripts/lib/schema-validator.mjs`.
+- Updated each `scripts/run.mjs` import from `../../qveris-finance-common/runner.mjs` to `./lib/runner.mjs`.
+- Updated each `tests/runner.fixture.test.mjs` import from repository-level common files to `../scripts/lib/*`.
+- Updated fixture tests to run from the skill root with `scripts/run.mjs`, `fixtures/*`, and `schemas/output.schema.json`, instead of assuming the whole repo root is present.
+- Applied the same changes to both root skill directories and the `skills/` workspace/install copies.
+
+Validation:
+- Root skill tests: `node --test qveris-news-sentiment-radar/tests/runner.fixture.test.mjs qveris-portfolio-risk-monitor/tests/runner.fixture.test.mjs qveris-quant-factor-screen/tests/runner.fixture.test.mjs qveris-sector-rotation-map/tests/runner.fixture.test.mjs` -> 12/12 pass.
+- `skills/` copy tests: `node --test skills/qveris-news-sentiment-radar/tests/runner.fixture.test.mjs skills/qveris-portfolio-risk-monitor/tests/runner.fixture.test.mjs skills/qveris-quant-factor-screen/tests/runner.fixture.test.mjs skills/qveris-sector-rotation-map/tests/runner.fixture.test.mjs` -> 12/12 pass.
+- True standalone temp-copy tests: each skill was copied alone into `/tmp/qveris-skill-standalone-20260704110135/` and tested from inside its own directory -> 12/12 pass.
+
+Result: a user who installs or copies one of these four skill folders independently now receives the deterministic runner, schema validator, fixtures, tests, and script entrypoint needed for local fixture validation without the repository-level common folder.
+## 15. 2026-07-04 standalone product-package semantics
+
+Goal: make each QVeris skill feel and behave like an independent installable product package, not a partial folder that depends on repository context.
+
+Changes:
+- Renamed the embedded per-skill runtime from `scripts/lib/runner.mjs` to `scripts/lib/qveris-runtime.mjs` so `scripts/run.mjs` remains the skill-specific deterministic runner entrypoint.
+- Updated `scripts/run.mjs` and fixture tests in root skill folders and `skills/` install copies to import `qveris-runtime.mjs`.
+- Updated `SKILL.md`, `agent.md`, `examples/README.md`, and `references/scenario-review.md` to use skill-root relative commands such as `node scripts/run.mjs ...`.
+- Added a Standalone Execution Contract to each `SKILL.md`: normal dry-run, fixture, and live E2E must use `scripts/run.mjs`; manual QVeris curl calls are debug-only and cannot be reported as successful skill E2E.
+- Updated `qveris.skill.json` validation paths to skill-root relative paths and added `validation.runtime = scripts/lib/qveris-runtime.mjs`.
+- Added `scripts/sync-qveris-runtime.mjs` as a development helper for future skills. It copies the shared development source into each skill as bundled runtime, but installed skills do not depend on this script.
+- Updated QVeris runtime trace events to include provider and non-secret parameters for successful and failed live calls, improving auditability.
+
+Validation:
+- `node scripts/sync-qveris-runtime.mjs --all` synced 8 targets: four root skills and four `skills/` install copies.
+- Static standalone-facing file scan found no repo-common imports, old `scripts/lib/runner.mjs` imports, or repo-root `node qveris-*/scripts/run.mjs` commands outside historical artifacts.
+- `qveris.skill.json` strict JSON parse passed for root and `skills/` copies, with `validation.runner = scripts/run.mjs` and `validation.runtime = scripts/lib/qveris-runtime.mjs`.
+- Root skill fixture tests: 12/12 pass.
+- `skills/` copy fixture tests: 12/12 pass.
+- True standalone temp-copy tests from `/tmp/qveris-skill-independent-20260704112356/`: 12/12 pass.
+
+Result: each of the four skills can now be installed or copied as a standalone folder with its own instructions, manifest, deterministic runner entrypoint, bundled runtime, fixtures, schemas, tests, examples, and QVeris audit trace behavior.
+
+## 16. 2026-07-04 OpenClaw install-copy security hardening
+
+Goal: remove OpenClaw skill code-safety warnings caused by test/runtime structure while preserving standalone skill installability.
+
+Changes:
+- Updated each skill `scripts/run.mjs` to export `config` and `defaults`, and to call `runCli(config, defaults)` only when executed directly as a CLI entrypoint.
+- Reworked each `tests/runner.fixture.test.mjs` to import the skill-local runner config and call `runSkill(config, ...)` directly instead of spawning `node scripts/run.mjs` via `child_process`.
+- Added `qveris-finance-common/fixture-loader.mjs` and synced it into each skill as `scripts/lib/fixture-loader.mjs`.
+- Moved fixture file reading out of `scripts/lib/qveris-runtime.mjs` so the runtime file no longer combines fixture reads with live network-call code.
+- Updated `scripts/sync-qveris-runtime.mjs` so future bundled skills receive `qveris-runtime.mjs`, `schema-validator.mjs`, and `fixture-loader.mjs` together.
+- Reinstalled all four skills into OpenClaw profile `qveris-skill-e2e-20260703` with `--force`.
+
+Validation:
+- Root skill fixture tests: 12/12 pass.
+- `skills/` install-copy fixture tests: 12/12 pass.
+- True standalone temp-copy fixture tests: 12/12 pass.
+- CLI fixture smoke from each skill root produced Markdown report, business JSON, and trace JSON for all four skills.
+- `openclaw skills list --agent main` shows all four QVeris skills as `ready` from `openclaw-workspace`.
+- `openclaw security audit --deep` result: `0 critical`, `3 warn`, `1 info`.
+
+Remaining OpenClaw audit warnings are environment-level only:
+- `gateway.trusted_proxies_missing`
+- `fs.state_dir.perms_readable`
+- `gateway.probe_failed` due missing `operator.read` scope
+
+Result: the four skill install copies no longer produce OpenClaw `skills.code_safety` warnings, and the root skill folders were not deleted or replaced.
+
+## 17. 2026-07-04 natural-language canonical output hardening
+
+Goal: make natural-language skill invocation produce the canonical report, structured business JSON, and QVeris trace by default, instead of relying on the user or agent to know command details.
+
+Rationale:
+- A Codex natural-language portfolio test previously produced a useful enhanced report, but it wrote a temporary enhanced runner and emitted a non-canonical `skill_id`, so the JSON did not satisfy the original `qveris-portfolio-risk-monitor` schema.
+- The correct product behavior is: when the skill is triggered, the skill owns the structured output contract. `scripts/run.mjs` is an internal deterministic execution path, not something the user should need to know.
+
+Changes:
+- Added a `Natural-Language Invocation Contract` to all four `SKILL.md` files.
+- The contract requires every normal analysis/report invocation to produce:
+  - Markdown report
+  - schema-valid business JSON
+  - QVeris trace JSON
+- The contract forbids alternate runners, alternate schemas, and one-off JSON shapes for normal use.
+- Updated `agent.md` examples so live runs always include business JSON output.
+- Upgraded `qveris-portfolio-risk-monitor/scripts/run.mjs` from top-holding-only analysis to full portfolio coverage:
+  - quote, historical price, company profile, and news catalyst calls repeat across every non-cash holding
+  - benchmark history is still included
+  - output now includes `portfolio_risk_metrics`, `holdings_risk`, `sector_exposure`, `risk_leaders`, and `coverage_level`
+- Updated `qveris-portfolio-risk-monitor/schemas/output.schema.json` so the new portfolio-level fields are part of the canonical structured output.
+- Updated portfolio `qveris.skill.json` usage estimate to `17-25` calls and `150-520` credits for a 4-stock portfolio plus benchmark history.
+- Synced changes to `skills/` OpenClaw install copies and Windows Codex skill copies.
+- Reinstalled all four skills into OpenClaw profile `qveris-skill-e2e-20260703`.
+
+Validation:
+- Root fixture tests: 12/12 pass.
+- `skills/` install-copy fixture tests: 12/12 pass.
+- True standalone temp-copy fixture tests: 12/12 pass.
+- OpenClaw security audit remains `0 critical`; remaining warnings are environment-level gateway/state-dir warnings.
+- Portfolio canonical live runner smoke:
+  - `17` paid calls
+  - `240.28` estimated credits
+  - `holdings_risk` covers 4 non-cash holdings
+  - `portfolio_risk_metrics` present
+  - `sector_exposure`: Technology 70%, Consumer Cyclical 15%, Cash 15%
+  - schema validation passed with no errors
+- Codex natural-language portfolio regression:
+  - prompt was ordinary business language, not a command
+  - Codex read `qveris-portfolio-risk-monitor/SKILL.md`
+  - Codex used the canonical `scripts/run.mjs`
+  - no enhanced runner or alternate schema was created
+  - produced Markdown, schema-valid business JSON, and QVeris trace
+  - `17` paid calls, `240.28` estimated credits, `17` execution IDs, schema validation passed
+
+Result: natural-language invocation now drives agents toward canonical structured output owned by the skill. The command remains an internal deterministic runner, but successful skill usage is defined by the emitted report, JSON, and trace artifacts.
+
+## 18. 2026-07-04 SOP review bugfix pass
+
+Goal: fix the implementation/manifest mismatches found during the SOP compliance review, while preserving standalone installability.
+
+Changes:
+- Fixed `qveris-finance-common/runner.mjs` so paid-call budget exhaustion writes `call_skipped` trace rows instead of breaking silently. Synced the runtime fix into all four root skill folders and `skills/` install copies.
+- Updated `qveris-news-sentiment-radar/scripts/run.mjs` so `--tickers`/watchlist inputs expand across every ticker instead of silently using only the first ticker. The JSON output keeps the legacy primary `ticker` fields and adds `tickers` plus `watchlist` rows.
+- Updated news schema and usage estimate for watchlist output and the larger 5-ticker call envelope.
+- Updated `qveris-quant-factor-screen/scripts/run.mjs` so the documented tie-break rules are actually applied: total score, non-missing factor count, liquidity score, news-risk score, then ticker symbol.
+- Updated the quant manifest default prompt so it no longer implies a 50-stock screen fits the default 25-call execution model. Large 50-stock runs now require explicit larger paid-call and credit budgets.
+- Updated `qveris-portfolio-risk-monitor/scripts/run.mjs` so concentration HHI is calculated on non-cash holdings by default, matching the rest of the risk-asset analysis. Added `concentration_scope` to the structured output schema.
+- Updated `qveris-sector-rotation-map/scripts/run.mjs` so ticker watchlists map to common sector ETF proxies when no explicit `--sectors` are provided.
+- Tightened sector readiness: `phase_labels_ready` is true only when every requested proxy has usable signal coverage. Partial coverage now appears in `missing_outputs` and per-proxy `missing_data`.
+- Removed broken manifest references to `references/openclaw-skillhub-e2e-check.md` from all four skill folders. Replaced them with `openclaw_e2e = complete-local-cli` and `hosted_skillhub_e2e = pending`.
+- Repaired the damaged Chinese `usage_estimate.evidence.zh` and `status_note.zh` fields in all four manifests.
+- Synced root skill changes to `skills/` install copies and Windows Codex skill copies.
+- Reinstalled all four skills into OpenClaw profile `qveris-skill-e2e-20260703`.
+
+Validation:
+- Root skill fixture/unit tests: 16/16 pass.
+- `skills/` install-copy fixture/unit tests: 16/16 pass after OpenClaw reinstall.
+- True standalone temp-copy fixture/unit tests from `/tmp/qveris-standalone-skill-test`: 16/16 pass.
+- Manifest JSON parse passed for all four root manifests and all four `skills/` copy manifests.
+- Scan for `openclaw_e2e_blocker`, `references/openclaw-skillhub-e2e-check.md`, and `????` in root/install-copy manifests returned no matches.
+
+Result: the eight reviewed issues are resolved on the skill side. Remaining hosted Skill Hub publication/remote validation is still intentionally marked pending.
+
+## 19. 2026-07-04 live-output consistency repair pass
+
+Goal: fix the remaining skill-side inconsistencies found by reviewing live Codex artifacts and traces.
+
+Changes:
+- Updated the shared QVeris runtime so `config.analyze(...)` receives the paid-call trace and skills can reflect skipped calls in business JSON.
+- Added a shared `validateOptions` hook before live preflight/execution, used by quant screening to stop under-budgeted large-universe runs before QVeris paid calls begin.
+- `qveris-news-sentiment-radar` now marks `issuer_confirmation` as `strictPreferred` and caps it to EODHD news plus Alpha Vantage news sentiment. This prevents fallback to schema-incompatible FMP SEC filings tools with Alpha Vantage parameters.
+- Added a news regression test proving issuer confirmation does not fall back to `financialmodelingprep.stable.secfilingscompanysearch.*`.
+- `qveris-portfolio-risk-monitor` now includes `news_catalyst` in per-holding coverage and computes `coverage_level=complete` only when holdings, portfolio metrics, and global `missing_data` are all complete.
+- `qveris-sector-rotation-map` now surfaces skipped `etf_performance` source calls in `missing_outputs` / `missing_data` even when proxy price history succeeds.
+- Renamed sector `flow_or_revision_confirmation` live role to `news_catalyst_confirmation` because the actual verified route uses Alpha Vantage/EODHD news, not direct fund-flow or earnings-revision data.
+- Updated sector `SKILL.md`, `qveris.skill.json`, `references/qveris-tool-map.md`, and the normal fixture to avoid overstating news/sentiment context as direct flow/revision confirmation.
+- `qveris-quant-factor-screen` now hard-rejects live runs when `--max-paid-calls` is below `ticker_count * 5 required factor roles`. A 50-stock live screen therefore requires at least 250 paid calls before execution starts.
+- Synced root changes to `skills/` install copies, Windows Codex skill copies, and OpenClaw profile `qveris-skill-e2e-20260703`.
+
+Validation:
+- Root skill fixture/unit tests: 19/19 pass.
+- `skills/` install-copy fixture/unit tests: 19/19 pass after OpenClaw reinstall.
+- True standalone temp-copy fixture/unit tests from `/tmp/qveris-standalone-skill-test`: 19/19 pass.
+- Root and `skills/` manifest JSON parse: pass.
+- OpenClaw security audit: `0 critical`, `0 warn`, `1 info`.
+
+Result: live-output consistency gaps are fixed on the skill side. News avoids incompatible paid fallback, portfolio no longer reports complete coverage with missing data, sector JSON reflects skipped ETF-performance sources and uses honest catalyst-context naming, and quant blocks under-budgeted large screens before paid execution.

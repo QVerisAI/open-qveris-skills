@@ -14,6 +14,7 @@
       "required": ["ticker", "market", "window_days", "from", "to"],
       "properties": {
         "ticker": { "type": "string" },
+        "tickers": { "type": "array", "items": { "type": "string" } },
         "market": { "type": "string" },
         "window_days": { "type": "number" },
         "from": { "type": "string" },
@@ -36,6 +37,8 @@
       "required": ["ticker", "sentiment_counts", "total_records", "signal_level", "catalyst_status", "evidence_roles", "missing_data"],
       "properties": {
         "ticker": { "type": "string" },
+        "tickers": { "type": "array", "items": { "type": "string" } },
+        "watchlist": { "type": "array", "items": { "type": "object" } },
         "sentiment_counts": {
           "type": "object",
           "required": ["positive", "negative", "neutral"],

@@ -5,16 +5,38 @@ description: Rank a stock universe with transparent QVeris factor evidence acros
 
 # Quant factor screen
 
-## Deterministic Runner
+## Standalone Execution Contract
 
-Prefer the local runner before composing a free-form answer:
+Treat this skill folder as self-contained. When the skill is installed or copied alone, run commands from this directory and use `scripts/run.mjs` for dry-run, fixture, and live execution.
+
+Do not hand-write QVeris `curl` or ad hoc API calls for normal operation. Manual QVeris calls are allowed only for debugging provider behavior, must be labelled `manual_debug`, and must not be reported as a successful skill E2E run. The skill E2E path is successful only when `scripts/run.mjs` produces the Markdown report, structured JSON, and trace artifact.
+
+`scripts/lib/qveris-runtime.mjs` is bundled runtime plumbing for this skill package. No repository-level shared directory is required when using the skill as an installed package.
+
+## Natural-Language Invocation Contract
+
+When this skill is triggered by a user request, treat the skill as responsible for the final artifacts. The user should not need to know or request a command. Produce these canonical outputs whenever the user asks for analysis, a report, or a reusable result:
+
+- Markdown report
+- Schema-valid business JSON
+- QVeris trace JSON with tool IDs, providers, parameters, execution IDs, costs, skipped calls, and missing-data notes
+
+Use `scripts/run.mjs` internally to produce the canonical outputs. Always pass a business JSON output path when producing artifacts. In the final response, link the report, business JSON, and trace, and summarize paid calls, credits, execution status, and missing-data limits.
+
+Do not create alternate runners, alternate schemas, or one-off JSON shapes for normal use. If the canonical runner lacks a metric, state the gap in `missing_data` and improve this skill later; do not silently replace the skill with ad hoc code. Manual QVeris calls, web search, or provider-specific debugging may supplement the analysis only when labelled `manual_debug`; they cannot replace the canonical runner output or be reported as successful skill E2E.
+
+If the user has not authorized paid QVeris calls, stop after dry-run/preflight or ask for approval. If the user authorizes QVeris spend, run live and stay within the stated budget.
+
+## Internal Deterministic Runner
+
+Use the local runner internally before composing a free-form answer:
 
 ```bash
-node qveris-quant-factor-screen/scripts/run.mjs --dry-run --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90
-node qveris-quant-factor-screen/scripts/run.mjs --live --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90 --max-paid-calls 25 --max-credits 520 --output qveris-quant-factor-screen/artifacts/live-smoke.md --trace qveris-quant-factor-screen/artifacts/live-smoke-trace.json
+node scripts/run.mjs --dry-run --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90
+node scripts/run.mjs --live --universe AAPL,MSFT,NVDA,AMD,AVGO --window-days 90 --max-paid-calls 25 --max-credits 520 --output artifacts/live-smoke.md --json-output artifacts/live-smoke.json --trace artifacts/live-smoke-trace.json
 ```
 
-The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
+The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, writes schema-valid business JSON, and writes a JSON trace.
 
 ## Workflow
 
@@ -44,6 +66,7 @@ The JSON artifact must include `ranking_table`, `factor_weights`, `tie_break_rul
 - Discover and Inspect are treated as free preflight actions.
 - Paid actions are QVeris Call executions.
 - Provider fallback attempts are also paid actions and must remain inside `--max-paid-calls` and `--max-credits`; fallback attempts are recorded in the trace.
+- Live execution requires at least one paid-call slot per ticker per required factor role. For the default five roles, a 50-stock screen requires at least 250 paid calls before the runner will start live execution.
 - If estimated credits exceed the user's budget, reduce tickers, shorten windows, or ask for approval before continuing.
 
 ## Methodology Reference

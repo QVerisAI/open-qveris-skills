@@ -1,22 +1,43 @@
 ---
 name: qveris-sector-rotation-map
-description: Map sector performance, flows, earnings revisions, valuation, and catalysts to explain market rotation. Use when an agent needs QVeris-powered finance research, live market data, filings/news evidence, cost-aware tool calls, or source-backed investment analysis for this workflow.
+description: Map sector performance, benchmark-relative momentum, ETF proxy history, and news/catalyst context to explain market rotation. Use when an agent needs QVeris-powered finance research, live market data, filings/news evidence, cost-aware tool calls, or source-backed investment analysis for this workflow.
 ---
 
 # Sector rotation map
 
+## Standalone Execution Contract
+
+Treat this skill folder as self-contained. When the skill is installed or copied alone, run commands from this directory and use `scripts/run.mjs` for dry-run, fixture, and live execution.
+
+Do not hand-write QVeris `curl` or ad hoc API calls for normal operation. Manual QVeris calls are allowed only for debugging provider behavior, must be labelled `manual_debug`, and must not be reported as a successful skill E2E run. The skill E2E path is successful only when `scripts/run.mjs` produces the Markdown report, structured JSON, and trace artifact.
+
+`scripts/lib/qveris-runtime.mjs` is bundled runtime plumbing for this skill package. No repository-level shared directory is required when using the skill as an installed package.
 Use QVeris for current facts. Do not rely on model memory for prices, filings, macro data, company events, market reaction, or news.
 
-## Deterministic Runner
+## Natural-Language Invocation Contract
 
-Prefer the local runner before composing a free-form answer:
+When this skill is triggered by a user request, treat the skill as responsible for the final artifacts. The user should not need to know or request a command. Produce these canonical outputs whenever the user asks for analysis, a report, or a reusable result:
+
+- Markdown report
+- Schema-valid business JSON
+- QVeris trace JSON with tool IDs, providers, parameters, execution IDs, costs, skipped calls, and missing-data notes
+
+Use `scripts/run.mjs` internally to produce the canonical outputs. Always pass a business JSON output path when producing artifacts. In the final response, link the report, business JSON, and trace, and summarize paid calls, credits, execution status, and missing-data limits.
+
+Do not create alternate runners, alternate schemas, or one-off JSON shapes for normal use. If the canonical runner lacks a metric, state the gap in `missing_data` and improve this skill later; do not silently replace the skill with ad hoc code. Manual QVeris calls, web search, or provider-specific debugging may supplement the analysis only when labelled `manual_debug`; they cannot replace the canonical runner output or be reported as successful skill E2E.
+
+If the user has not authorized paid QVeris calls, stop after dry-run/preflight or ask for approval. If the user authorizes QVeris spend, run live and stay within the stated budget.
+
+## Internal Deterministic Runner
+
+Use the local runner internally before composing a free-form answer:
 
 ```bash
-node qveris-sector-rotation-map/scripts/run.mjs --dry-run --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30
-node qveris-sector-rotation-map/scripts/run.mjs --live --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30 --max-paid-calls 15 --max-credits 360 --output qveris-sector-rotation-map/artifacts/live-smoke.md --trace qveris-sector-rotation-map/artifacts/live-smoke-trace.json
+node scripts/run.mjs --dry-run --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30
+node scripts/run.mjs --live --sectors XLK,XLF,XLV,XLE,XLI,XLY,XLP,XLU --benchmark SPY --window-days 30 --max-paid-calls 15 --max-credits 360 --output artifacts/live-smoke.md --json-output artifacts/live-smoke.json --trace artifacts/live-smoke-trace.json
 ```
 
-The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, and writes a JSON trace with tool IDs, execution IDs, costs, skipped calls, and missing-data notes.
+The runner performs QVeris Discover / Inspect preflight, enforces paid-call and credit budgets, writes a Markdown report, writes schema-valid business JSON, and writes a JSON trace.
 
 ## Workflow
 
@@ -37,7 +58,7 @@ The runner performs QVeris Discover / Inspect preflight, enforces paid-call and 
 - QVeris calls used and estimated credits
 - Not investment advice
 
-The JSON artifact must include `rotation_quadrants`, `momentum_scores`, `relative_strength_scores`, `benchmark_relative_history`, role-level `missing_data`, and explicit `missing_outputs`. Snapshot-derived quadrants are allowed when sector snapshot data is present; benchmark-relative history and flow/revision confirmation are populated only when those routes return usable evidence.
+The JSON artifact must include `rotation_quadrants`, `momentum_scores`, `relative_strength_scores`, `benchmark_relative_history`, role-level `missing_data`, and explicit `missing_outputs`. Snapshot-derived quadrants are allowed when sector snapshot data is present. News/catalyst context is not the same as ETF fund-flow or earnings-revision confirmation; if direct flow or revision routes are unavailable, label those routes as missing instead of implying confirmation.
 
 ## Cost Guardrails
 

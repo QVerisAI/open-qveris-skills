@@ -15,7 +15,7 @@ Purpose: SOP evidence for reproducible live business scenarios. Each scenario wa
 ## Repro Commands
 
 ```bash
-node qveris-news-sentiment-radar/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --ticker TSLA \
   --market US \
@@ -23,11 +23,11 @@ node qveris-news-sentiment-radar/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 30 \
-  --output qveris-news-sentiment-radar/artifacts/scenario-02-tsla-14d.md \
-  --json-output qveris-news-sentiment-radar/artifacts/scenario-02-tsla-14d-output.json \
-  --trace qveris-news-sentiment-radar/artifacts/scenario-02-tsla-14d-trace.json
+  --output artifacts/scenario-02-tsla-14d.md \
+  --json-output artifacts/scenario-02-tsla-14d-output.json \
+  --trace artifacts/scenario-02-tsla-14d-trace.json
 
-node qveris-news-sentiment-radar/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --ticker AAPL \
   --market US \
@@ -35,9 +35,9 @@ node qveris-news-sentiment-radar/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 30 \
-  --output qveris-news-sentiment-radar/artifacts/scenario-03-aapl-30d.md \
-  --json-output qveris-news-sentiment-radar/artifacts/scenario-03-aapl-30d-output.json \
-  --trace qveris-news-sentiment-radar/artifacts/scenario-03-aapl-30d-trace.json
+  --output artifacts/scenario-03-aapl-30d.md \
+  --json-output artifacts/scenario-03-aapl-30d-output.json \
+  --trace artifacts/scenario-03-aapl-30d-trace.json
 ```
 
 ## Execution Evidence

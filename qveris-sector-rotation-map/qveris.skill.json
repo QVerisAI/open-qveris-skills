@@ -8,7 +8,7 @@
     "zh": "板块轮动地图"
   },
   "description": {
-    "en": "Map sector performance, flows, earnings revisions, valuation, and catalysts to explain market rotation.",
+    "en": "Map sector performance, benchmark-relative momentum, ETF proxy history, and news/catalyst context to explain market rotation.",
     "zh": "板块轮动地图：通过 QVeris 调用实时数据、新闻、公告和市场信号，生成可审计的金融分析工作流。"
   },
   "overview": {
@@ -129,8 +129,8 @@
         "zh": "寻找板块轮动地图数据"
       },
       "purpose": {
-        "en": "Find sector performance, ETF flows, earnings revisions, and valuation capabilities needed for this workflow.",
-        "zh": "寻找该工作流需要的板块轮动地图相关能力。"
+        "en": "Find sector performance, ETF proxy history, benchmark-relative momentum, and news/catalyst capabilities needed for this workflow.",
+        "zh": "寻找该工作流需要的板块表现、ETF 代理历史、相对基准动量和新闻催化相关能力。"
       },
       "sources": [
         "QVeris capability index",
@@ -138,7 +138,7 @@
         "market data providers",
         "news and filing providers"
       ],
-      "sample_query": "sector performance ETF flows earnings revisions valuation API"
+      "sample_query": "sector performance ETF proxy history benchmark relative momentum news catalyst API"
     },
     {
       "action": "Inspect",
@@ -183,7 +183,7 @@
     },
     "summary": {
       "en": "This workflow usually needs 6-24 paid Calls after free Discover and Inspect preflight. Cost depends on provider billing, sector proxy count, benchmark history, and time window.",
-      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 6-20 次付费 Call。费用取决于供应商计费、股票数量和时间窗口。"
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 6-24 次付费 Call。费用取决于供应商计费、板块代理数量、基准历史和时间窗口。"
     },
     "typical_calls": "6-24",
     "estimated_credits": "6-360 credits",
@@ -200,7 +200,7 @@
     },
     "evidence": {
       "en": "Updated from QVeris Discover / Inspect preflight on 2026-07-02; live smoke traces are stored under artifacts after execution.",
-      "zh": "?? 2026-07-02 ? QVeris Discover / Inspect ??????? smoke trace ?????? artifacts?"
+      "zh": "已根据 2026-07-02 的 QVeris Discover / Inspect 预检更新；live smoke trace 会在执行后保存到 artifacts。"
     }
   },
   "execution_flow": [
@@ -246,24 +246,25 @@
     }
   ],
   "validation": {
-    "source_review": "qveris-sector-rotation-map/references/source-review.md",
-    "qveris_tool_map": "qveris-sector-rotation-map/references/qveris-tool-map.md",
-    "runner": "qveris-sector-rotation-map/scripts/run.mjs",
-    "output_schema": "qveris-sector-rotation-map/schemas/output.schema.json",
-    "fixture_output": "qveris-sector-rotation-map/artifacts/fixture-output.json",
-    "fixture_test": "qveris-sector-rotation-map/tests/runner.fixture.test.mjs",
-    "examples": "qveris-sector-rotation-map/examples/README.md",
-    "live_smoke_report": "qveris-sector-rotation-map/artifacts/live-smoke.md",
-    "live_smoke_trace": "qveris-sector-rotation-map/artifacts/live-smoke-trace.json",
-    "codex_e2e": "qveris-sector-rotation-map/artifacts/codex-e2e.md",
-    "codex_cli_e2e_report": "qveris-sector-rotation-map/artifacts/codex-cli-live.md",
-    "codex_cli_e2e_output": "qveris-sector-rotation-map/artifacts/codex-cli-live-output.json",
-    "codex_cli_e2e_trace": "qveris-sector-rotation-map/artifacts/codex-cli-live-trace.json",
-    "openclaw_e2e_blocker": "references/openclaw-skillhub-e2e-check.md",
-    "openclaw_e2e": "pending"
+    "source_review": "references/source-review.md",
+    "qveris_tool_map": "references/qveris-tool-map.md",
+    "runner": "scripts/run.mjs",
+    "runtime": "scripts/lib/qveris-runtime.mjs",
+    "output_schema": "schemas/output.schema.json",
+    "fixture_output": "artifacts/fixture-output.json",
+    "fixture_test": "tests/runner.fixture.test.mjs",
+    "examples": "examples/README.md",
+    "live_smoke_report": "artifacts/live-smoke.md",
+    "live_smoke_trace": "artifacts/live-smoke-trace.json",
+    "codex_e2e": "artifacts/codex-e2e.md",
+    "codex_cli_e2e_report": "artifacts/codex-cli-live.md",
+    "codex_cli_e2e_output": "artifacts/codex-cli-live-output.json",
+    "codex_cli_e2e_trace": "artifacts/codex-cli-live-trace.json",
+    "openclaw_e2e": "complete-local-cli",
+    "hosted_skillhub_e2e": "pending"
   },
   "status_note": {
-    "en": "Preview until deterministic scripts, fixture tests, live QVeris smoke traces, Codex validation, and OpenClaw validation are complete.",
-    "zh": "???????fixture ????? QVeris smoke trace?Codex ??? OpenClaw ??????? preview?"
+    "en": "Preview until hosted Skill Hub validation and release approval are complete. Deterministic scripts, fixture tests, QVeris live smoke traces, Codex validation, and local OpenClaw validation have been exercised.",
+    "zh": "预览状态：已完成确定性脚本、fixture 测试、QVeris live smoke trace、Codex 验证和本地 OpenClaw 验证；Hosted Skill Hub 验证和发布审批完成前不得标记为上线。"
   }
 }

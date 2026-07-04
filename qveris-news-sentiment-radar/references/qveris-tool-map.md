@@ -104,10 +104,10 @@ Final live artifact cost: 5 paid calls / 9.62 credits. Output status: `catalyst_
 
 ## Skill-side Repair Update - 2026-07-03
 
-- Added `issuer_confirmation` as a paid fallback route after filings attempts. It prefers EODHD company news, then Alpha Vantage news sentiment, and is traced separately from `filings_check`.
+- Added `issuer_confirmation` as a paid fallback route after filings attempts. It uses strict preferred candidates only: EODHD company news, then Alpha Vantage news sentiment. Do not fall back to SEC filings tools in this role because their parameter schema is different.
 - Catalyst confirmation now accepts either `filings_check` or `issuer_confirmation`; `confirmed_evidence_set` still requires market news, aggregate sentiment, price reaction, and one confirmation role.
 - Output contract now includes `confirmation_roles` so downstream agents can distinguish SEC/filings evidence from issuer/news fallback evidence.
-- Default live guardrail is now 6 paid calls / 40 credits to leave budget for the issuer-confirmation fallback without starving price reaction.
+- Default live guardrail is now 20 paid calls / 150 credits to support bounded watchlist scans and issuer-confirmation fallback without starving price reaction.
 
 ## Repair Live Verification - 2026-07-03
 

@@ -34,7 +34,20 @@
     },
     "result": {
       "type": "object",
-      "required": ["top_holding", "concentration_hhi", "concentration_level", "evidence_roles", "measurable_risks", "missing_metrics", "missing_data"],
+      "required": [
+        "top_holding",
+        "concentration_hhi",
+        "concentration_level",
+        "evidence_roles",
+        "measurable_risks",
+        "portfolio_risk_metrics",
+        "holdings_risk",
+        "sector_exposure",
+        "risk_leaders",
+        "coverage_level",
+        "missing_metrics",
+        "missing_data"
+      ],
       "properties": {
         "top_holding": {
           "type": "object",
@@ -45,6 +58,7 @@
           }
         },
         "concentration_hhi": { "type": "number" },
+        "concentration_scope": { "type": "string" },
         "concentration_level": { "type": "string", "enum": ["low", "medium", "high"] },
         "evidence_roles": { "type": "array", "items": { "type": "string" } },
         "measurable_risks": { "type": "array", "items": { "type": "string" } },
@@ -61,6 +75,58 @@
             "benchmark_observation_count": { "type": "number" }
           }
         },
+        "portfolio_risk_metrics": {
+          "type": ["object", "null"],
+          "properties": {
+            "observation_count": { "type": "number" },
+            "cumulative_return": { "type": "number" },
+            "daily_volatility": { "type": ["number", "null"] },
+            "annualized_volatility": { "type": ["number", "null"] },
+            "max_drawdown": { "type": "number" },
+            "historical_var_95": { "type": ["number", "null"] },
+            "correlation_to_benchmark": { "type": ["number", "null"] },
+            "benchmark_observation_count": { "type": "number" }
+          }
+        },
+        "holdings_risk": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["symbol", "weight", "risk_metrics", "news_record_count", "data_status", "missing_data"],
+            "properties": {
+              "symbol": { "type": "string" },
+              "weight": { "type": "number" },
+              "sector": { "type": ["string", "null"] },
+              "industry": { "type": ["string", "null"] },
+              "market_cap": { "type": ["number", "null"] },
+              "quote": { "type": ["object", "null"] },
+              "risk_metrics": { "type": ["object", "null"] },
+              "news_record_count": { "type": "number" },
+              "data_status": { "type": "string", "enum": ["complete", "partial"] },
+              "missing_data": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "sector_exposure": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["sector", "weight"],
+            "properties": {
+              "sector": { "type": "string" },
+              "weight": { "type": "number" }
+            }
+          }
+        },
+        "risk_leaders": {
+          "type": "object",
+          "properties": {
+            "volatility": { "type": "array", "items": { "type": "object" } },
+            "drawdown": { "type": "array", "items": { "type": "object" } },
+            "var_95": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        "coverage_level": { "type": "string", "enum": ["complete", "partial"] },
         "missing_metrics": { "type": "array", "items": { "type": "string" } },
         "missing_data": { "type": "array", "items": { "type": "string" } }
       }

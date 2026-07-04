@@ -15,7 +15,7 @@ Purpose: SOP evidence for reproducible live business scenarios. Each scenario wa
 ## Repro Commands
 
 ```bash
-node qveris-portfolio-risk-monitor/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --holdings NVDA:60,AMD:20,CASH:20 \
   --market US \
@@ -24,11 +24,11 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 60 \
-  --output qveris-portfolio-risk-monitor/artifacts/scenario-02-concentrated-nvda.md \
-  --json-output qveris-portfolio-risk-monitor/artifacts/scenario-02-concentrated-nvda-output.json \
-  --trace qveris-portfolio-risk-monitor/artifacts/scenario-02-concentrated-nvda-trace.json
+  --output artifacts/scenario-02-concentrated-nvda.md \
+  --json-output artifacts/scenario-02-concentrated-nvda-output.json \
+  --trace artifacts/scenario-02-concentrated-nvda-trace.json
 
-node qveris-portfolio-risk-monitor/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --holdings JNJ:25,PG:25,KO:20,WMT:20,CASH:10 \
   --market US \
@@ -37,9 +37,9 @@ node qveris-portfolio-risk-monitor/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 60 \
-  --output qveris-portfolio-risk-monitor/artifacts/scenario-03-defensive-stocks.md \
-  --json-output qveris-portfolio-risk-monitor/artifacts/scenario-03-defensive-stocks-output.json \
-  --trace qveris-portfolio-risk-monitor/artifacts/scenario-03-defensive-stocks-trace.json
+  --output artifacts/scenario-03-defensive-stocks.md \
+  --json-output artifacts/scenario-03-defensive-stocks-output.json \
+  --trace artifacts/scenario-03-defensive-stocks-trace.json
 ```
 
 ## Execution Evidence

@@ -11,6 +11,6 @@ Use QVeris Discover and Inspect before paid Calls. Tell the user the expected us
 Preferred deterministic path:
 
 ```bash
-node qveris-news-sentiment-radar/scripts/run.mjs --dry-run --ticker NVDA --window-days 7
-node qveris-news-sentiment-radar/scripts/run.mjs --live --ticker NVDA --window-days 7 --max-paid-calls 4 --max-credits 30 --output qveris-news-sentiment-radar/artifacts/live-smoke.md --trace qveris-news-sentiment-radar/artifacts/live-smoke-trace.json
+node scripts/run.mjs --dry-run --ticker NVDA --window-days 7
+node scripts/run.mjs --live --ticker NVDA --window-days 7 --max-paid-calls 6 --max-credits 40 --output artifacts/live-smoke.md --json-output artifacts/live-smoke.json --trace artifacts/live-smoke-trace.json
 ```
