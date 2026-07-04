@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { pathToFileURL } from "node:url";
 import {
   countRecords,
   dateNDaysBefore,
@@ -8,7 +9,7 @@ import {
   runCli,
   toAlphaVantageTimestamp,
   usTicker,
-} from "../../qveris-finance-common/runner.mjs";
+} from "./lib/qveris-runtime.mjs";
 
 function universe(opts) {
   return opts.universe?.length ? opts.universe : opts.tickers?.length ? opts.tickers : ["AAPL", "MSFT", "NVDA", "AMD", "AVGO"];
@@ -99,6 +100,22 @@ function priceMomentum(call) {
   return { raw, score: Number(Math.max(0, Math.min(1, 0.5 + raw / 30)).toFixed(3)) };
 }
 
+const REQUIRED_FACTOR_ROLES = ["valuation", "quality", "liquidity", "momentum", "news_risk"];
+
+function minimumPaidCallsForCompletePanel(opts) {
+  return universe(opts).length * REQUIRED_FACTOR_ROLES.length;
+}
+
+function validateOptions(opts, { mode } = {}) {
+  if (mode !== "live") return;
+  const required = minimumPaidCallsForCompletePanel(opts);
+  if (opts.maxPaidCalls < required) {
+    throw new Error(
+      `Budget too low for complete quant factor screen: ${universe(opts).length} tickers require at least ${required} paid calls (${REQUIRED_FACTOR_ROLES.length} factor roles per ticker), but --max-paid-calls is ${opts.maxPaidCalls}. Reduce --universe or raise --max-paid-calls before live execution.`,
+    );
+  }
+}
+
 function scoredRows(opts, calls) {
   const names = universe(opts);
   const weights = {
@@ -150,6 +167,7 @@ function scoredRows(opts, calls) {
       rank: null,
       symbol,
       score,
+      non_missing_factor_count: present.length,
       data_status: score == null ? "missing" : missingFactors.length ? "partial" : "complete",
       raw_fields: {
         pe,
@@ -166,9 +184,20 @@ function scoredRows(opts, calls) {
       missing_factors: missingFactors,
     };
   });
+  const componentScore = (row, key) => {
+    const value = row.normalized_scores?.[key];
+    return Number.isFinite(value) ? value : Number.NEGATIVE_INFINITY;
+  };
   rows
     .filter((row) => row.score != null)
-    .sort((a, b) => b.score - a.score || Object.keys(b.normalized_scores).length - Object.keys(a.normalized_scores).length)
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        b.non_missing_factor_count - a.non_missing_factor_count ||
+        componentScore(b, "liquidity") - componentScore(a, "liquidity") ||
+        componentScore(b, "news_risk") - componentScore(a, "news_risk") ||
+        a.symbol.localeCompare(b.symbol),
+    )
     .forEach((row, index) => {
       row.rank = index + 1;
     });
@@ -245,7 +274,7 @@ function analyze({ opts, calls }) {
   };
 }
 
-const config = {
+export const config = {
   id: "qveris-quant-factor-screen",
   title: "Quant Factor Screen",
   toolCategories: [
@@ -346,16 +375,22 @@ const config = {
     universe: universe(opts),
     market: opts.market,
     factor_set: ["valuation", "quality", "liquidity", "momentum", "news_risk"],
+    minimum_paid_calls_for_complete_panel: minimumPaidCallsForCompletePanel(opts),
     max_paid_calls: opts.maxPaidCalls,
     max_credits: opts.maxCredits,
   }),
   analyze,
+  validateOptions,
 };
 
-runCli(config, {
+export const defaults = {
   universe: ["AAPL", "MSFT", "NVDA", "AMD", "AVGO"],
   market: "US",
   windowDays: 90,
   maxPaidCalls: 25,
   maxCredits: 520,
-});
+};
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  runCli(config, defaults);
+}

@@ -15,7 +15,7 @@ Purpose: SOP evidence for reproducible live business scenarios. Each scenario wa
 ## Repro Commands
 
 ```bash
-node qveris-quant-factor-screen/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --universe NVDA,AMD,AVGO,INTC,QCOM \
   --market US \
@@ -23,11 +23,11 @@ node qveris-quant-factor-screen/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 80 \
-  --output qveris-quant-factor-screen/artifacts/scenario-02-semis.md \
-  --json-output qveris-quant-factor-screen/artifacts/scenario-02-semis-output.json \
-  --trace qveris-quant-factor-screen/artifacts/scenario-02-semis-trace.json
+  --output artifacts/scenario-02-semis.md \
+  --json-output artifacts/scenario-02-semis-output.json \
+  --trace artifacts/scenario-02-semis-trace.json
 
-node qveris-quant-factor-screen/scripts/run.mjs \
+node scripts/run.mjs \
   --live \
   --universe JNJ,PG,KO,PEP,WMT \
   --market US \
@@ -35,9 +35,9 @@ node qveris-quant-factor-screen/scripts/run.mjs \
   --as-of 2026-07-03 \
   --max-paid-calls 4 \
   --max-credits 80 \
-  --output qveris-quant-factor-screen/artifacts/scenario-03-defensive-quality.md \
-  --json-output qveris-quant-factor-screen/artifacts/scenario-03-defensive-quality-output.json \
-  --trace qveris-quant-factor-screen/artifacts/scenario-03-defensive-quality-trace.json
+  --output artifacts/scenario-03-defensive-quality.md \
+  --json-output artifacts/scenario-03-defensive-quality-output.json \
+  --trace artifacts/scenario-03-defensive-quality-trace.json
 ```
 
 ## Execution Evidence

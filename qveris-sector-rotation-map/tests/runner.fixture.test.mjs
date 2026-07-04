@@ -1,35 +1,35 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateSchema } from "../../qveris-finance-common/schema-validator.mjs";
-import { executePlan } from "../../qveris-finance-common/runner.mjs";
+import { config, defaults } from "../scripts/run.mjs";
+import { validateSchema } from "../scripts/lib/schema-validator.mjs";
+import { executePlan, runSkill } from "../scripts/lib/qveris-runtime.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const skillRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("sector rotation runner renders fixture report and trace", () => {
+async function runFixture(fixtureName, output, jsonOutput, trace) {
+  await runSkill(config, {
+    ...defaults,
+    fixture: path.join(skillRoot, "fixtures", fixtureName),
+    output,
+    jsonOutput,
+    trace,
+  });
+}
+
+test("sector rotation runner renders fixture report and trace", async () => {
   const dir = mkdtempSync(path.join(tmpdir(), "qveris-sector-"));
   const output = path.join(dir, "report.md");
   const jsonOutput = path.join(dir, "business-output.json");
   const trace = path.join(dir, "trace.json");
-  execFileSync(process.execPath, [
-    "qveris-sector-rotation-map/scripts/run.mjs",
-    "--fixture",
-    "qveris-sector-rotation-map/fixtures/normal-sector-rotation.json",
-    "--output",
-    output,
-    "--json-output",
-    jsonOutput,
-    "--trace",
-    trace,
-  ], { cwd: root, encoding: "utf8" });
+  await runFixture("normal-sector-rotation.json", output, jsonOutput, trace);
   const report = readFileSync(output, "utf8");
   const businessOutput = JSON.parse(readFileSync(jsonOutput, "utf8"));
   const traceJson = JSON.parse(readFileSync(trace, "utf8"));
-  const schema = JSON.parse(readFileSync(path.join(root, "qveris-sector-rotation-map/schemas/output.schema.json"), "utf8"));
+  const schema = JSON.parse(readFileSync(path.join(skillRoot, "schemas/output.schema.json"), "utf8"));
   assert.match(report, /Sector Rotation Map/);
   assert.match(report, /Rotation proxy set/);
   assert.equal(traceJson.skill_id, "qveris-sector-rotation-map");
@@ -40,30 +40,20 @@ test("sector rotation runner renders fixture report and trace", () => {
   assert.ok(Array.isArray(businessOutput.result.momentum_scores));
   assert.ok(!businessOutput.result.missing_outputs.includes("rotation_quadrants"));
   assert.ok(!businessOutput.result.missing_outputs.includes("benchmark_relative_history"));
-  assert.ok(!businessOutput.result.missing_outputs.includes("flow_or_revision_confirmation"));
+  assert.ok(!businessOutput.result.missing_outputs.includes("news_catalyst_confirmation"));
   assert.ok(Array.isArray(businessOutput.result.benchmark_relative_history));
   assert.equal(businessOutput.result.benchmark_relative_history.length, 2);
 });
 
-test("sector rotation runner surfaces missing provider data", () => {
+test("sector rotation runner surfaces missing provider data", async () => {
   const dir = mkdtempSync(path.join(tmpdir(), "qveris-sector-missing-"));
   const output = path.join(dir, "report.md");
   const jsonOutput = path.join(dir, "business-output.json");
   const trace = path.join(dir, "trace.json");
-  execFileSync(process.execPath, [
-    "qveris-sector-rotation-map/scripts/run.mjs",
-    "--fixture",
-    "qveris-sector-rotation-map/fixtures/missing-data-sector-rotation.json",
-    "--output",
-    output,
-    "--json-output",
-    jsonOutput,
-    "--trace",
-    trace,
-  ], { cwd: root, encoding: "utf8" });
+  await runFixture("missing-data-sector-rotation.json", output, jsonOutput, trace);
   const businessOutput = JSON.parse(readFileSync(jsonOutput, "utf8"));
   const traceJson = JSON.parse(readFileSync(trace, "utf8"));
-  const schema = JSON.parse(readFileSync(path.join(root, "qveris-sector-rotation-map/schemas/output.schema.json"), "utf8"));
+  const schema = JSON.parse(readFileSync(path.join(skillRoot, "schemas/output.schema.json"), "utf8"));
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.result.phase_labels_ready, false);
   assert.ok(businessOutput.result.missing_outputs.includes("rotation_quadrants"));
@@ -98,4 +88,77 @@ test("sector rotation runner skips calls that would exceed credit budget", async
   assert.equal(result.usage.estimated_credits, 0);
   assert.equal(result.trace[0].reason, "credit budget would be exceeded");
   assert.equal(result.trace[0].role, "sector_performance_snapshot");
+});
+
+test("sector rotation runner maps ticker watchlists to sector proxies", () => {
+  const summary = config.inputSummary({ ...defaults, sectors: [], tickers: ["AAPL", "NVDA", "TSLA"] });
+  assert.deepEqual(summary.sector_proxies, ["XLK", "XLY"]);
+  assert.deepEqual(summary.requested_tickers, ["AAPL", "NVDA", "TSLA"]);
+});
+
+test("sector rotation readiness stays partial when a requested proxy has no signal", () => {
+  const analysis = config.analyze({
+    opts: { ...defaults, sectors: ["XLK", "XLY"], benchmark: "SPY", asOf: "2026-07-02", windowDays: 30 },
+    calls: [
+      {
+        role: "proxy_price_history",
+        target: "XLK",
+        ok: true,
+        raw_result: {
+          result: {
+            historical: [
+              { date: "2026-06-01", close: 100 },
+              { date: "2026-07-01", close: 110 },
+            ],
+          },
+        },
+      },
+    ],
+  });
+  assert.equal(analysis.result.phase_labels_ready, false);
+  assert.ok(analysis.result.missing_outputs.includes("partial_rotation_quadrants"));
+  assert.ok(analysis.result.missing_data.some((item) => item.includes("sector_signal/XLY")));
+});
+
+test("sector rotation business output surfaces skipped ETF performance source", () => {
+  const analysis = config.analyze({
+    opts: { ...defaults, sectors: ["XLK"], benchmark: "SPY", asOf: "2026-07-02", windowDays: 30 },
+    calls: [
+      {
+        role: "proxy_price_history",
+        target: "XLK",
+        ok: true,
+        raw_result: {
+          result: {
+            historical: [
+              { date: "2026-06-01", close: 100 },
+              { date: "2026-07-01", close: 110 },
+            ],
+          },
+        },
+      },
+      {
+        role: "benchmark_price_history",
+        target: "SPY",
+        ok: true,
+        raw_result: {
+          result: {
+            historical: [
+              { date: "2026-06-01", close: 100 },
+              { date: "2026-07-01", close: 105 },
+            ],
+          },
+        },
+      },
+      {
+        role: "news_catalyst_confirmation",
+        target: "XLK",
+        ok: true,
+        raw_result: { result: [{ title: "Technology catalyst context", overall_sentiment_label: "Bullish" }] },
+      },
+    ],
+    trace: [{ type: "call_skipped", role: "etf_performance", target: "XLK", reason: "no inspected tool candidate" }],
+  });
+  assert.ok(analysis.result.missing_outputs.includes("etf_performance_source"));
+  assert.ok(analysis.result.missing_data.some((item) => item.includes("etf_performance/XLK: skipped")));
 });

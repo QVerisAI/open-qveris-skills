@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { pathToFileURL } from "node:url";
 import {
   countRecords,
   dateNDaysBefore,
@@ -8,10 +9,31 @@ import {
   runCli,
   toAlphaVantageTimestamp,
   usTicker,
-} from "../../qveris-finance-common/runner.mjs";
+} from "./lib/qveris-runtime.mjs";
+
+function normalizeTicker(symbol) {
+  return String(symbol || "").trim().toUpperCase().replace(/\.US$/, "");
+}
+
+function tickers(opts) {
+  const names = opts.tickers?.length ? opts.tickers : [opts.ticker || "NVDA"];
+  return [...new Set(names.map(normalizeTicker).filter(Boolean))];
+}
 
 function primaryTicker(opts) {
-  return (opts.tickers?.[0] || opts.ticker || "NVDA").toUpperCase();
+  return tickers(opts)[0] || "NVDA";
+}
+
+function callTarget(call) {
+  const value = call?.target || call?.parameters?.tickers || call?.parameters?.symbol || call?.parameters?.s || "";
+  return normalizeTicker(String(value).split(",")[0]);
+}
+
+function callsForTicker(calls, symbol, allTickers) {
+  const wanted = normalizeTicker(symbol);
+  const targeted = calls.filter((call) => callTarget(call) === wanted);
+  if (targeted.length || allTickers.length > 1) return targeted;
+  return calls;
 }
 
 function extractSentimentLabels(calls) {
@@ -61,25 +83,60 @@ function catalystScore(labels, calls) {
 }
 
 function analyze({ opts, calls }) {
+  const names = tickers(opts);
   const evidence = calls.map(genericEvidence);
-  const labels = extractSentimentLabels(calls);
+  const tickerRows = names.map((ticker) => {
+    const tickerCalls = callsForTicker(calls, ticker, names);
+    const tickerEvidence = tickerCalls.map(genericEvidence);
+    const labels = extractSentimentLabels(tickerCalls);
+    const totalRecords = tickerEvidence.reduce((sum, row) => sum + (row.record_count || 0), 0);
+    const missingData = [
+      ...["market_news_sentiment", "aggregate_sentiment", "price_reaction"].map((role) => missingRole(tickerCalls, role)),
+      missingConfirmation(tickerCalls),
+    ].filter(Boolean);
+    const requiredEvidenceReady =
+      roleSatisfied(tickerCalls, "market_news_sentiment") &&
+      roleSatisfied(tickerCalls, "aggregate_sentiment") &&
+      anyRoleSatisfied(tickerCalls, ["filings_check", "issuer_confirmation"]) &&
+      roleSatisfied(tickerCalls, "price_reaction");
+    return {
+      ticker,
+      sentiment_counts: labels,
+      total_records: totalRecords,
+      signal_level: sentimentLevel(labels, totalRecords),
+      catalyst_status: totalRecords && requiredEvidenceReady ? "confirmed_evidence_set" : totalRecords ? "needs_confirmation" : "insufficient_data",
+      catalyst_confidence_score: catalystScore(labels, tickerCalls),
+      corroborating_roles: ["market_news_sentiment", "aggregate_sentiment", "filings_check", "issuer_confirmation", "price_reaction"].filter((role) => roleSatisfied(tickerCalls, role)),
+      confirmation_roles: ["filings_check", "issuer_confirmation"].filter((role) => roleSatisfied(tickerCalls, role)),
+      evidence_roles: tickerEvidence.map((row) => row.role),
+      missing_data: missingData,
+    };
+  });
+  const primary = tickerRows[0] || {
+    ticker: primaryTicker(opts),
+    sentiment_counts: { positive: 0, negative: 0, neutral: 0 },
+    total_records: 0,
+    signal_level: "insufficient_data",
+    catalyst_status: "insufficient_data",
+    catalyst_confidence_score: 0,
+    corroborating_roles: [],
+    confirmation_roles: [],
+    evidence_roles: [],
+    missing_data: [],
+  };
+  const labels = {
+    positive: tickerRows.reduce((sum, row) => sum + row.sentiment_counts.positive, 0),
+    negative: tickerRows.reduce((sum, row) => sum + row.sentiment_counts.negative, 0),
+    neutral: tickerRows.reduce((sum, row) => sum + row.sentiment_counts.neutral, 0),
+  };
   const totalRecords = evidence.reduce((sum, row) => sum + (row.record_count || 0), 0);
-  const missingData = [
-    ...["market_news_sentiment", "aggregate_sentiment", "price_reaction"].map((role) => missingRole(calls, role)),
-    missingConfirmation(calls),
-  ]
-    .filter(Boolean);
-  const score = catalystScore(labels, calls);
-  const requiredEvidenceReady =
-    roleSatisfied(calls, "market_news_sentiment") &&
-    roleSatisfied(calls, "aggregate_sentiment") &&
-    anyRoleSatisfied(calls, ["filings_check", "issuer_confirmation"]) &&
-    roleSatisfied(calls, "price_reaction");
+  const missingData = tickerRows.flatMap((row) => row.missing_data.map((item) => `${row.ticker}: ${item}`));
+  const score = primary.catalyst_confidence_score;
   const findings = [
-    `Reviewed ${primaryTicker(opts)} over a ${opts.windowDays}-day window with ${calls.length} QVeris call attempts.`,
+    `Reviewed ${names.join(", ")} over a ${opts.windowDays}-day window with ${calls.length} QVeris call attempts.`,
     `Observed ${totalRecords} raw records or nested payload rows across selected sources.`,
     `Sentiment text mentions in returned payload: ${labels.positive} positive, ${labels.negative} negative, ${labels.neutral} neutral.`,
-    `Composite catalyst confidence score is ${score}; scores below 0.65 should stay in watchlist mode.`,
+    `Primary catalyst confidence score is ${score}; scores below 0.65 should stay in watchlist mode.`,
     "Use strong labels only when news, filings, or quote reaction agree; otherwise mark the catalyst as weak or unresolved.",
   ];
   const risks = [
@@ -90,6 +147,7 @@ function analyze({ opts, calls }) {
   return {
     scope: {
       ticker: primaryTicker(opts),
+      tickers: names,
       market: opts.market,
       window_days: opts.windowDays,
       from: dateNDaysBefore(opts.asOf, opts.windowDays),
@@ -100,20 +158,22 @@ function analyze({ opts, calls }) {
     risks,
     result: {
       ticker: primaryTicker(opts),
-      sentiment_counts: labels,
+      tickers: names,
+      watchlist: tickerRows,
+      sentiment_counts: primary.sentiment_counts,
       total_records: totalRecords,
-      signal_level: sentimentLevel(labels, totalRecords),
-      catalyst_status: totalRecords && requiredEvidenceReady ? "confirmed_evidence_set" : totalRecords ? "needs_confirmation" : "insufficient_data",
+      signal_level: primary.signal_level,
+      catalyst_status: primary.catalyst_status,
       catalyst_confidence_score: score,
-      corroborating_roles: ["market_news_sentiment", "aggregate_sentiment", "filings_check", "issuer_confirmation", "price_reaction"].filter((role) => roleSatisfied(calls, role)),
-      confirmation_roles: ["filings_check", "issuer_confirmation"].filter((role) => roleSatisfied(calls, role)),
+      corroborating_roles: primary.corroborating_roles,
+      confirmation_roles: primary.confirmation_roles,
       evidence_roles: evidence.map((row) => row.role),
       missing_data: missingData,
     },
   };
 }
 
-const config = {
+export const config = {
   id: "qveris-news-sentiment-radar",
   title: "News Sentiment Radar",
   toolCategories: [
@@ -147,9 +207,11 @@ const config = {
       role: "market_news_sentiment",
       category: "news_sentiment",
       preferredToolIds: ["alphavantage.news_sentiment.query.v1.467a92c0"],
-      buildParams: (opts) => ({
+      repeatFor: (opts) => tickers(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) => ({
         function: "NEWS_SENTIMENT",
-        tickers: primaryTicker(opts),
+        tickers: symbol,
         time_from: toAlphaVantageTimestamp(dateNDaysBefore(opts.asOf, opts.windowDays)),
         time_to: toAlphaVantageTimestamp(opts.asOf),
         sort: "LATEST",
@@ -160,8 +222,10 @@ const config = {
       role: "aggregate_sentiment",
       category: "news_sentiment",
       preferredToolIds: ["eodhd.sentiments.list.v1.9ba159a0"],
-      buildParams: (opts) => ({
-        s: usTicker(primaryTicker(opts)),
+      repeatFor: (opts) => tickers(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) => ({
+        s: usTicker(symbol),
         from: dateNDaysBefore(opts.asOf, opts.windowDays),
         to: opts.asOf,
       }),
@@ -176,8 +240,10 @@ const config = {
       ],
       fallbackOnEmpty: true,
       maxAttempts: 2,
-      buildParams: (opts) => ({
-        symbol: primaryTicker(opts),
+      repeatFor: (opts) => tickers(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) => ({
+        symbol,
         from: dateNDaysBefore(opts.asOf, opts.windowDays),
         to: opts.asOf,
       }),
@@ -186,20 +252,26 @@ const config = {
       role: "price_reaction",
       category: "market_reaction",
       preferredToolIds: ["eodhd.live_data.real_time.retrieve.v1.b60a4285", "finnhub_io_api.stock.quote", "finnhub.quote.retrieve.v1.f72cf5ef"],
-      buildParams: (opts, tool) =>
+      repeatFor: (opts) => tickers(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) =>
         String(tool.tool_id).startsWith("eodhd.")
-          ? { symbol: usTicker(primaryTicker(opts)), fmt: "json" }
-          : { symbol: primaryTicker(opts) },
+          ? { symbol: usTicker(symbol), fmt: "json" }
+          : { symbol },
     },
     {
       role: "issuer_confirmation",
       category: "issuer_confirmation",
       preferredToolIds: ["eodhd.news.retrieve.v1.fe8bf94c", "alphavantage.news_sentiment.query.v1.467a92c0"],
+      strictPreferred: true,
       fallbackOnEmpty: true,
-      buildParams: (opts, tool) =>
+      maxAttempts: 2,
+      repeatFor: (opts) => tickers(opts),
+      target: (symbol) => symbol,
+      buildParams: (opts, tool, symbol) =>
         String(tool.tool_id).startsWith("eodhd.")
           ? {
-              s: usTicker(primaryTicker(opts)),
+              s: usTicker(symbol),
               from: dateNDaysBefore(opts.asOf, opts.windowDays),
               to: opts.asOf,
               limit: opts.limit || 10,
@@ -207,7 +279,7 @@ const config = {
             }
           : {
               function: "NEWS_SENTIMENT",
-              tickers: primaryTicker(opts),
+              tickers: symbol,
               time_from: toAlphaVantageTimestamp(dateNDaysBefore(opts.asOf, opts.windowDays)),
               time_to: toAlphaVantageTimestamp(opts.asOf),
               sort: "LATEST",
@@ -217,6 +289,7 @@ const config = {
   ],
   inputSummary: (opts) => ({
     ticker: primaryTicker(opts),
+    tickers: tickers(opts),
     market: opts.market,
     window_days: opts.windowDays,
     max_paid_calls: opts.maxPaidCalls,
@@ -225,11 +298,15 @@ const config = {
   analyze,
 };
 
-runCli(config, {
+export const defaults = {
   ticker: "NVDA",
   market: "US",
   windowDays: 7,
-  maxPaidCalls: 6,
-  maxCredits: 40,
+  maxPaidCalls: 20,
+  maxCredits: 150,
   limit: 10,
-});
+};
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  runCli(config, defaults);
+}

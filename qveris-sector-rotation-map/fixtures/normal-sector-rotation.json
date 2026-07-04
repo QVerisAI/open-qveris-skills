@@ -77,7 +77,7 @@
       }
     },
     {
-      "role": "flow_or_revision_confirmation",
+      "role": "news_catalyst_confirmation",
       "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
       "ok": true,
       "cost": 2,

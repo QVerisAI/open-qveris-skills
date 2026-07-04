@@ -15,6 +15,7 @@
       "properties": {
         "sector_proxies": { "type": "array", "items": { "type": "string" } },
         "benchmark": { "type": "string" },
+        "requested_tickers": { "type": "array", "items": { "type": "string" } },
         "market": { "type": "string" },
         "window_days": { "type": "number" },
         "from": { "type": "string" },

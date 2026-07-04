@@ -1,42 +1,49 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateSchema } from "../../qveris-finance-common/schema-validator.mjs";
-import { executePlan } from "../../qveris-finance-common/runner.mjs";
+import { config, defaults } from "../scripts/run.mjs";
+import { validateSchema } from "../scripts/lib/schema-validator.mjs";
+import { executePlan, runSkill } from "../scripts/lib/qveris-runtime.mjs";
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
+const skillRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-test("portfolio risk runner renders fixture report and trace", () => {
+async function runFixture(fixtureName, output, jsonOutput, trace) {
+  await runSkill(config, {
+    ...defaults,
+    fixture: path.join(skillRoot, "fixtures", fixtureName),
+    output,
+    jsonOutput,
+    trace,
+  });
+}
+
+test("portfolio risk runner renders fixture report and trace", async () => {
   const dir = mkdtempSync(path.join(tmpdir(), "qveris-portfolio-"));
   const output = path.join(dir, "report.md");
   const jsonOutput = path.join(dir, "business-output.json");
   const trace = path.join(dir, "trace.json");
-  execFileSync(process.execPath, [
-    "qveris-portfolio-risk-monitor/scripts/run.mjs",
-    "--fixture",
-    "qveris-portfolio-risk-monitor/fixtures/normal-portfolio-risk.json",
-    "--output",
-    output,
-    "--json-output",
-    jsonOutput,
-    "--trace",
-    trace,
-  ], { cwd: root, encoding: "utf8" });
+  await runFixture("normal-portfolio-risk.json", output, jsonOutput, trace);
   const report = readFileSync(output, "utf8");
   const businessOutput = JSON.parse(readFileSync(jsonOutput, "utf8"));
   const traceJson = JSON.parse(readFileSync(trace, "utf8"));
-  const schema = JSON.parse(readFileSync(path.join(root, "qveris-portfolio-risk-monitor/schemas/output.schema.json"), "utf8"));
+  const schema = JSON.parse(readFileSync(path.join(skillRoot, "schemas/output.schema.json"), "utf8"));
   assert.match(report, /Portfolio Risk Monitor/);
   assert.match(report, /Largest non-cash holding/);
   assert.equal(traceJson.skill_id, "qveris-portfolio-risk-monitor");
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.equal(businessOutput.skill_id, "qveris-portfolio-risk-monitor");
   assert.equal(businessOutput.result.top_holding.symbol, "AAPL");
+  assert.equal(businessOutput.result.concentration_scope, "non_cash_holdings");
+  assert.ok(businessOutput.result.concentration_hhi > 0.25);
   assert.ok(businessOutput.result.risk_metrics);
+  assert.ok(Array.isArray(businessOutput.result.holdings_risk));
+  assert.equal(businessOutput.result.holdings_risk[0].symbol, "AAPL");
+  assert.ok(Array.isArray(businessOutput.result.sector_exposure));
+  assert.ok(businessOutput.result.risk_leaders);
+  assert.equal(businessOutput.result.coverage_level, "partial");
   assert.equal(businessOutput.result.risk_metrics.observation_count, 5);
   assert.ok(!businessOutput.result.missing_metrics.includes("volatility"));
   assert.ok(!businessOutput.result.missing_metrics.includes("drawdown"));
@@ -45,27 +52,18 @@ test("portfolio risk runner renders fixture report and trace", () => {
   assert.ok(businessOutput.result.measurable_risks.includes("benchmark_correlation"));
 });
 
-test("portfolio risk runner surfaces missing provider data", () => {
+test("portfolio risk runner surfaces missing provider data", async () => {
   const dir = mkdtempSync(path.join(tmpdir(), "qveris-portfolio-missing-"));
   const output = path.join(dir, "report.md");
   const jsonOutput = path.join(dir, "business-output.json");
   const trace = path.join(dir, "trace.json");
-  execFileSync(process.execPath, [
-    "qveris-portfolio-risk-monitor/scripts/run.mjs",
-    "--fixture",
-    "qveris-portfolio-risk-monitor/fixtures/missing-data-portfolio-risk.json",
-    "--output",
-    output,
-    "--json-output",
-    jsonOutput,
-    "--trace",
-    trace,
-  ], { cwd: root, encoding: "utf8" });
+  await runFixture("missing-data-portfolio-risk.json", output, jsonOutput, trace);
   const businessOutput = JSON.parse(readFileSync(jsonOutput, "utf8"));
   const traceJson = JSON.parse(readFileSync(trace, "utf8"));
-  const schema = JSON.parse(readFileSync(path.join(root, "qveris-portfolio-risk-monitor/schemas/output.schema.json"), "utf8"));
+  const schema = JSON.parse(readFileSync(path.join(skillRoot, "schemas/output.schema.json"), "utf8"));
   assert.deepEqual(validateSchema(schema, businessOutput), []);
   assert.ok(businessOutput.result.missing_data.some((item) => item.includes("quote_snapshot")));
+  assert.equal(businessOutput.result.coverage_level, "partial");
   assert.ok(traceJson.trace.some((row) => row.type === "call_error" && row.role === "quote_snapshot"));
 });
 
