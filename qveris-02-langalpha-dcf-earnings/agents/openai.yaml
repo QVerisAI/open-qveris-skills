@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris LangAlpha DCF"
+  short_description: "DCF, earnings, and sector overview"
+  default_prompt: "Use $qveris-02-langalpha-dcf-earnings to run a QVeris-backed DCF, earnings, or sector overview."

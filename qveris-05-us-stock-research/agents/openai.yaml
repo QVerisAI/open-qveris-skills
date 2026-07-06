@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris US Stock Research"
+  short_description: "Evidence-first US stock research"
+  default_prompt: "Use $qveris-05-us-stock-research to draft a QVeris-backed 10-K, catalyst, competitor, DCF, or earnings-call memo."

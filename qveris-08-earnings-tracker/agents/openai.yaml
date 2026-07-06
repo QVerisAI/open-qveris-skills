@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Earnings Tracker"
+  short_description: "Calendar, watchlist, and recap tracking"
+  default_prompt: "Use $qveris-08-earnings-tracker to track upcoming earnings and create trace-backed recaps."

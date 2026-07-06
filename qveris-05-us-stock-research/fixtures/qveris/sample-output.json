@@ -1,0 +1,58 @@
+{
+  "skill": "qveris-05-us-stock-research",
+  "source_record": {
+    "candidate_number": 5,
+    "github_url": "https://github.com/yennanliu/InvestSkill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-05",
+    "local_source_snapshot": "third_party/source_repos/05-investskill",
+    "snapshot_latest_commit": "49aa5da 2026-07-05"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 14,
+    "max_age": "P1D",
+    "budget_note": "Prioritize filings, XBRL, and evidence tables before optional valuation inputs."
+  },
+  "analysis": {
+    "workflow": "10k_digest",
+    "entity": "AMZN",
+    "summary": "Evidence-first 10-K digest with red flag and catalyst sections.",
+    "sections": [
+      "filing_summary",
+      "xbrl_metrics",
+      "red_flags",
+      "catalysts",
+      "missing_data"
+    ]
+  },
+  "risk_notes": [
+    "Filing interpretation requires source evidence and is not an investment conclusion."
+  ],
+  "missing_fields": [],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.filings_structured_xbrl",
+      "capability_id": "FILINGS.STRUCTURED_XBRL",
+      "entity": "AMZN",
+      "market": "US",
+      "params": {
+        "form": "10-K",
+        "period": "latest"
+      },
+      "as_of": "2026-07-06",
+      "retrieved_at": "2026-07-06T00:00:00Z",
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ],
+  "disclaimer": "不构成投资建议 / Not investment advice.",
+  "data_quality": {
+    "status": "ok",
+    "warnings": [],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": []
+  },
+  "suppressed_fields": []
+}

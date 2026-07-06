@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Market Monitor"
+  short_description: "Briefs, screeners, earnings, macro risk"
+  default_prompt: "Use $qveris-03-market-monitor to create a QVeris-backed company brief, screener, earnings monitor, or risk note."
