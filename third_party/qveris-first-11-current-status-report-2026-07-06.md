@@ -12,8 +12,8 @@ Current usability status:
 
 | Status | Count | Skills |
 |---|---:|---|
-| Good | 1 | `qveris-03-market-monitor` |
-| Usable with warning | 10 | `qveris-01`, `qveris-02`, `qveris-04`, `qveris-05`, `qveris-06`, `qveris-07`, `qveris-08`, `qveris-09`, `qveris-10`, `qveris-11` |
+| Good | 1 | `qveris-eodhd-claude-skills` |
+| Usable with warning | 10 | `qveris-anthropic-financial-services`, `qveris-langalpha`, `qveris-finance-skills`, `qveris-investskill`, `qveris-tech-earnings-deepdive`, `qveris-day1global-skills`, `qveris-earnings-tracker`, `qveris-hhxg-market`, `qveris-tradermonty-trading-skills`, `qveris-financial-analyst-skills` |
 | Blocked | 0 | None |
 
 Important nuance: "usable with warning" means the skill can be invoked and can produce traceable output, but it must surface `missing_fields`, `fallback_used`, and `data_quality` because live QVeris payloads were incomplete, failed, stale, out-of-window, cross-market, or semantically mismatched.
@@ -49,7 +49,7 @@ These are not blockers, but they are the main places where the current implement
 
 ## Skill Status
 
-### 1. `qveris-01-financial-services`
+### 1. `qveris-anthropic-financial-services`
 
 Current status: usable with warning.
 
@@ -61,7 +61,7 @@ Current guardrail: Do not state beat/miss without actual and consensus; do not i
 
 Still not fully done: Workflow tool names in `SKILL.md` should be fully qualified; fixture should show the actual earnings-surprise fallback case.
 
-### 2. `qveris-02-langalpha-dcf-earnings`
+### 2. `qveris-langalpha`
 
 Current status: usable with warning.
 
@@ -73,7 +73,7 @@ Current guardrail: Do not blend annual/quarterly/TTM values; mark missing risk-f
 
 Still not fully done: Needs deterministic period-alignment gate and fallback fixture for missing rates/cross-period cash flow.
 
-### 3. `qveris-03-market-monitor`
+### 3. `qveris-eodhd-claude-skills`
 
 Current status: good.
 
@@ -85,7 +85,7 @@ Current guardrail: Flag stale quotes and suppress target-price/upside/recommenda
 
 Still not fully done: Original EODHD names remain in source records as required provenance, which can look noisy in residual scans; fixture should show stale-quote handling.
 
-### 4. `qveris-04-factor-finance`
+### 4. `qveris-finance-skills`
 
 Current status: usable with warning.
 
@@ -97,7 +97,7 @@ Current guardrail: If sentiment scoring fails, use only qualitative `news_fin_ta
 
 Still not fully done: Needs fallback fixture showing qualitative-only sentiment and partial valuation factors.
 
-### 5. `qveris-05-us-stock-research`
+### 5. `qveris-investskill`
 
 Current status: usable with warning.
 
@@ -109,7 +109,7 @@ Current guardrail: If raw filing or true XBRL facts are unavailable, output only
 
 Still not fully done: Needs schema/fixture examples for "metadata is not XBRL" and source-span absence.
 
-### 6. `qveris-06-tech-earnings-deepdive`
+### 6. `qveris-tech-earnings-deepdive`
 
 Current status: usable with warning.
 
@@ -121,7 +121,7 @@ Current guardrail: Without segment facts, do not emit a segment revenue/margin s
 
 Still not fully done: Needs deterministic payload-shape checks for patents/research/theme data and a fallback memo fixture.
 
-### 7. `qveris-07-global-tech-memo`
+### 7. `qveris-day1global-skills`
 
 Current status: usable with warning.
 
@@ -133,7 +133,7 @@ Current guardrail: Mark FX missing if unavailable; do not label academic rows as
 
 Still not fully done: Needs region/content-type quality gate and fixture showing missing FX/macro.
 
-### 8. `qveris-08-earnings-tracker`
+### 8. `qveris-earnings-tracker`
 
 Current status: usable with warning.
 
@@ -145,7 +145,7 @@ Current guardrail: Filter calendar rows to the requested date window; put reject
 
 Still not fully done: Needs out-of-window fixture and deterministic calendar-window gate.
 
-### 9. `qveris-09-a-share-market-snapshot`
+### 9. `qveris-hhxg-market`
 
 Current status: usable with warning.
 
@@ -157,7 +157,7 @@ Current guardrail: Use index quote fallback for broad snapshot; do not emit brea
 
 Still not fully done: Needs deterministic market/suffix gate and fallback fixture for CN breadth/top-mover rejection.
 
-### 10. `qveris-10-risk-regime-review`
+### 10. `qveris-tradermonty-trading-skills`
 
 Current status: usable with warning.
 
@@ -169,7 +169,7 @@ Current guardrail: Use VIX/rates/liquid ETF proxies only as limited fallback; lo
 
 Still not fully done: Needs strict schema enforcement for proxy vs primary evidence and fixture showing limited confidence.
 
-### 11. `qveris-11-financial-document-modeling`
+### 11. `qveris-financial-analyst-skills`
 
 Current status: usable with warning.
 

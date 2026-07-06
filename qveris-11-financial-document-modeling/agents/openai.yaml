@@ -1,4 +1,0 @@
-interface:
-  display_name: "QVeris Document Modeling"
-  short_description: "Financial extraction and model JSON"
-  default_prompt: "Use $qveris-11-financial-document-modeling to extract, calculate, model, and emit trace-backed financial JSON."

@@ -14,17 +14,17 @@ Smoke report used: `reports\qveris-live-smoke-first-11-2026-07-06T09-10-26-891Z.
 
 | Skill | Verdict | Score | Selected live CAP | Failed primary attempts | Issues / warnings |
 |---|---:|---:|---|---|---|
-| qveris-01-financial-services | usable-with-warning | 3/4 | `qveris_finance.estimates_consensus` | qveris_finance.earnings_actual_surprise 503 | - |
-| qveris-02-langalpha-dcf-earnings | good | 4/4 | `qveris_finance.fundamentals_cf` | - | - |
-| qveris-03-market-monitor | good | 4/4 | `qveris_finance.ref_company_profile` | - | - |
-| qveris-04-factor-finance | usable-with-warning | 3/4 | `qveris_finance.news_fin_tagged` | qveris_finance.sentiment_text_signals 503 | - |
-| qveris-05-us-stock-research | good | 4/4 | `qveris_finance.filings_structured_xbrl` | - | - |
-| qveris-06-tech-earnings-deepdive | usable-with-warning | 3/4 | `qveris_finance.news_fin_tagged` | qveris_finance.fundamentals_segment 503 | - |
-| qveris-07-global-tech-memo | good | 4/4 | `qveris_finance.mkt_l1_rt` | - | - |
-| qveris-08-earnings-tracker | good | 4/4 | `qveris_finance.event_calendar_earnings` | - | - |
-| qveris-09-a-share-market-snapshot | usable-with-warning | 3/4 | `qveris_finance.mkt_l1_rt` | qveris_finance.mkt_breadth_internals 503 | - |
-| qveris-10-risk-regime-review | good | 4/4 | `qveris_finance.index_vix` | - | - |
-| qveris-11-financial-document-modeling | good | 4/4 | `qveris_finance.filings_regulatory_metadata` | - | - |
+| qveris-anthropic-financial-services | usable-with-warning | 3/4 | `qveris_finance.estimates_consensus` | qveris_finance.earnings_actual_surprise 503 | - |
+| qveris-langalpha | good | 4/4 | `qveris_finance.fundamentals_cf` | - | - |
+| qveris-eodhd-claude-skills | good | 4/4 | `qveris_finance.ref_company_profile` | - | - |
+| qveris-finance-skills | usable-with-warning | 3/4 | `qveris_finance.news_fin_tagged` | qveris_finance.sentiment_text_signals 503 | - |
+| qveris-investskill | good | 4/4 | `qveris_finance.filings_structured_xbrl` | - | - |
+| qveris-tech-earnings-deepdive | usable-with-warning | 3/4 | `qveris_finance.news_fin_tagged` | qveris_finance.fundamentals_segment 503 | - |
+| qveris-day1global-skills | good | 4/4 | `qveris_finance.mkt_l1_rt` | - | - |
+| qveris-earnings-tracker | good | 4/4 | `qveris_finance.event_calendar_earnings` | - | - |
+| qveris-hhxg-market | usable-with-warning | 3/4 | `qveris_finance.mkt_l1_rt` | qveris_finance.mkt_breadth_internals 503 | - |
+| qveris-tradermonty-trading-skills | good | 4/4 | `qveris_finance.index_vix` | - | - |
+| qveris-financial-analyst-skills | good | 4/4 | `qveris_finance.filings_regulatory_metadata` | - | - |
 
 ## Findings
 

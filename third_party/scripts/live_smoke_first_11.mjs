@@ -5,7 +5,7 @@ import { callTool, discoverTools } from "../../qveris-official/scripts/qveris_cl
 
 const scenarios = [
   {
-    skill: "qveris-01-financial-services",
+    skill: "qveris-anthropic-financial-services",
     attempts: [
       {
         label: "earnings surprise",
@@ -22,7 +22,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-02-langalpha-dcf-earnings",
+    skill: "qveris-langalpha",
     attempts: [
       {
         label: "cash-flow fundamentals",
@@ -39,7 +39,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-03-market-monitor",
+    skill: "qveris-eodhd-claude-skills",
     attempts: [
       {
         label: "company profile",
@@ -50,7 +50,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-04-factor-finance",
+    skill: "qveris-finance-skills",
     attempts: [
       {
         label: "sentiment text signals",
@@ -67,7 +67,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-05-us-stock-research",
+    skill: "qveris-investskill",
     attempts: [
       {
         label: "structured XBRL filings",
@@ -84,7 +84,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-06-tech-earnings-deepdive",
+    skill: "qveris-tech-earnings-deepdive",
     attempts: [
       {
         label: "segment fundamentals",
@@ -107,7 +107,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-07-global-tech-memo",
+    skill: "qveris-day1global-skills",
     attempts: [
       {
         label: "real-time market quote",
@@ -118,7 +118,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-08-earnings-tracker",
+    skill: "qveris-earnings-tracker",
     attempts: [
       {
         label: "earnings calendar",
@@ -129,7 +129,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-09-a-share-market-snapshot",
+    skill: "qveris-hhxg-market",
     attempts: [
       {
         label: "A-share market breadth",
@@ -152,7 +152,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-10-risk-regime-review",
+    skill: "qveris-tradermonty-trading-skills",
     attempts: [
       {
         label: "VIX index",
@@ -169,7 +169,7 @@ const scenarios = [
     ],
   },
   {
-    skill: "qveris-11-financial-document-modeling",
+    skill: "qveris-financial-analyst-skills",
     attempts: [
       {
         label: "filing metadata",

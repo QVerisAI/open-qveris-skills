@@ -1,4 +1,0 @@
-interface:
-  display_name: "QVeris Factor Finance"
-  short_description: "Trace-backed finance factor workflows"
-  default_prompt: "Use $qveris-04-factor-finance to produce QVeris-backed sentiment, valuation, earnings, liquidity, or correlation factors."

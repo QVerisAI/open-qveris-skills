@@ -1,4 +1,0 @@
-interface:
-  display_name: "QVeris Financial Services"
-  short_description: "Institutional QVeris research workflows"
-  default_prompt: "Use $qveris-01-financial-services to draft a trace-backed earnings, comps, DCF, or market research memo."

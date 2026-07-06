@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Risk Regime"
+  short_description: "Portfolio risk and market regime review"
+  default_prompt: "Use $qveris-tradermonty-trading-skills to review risk, regime, sector rotation, and data quality with QVeris."

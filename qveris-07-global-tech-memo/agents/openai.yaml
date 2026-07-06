@@ -1,4 +1,0 @@
-interface:
-  display_name: "QVeris Global Tech Memo"
-  short_description: "Global technology research memo"
-  default_prompt: "Use $qveris-07-global-tech-memo to assemble a QVeris-backed global or technology research memo."

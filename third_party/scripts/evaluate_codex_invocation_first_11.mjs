@@ -3,17 +3,17 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const skills = [
-  "qveris-01-financial-services",
-  "qveris-02-langalpha-dcf-earnings",
-  "qveris-03-market-monitor",
-  "qveris-04-factor-finance",
-  "qveris-05-us-stock-research",
-  "qveris-06-tech-earnings-deepdive",
-  "qveris-07-global-tech-memo",
-  "qveris-08-earnings-tracker",
-  "qveris-09-a-share-market-snapshot",
-  "qveris-10-risk-regime-review",
-  "qveris-11-financial-document-modeling",
+  "qveris-anthropic-financial-services",
+  "qveris-langalpha",
+  "qveris-eodhd-claude-skills",
+  "qveris-finance-skills",
+  "qveris-investskill",
+  "qveris-tech-earnings-deepdive",
+  "qveris-day1global-skills",
+  "qveris-earnings-tracker",
+  "qveris-hhxg-market",
+  "qveris-tradermonty-trading-skills",
+  "qveris-financial-analyst-skills",
 ];
 
 function nowIso() {
