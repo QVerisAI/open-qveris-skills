@@ -258,7 +258,7 @@ Prefer this path for `qveris_finance.*` workflows:
 node {baseDir}/scripts/qveris_tool.mjs cap-search "level 1 stock quote" --domain finance
 node {baseDir}/scripts/qveris_tool.mjs cap-detail qveris_finance.mkt_l1_rt
 node {baseDir}/scripts/qveris_tool.mjs cap-query qveris_finance.mkt_l1_rt \
-  --params '{"symbol": "AAPL"}' \
+  --param symbol=AAPL \
   --safe-json
 ```
 
@@ -307,7 +307,8 @@ Step 2 — Call (use `tool_id` and `search_id` from step 1):
 node {baseDir}/scripts/qveris_tool.mjs discover "weather forecast API"
 node {baseDir}/scripts/qveris_tool.mjs call openweathermap.weather.execute.v1 \
   --discovery-id <id> \
-  --params '{"city": "London", "units": "metric"}'
+  --param city=London \
+  --param units=metric
 node {baseDir}/scripts/qveris_tool.mjs inspect openweathermap.weather.execute.v1
 ```
 
