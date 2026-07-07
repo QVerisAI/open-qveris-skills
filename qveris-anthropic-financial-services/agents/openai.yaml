@@ -1,4 +1,4 @@
 interface:
   display_name: "QVeris Financial Services"
-  short_description: "Institutional QVeris research workflows"
-  default_prompt: "Use $qveris-anthropic-financial-services to draft a trace-backed earnings, comps, DCF, or market research memo."
+  short_description: "QVeris-only institutional research with fallback/data-quality guards"
+  default_prompt: "Use $qveris-anthropic-financial-services to draft a trace-backed earnings, comps, DCF, or market research memo. Use only qveris_finance.* evidence, echo controls, include data_quality/missing_fields, suppress target/upside/recommendation fields, and do not state beat/miss when earnings_actual_surprise is unavailable."

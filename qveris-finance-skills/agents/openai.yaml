@@ -1,4 +1,4 @@
 interface:
   display_name: "QVeris Factor Finance"
-  short_description: "Trace-backed finance factor workflows"
-  default_prompt: "Use $qveris-finance-skills to produce QVeris-backed sentiment, valuation, earnings, liquidity, or correlation factors."
+  short_description: "QVeris-only factor notes with qualitative fallback guards"
+  default_prompt: "Use $qveris-finance-skills to produce QVeris-backed sentiment, valuation, earnings, liquidity, or correlation factors. Use only qveris_finance.* evidence, include data_quality/missing_fields, suppress target/upside/recommendation fields, and keep sentiment qualitative when sentiment_text_signals is unavailable."

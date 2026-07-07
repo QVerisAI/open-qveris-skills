@@ -7,16 +7,52 @@
     "source_record",
     "controls",
     "analysis",
+    "risk_notes",
+    "missing_fields",
     "data_quality",
     "qveris_trace",
-    "disclaimer"
+    "disclaimer",
+    "suppressed_fields"
   ],
   "properties": {
     "skill": {
       "type": "string"
     },
     "source_record": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "candidate_number",
+        "original_repository",
+        "github_url",
+        "license",
+        "evaluation_recent_activity",
+        "local_source_snapshot",
+        "snapshot_latest_commit"
+      ],
+      "properties": {
+        "candidate_number": {
+          "type": "integer"
+        },
+        "original_repository": {
+          "type": "string"
+        },
+        "github_url": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "evaluation_recent_activity": {
+          "type": "string"
+        },
+        "local_source_snapshot": {
+          "type": "string"
+        },
+        "snapshot_latest_commit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     },
     "controls": {
       "type": "object",
@@ -40,7 +76,8 @@
         "budget_note": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "analysis": {
       "type": "object"
@@ -59,6 +96,7 @@
     },
     "qveris_trace": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "required": [
@@ -105,13 +143,17 @@
             }
           },
           "source_provider": {
-            "type": "string",
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "QVeris internal provenance only; not a direct skill dependency."
           },
           "quality_note": {
             "type": "string"
           }
-        }
+        },
+        "additionalProperties": false
       }
     },
     "disclaimer": {
@@ -163,7 +205,8 @@
             "type": "string"
           }
         }
-      }
+      },
+      "additionalProperties": false
     },
     "suppressed_fields": {
       "type": "array",
@@ -172,5 +215,5 @@
       }
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

@@ -33,18 +33,18 @@ Source record:
 
 ## Workflows
 
-1. Earnings analysis: `event_calendar_earnings`, `earnings_actual_surprise`, `estimates_consensus`, `fundamentals_*`, `fundamentals_segment`, `transcripts_earnings_call`, `news_fin_tagged`, `mkt_l1_rt`.
-2. Peer comps: `ref_classification_industry`, `ref_classification_theme`, `fundamentals_derived_ratios`, `mkt_l1_rt`, `estimates_consensus`.
-3. DCF/model update: `fundamentals_is`, `fundamentals_bs`, `fundamentals_cf`, `estimates_consensus`, `rates_govt_benchmark`, `fx_spot`, `mkt_l1_rt`; output assumptions and sensitivity, not a target price promise.
-4. Market research: `research_analyst_reports`, `news_dedup_cluster`, `event_calendar_corp`, `ownership_institutional`, `ownership_insider_trades`.
+1. Earnings analysis: `qveris_finance.event_calendar_earnings`, `qveris_finance.earnings_actual_surprise`, `qveris_finance.estimates_consensus`, `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf`, `qveris_finance.fundamentals_segment`, `qveris_finance.transcripts_earnings_call`, `qveris_finance.news_fin_tagged`, `qveris_finance.mkt_l1_rt`.
+2. Peer comps: `qveris_finance.ref_classification_industry`, `qveris_finance.ref_classification_theme`, `qveris_finance.fundamentals_derived_ratios`, `qveris_finance.mkt_l1_rt`, `qveris_finance.estimates_consensus`.
+3. DCF/model update: `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf`, `qveris_finance.estimates_consensus`, `qveris_finance.rates_govt_benchmark`, `qveris_finance.fx_spot`, `qveris_finance.mkt_l1_rt`; output assumptions and sensitivity, not a target price promise.
+4. Market research: `qveris_finance.research_analyst_reports`, `qveris_finance.news_dedup_cluster`, `qveris_finance.event_calendar_corp`, `qveris_finance.ownership_institutional`, `qveris_finance.ownership_insider_trades`.
 
 ## Live Fallback Policy
 
-- If `earnings_actual_surprise` returns a provider error, fall back to `estimates_consensus` plus `event_calendar_earnings`; mark the earnings-surprise field as missing.
-- If `transcripts_earnings_call` returns an error, use `news_fin_tagged` only for context and do not invent management quotes.
-- If `fundamentals_cf` or other statement payloads return a different fiscal period than the requested statement set, keep them out of aligned tables and move them to `data_quality.warnings`.
+- If `qveris_finance.earnings_actual_surprise` returns a provider error, fall back to `qveris_finance.estimates_consensus` plus `qveris_finance.event_calendar_earnings`; mark the earnings-surprise field as missing.
+- If `qveris_finance.transcripts_earnings_call` returns an error, use `qveris_finance.news_fin_tagged` only for context and do not invent management quotes.
+- If `qveris_finance.fundamentals_cf` or other statement payloads return a different fiscal period than the requested statement set, keep them out of aligned tables and move them to `data_quality.warnings`.
 - Set `qveris_trace[].fallback_used: true` for fallback conclusions and include `primary_tool_unavailable` in `missing_fields`.
-- Do not state beat/miss as fact unless `earnings_actual_surprise` succeeds or another QVeris CAP payload explicitly provides actual and consensus values.
+- Do not state beat/miss as fact unless `qveris_finance.earnings_actual_surprise` succeeds or another QVeris CAP payload explicitly provides actual and consensus values.
 
 ## Output Requirements
 

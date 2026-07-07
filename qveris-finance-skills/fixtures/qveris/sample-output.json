@@ -2,6 +2,7 @@
   "skill": "qveris-finance-skills",
   "source_record": {
     "candidate_number": 4,
+    "original_repository": "Finance Skills",
     "github_url": "https://github.com/himself65/finance-skills",
     "license": "MIT",
     "evaluation_recent_activity": "2026-06-14",
@@ -17,41 +18,78 @@
   "analysis": {
     "workflow": "sentiment_factor",
     "entity": "TSLA",
-    "summary": "Standardized factor output with value, direction, confidence, evidence, and missing fields.",
+    "summary": "Qualitative-only factor note because the numeric sentiment signal route was unavailable.",
+    "fallback_context": {
+      "primary_tool": "qveris_finance.sentiment_text_signals",
+      "fallback_tool": "qveris_finance.news_fin_tagged",
+      "numeric_sentiment_score_allowed": false
+    },
     "factors": [
       {
-        "name": "news_sentiment",
+        "name": "news_context",
         "direction": "mixed",
-        "confidence": "medium"
+        "confidence": "low",
+        "numeric_score": null
       }
     ]
   },
   "risk_notes": [
-    "Sentiment is explanatory context, not a return forecast."
+    "Qualitative news context is not a return forecast.",
+    "Do not emit a numeric sentiment score unless qveris_finance.sentiment_text_signals succeeds."
   ],
-  "missing_fields": [],
+  "missing_fields": [
+    "primary_tool_unavailable",
+    "qveris_finance.sentiment_text_signals: provider_error",
+    "numeric_sentiment_score",
+    "sentiment_magnitude",
+    "model_confidence_score"
+  ],
   "qveris_trace": [
     {
-      "tool_name": "qveris_finance.sentiment_text_signals",
-      "capability_id": "SENTIMENT.TEXT_SIGNALS",
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "NEWS.FIN.TAGGED",
       "entity": "TSLA",
       "market": "US",
       "params": {
-        "lookback_days": 7
+        "symbol": "TSLA",
+        "market": "US",
+        "start_date": "2026-06-30",
+        "end_date": "2026-07-07"
       },
-      "as_of": "2026-07-06",
-      "retrieved_at": "2026-07-06T00:00:00Z",
-      "fallback_used": false,
-      "missing_fields": []
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T02:45:26Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "primary_tool_unavailable",
+        "qveris_finance.sentiment_text_signals: provider_error",
+        "numeric_sentiment_score"
+      ],
+      "source_provider": "finnhub",
+      "quality_note": "Tagged-news fallback supports qualitative context only."
     }
   ],
   "disclaimer": "不构成投资建议 / Not investment advice.",
   "data_quality": {
-    "status": "ok",
-    "warnings": [],
+    "status": "limited",
+    "warnings": [
+      "Primary sentiment model output is unavailable; factor output must remain qualitative.",
+      "No directional return claim should be derived from tagged-news context alone."
+    ],
     "stale_fields": [],
     "out_of_window_events": [],
-    "suppressed_fields": []
+    "suppressed_fields": [
+      "analyst_target_price",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
   },
-  "suppressed_fields": []
+  "suppressed_fields": [
+    "analyst_target_price",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ]
 }

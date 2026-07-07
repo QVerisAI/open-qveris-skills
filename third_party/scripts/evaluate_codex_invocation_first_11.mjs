@@ -16,6 +16,20 @@ const skills = [
   "qveris-financial-analyst-skills",
 ];
 
+const legacySkillAliases = new Map([
+  ["qveris-anthropic-financial-services", ["qveris-01-financial-services"]],
+  ["qveris-langalpha", ["qveris-02-langalpha-dcf-earnings"]],
+  ["qveris-eodhd-claude-skills", ["qveris-03-market-monitor"]],
+  ["qveris-finance-skills", ["qveris-04-factor-finance"]],
+  ["qveris-investskill", ["qveris-05-us-stock-research"]],
+  ["qveris-tech-earnings-deepdive", ["qveris-06-tech-earnings-deepdive"]],
+  ["qveris-day1global-skills", ["qveris-07-global-tech-memo"]],
+  ["qveris-earnings-tracker", ["qveris-08-earnings-tracker"]],
+  ["qveris-hhxg-market", ["qveris-09-a-share-market-snapshot"]],
+  ["qveris-tradermonty-trading-skills", ["qveris-10-risk-regime-review"]],
+  ["qveris-financial-analyst-skills", ["qveris-11-financial-document-modeling"]],
+]);
+
 const dateOnly = (date) => date.toISOString().split("T")[0];
 const today = dateOnly(new Date());
 const investmentAdviceDisclaimer = "不构成投资建议 / Not investment advice.";
@@ -36,11 +50,16 @@ async function latestSmokeReport() {
   return { file: join("reports", file), report: JSON.parse(raw) };
 }
 
+function findSmokeResult(report, skill) {
+  const acceptedNames = [skill, ...(legacySkillAliases.get(skill) ?? [])];
+  return report.results.find((result) => acceptedNames.includes(result.skill));
+}
+
 function extractSourceRecord(skillMd, skill) {
   const get = (label) => {
     const re = new RegExp(`\\| ${label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")} \\| ([^|]+) \\|`);
     const match = skillMd.match(re);
-    return match ? match[1].trim().replace(/^`|`$/g, "") : null;
+    return match ? match[1].trim().replace(/`/g, "") : null;
   };
   return {
     candidate_number: Number(get("Candidate number")),
@@ -50,7 +69,6 @@ function extractSourceRecord(skillMd, skill) {
     evaluation_recent_activity: get("Evaluation recent activity"),
     local_source_snapshot: get("Local source snapshot"),
     snapshot_latest_commit: get("Snapshot latest commit"),
-    skill,
   };
 }
 
@@ -83,14 +101,14 @@ function makeTrace(attempt, fallbackUsed, failedPrimaries) {
   };
 }
 
-function makeInvocationOutput({ smokeResult, sourceRecord }) {
+function makeInvocationOutput({ skill, smokeResult, sourceRecord }) {
   const chosen = selectedAttempt(smokeResult);
   const failures = failedPrimaryAttempts(smokeResult);
   const fallbackUsed = failures.length > 0 || chosen.tool_id !== smokeResult.attempts[0]?.tool_id;
   const trace = makeTrace(chosen, fallbackUsed, failures);
 
   return {
-    skill: smokeResult.skill,
+    skill,
     source_record: sourceRecord,
     controls: {
       dry_run: false,
@@ -99,7 +117,7 @@ function makeInvocationOutput({ smokeResult, sourceRecord }) {
       budget_note: "Codex invocation test used live QVeris CAP smoke output and stopped after a representative successful path.",
     },
     analysis: {
-      test_prompt: `Use $${smokeResult.skill} for a live, trace-backed representative task.`,
+      test_prompt: `Use $${skill} for a live, trace-backed representative task.`,
       selected_capability: chosen.execution?.capability_id ?? chosen.tool_id,
       selected_tool_id: chosen.tool_id,
       selected_label: chosen.label,
@@ -108,9 +126,21 @@ function makeInvocationOutput({ smokeResult, sourceRecord }) {
         : "Not usable: no representative QVeris CAP path succeeded.",
       output_quality_notes: [],
     },
-    risk_notes: [],
+    risk_notes: fallbackUsed
+      ? ["Representative fallback output; missing primary fields must remain visible and confidence must be lowered."]
+      : [],
     missing_fields: trace.missing_fields,
+    data_quality: {
+      status: fallbackUsed ? "limited" : "ok",
+      warnings: fallbackUsed
+        ? ["Fallback path used because at least one representative primary QVeris CAP attempt failed."]
+        : [],
+      stale_fields: [],
+      out_of_window_events: [],
+      suppressed_fields: [],
+    },
     qveris_trace: [trace],
+    suppressed_fields: [],
     disclaimer: investmentAdviceDisclaimer,
   };
 }
@@ -119,7 +149,7 @@ function validateInvocation(output, skillMd, toolMap) {
   const issues = [];
   const warnings = [];
 
-  for (const key of ["skill", "source_record", "controls", "analysis", "qveris_trace", "disclaimer"]) {
+  for (const key of ["skill", "source_record", "controls", "analysis", "risk_notes", "missing_fields", "data_quality", "qveris_trace", "suppressed_fields", "disclaimer"]) {
     if (!(key in output)) issues.push(`missing required key: ${key}`);
   }
   for (const key of ["dry_run", "max_calls", "max_age", "budget_note"]) {
@@ -127,6 +157,18 @@ function validateInvocation(output, skillMd, toolMap) {
   }
   if (!Array.isArray(output.qveris_trace) || output.qveris_trace.length === 0) {
     issues.push("qveris_trace is empty");
+  }
+  if (!Array.isArray(output.risk_notes)) {
+    issues.push("risk_notes must be an array");
+  }
+  if (!Array.isArray(output.missing_fields)) {
+    issues.push("missing_fields must be an array");
+  }
+  if (!Array.isArray(output.suppressed_fields)) {
+    issues.push("suppressed_fields must be an array");
+  }
+  for (const key of ["status", "warnings", "stale_fields", "out_of_window_events", "suppressed_fields"]) {
+    if (!(key in (output.data_quality ?? {}))) issues.push(`data_quality missing ${key}`);
   }
   for (const trace of output.qveris_trace ?? []) {
     if (!String(trace.tool_name).startsWith("qveris_finance.")) {
@@ -172,13 +214,13 @@ async function main() {
   for (const skill of skills) {
     const skillMd = await readFile(join(skill, "SKILL.md"), "utf8");
     const toolMap = await readFile(join(skill, "references", "qveris-tool-map.md"), "utf8");
-    const smokeResult = report.results.find((result) => result.skill === skill);
+    const smokeResult = findSmokeResult(report, skill);
     if (!smokeResult) {
       results.push({ skill, verdict: "blocked", score: 1, issues: ["missing smoke result"], warnings: [] });
       continue;
     }
     const sourceRecord = extractSourceRecord(skillMd, skill);
-    const output = makeInvocationOutput({ smokeResult, sourceRecord });
+    const output = makeInvocationOutput({ skill, smokeResult, sourceRecord });
     const validation = validateInvocation(output, skillMd, toolMap);
     const score = scoreInvocation({ smokeResult, validation });
     output.analysis.output_quality_notes = [

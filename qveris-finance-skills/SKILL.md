@@ -22,7 +22,7 @@ Source record:
 ## Runtime Contract
 
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
-- Resolve the security with `ref_symbology`, `ref_security_master`, and `ref_company_profile`.
+- Resolve the security with `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, and `qveris_finance.ref_company_profile`.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted in a natural-language request, default to `dry_run=false`, `max_calls=12`, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Include `qveris_trace` for each factor and expose stale or missing inputs.
 - Treat QVeris `_meta.source_provider` as provenance only; never call, request credentials for, or depend on those internal providers directly.
@@ -31,17 +31,17 @@ Source record:
 
 ## Workflows
 
-1. Sentiment factor: `news_fin_tagged`, `news_dedup_cluster`, `sentiment_text_signals`.
-2. Valuation input factor: `fundamentals_is`, `fundamentals_bs`, `fundamentals_cf`, `fundamentals_derived_ratios`, `mkt_l1_rt`, `estimates_consensus`.
-3. Earnings recap factor: `event_calendar_earnings`, `earnings_actual_surprise`, `estimates_consensus`, `transcripts_earnings_call`.
-4. Liquidity factor: `mkt_bars_adjusted`, `mkt_breadth_internals`, and available trading aggregate fields from QVeris payloads.
-5. Correlation factor: `mkt_bars_adjusted`, `risk_beta_vol`, and benchmark `index_levels`.
+1. Sentiment factor: `qveris_finance.news_fin_tagged`, `qveris_finance.news_dedup_cluster`, `qveris_finance.sentiment_text_signals`.
+2. Valuation input factor: `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf`, `qveris_finance.fundamentals_derived_ratios`, `qveris_finance.mkt_l1_rt`, `qveris_finance.estimates_consensus`.
+3. Earnings recap factor: `qveris_finance.event_calendar_earnings`, `qveris_finance.earnings_actual_surprise`, `qveris_finance.estimates_consensus`, `qveris_finance.transcripts_earnings_call`.
+4. Liquidity factor: `qveris_finance.mkt_bars_adjusted`, `qveris_finance.mkt_breadth_internals`, and available trading aggregate fields from QVeris payloads.
+5. Correlation factor: `qveris_finance.mkt_bars_adjusted`, `qveris_finance.risk_beta_vol`, and benchmark `qveris_finance.index_levels`.
 
 ## Live Fallback Policy
 
-- If `sentiment_text_signals` returns a provider error, fall back to `news_fin_tagged` and derive only a qualitative news-context factor.
-- Mark quantitative sentiment score fields as missing unless `sentiment_text_signals` succeeds.
-- If `fundamentals_derived_ratios`, `estimates_consensus`, or `earnings_actual_surprise` fail, keep valuation and earnings factors as partial inputs with missing numeric fields; do not convert them into directional return claims.
+- If `qveris_finance.sentiment_text_signals` returns a provider error, fall back to `qveris_finance.news_fin_tagged` and derive only a qualitative news-context factor.
+- Mark quantitative sentiment score fields as missing unless `qveris_finance.sentiment_text_signals` succeeds.
+- If `qveris_finance.fundamentals_derived_ratios`, `qveris_finance.estimates_consensus`, or `qveris_finance.earnings_actual_surprise` fail, keep valuation and earnings factors as partial inputs with missing numeric fields; do not convert them into directional return claims.
 - Set `qveris_trace[].fallback_used: true` and include `primary_tool_unavailable` in `missing_fields` for fallback sentiment output.
 
 ## Output Requirements

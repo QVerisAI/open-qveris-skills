@@ -32,17 +32,17 @@ Source record:
 
 ## Workflows
 
-1. Portfolio risk: user holdings plus `mkt_bars_adjusted`, `risk_beta_vol`, `index_levels`, `ownership_institutional`, `news_fin_tagged`.
-2. Market regime: `index_levels`, `index_vix`, `mkt_breadth_internals`, `macro_actual_vs_forecast`, `rates_govt_benchmark`.
-3. Sector rotation: `ref_classification_industry`, `flow_sector_capital`, `mkt_top_movers`, `index_constituents`.
+1. Portfolio risk: user holdings plus `qveris_finance.mkt_bars_adjusted`, `qveris_finance.risk_beta_vol`, `qveris_finance.index_levels`, `qveris_finance.ownership_institutional`, `qveris_finance.news_fin_tagged`.
+2. Market regime: `qveris_finance.index_levels`, `qveris_finance.index_vix`, `qveris_finance.mkt_breadth_internals`, `qveris_finance.macro_actual_vs_forecast`, `qveris_finance.rates_govt_benchmark`.
+3. Sector rotation: `qveris_finance.ref_classification_industry`, `qveris_finance.flow_sector_capital`, `qveris_finance.mkt_top_movers`, `qveris_finance.index_constituents`.
 4. Data-quality checker: validate `as_of`, `missing_fields`, `fallback_used`, and staleness for each payload.
-5. Earnings calendar: `event_calendar_earnings`.
+5. Earnings calendar: `qveris_finance.event_calendar_earnings`.
 
 ## Output Requirements
 
 - Use `schemas/output.schema.json`.
 - Output monitoring interpretation, exposure explanation, regime evidence, sector map, and data-quality warnings.
-- If `index_levels`, `mkt_breadth_internals`, or `macro_actual_vs_forecast` fail, use VIX/rates/liquid ETF proxies only as limited fallbacks and lower confidence.
+- If `qveris_finance.index_levels`, `qveris_finance.mkt_breadth_internals`, or `qveris_finance.macro_actual_vs_forecast` fail, use VIX/rates/liquid ETF proxies only as limited fallbacks and lower confidence.
 - Derive `fallback_used` from QVeris `_meta.failover_log` as well as explicit fallback tool choices.
 - Do not output trade prep, execution plan, rebalance instruction, buy/sell point, or target price commitment.
 - Include `data_quality` with status, stale fields, out-of-window events, and suppressed fields when applicable.
