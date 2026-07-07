@@ -106,7 +106,7 @@
       "quality_note": "News context may describe catalysts but cannot be used as management-call evidence."
     }
   ],
-  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice.",
+  "disclaimer": "Not investment advice.",
   "suppressed_fields": [
     "analyst_target_price",
     "target_price",

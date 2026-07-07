@@ -164,7 +164,7 @@
     },
     "disclaimer": {
       "type": "string",
-      "const": "不构成投资建议 / Not investment advice."
+      "const": "Not investment advice."
     },
     "data_quality": {
       "type": "object",
@@ -181,7 +181,11 @@
           "enum": [
             "ok",
             "limited",
-            "insufficient"
+            "insufficient",
+            "complete",
+            "partial",
+            "proxy_only",
+            "budget_limited"
           ]
         },
         "warnings": {

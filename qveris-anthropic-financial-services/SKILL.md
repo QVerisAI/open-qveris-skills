@@ -24,7 +24,7 @@ Source record:
 - Use only `qveris_finance.*` CAP tools for financial data.
 - Use only `QVERIS_API_KEY`; do not request, store, or infer third-party keys.
 - Resolve entities first with `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, and `qveris_finance.ref_company_profile`.
-- Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted in a natural-language request, default to `dry_run=false`, `max_calls=12`, `max_age=P1D`, and a conservative budget note, then echo those controls.
+- Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted in a natural-language request, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Include `qveris_trace` for every numeric claim, quote, event, and conclusion.
 - Report `missing_fields`; do not fill missing data as fact.
 - Treat QVeris `_meta.source_provider` as provenance only; never call, request credentials for, depend on, or print those internal providers directly.
@@ -33,10 +33,19 @@ Source record:
 - Suppress `analyst_target_price`, `target_price`, price-objective, upside, buy/sell, and recommendation fields even if a QVeris payload contains them.
 - Sanity-check entity, market, date window, fiscal period, and payload shape before using data; if a payload is stale, cross-period, truncated, or semantically mismatched, mark it in `data_quality` and `missing_fields`.
 
+## Evidence Gate
+
+Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris payloads as evidence. A payload that succeeds transport but fails identity, date-window, fiscal-period, or statement-consistency checks is hard rejected, not treated as a usable fallback.
+
+- Use evidence status labels from the shared rubric: `complete`, `partial`, `proxy_only`, or `insufficient`.
+- Require IS, BS, CF, and segment data to share fiscal year, fiscal period, and period ending before building aligned earnings tables.
+- Exclude CF from aligned tables when same-period CF net income materially conflicts with IS net income; mark `statement_semantic_mismatch`.
+- Treat `qveris_finance.news_fin_tagged` as qualitative context only when transcript or cluster routes are unavailable. Do not derive management quotes, numeric sentiment, strong catalysts, or strong risk direction from tagged news alone.
+
 ## CAP Invocation
 
 - Prefer native `qveris_finance.*` CAP functions when the environment exposes them.
-- If native functions are not exposed but the repo script is available, execute standardized CAP calls from the repository root with `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --params '<json>' --safe-json`.
+- If native functions are not exposed but the repo script is available, execute standardized CAP calls from the repository root with `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
 - Equivalent HTTP route: `POST https://qveris.ai/api/v1/capabilities/query` with `capability_id`, structured `parameters`, and `strategy: "best"`.
 - Use `cap-search` or `GET /capabilities/search` only when the CAP ID or parameter contract is uncertain; use `cap-detail` or `GET /capabilities/{capability_id}` to verify fields.
 - Use legacy QVeris `/search` plus `/tools/execute` only when the standardized CAP endpoint is unavailable; mark `legacy_cap_shim_used` in `data_quality.warnings` and keep trace names normalized to `qveris_finance.*`.
@@ -46,7 +55,7 @@ Source record:
 1. Earnings analysis: `qveris_finance.event_calendar_earnings`, `qveris_finance.earnings_actual_surprise`, `qveris_finance.estimates_consensus`, `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf`, `qveris_finance.fundamentals_segment`, `qveris_finance.transcripts_earnings_call`, `qveris_finance.news_fin_tagged`, `qveris_finance.mkt_l1_rt`.
 2. Peer comps: `qveris_finance.ref_classification_industry`, `qveris_finance.ref_classification_theme`, `qveris_finance.fundamentals_derived_ratios`, `qveris_finance.mkt_l1_rt`, `qveris_finance.estimates_consensus`.
 3. DCF/model update: `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf`, `qveris_finance.estimates_consensus`, `qveris_finance.rates_govt_benchmark`, `qveris_finance.fx_spot`, `qveris_finance.mkt_l1_rt`; output assumptions and sensitivity, not a target price promise.
-4. Market research: `qveris_finance.research_analyst_reports`, `qveris_finance.news_dedup_cluster`, `qveris_finance.event_calendar_corp`, `qveris_finance.ownership_institutional`, `qveris_finance.ownership_insider_trades`.
+4. Market research: `qveris_finance.research_analyst_reports`, `qveris_finance.news_fin_tagged`, `qveris_finance.event_calendar_corp`, `qveris_finance.ownership_institutional`, `qveris_finance.ownership_insider_trades`; call `qveris_finance.news_dedup_cluster` only after `cap-detail` confirms it exists.
 
 ## Live Fallback Policy
 
@@ -61,10 +70,10 @@ Source record:
 - Return a Markdown user report by default, not a single large JSON object.
 - Use this report structure: `Summary`, `Evidence Used`, `Analysis`, `Data Quality And Missing Fields`, `What This Can Support`, `What This Cannot Support`, and `Trace Appendix`.
 - Put the user-facing conclusion before trace details. Keep internal controls, `missing_fields`, and `data_quality` readable in prose or compact tables.
-- Put `qveris_trace` in the appendix as a compact table or fenced JSON. Use the full `schemas/output.schema.json` shape only when the user asks for machine-readable output or when preparing fixtures.
+- Use a two-layer trace: concise user-facing evidence table by default, full `qveris_trace` JSON only in the appendix when useful, when the user asks for machine-readable output, or when preparing schema fixtures.
 - If `max_calls`, `dry_run`, or budget constraints prevent the main workflow from running, return a budget-limited Markdown report: state what was not called, do not infer missing facts, and list the next QVeris calls that would be needed.
 - Separate evidence, interpretation, uncertainty, and next verification steps.
-- End with: `不构成投资建议 / Not investment advice.`
+- End with ASCII-only: `Not investment advice.`
 
 ## Prohibited Capabilities
 
@@ -73,7 +82,6 @@ Do not use original MCP/data-provider assumptions, any non-QVeris finance data p
 ## References
 
 - Read `references/qveris-tool-map.md` before choosing tool calls.
-- Use `fixtures/qveris/sample-output.json` as the minimum output shape.
-- Use `fixtures/qveris/fallback-output.json` as the reviewer-facing example for primary earnings/transcript route failures.
-- Use `fixtures/qveris/budget-limited-output.json` as the reviewer-facing example when controls prevent enough QVeris calls.
+- Use `examples/default-markdown-report.md` as the primary user-facing output example.
+- Use `fixtures/qveris/sample-output.json`, `fixtures/qveris/fallback-output.json`, and `fixtures/qveris/budget-limited-output.json` as schema fixtures only.
 - Use `examples/natural-language-prompts.md` for copyable natural-language test prompts.

@@ -1,39 +1,59 @@
 {
-  "report_type": "budget_limited_user_report",
   "skill": "qveris-tradermonty-trading-skills",
-  "artifact_type": "risk/regime monitoring",
+  "source_record": {
+    "candidate_number": 10,
+    "original_repository": "Tradermonty Trading Skills",
+    "github_url": "https://github.com/tradermonty/claude-trading-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-06",
+    "local_source_snapshot": "third_party/source_repos/10-tradermonty-trading-skills",
+    "snapshot_latest_commit": "4d63990 2026-07-05"
+  },
   "controls": {
     "dry_run": false,
     "max_calls": 2,
     "max_age": "P1D",
     "budget_note": "Budget-limited run: only entity/portfolio intake and one risk evidence call were allowed."
   },
-  "markdown_sections": {
+  "analysis": {
+    "report_type": "budget_limited_user_report",
+    "workflow": "risk_regime_monitor",
+    "artifact_type": "risk/regime monitoring",
+    "evidence_status": "insufficient",
     "summary": "The monitor cannot confirm market regime, sector rotation, beta/volatility, or portfolio risk metrics because the call budget ended before primary and proxy evidence could be collected.",
-    "monitoring_read": "State that no regime call is supported. Do not label the market risk-on or risk-off.",
-    "primary_evidence": "Mark index levels, breadth, macro, and beta/vol as not called when budget-limited.",
-    "proxy_evidence": "Use no VIX/rates/ETF proxy unless the corresponding QVeris capability was called.",
-    "what_this_can_support": "A read-only portfolio intake, missing-evidence inventory, and next QVeris calls.",
-    "what_this_cannot_support": "No trading plan, rebalance instruction, regime classification, target price, or portfolio action."
+    "markdown_sections": {
+      "summary": "The monitor cannot confirm regime, sector rotation, beta/volatility, or portfolio risk metrics under the call budget.",
+      "monitoring_read": "State that no regime call is supported. Do not label the market risk-on or risk-off.",
+      "primary_evidence": "Mark index levels, breadth, macro, and beta/vol as not called when budget-limited.",
+      "proxy_evidence": "Use no VIX/rates/ETF proxy unless the corresponding QVeris capability was called.",
+      "what_this_can_support": "A read-only portfolio intake, missing-evidence inventory, and next QVeris calls.",
+      "what_this_cannot_support": "No trading plan, rebalance instruction, regime classification, target price, or portfolio action."
+    }
   },
+  "risk_notes": [
+    "Budget exhaustion prevents a regime conclusion.",
+    "Do not provide trading, rebalancing, or portfolio action instructions."
+  ],
   "missing_fields": [
     "qveris_finance.risk_beta_vol:not_called_budget_limited",
     "qveris_finance.index_levels:not_called_budget_limited",
     "qveris_finance.index_vix:not_called_budget_limited",
     "qveris_finance.mkt_breadth_internals:not_called_budget_limited",
-    "qveris_finance.macro_actual_vs_forecast:not_called_budget_limited",
+    "qveris_finance.event_calendar_macro:not_called_budget_limited",
     "qveris_finance.rates_govt_benchmark:not_called_budget_limited",
     "qveris_finance.ref_classification_industry:not_called_budget_limited",
-    "qveris_finance.flow_sector_capital:not_called_budget_limited"
+    "qveris_finance.mkt_top_movers:not_called_budget_limited",
+    "qveris_finance.index_constituents:not_called_budget_limited"
   ],
   "data_quality": {
     "status": "budget_limited",
-    "fallback_used": false,
     "warnings": [
       "Budget exhaustion prevents a regime conclusion.",
       "Do not substitute non-QVeris sources or untraced market intuition.",
       "Do not provide trading, rebalancing, or portfolio action instructions."
     ],
+    "stale_fields": [],
+    "out_of_window_events": [],
     "suppressed_fields": [
       "trade_plan",
       "rebalance_instruction",
@@ -51,11 +71,17 @@
         "symbol": "EXAMPLE",
         "market": "US"
       },
-      "as_of": null,
+      "as_of": "example",
       "retrieved_at": "example",
       "fallback_used": false,
       "missing_fields": []
     }
   ],
-  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice."
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "trade_plan",
+    "rebalance_instruction",
+    "target_price",
+    "buy_sell"
+  ]
 }

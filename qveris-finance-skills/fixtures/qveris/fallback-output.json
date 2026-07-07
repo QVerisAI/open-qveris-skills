@@ -105,7 +105,7 @@
       "quality_note": "Market price may support partial valuation inputs but not target price or return claims."
     }
   ],
-  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice.",
+  "disclaimer": "Not investment advice.",
   "suppressed_fields": [
     "numeric_sentiment_score",
     "analyst_target_price",

@@ -1,0 +1,49 @@
+# Portfolio Risk Monitor
+
+## Summary
+
+Evidence status: `partial`.
+
+The monitor can identify concentration and beta/vol evidence when QVeris payloads validate. It cannot present full portfolio VaR, correlation, realized volatility, or market-regime confirmation when bars, benchmark, breadth, or macro evidence is missing or rejected.
+
+## Monitoring Read
+
+State concentration from the user-provided weights. Label beta/vol as monitor evidence, not a complete risk model, unless validated bars and benchmark data support the full calculation.
+
+## Primary Evidence
+
+| Evidence | Status | Use |
+|---|---|---|
+| Holdings weights | `complete` | Concentration review. |
+| Beta/vol | `partial` | Beta monitor only when identity checks pass. |
+| Bars | `insufficient` | Reject multi-day metrics if fewer than 2 observations return. |
+| Index/breadth | `insufficient` | Reject wrong-asset index payloads. |
+
+## Proxy Evidence
+
+VIX, rates, and liquid ETF bars are `proxy_only` unless primary index and breadth evidence pass validation. Monthly or stale rates are lagged proxies only.
+
+## Data Quality And Missing Fields
+
+- `index_levels`: reject `SPX` responses that are not index evidence.
+- `mkt_bars_adjusted`: reject VaR/correlation/volatility calculations from insufficient observations.
+- `event_calendar_macro`: macro-event context only, not actual-vs-forecast surprise.
+- `news_fin_tagged`: qualitative background only.
+
+## What This Can Support
+
+- Concentration monitor.
+- Beta/vol monitor if QVeris identity checks pass.
+- Proxy-only regime context when clearly labeled.
+
+## What This Cannot Support
+
+- Trade plan, rebalance instruction, target price, or buy/sell point.
+- Full portfolio risk model without validated bars, benchmark, and correlation evidence.
+- Strong regime call from proxy evidence alone.
+
+## Trace Appendix
+
+Use a compact evidence table by default. Include full `qveris_trace` JSON only when requested or when preparing schema fixtures.
+
+Not investment advice.

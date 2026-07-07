@@ -6,18 +6,19 @@ Source: Tradermonty Trading Skills, https://github.com/tradermonty/claude-tradin
 
 - Runtime data source: `qveris_finance.*` CAP tools only.
 - Credential: `QVERIS_API_KEY` only.
-- Controls: accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; when omitted in natural language, default to `dry_run=false`, `max_calls=12`, `max_age=P1D`, and a conservative budget note.
+- Controls: accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; when omitted in natural language, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note.
 - Required trace fields: `tool_name`, `capability_id`, `entity`, `market`, `params`, `as_of`, `retrieved_at`, `fallback_used`, `missing_fields`.
 - Treat QVeris `_meta.source_provider` as provenance only, never as a direct skill dependency, and never print raw vendor/provider IDs. Use `qveris_internal`, `internal_failover`, or `unknown` when provenance must be surfaced. In final output, say "non-QVeris sources" instead of naming prohibited providers.
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, benchmark, and payload shape before using a payload as evidence.
+- Apply the shared rubric at `../../references/qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, benchmark, or proxy checks are hard rejects.
 
 ## Direct CAP Invocation
 
 Prefer standardized CAP query over legacy tool discovery:
 
 - Native route: call the exposed `qveris_finance.*` function directly, if present.
-- Script route: from the repository root, run `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<name> --params '<json>' --safe-json`.
+- Script route: from the repository root, run `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<name> --param key=value --safe-json`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
 - HTTP route: `POST /api/v1/capabilities/query` with `capability_id`, structured `parameters`, and `strategy: "best"`.
 - Discovery route: use `cap-search` and `cap-detail` only to verify unknown capability IDs or params.
 - Legacy route: use `/search` plus `/tools/execute` only if CAP query is unavailable; add `legacy_cap_shim_used` to `data_quality.warnings`.
@@ -36,10 +37,8 @@ Common CAP IDs for this skill:
 | `qveris_finance.news_fin_tagged` | `NEWS.FIN.TAGGED` |
 | `qveris_finance.index_vix` | `INDEX.VIX` |
 | `qveris_finance.mkt_breadth_internals` | `MKT.BREADTH.INTERNALS` |
-| `qveris_finance.macro_actual_vs_forecast` | `MACRO.ACTUAL_VS_FORECAST` |
 | `qveris_finance.rates_govt_benchmark` | `RATES.GOVT_BENCHMARK` |
 | `qveris_finance.ref_classification_industry` | `REF.CLASSIFICATION.INDUSTRY` |
-| `qveris_finance.flow_sector_capital` | `FLOW.SECTOR_CAPITAL` |
 | `qveris_finance.mkt_top_movers` | `MKT.TOP_MOVERS` |
 | `qveris_finance.index_constituents` | `INDEX.CONSTITUENTS` |
 | `qveris_finance.event_calendar_earnings` | `EVENT.CALENDAR.EARNINGS` |
@@ -51,17 +50,27 @@ Use structured parameters; do not pass the user request as a free-text parameter
 
 | Purpose | Template |
 |---|---|
-| Single-symbol risk/beta | `{"symbol":"AAPL","market":"US","benchmark":"SPY"}` |
+| Single-symbol risk/beta | `{"symbol":"AAPL","market":"US","benchmark_symbol":"SPY"}` |
 | Portfolio symbol loop | Run one call per symbol when multi-symbol parameters fail: `{"symbol":"NVDA","market":"US"}` |
 | Index levels | `{"symbol":"SPX","market":"US","date":"2026-07-07"}`; sanity-check index identity before use |
 | VIX proxy | `{"symbol":"VIX","region":"US","date":"2026-07-07"}` |
 | Rates proxy | `{"symbol":"US10Y"}`; if rejected, inspect `RATES.GOVT_BENCHMARK` and retry with its documented fields |
-| Liquid ETF proxy bars | `{"symbol":"SPY","start_date":"2026-06-07","end_date":"2026-07-07","interval":"1d"}` |
+| Liquid ETF proxy bars | `{"symbol":"SPY","start_date":"2026-06-07","end_date":"2026-07-07","interval":"1day"}` |
 | News and institutional context | `{"symbol":"MSFT","market":"US","limit":5}` |
+
+## Evidence Gate Checklist
+
+- Confirm returned symbol, company name, exchange, market, and asset type match each holding before citing holding-level data.
+- Confirm returned index or benchmark identity before using index payloads. Reject `SPX` or benchmark responses that resolve to a non-index security.
+- Require at least 2 observations for multi-day bars before computing return, trend, correlation, realized volatility, drawdown, liquidity, VaR, or portfolio risk metrics.
+- Use `risk_beta_vol` as beta/vol monitor evidence when it passes identity checks, but do not present it as a full portfolio risk model without bars, benchmark, and correlation evidence.
+- Treat VIX, rates, and liquid ETF bars as proxy-only regime evidence unless primary index and breadth evidence pass validation.
+- Treat `news_fin_tagged` as qualitative context only; do not infer strong risk direction, strong catalysts, or numeric sentiment from tagged news alone.
+- Treat monthly/stale rates as lagged proxy evidence only, not same-day market-regime confirmation.
 
 ## Cost And Budget Guardrails
 
-- Minimum useful market-regime monitor: index levels, breadth, macro actual-vs-forecast, VIX, rates, and at least one liquid ETF/index proxy if primary evidence fails.
+- Minimum useful market-regime monitor: index levels, breadth, macro-event context, VIX, rates, and at least one liquid ETF/index proxy if primary evidence fails.
 - Minimum useful portfolio-risk monitor: holdings intake, beta/vol, classification, index/regime proxy, institutional ownership, and news for each major holding.
 - If `max_calls` is too low for the minimum useful set, return a budget-limited report and do not label the market risk-on/risk-off or recommend portfolio action.
 
@@ -70,8 +79,8 @@ Use structured parameters; do not pass the user request as a free-text parameter
 | Workflow | QVeris tools |
 |---|---|
 | Portfolio risk | `qveris_finance.mkt_bars_adjusted`, `qveris_finance.risk_beta_vol`, `qveris_finance.index_levels`, `qveris_finance.ownership_institutional`, `qveris_finance.news_fin_tagged` |
-| Market regime | `qveris_finance.index_levels`, `qveris_finance.index_vix`, `qveris_finance.mkt_breadth_internals`, `qveris_finance.macro_actual_vs_forecast`, `qveris_finance.rates_govt_benchmark` |
-| Sector rotation | `qveris_finance.ref_classification_industry`, `qveris_finance.flow_sector_capital`, `qveris_finance.mkt_top_movers`, `qveris_finance.index_constituents` |
+| Market regime | `qveris_finance.index_levels`, `qveris_finance.index_vix`, `qveris_finance.mkt_breadth_internals`, `qveris_finance.event_calendar_macro`, `qveris_finance.rates_govt_benchmark` |
+| Sector rotation | `qveris_finance.ref_classification_industry`, `qveris_finance.mkt_top_movers`, `qveris_finance.index_constituents` |
 | Data-quality checker | Validate `as_of`, `missing_fields`, `fallback_used`, and staleness on every QVeris payload |
 | Earnings calendar | `qveris_finance.event_calendar_earnings` |
 
@@ -92,7 +101,12 @@ If a raw response exposes an internal provider route, normalize it before writin
 | Issue | Output rule |
 |---|---|
 | `qveris_finance.index_levels` and `qveris_finance.mkt_breadth_internals` returned 503 in natural-language forward test on 2026-07-06 | Use VIX/rates/liquid ETF proxies only as limited fallback and lower confidence. |
-| `qveris_finance.macro_actual_vs_forecast` returned 404 | Use `event_calendar_macro` only as weaker macro-event context and mark actual-vs-forecast missing. |
+| `qveris_finance.index_levels` can return a non-index security for an `SPX` request | Hard reject the payload as `semantic_mismatch`; do not use it as market index evidence. |
+| `qveris_finance.mkt_bars_adjusted` can return only one usable observation for a multi-day request | Hard reject for return, correlation, realized volatility, drawdown, liquidity, VaR, or portfolio risk calculations; mark `insufficient_observations`. |
+| `qveris_finance.macro_actual_vs_forecast` returned 404 / capability not found in no-limit natural-language retest on 2026-07-07 | Do not call as a primary path unless `cap-detail` first confirms availability; use `event_calendar_macro` only as weaker macro-event context and mark actual-vs-forecast missing. |
+| `qveris_finance.flow_sector_capital` returned 404 / capability not found in no-limit natural-language retest on 2026-07-07 | Do not call as a primary path unless `cap-detail` first confirms availability; use `mkt_top_movers`, `index_constituents`, and industry classification as weaker sector context. |
+| `qveris_finance.rates_govt_benchmark` can return monthly/stale rate observations | Use as lagged proxy evidence only; do not treat as same-day macro confirmation. |
+| `qveris_finance.news_fin_tagged` can return broad or truncated news sets when limits are weakly enforced | Use as qualitative context only; mark `overbroad_news` when relevance is weak or truncated. |
 | QVeris `_meta.failover_log` may show internal provider failover | Reflect this in `qveris_trace[].fallback_used` without treating providers as direct dependencies. |
 
 ## Removed Or Replaced
