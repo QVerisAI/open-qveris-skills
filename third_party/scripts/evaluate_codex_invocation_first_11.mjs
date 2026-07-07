@@ -16,6 +16,10 @@ const skills = [
   "qveris-financial-analyst-skills",
 ];
 
+const dateOnly = (date) => date.toISOString().split("T")[0];
+const today = dateOnly(new Date());
+const investmentAdviceDisclaimer = "不构成投资建议 / Not investment advice.";
+
 function nowIso() {
   return new Date().toISOString();
 }
@@ -72,7 +76,7 @@ function makeTrace(attempt, fallbackUsed, failedPrimaries) {
     entity: attempt.params?.symbol ?? attempt.params?.query ?? attempt.params?.market ?? "N/A",
     market: attempt.params?.market ?? attempt.params?.region ?? "N/A",
     params: attempt.params ?? {},
-    as_of: attempt.params?.date ?? "2026-07-06",
+    as_of: attempt.params?.date ?? today,
     retrieved_at: nowIso(),
     fallback_used: fallbackUsed,
     missing_fields: [...new Set(missing)],
@@ -107,7 +111,7 @@ function makeInvocationOutput({ smokeResult, sourceRecord }) {
     risk_notes: [],
     missing_fields: trace.missing_fields,
     qveris_trace: [trace],
-    disclaimer: "不构成投资建议 / Not investment advice.",
+    disclaimer: investmentAdviceDisclaimer,
   };
 }
 
@@ -118,7 +122,7 @@ function validateInvocation(output, skillMd, toolMap) {
   for (const key of ["skill", "source_record", "controls", "analysis", "qveris_trace", "disclaimer"]) {
     if (!(key in output)) issues.push(`missing required key: ${key}`);
   }
-  for (const key of ["dry_run", "max_calls", "budget_note"]) {
+  for (const key of ["dry_run", "max_calls", "max_age", "budget_note"]) {
     if (!(key in output.controls)) issues.push(`missing controls.${key}`);
   }
   if (!Array.isArray(output.qveris_trace) || output.qveris_trace.length === 0) {
@@ -135,7 +139,7 @@ function validateInvocation(output, skillMd, toolMap) {
       issues.push("fallback trace missing primary_tool_unavailable");
     }
   }
-  if (!/不构成投资建议|Not investment advice/.test(output.disclaimer)) {
+  if (output.disclaimer !== investmentAdviceDisclaimer) {
     issues.push("missing investment-advice disclaimer");
   }
   if (!/fallback/i.test(skillMd) && output.qveris_trace.some((trace) => trace.fallback_used)) {
@@ -222,7 +226,7 @@ async function main() {
 
   const markdown = `# Codex Skill Invocation Evaluation: First 11 QVeris Finance Skills
 
-Date: 2026-07-06
+Date: ${today}
 
 This evaluation simulates Codex invoking each newly created skill against the latest live QVeris smoke report. It checks whether a Codex-style output can satisfy the skill contract: source record, controls, qveris_trace, fallback marking, missing_fields, and investment-advice disclaimer.
 
@@ -253,7 +257,7 @@ ${rows.join("\n")}
 4. Test side: keep \`third_party/scripts/live_smoke_first_11.mjs\` and this invocation evaluator as pre-promotion checks.
 `;
 
-  const markdownPath = "third_party/qveris-first-11-codex-invocation-eval-2026-07-06.md";
+  const markdownPath = `third_party/qveris-first-11-codex-invocation-eval-${today}.md`;
   await writeFile(markdownPath, markdown, "utf8");
 
   console.log(JSON.stringify({

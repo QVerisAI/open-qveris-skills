@@ -3,6 +3,12 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { callTool, discoverTools } from "../../qveris-official/scripts/qveris_client.mjs";
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+const dateOnly = (date) => date.toISOString().split("T")[0];
+const today = dateOnly(new Date());
+const sevenDaysAgo = dateOnly(new Date(Date.now() - 7 * DAY_MS));
+const oneMonthHence = dateOnly(new Date(Date.now() + 30 * DAY_MS));
+
 const scenarios = [
   {
     skill: "qveris-anthropic-financial-services",
@@ -56,13 +62,13 @@ const scenarios = [
         label: "sentiment text signals",
         tool_id: "qveris_finance.sentiment_text_signals",
         query: "qveris_finance sentiment text signals TSLA",
-        params: { symbol: "TSLA", market: "US", start_date: "2026-06-29", end_date: "2026-07-06" },
+        params: { symbol: "TSLA", market: "US", start_date: sevenDaysAgo, end_date: today },
       },
       {
         label: "tagged news fallback",
         tool_id: "qveris_finance.news_fin_tagged",
         query: "qveris_finance tagged financial news TSLA",
-        params: { symbol: "TSLA", market: "US", start_date: "2026-06-29", end_date: "2026-07-06" },
+        params: { symbol: "TSLA", market: "US", start_date: sevenDaysAgo, end_date: today },
       },
     ],
   },
@@ -96,7 +102,7 @@ const scenarios = [
         label: "tagged news fallback",
         tool_id: "qveris_finance.news_fin_tagged",
         query: "qveris_finance tagged financial news NVDA",
-        params: { symbol: "NVDA", market: "US", start_date: "2026-06-29", end_date: "2026-07-06" },
+        params: { symbol: "NVDA", market: "US", start_date: sevenDaysAgo, end_date: today },
       },
       {
         label: "consensus estimates fallback",
@@ -124,7 +130,7 @@ const scenarios = [
         label: "earnings calendar",
         tool_id: "qveris_finance.event_calendar_earnings",
         query: "qveris_finance earnings calendar",
-        params: { symbol: "AAPL", market: "US", start_date: "2026-07-06", end_date: "2026-08-06" },
+        params: { symbol: "AAPL", market: "US", start_date: today, end_date: oneMonthHence },
       },
     ],
   },
@@ -135,7 +141,7 @@ const scenarios = [
         label: "A-share market breadth",
         tool_id: "qveris_finance.mkt_breadth_internals",
         query: "qveris_finance China A share market breadth",
-        params: { market: "CN", date: "2026-07-06" },
+        params: { market: "CN", date: today },
       },
       {
         label: "A-share quote fallback",
@@ -147,7 +153,7 @@ const scenarios = [
         label: "A-share top movers fallback",
         tool_id: "qveris_finance.mkt_top_movers",
         query: "qveris_finance China A share top movers",
-        params: { market: "CN", date: "2026-07-06" },
+        params: { market: "CN", date: today },
       },
     ],
   },
@@ -158,13 +164,13 @@ const scenarios = [
         label: "VIX index",
         tool_id: "qveris_finance.index_vix",
         query: "qveris_finance VIX index levels market regime",
-        params: { symbol: "VIX", region: "US", date: "2026-07-06" },
+        params: { symbol: "VIX", region: "US", date: today },
       },
       {
         label: "market breadth fallback",
         tool_id: "qveris_finance.mkt_breadth_internals",
         query: "qveris_finance US market breadth internals",
-        params: { market: "US", date: "2026-07-06" },
+        params: { market: "US", date: today },
       },
     ],
   },
