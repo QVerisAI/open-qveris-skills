@@ -1,0 +1,95 @@
+{
+  "skill": "qveris-finance-skills",
+  "source_record": {
+    "candidate_number": 4,
+    "original_repository": "Finance Skills",
+    "github_url": "https://github.com/himself65/finance-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-14",
+    "local_source_snapshot": "third_party/source_repos/04-finance-skills",
+    "snapshot_latest_commit": "87f688e 2026-06-07"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 10,
+    "max_age": "P1D",
+    "budget_note": "Prefer factor inputs with direct QVeris traces; omit optional factors when call budget is reached."
+  },
+  "analysis": {
+    "workflow": "sentiment_factor",
+    "entity": "TSLA",
+    "summary": "Qualitative-only factor note because the numeric sentiment signal route was unavailable.",
+    "fallback_context": {
+      "primary_tool": "qveris_finance.sentiment_text_signals",
+      "fallback_tool": "qveris_finance.news_fin_tagged",
+      "numeric_sentiment_score_allowed": false
+    },
+    "factors": [
+      {
+        "name": "news_context",
+        "direction": "mixed",
+        "confidence": "low",
+        "numeric_score": null
+      }
+    ]
+  },
+  "risk_notes": [
+    "Qualitative news context is not a return forecast.",
+    "Do not emit a numeric sentiment score unless qveris_finance.sentiment_text_signals succeeds."
+  ],
+  "missing_fields": [
+    "primary_tool_unavailable",
+    "qveris_finance.sentiment_text_signals: provider_error",
+    "numeric_sentiment_score",
+    "sentiment_magnitude",
+    "model_confidence_score"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "NEWS.FIN.TAGGED",
+      "entity": "TSLA",
+      "market": "US",
+      "params": {
+        "symbol": "TSLA",
+        "market": "US",
+        "start_date": "2026-06-30",
+        "end_date": "2026-07-07"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T02:45:26Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "primary_tool_unavailable",
+        "qveris_finance.sentiment_text_signals: provider_error",
+        "numeric_sentiment_score"
+      ],
+      "source_provider": "internal_failover",
+      "quality_note": "Tagged-news fallback supports qualitative context only."
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Primary sentiment model output is unavailable; factor output must remain qualitative.",
+      "No directional return claim should be derived from tagged-news context alone."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "analyst_target_price",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "analyst_target_price",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ]
+}

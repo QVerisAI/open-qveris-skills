@@ -13,12 +13,126 @@
  *
  * Usage:
  *   node scripts/qveris_tool.mjs discover "weather forecast"
- *   node scripts/qveris_tool.mjs call <tool_id> --discovery-id <id> --params '{"city": "London"}'
+ *   node scripts/qveris_tool.mjs call <tool_id> --discovery-id <id> --param city=London
  *   node scripts/qveris_tool.mjs inspect <tool_id1> [tool_id2 ...]
  */
 
 import { readQverisApiKey } from "./qveris_env.mjs";
-import { callTool, discoverTools, getBaseUrl, inspectToolsByIds } from "./qveris_client.mjs";
+import {
+  callTool,
+  discoverTools,
+  getBaseUrl,
+  getCapability,
+  inspectToolsByIds,
+  listCapabilities,
+  queryCapability,
+  searchCapabilities,
+} from "./qveris_client.mjs";
+
+const FINANCE_CAPABILITY_ALIASES = {
+  "qveris_finance.ref_classification_industry": "REF.CLASSIFICATION.INDUSTRY",
+  "qveris_finance.ref_classification_theme": "REF.CLASSIFICATION.THEME",
+  "qveris_finance.ref_company_profile": "REF.COMPANY_PROFILE",
+  "qveris_finance.ref_security_master": "REF.SECURITY_MASTER",
+  "qveris_finance.ref_symbology": "REF.SYMBOLOGY",
+  "qveris_finance.event_calendar_corp": "EVENT.CALENDAR.CORP",
+  "qveris_finance.event_calendar_earnings": "EVENT.CALENDAR.EARNINGS",
+  "qveris_finance.event_calendar_macro": "EVENT.CALENDAR.MACRO",
+  "qveris_finance.news_fin_tagged": "NEWS.FIN.TAGGED",
+  "qveris_finance.earnings_actual_surprise": "EARNINGS.ACTUAL_SURPRISE",
+  "qveris_finance.estimates_consensus": "ESTIMATES.CONSENSUS",
+  "qveris_finance.estimates_ratings_targets": "ESTIMATES.RATINGS_TARGETS",
+  "qveris_finance.fundamentals_bs": "FUNDAMENTALS.BS",
+  "qveris_finance.fundamentals_cf": "FUNDAMENTALS.CF",
+  "qveris_finance.fundamentals_derived_ratios": "FUNDAMENTALS.DERIVED_RATIOS",
+  "qveris_finance.fundamentals_is": "FUNDAMENTALS.IS",
+  "qveris_finance.fundamentals_segment": "FUNDAMENTALS.SEGMENT",
+  "qveris_finance.fx_spot": "FX.SPOT",
+  "qveris_finance.index_constituents": "INDEX.CONSTITUENTS",
+  "qveris_finance.index_levels": "INDEX.LEVELS",
+  "qveris_finance.index_vix": "INDEX.VIX",
+  "qveris_finance.mkt_bars_adjusted": "MKT.BARS.ADJUSTED",
+  "qveris_finance.mkt_bars_eod": "MKT.BARS.EOD",
+  "qveris_finance.mkt_bars_intraday": "MKT.BARS.INTRADAY",
+  "qveris_finance.mkt_breadth_internals": "MKT.BREADTH.INTERNALS",
+  "qveris_finance.mkt_l1_rt": "MKT.L1.RT",
+  "qveris_finance.mkt_top_movers": "MKT.TOP_MOVERS",
+  "qveris_finance.ownership_insider_trades": "OWNERSHIP.INSIDER_TRADES",
+  "qveris_finance.ownership_institutional": "OWNERSHIP.INSTITUTIONAL",
+  "qveris_finance.rates_govt_benchmark": "RATES.GOVT_BENCHMARK",
+  "qveris_finance.research_analyst_reports": "RESEARCH.ANALYST_REPORTS",
+  "qveris_finance.risk_beta_vol": "RISK.BETA_VOL",
+  "qveris_finance.sentiment_text_signals": "SENTIMENT.TEXT_SIGNALS",
+  "qveris_finance.transcripts_earnings_call": "TRANSCRIPTS.EARNINGS_CALL",
+};
+
+function normalizeCapabilityId(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) {
+    return raw;
+  }
+  return FINANCE_CAPABILITY_ALIASES[raw.toLowerCase()] ?? raw;
+}
+
+function parseParamValue(rawValue) {
+  const value = String(rawValue ?? "");
+  if (value === "") {
+    return "";
+  }
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function parseParamOverride(rawAssignment) {
+  const assignment = String(rawAssignment ?? "");
+  const separatorIndex = assignment.indexOf("=");
+  if (separatorIndex <= 0) {
+    throw new Error(`Invalid --param '${assignment}'. Use KEY=VALUE, for example --param symbol=AAPL.`);
+  }
+  const key = assignment.slice(0, separatorIndex).trim();
+  if (!key) {
+    throw new Error(`Invalid --param '${assignment}'. Parameter key must not be empty.`);
+  }
+  return [key, parseParamValue(assignment.slice(separatorIndex + 1))];
+}
+
+function parseCommandParams(paramsJson, paramOverrides) {
+  let params;
+  try {
+    params = JSON.parse(paramsJson);
+  } catch (e) {
+    throw new Error(`Invalid JSON in --params: ${e.message}`);
+  }
+
+  if (!params || typeof params !== "object" || Array.isArray(params)) {
+    throw new Error("--params must decode to a JSON object.");
+  }
+
+  for (const override of paramOverrides ?? []) {
+    const [key, value] = parseParamOverride(override);
+    params[key] = value;
+  }
+  return params;
+}
+
+function readParamArg(args, index) {
+  if (index + 1 >= args.length) {
+    console.error("Error: --param requires KEY=VALUE or KEY VALUE");
+    process.exit(1);
+  }
+  const first = args[index + 1];
+  if (first.includes("=")) {
+    return { assignment: first, nextIndex: index + 1 };
+  }
+  if (index + 2 >= args.length || args[index + 2].startsWith("--")) {
+    console.error("Error: --param KEY requires a VALUE");
+    process.exit(1);
+  }
+  return { assignment: `${first}=${args[index + 2]}`, nextIndex: index + 2 };
+}
 
 function normalizeLegacyArgs(rawArgs) {
   const args = [...rawArgs];
@@ -28,6 +142,14 @@ function normalizeLegacyArgs(rawArgs) {
     execute: "call",
     invoke: "call",
     "get-by-ids": "inspect",
+    "list-capabilities": "cap-list",
+    "search-capabilities": "cap-search",
+    "capability-search": "cap-search",
+    "capability-detail": "cap-detail",
+    "get-capability": "cap-detail",
+    "query-capability": "cap-query",
+    "capability-query": "cap-query",
+    "cap-call": "cap-query",
   };
 
   if (args.length > 0 && commandAliases[args[0]]) {
@@ -134,37 +256,205 @@ function displayCallResult(result) {
   }
 }
 
+function displayCapabilityResults(result) {
+  const searchId = result.search_id ?? "N/A";
+  const capabilities = result.results ?? [];
+  const total = result.total ?? capabilities.length;
+
+  if (result.search_id) {
+    console.log(`\nSearch ID: ${searchId}`);
+  }
+  console.log(`Found ${total} capabilities\n`);
+
+  if (capabilities.length === 0) {
+    console.log("No capabilities found.");
+    return;
+  }
+
+  for (let i = 0; i < capabilities.length; i++) {
+    const cap = capabilities[i];
+    const capabilityId = cap.capability_id ?? "N/A";
+    const name = cap.name_en ?? cap.name ?? "N/A";
+    const desc = cap.description ?? "N/A";
+
+    console.log(`[${i + 1}] ${name}`);
+    console.log(`    Capability ID: ${capabilityId}`);
+    console.log(`    ${desc.length > 100 ? desc.slice(0, 100) + "..." : desc}`);
+
+    const params = cap.params ?? [];
+    if (params.length > 0) {
+      const required = params.filter((p) => p.required).map((p) => p.name);
+      const optional = params.filter((p) => !p.required).map((p) => p.name);
+      if (required.length > 0) {
+        console.log(`    Required: ${required.join(", ")}`);
+      }
+      if (optional.length > 0) {
+        const shown = optional.slice(0, 5).join(", ");
+        console.log(`    Optional: ${shown}${optional.length > 5 ? "..." : ""}`);
+      }
+    }
+
+    const examples = cap.examples ?? {};
+    if (examples.sample_parameters) {
+      console.log(`    Example: ${JSON.stringify(examples.sample_parameters)}`);
+    }
+
+    if (typeof cap.relevance_score === "number") {
+      console.log(`    Relevance: ${cap.relevance_score.toFixed(3)}`);
+    }
+
+    console.log();
+  }
+}
+
+function displayCapabilityDetail(result) {
+  const capabilityId = result.capability_id ?? "N/A";
+  const name = result.name_en ?? result.name ?? "N/A";
+  const desc = result.description ?? "N/A";
+
+  console.log(`\n${name}`);
+  console.log(`Capability ID: ${capabilityId}`);
+  console.log(desc);
+
+  const params = result.params ?? [];
+  if (params.length > 0) {
+    console.log("\nParameters:");
+    for (const param of params) {
+      const required = param.required ? "required" : "optional";
+      const type = param.type ?? "unknown";
+      const description = param.description ? ` - ${param.description}` : "";
+      console.log(`  - ${param.name} (${type}, ${required})${description}`);
+    }
+  }
+
+  const fieldSpec = result.field_spec ?? [];
+  if (fieldSpec.length > 0) {
+    console.log("\nFields:");
+    for (const field of fieldSpec.slice(0, 30)) {
+      const type = field.type ? ` (${field.type})` : "";
+      console.log(`  - ${field.name}${type}`);
+    }
+    if (fieldSpec.length > 30) {
+      console.log(`  ... ${fieldSpec.length - 30} more fields`);
+    }
+  }
+
+  if (result.examples?.sample_parameters) {
+    console.log("\nExample parameters:");
+    console.log(JSON.stringify(result.examples.sample_parameters, null, 2));
+  }
+}
+
+function omitProviderRouteMeta(meta) {
+  if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
+    return meta;
+  }
+  const { source_provider, source_tool_id, failover_log, ...safeMeta } = meta;
+  return safeMeta;
+}
+
+function sanitizeProviderRouteMetadata(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeProviderRouteMetadata(item));
+  }
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+
+  const sanitized = {};
+  for (const [key, child] of Object.entries(value)) {
+    if (key === "_meta") {
+      sanitized[key] = sanitizeProviderRouteMetadata(omitProviderRouteMeta(child));
+    } else if (key === "source_provider" || key === "source_tool_id" || key === "failover_log") {
+      continue;
+    } else {
+      sanitized[key] = sanitizeProviderRouteMetadata(child);
+    }
+  }
+  return sanitized;
+}
+
+function displayCapabilityQueryResult(result) {
+  const success = result.success ?? false;
+  const execTime = result.elapsed_time_ms ?? "N/A";
+  const cost = result.cost ?? 0;
+  const capabilityId = result.capability_id ?? "N/A";
+
+  console.log(`\n${success ? "Success" : "Failed"}`);
+  console.log(`Capability ID: ${capabilityId}`);
+  console.log(`Time: ${execTime}ms | Cost: ${cost}`);
+
+  if (!success) {
+    const error = result.error_message ?? result.error ?? "Unknown error";
+    console.log(`Error: ${error}`);
+  }
+
+  if (result.data !== undefined) {
+    console.log("\nData:");
+    console.log(JSON.stringify(sanitizeProviderRouteMetadata(result.data), null, 2));
+  } else if (result.result !== undefined) {
+    console.log("\nResult:");
+    console.log(JSON.stringify(sanitizeProviderRouteMetadata(result.result), null, 2));
+  }
+
+  if (result._meta) {
+    console.log("\nMetadata (provider route fields omitted; use --json for raw metadata):");
+    console.log(JSON.stringify(omitProviderRouteMeta(result._meta), null, 2));
+  }
+}
+
 function printUsage() {
   const baseUrl = getBaseUrl();
   console.log(`QVeris Capability Discovery & Tool Calling CLI
 
 Usage:
+  node scripts/qveris_tool.mjs cap-list [options]
+  node scripts/qveris_tool.mjs cap-search <query> [options]
+  node scripts/qveris_tool.mjs cap-detail <capability_id|qveris_finance.name> [options]
+  node scripts/qveris_tool.mjs cap-query <capability_id|qveris_finance.name> --param symbol=AAPL [options]
   node scripts/qveris_tool.mjs discover <query> [options]
   node scripts/qveris_tool.mjs call <tool_id> --discovery-id <id> [options]
   node scripts/qveris_tool.mjs inspect <tool_id> [tool_id2 ...] [options]
 
 Commands:
+  cap-list                   List standardized capabilities
+  cap-search <query>         Search standardized capabilities by keyword/semantics
+  cap-detail <id>            Inspect one standardized capability
+  cap-query <id>             Execute a standardized capability via /capabilities/query
   discover <query>            Discover tool candidates for a capability description
   call <tool_id>              Call the selected tool through QVeris
   inspect <id> [id2 ...]      Inspect tool details before reuse or calling
 
 Notes:
+  cap-query is preferred for qveris_finance.* workflows because it uses capability_id + parameters
+  cap-query accepts known finance aliases such as qveris_finance.mkt_l1_rt and normalizes them to CAP IDs
   discover returns tool candidates and metadata, not final data results
   call returns the execution result
   all requests are routed to ${baseUrl}
 
 Options:
+  --domain DOMAIN   Capability domain for cap-list/cap-search (default: finance for cap-search)
+  --page N          Page for cap-list (default: 1)
+  --page-size N     Page size for cap-list (default: 50)
   --limit N          Max results for discover (default: 10)
   --discovery-id ID  Discovery ID from previous discover (required for call, optional for inspect)
+  --search-id ID     Search ID from cap-search for cap-query traceability
   --params JSON      Tool parameters as JSON string (default: "{}")
+  --param KEY=VALUE  Repeatable shell-friendly parameter override; values are JSON-parsed when possible
+  --strategy NAME    Capability routing strategy: best, cheapest, or balanced (default: best)
   --max-size N       Max response size in bytes (default: 20480)
   --timeout N        Request timeout in seconds (default: 30 for discover/inspect, 60 for call)
   --json             Output raw JSON instead of formatted display
+  --safe-json        Output JSON with provider route metadata removed
   --help             Show this help message
 
 Examples:
+  node scripts/qveris_tool.mjs cap-search "end of day bars" --domain finance
+  node scripts/qveris_tool.mjs cap-detail qveris_finance.mkt_bars_eod
+  node scripts/qveris_tool.mjs cap-query qveris_finance.mkt_l1_rt --param symbol=AAPL --safe-json
+  node scripts/qveris_tool.mjs cap-query MKT.BARS.EOD --param symbol=AAPL --param start_date=2026-01-01 --param end_date=2026-01-03
   node scripts/qveris_tool.mjs discover "weather forecast API"
-  node scripts/qveris_tool.mjs call openweathermap.weather.execute.v1 --discovery-id abc123 --params '{"city": "London"}'
+  node scripts/qveris_tool.mjs call openweathermap.weather.execute.v1 --discovery-id abc123 --param city=London
   node scripts/qveris_tool.mjs inspect openweathermap.weather.execute.v1`);
 }
 
@@ -182,9 +472,101 @@ function parseArgs(argv) {
   }
 
   const command = args[0];
-  const parsed = { command, json: false };
+  const parsed = { command, json: false, safeJson: false };
 
-  if (command === "discover") {
+  if (command === "cap-list") {
+    parsed.domain = null;
+    parsed.page = 1;
+    parsed.pageSize = 50;
+    parsed.timeout = 30;
+
+    for (let i = 1; i < args.length; i++) {
+      if (args[i] === "--domain" && i + 1 < args.length) {
+        parsed.domain = args[++i];
+      } else if (args[i] === "--page" && i + 1 < args.length) {
+        parsed.page = parseInt(args[++i], 10);
+      } else if (args[i] === "--page-size" && i + 1 < args.length) {
+        parsed.pageSize = parseInt(args[++i], 10);
+      } else if (args[i] === "--timeout" && i + 1 < args.length) {
+        parsed.timeout = parseInt(args[++i], 10);
+      } else if (args[i] === "--json") {
+        parsed.json = true;
+      } else if (args[i] === "--safe-json") {
+        parsed.safeJson = true;
+      }
+    }
+  } else if (command === "cap-search") {
+    if (args.length < 2) {
+      console.error("Error: cap-search command requires a query argument");
+      process.exit(1);
+    }
+    parsed.query = args[1];
+    parsed.domain = "finance";
+    parsed.limit = 5;
+    parsed.timeout = 30;
+
+    for (let i = 2; i < args.length; i++) {
+      if (args[i] === "--domain" && i + 1 < args.length) {
+        parsed.domain = args[++i];
+      } else if (args[i] === "--limit" && i + 1 < args.length) {
+        parsed.limit = parseInt(args[++i], 10);
+      } else if (args[i] === "--timeout" && i + 1 < args.length) {
+        parsed.timeout = parseInt(args[++i], 10);
+      } else if (args[i] === "--json") {
+        parsed.json = true;
+      } else if (args[i] === "--safe-json") {
+        parsed.safeJson = true;
+      }
+    }
+  } else if (command === "cap-detail") {
+    if (args.length < 2) {
+      console.error("Error: cap-detail command requires a capability_id argument");
+      process.exit(1);
+    }
+    parsed.capabilityId = normalizeCapabilityId(args[1]);
+    parsed.timeout = 30;
+
+    for (let i = 2; i < args.length; i++) {
+      if (args[i] === "--timeout" && i + 1 < args.length) {
+        parsed.timeout = parseInt(args[++i], 10);
+      } else if (args[i] === "--json") {
+        parsed.json = true;
+      } else if (args[i] === "--safe-json") {
+        parsed.safeJson = true;
+      }
+    }
+  } else if (command === "cap-query") {
+    if (args.length < 2) {
+      console.error("Error: cap-query command requires a capability_id argument");
+      process.exit(1);
+    }
+    parsed.capabilityId = normalizeCapabilityId(args[1]);
+    parsed.params = "{}";
+    parsed.paramOverrides = [];
+    parsed.strategy = "best";
+    parsed.searchId = null;
+    parsed.timeout = 60;
+
+    for (let i = 2; i < args.length; i++) {
+      if (args[i] === "--params" && i + 1 < args.length) {
+        parsed.params = args[++i];
+      } else if (args[i] === "--param") {
+        const param = readParamArg(args, i);
+        parsed.paramOverrides.push(param.assignment);
+        i = param.nextIndex;
+      } else if (args[i] === "--strategy" && i + 1 < args.length) {
+        parsed.strategy = args[++i];
+      } else if (args[i] === "--search-id" && i + 1 < args.length) {
+        parsed.searchId = args[++i];
+      } else if (args[i] === "--timeout" && i + 1 < args.length) {
+        parsed.timeout = parseInt(args[++i], 10);
+      } else if (args[i] === "--json") {
+        parsed.json = true;
+      } else if (args[i] === "--safe-json") {
+        parsed.safeJson = true;
+      }
+    }
+  } else if (command === "discover") {
     if (args.length < 2) {
       console.error("Error: discover command requires a query argument");
       process.exit(1);
@@ -210,6 +592,7 @@ function parseArgs(argv) {
     parsed.toolId = args[1];
     parsed.discoveryId = null;
     parsed.params = "{}";
+    parsed.paramOverrides = [];
     parsed.maxSize = 20480;
     parsed.timeout = 60;
 
@@ -218,6 +601,10 @@ function parseArgs(argv) {
         parsed.discoveryId = args[++i];
       } else if (args[i] === "--params" && i + 1 < args.length) {
         parsed.params = args[++i];
+      } else if (args[i] === "--param") {
+        const param = readParamArg(args, i);
+        parsed.paramOverrides.push(param.assignment);
+        i = param.nextIndex;
       } else if (args[i] === "--max-size" && i + 1 < args.length) {
         parsed.maxSize = parseInt(args[++i], 10);
       } else if (args[i] === "--timeout" && i + 1 < args.length) {
@@ -257,7 +644,9 @@ function parseArgs(argv) {
       process.exit(1);
     }
   } else {
-    console.error(`Error: unknown command '${command}'. Use 'discover', 'call', or 'inspect'.`);
+    console.error(
+      `Error: unknown command '${command}'. Use 'cap-list', 'cap-search', 'cap-detail', 'cap-query', 'discover', 'call', or 'inspect'.`,
+    );
     process.exit(1);
   }
 
@@ -269,7 +658,67 @@ async function main() {
   const apiKey = readQverisApiKey();
 
   try {
-    if (args.command === "discover") {
+    if (args.command === "cap-list") {
+      const result = await listCapabilities({
+        apiKey,
+        domain: args.domain,
+        page: args.page,
+        pageSize: args.pageSize,
+        timeoutMs: args.timeout * 1000,
+      });
+      if (args.json) {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        displayCapabilityResults(result);
+      }
+    } else if (args.command === "cap-search") {
+      const result = await searchCapabilities({
+        apiKey,
+        query: args.query,
+        domain: args.domain,
+        limit: args.limit,
+        timeoutMs: args.timeout * 1000,
+      });
+      if (args.json) {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        displayCapabilityResults(result);
+      }
+    } else if (args.command === "cap-detail") {
+      const result = await getCapability({
+        apiKey,
+        capabilityId: args.capabilityId,
+        timeoutMs: args.timeout * 1000,
+      });
+      if (args.json) {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        displayCapabilityDetail(result);
+      }
+    } else if (args.command === "cap-query") {
+      let params;
+      try {
+        params = parseCommandParams(args.params, args.paramOverrides);
+      } catch (e) {
+        console.error(e.message);
+        process.exit(1);
+      }
+      const result = await queryCapability({
+        apiKey,
+        capabilityId: args.capabilityId,
+        parameters: params,
+        strategy: args.strategy,
+        searchId: args.searchId,
+        timeoutMs: args.timeout * 1000,
+      });
+      if (args.safeJson) {
+        console.log(JSON.stringify(sanitizeProviderRouteMetadata(result), null, 2));
+      } else if (args.json) {
+        console.log(JSON.stringify(result, null, 2));
+      } else {
+        displayCapabilityQueryResult(result);
+      }
+    } else if (args.command === "discover") {
       const result = await discoverTools({
         apiKey,
         query: args.query,
@@ -284,9 +733,9 @@ async function main() {
     } else if (args.command === "call") {
       let params;
       try {
-        params = JSON.parse(args.params);
+        params = parseCommandParams(args.params, args.paramOverrides);
       } catch (e) {
-        console.error(`Invalid JSON in --params: ${e.message}`);
+        console.error(e.message);
         process.exit(1);
       }
       const result = await callTool({

@@ -1,0 +1,57 @@
+{
+  "report_type": "budget_limited_user_report",
+  "skill": "qveris-anthropic-financial-services",
+  "controls": {
+    "dry_run": false,
+    "max_calls": 2,
+    "max_age": "P1D",
+    "budget_note": "Budget-limited run: only entity resolution and one market/evidence call were allowed."
+  },
+  "markdown_sections": {
+    "summary": "Only entity anchoring and one QVeris evidence call were attempted. The report cannot support an earnings beat/miss, DCF update, peer comparison, or market-research conclusion.",
+    "evidence_used": "QVeris evidence is limited to entity resolution and the first allowed workflow call.",
+    "data_quality_and_missing_fields": "Primary earnings, consensus, statements, transcript, market, and peer inputs were not called because of the call budget.",
+    "what_this_can_support": "Entity identification and a list of next verification calls.",
+    "what_this_cannot_support": "No beat/miss conclusion, no management quotes, no target price, no recommendation, and no model update."
+  },
+  "missing_fields": [
+    "qveris_finance.earnings_actual_surprise:not_called_budget_limited",
+    "qveris_finance.estimates_consensus:not_called_budget_limited",
+    "qveris_finance.fundamentals_is:not_called_budget_limited",
+    "qveris_finance.fundamentals_bs:not_called_budget_limited",
+    "qveris_finance.fundamentals_cf:not_called_budget_limited",
+    "qveris_finance.transcripts_earnings_call:not_called_budget_limited",
+    "qveris_finance.mkt_l1_rt:not_called_budget_limited"
+  ],
+  "data_quality": {
+    "status": "budget_limited",
+    "fallback_used": false,
+    "warnings": [
+      "Do not infer missing financial facts from prior knowledge.",
+      "State the required next QVeris calls before any investment-research conclusion."
+    ],
+    "suppressed_fields": [
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_company_profile",
+      "capability_id": "REF.COMPANY_PROFILE",
+      "entity": "EXAMPLE",
+      "market": "US",
+      "params": {
+        "symbol": "EXAMPLE",
+        "market": "US"
+      },
+      "as_of": null,
+      "retrieved_at": "example",
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ],
+  "disclaimer": "Not investment advice."
+}

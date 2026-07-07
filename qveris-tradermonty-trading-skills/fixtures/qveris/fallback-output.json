@@ -1,0 +1,119 @@
+{
+  "skill": "qveris-tradermonty-trading-skills",
+  "source_record": {
+    "candidate_number": 10,
+    "original_repository": "Tradermonty Trading Skills",
+    "github_url": "https://github.com/tradermonty/claude-trading-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-06",
+    "local_source_snapshot": "third_party/source_repos/10-tradermonty-trading-skills",
+    "snapshot_latest_commit": "4d63990 2026-07-05"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 12,
+    "max_age": "P1D",
+    "budget_note": "Fallback example: primary index, breadth, macro, and rates routes are unavailable, so output proxy-only risk/regime monitoring."
+  },
+  "analysis": {
+    "workflow": "risk_regime_monitor",
+    "entity": "US market",
+    "summary": "Proxy-only risk/regime monitor. VIX and liquid ETF proxies may support a low-confidence regime read, but missing primary evidence prevents a high-confidence call.",
+    "fallback_context": {
+      "failed_primary_tools": [
+        "qveris_finance.index_levels",
+        "qveris_finance.mkt_breadth_internals",
+        "qveris_finance.macro_actual_vs_forecast",
+        "qveris_finance.rates_govt_benchmark"
+      ],
+      "proxy_tools": [
+        "qveris_finance.index_vix",
+        "qveris_finance.mkt_bars_adjusted"
+      ],
+      "trading_actions_allowed": false,
+      "artifact_label": "risk/regime monitoring"
+    }
+  },
+  "risk_notes": [
+    "Proxy evidence is weaker than primary index, breadth, macro, and rates evidence.",
+    "Monitoring output only; no trading, execution, rebalance, buy/sell point, or portfolio action instruction."
+  ],
+  "missing_fields": [
+    "primary_tool_unavailable",
+    "primary_index_levels",
+    "market_breadth",
+    "macro_actual_vs_forecast",
+    "rates_govt_benchmark",
+    "full_correlation_confirmation"
+  ],
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Primary regime evidence is unavailable; lower confidence and separate proxy evidence.",
+      "Do not present proxy-only evidence as a complete market regime confirmation."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "analyst_target_price",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell",
+      "trade_plan",
+      "rebalance_instruction"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.index_vix",
+      "capability_id": "INDEX.VIX",
+      "entity": "VIX",
+      "market": "US",
+      "params": {
+        "symbol": "VIX",
+        "region": "US"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T05:45:00Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "primary_index_levels",
+        "market_breadth",
+        "macro_actual_vs_forecast",
+        "rates_govt_benchmark"
+      ],
+      "source_provider": "internal_failover",
+      "quality_note": "VIX proxy only; not complete market regime evidence."
+    },
+    {
+      "tool_name": "qveris_finance.mkt_bars_adjusted",
+      "capability_id": "MKT.BARS.ADJUSTED",
+      "entity": "SPY",
+      "market": "US",
+      "params": {
+        "symbol": "SPY",
+        "window": "P5D"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T05:45:00Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "primary_index_levels",
+        "market_breadth"
+      ],
+      "source_provider": "qveris_internal",
+      "quality_note": "Liquid ETF proxy must be labeled separately from primary index evidence."
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "analyst_target_price",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell",
+    "trade_plan",
+    "rebalance_instruction"
+  ]
+}
