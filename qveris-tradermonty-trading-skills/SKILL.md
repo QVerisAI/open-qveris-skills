@@ -24,6 +24,7 @@ Source record:
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
 - Accept user-provided holdings as read-only context; never request brokerage login or account permissions.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted in a natural-language request, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
+- Use the shared retry policy at `../references/qveris-finance-retry-policy.md`; retry transient 5xx/transport failures at most 2 times, do not blind-retry 404s, and hard reject semantic mismatches.
 - Include `qveris_trace` for every risk, market, sector, macro, and calendar claim.
 - Data-quality checks must inspect `as_of`, `missing_fields`, `fallback_used`, and staleness on each QVeris payload.
 - Treat QVeris `_meta.source_provider` as provenance only; never call, request credentials for, depend on, or print those internal providers directly.
@@ -81,6 +82,10 @@ Do not use non-QVeris finance data providers, brokerage/account permissions, tra
 ## References
 
 - Read `references/qveris-tool-map.md` before choosing tool calls.
+- Read `../references/qveris-finance-retry-policy.md` when a CAP call fails, needs retry, or needs fallback classification.
+- Check `../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` when deciding whether a capability belongs on the primary path.
 - Use `examples/default-markdown-report.md` as the primary user-facing output example.
 - Use `fixtures/qveris/sample-output.json`, `fixtures/qveris/fallback-output.json`, and `fixtures/qveris/budget-limited-output.json` as schema fixtures only.
 - Use `examples/natural-language-prompts.md` for copyable natural-language test prompts.
+- Use `examples/natural-language-test-output-2026-07-07.md` as a dated reviewer output record.
+- Run `scripts/validate_qveris_finance_report.py <markdown-report>` on generated reviewer reports when updating examples or fixtures.

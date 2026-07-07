@@ -25,6 +25,7 @@ Use validated QVeris payloads only. A transport-success response that resolves t
 - `mkt_bars_adjusted`: reject multi-day metrics when fewer than 2 observations return.
 - `index_levels`: reject benchmark identity mismatches.
 - `fundamentals_cf`: exclude inconsistent CF from aligned valuation tables.
+- `FY2025 cash flow`: mark missing if an annual/FY request returns a latest-quarter or TTM-shaped payload after one stricter documented-period retry.
 
 ## What This Can Support
 
@@ -36,10 +37,15 @@ Use validated QVeris payloads only. A transport-success response that resolves t
 
 - Numeric sentiment without sentiment evidence.
 - Forward multiples without consensus or derived ratios.
-- Return forecast, target price, or buy/sell trigger.
+- Cannot support return forecast, target price, or buy/sell trigger.
 
 ## Trace Appendix
 
-Use a compact evidence table by default. Include full `qveris_trace` JSON only when requested or when preparing schema fixtures.
+| qveris_finance capability | Parameters | Status | Fallback |
+|---|---|---|---|
+| `qveris_finance.news_fin_tagged` | `symbol=TSLA`, `market=US`, recent window | example qualitative context | none |
+| `qveris_finance.sentiment_text_signals` | `symbol=TSLA`, `market=US`, recent window | example missing | tagged news only |
+
+Include full `qveris_trace` JSON only when requested or when preparing schema fixtures.
 
 Not investment advice.

@@ -38,12 +38,17 @@ VIX, rates, and liquid ETF bars are `proxy_only` unless primary index and breadt
 
 ## What This Cannot Support
 
-- Trade plan, rebalance instruction, target price, or buy/sell point.
+- Cannot support trade plan, rebalance instruction, target price, or buy/sell point.
 - Full portfolio risk model without validated bars, benchmark, and correlation evidence.
 - Strong regime call from proxy evidence alone.
 
 ## Trace Appendix
 
-Use a compact evidence table by default. Include full `qveris_trace` JSON only when requested or when preparing schema fixtures.
+| qveris_finance capability | Parameters | Status | Fallback |
+|---|---|---|---|
+| `qveris_finance.risk_beta_vol` | holding symbols, `benchmark_symbol=SPY` | example partial | beta monitor only |
+| `qveris_finance.mkt_breadth_internals` | `market=US` | example missing | VIX/rates/liquid ETF proxies only |
+
+Include full `qveris_trace` JSON only when requested or when preparing schema fixtures.
 
 Not investment advice.

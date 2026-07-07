@@ -11,6 +11,7 @@ Source: Anthropic Financial Services, https://github.com/anthropics/financial-se
 - Treat QVeris `_meta.source_provider` as provenance only, never as a direct skill dependency, and never print raw vendor/provider IDs. Use `qveris_internal`, `internal_failover`, or `unknown` when provenance must be surfaced. In final output, say "non-QVeris sources" instead of naming prohibited providers.
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, fiscal period, and payload shape before using a payload as evidence.
+- Apply `../../references/qveris-finance-retry-policy.md` for retry/no-retry decisions and `../../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
 - Apply the shared rubric at `../../references/qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, or statement-consistency checks are hard rejects.
 
 ## Direct CAP Invocation
@@ -59,6 +60,7 @@ Use structured parameters; do not pass the user request as a free-text parameter
 | Entity/profile | `{"symbol":"MSFT","market":"US"}` |
 | Earnings calendar/surprise/consensus | `{"symbol":"NVDA","market":"US"}` |
 | Statements | `{"symbol":"MSFT","market":"US","period":"annual","limit":3}` or `{"symbol":"NVDA","market":"US","period":"quarterly","limit":4}` |
+| Strict statement-period retry | Inspect `cap-detail` first; if the fields are documented, retry with a stricter shape such as `{"symbol":"MSFT","market":"US","period":"annual","fiscal_year":2025,"period_type":"annual","limit":1}` |
 | Market quote | `{"symbol":"MSFT","market":"US"}` |
 | US rate proxy | `{"symbol":"US10Y"}`; if rejected, inspect `RATES.GOVT_BENCHMARK` and retry with its documented fields |
 | FX | `{"base_currency":"USD","quote_currency":"USD"}` |
@@ -68,6 +70,7 @@ Use structured parameters; do not pass the user request as a free-text parameter
 
 - Confirm returned symbol, company name, exchange, market, and asset type match the request before citing company data.
 - Align IS, BS, CF, and segment payloads by fiscal year, fiscal period, and period ending before creating earnings tables.
+- If an annual/FY request returns a latest-quarter or TTM-shaped statement payload, reject it for the requested period, retry once with stricter documented period fields, and mark the requested statement missing if it still does not match.
 - Exclude same-period CF if CF net income materially conflicts with IS net income; mark `statement_semantic_mismatch`.
 - Treat `news_fin_tagged` as background context only when transcript or cluster routes fail; do not infer management quotes, numeric sentiment, or strong catalysts from tagged news alone.
 - Treat monthly or stale rates as lagged proxy inputs only, not same-day macro evidence.
@@ -93,7 +96,7 @@ Use structured parameters; do not pass the user request as a free-text parameter
 |---|---|---|---|
 | `qveris_finance.earnings_actual_surprise` | Provider returned 503 in live smoke on 2026-07-06 | `qveris_finance.estimates_consensus` plus `qveris_finance.event_calendar_earnings` | Do not assert beat/miss unless actual and consensus are both present; mark `fallback_used: true` and add `primary_tool_unavailable` to `missing_fields`. |
 | `qveris_finance.transcripts_earnings_call` | Provider returned 503 in natural-language forward test on 2026-07-06 | `qveris_finance.news_fin_tagged` | Use news only as context; do not invent management quotes. |
-| Statement period alignment | `fundamentals_cf` can return TTM/other periods despite quarterly intent | None | Keep cross-period values out of aligned tables and add a data-quality warning. |
+| Statement period alignment | `fundamentals_cf` can return a different fiscal period than requested, including annual requests returning latest-quarter or TTM-shaped data | Stricter documented period params after `cap-detail` | Keep cross-period values out of aligned tables; if the retry still mismatches, mark the requested statement missing, e.g. `FY2025 cash flow missing due to period mismatch`. |
 | Statement semantic consistency | `fundamentals_cf` can return same-label fields that conflict with the aligned IS period | None | Hard reject the conflicting CF fields from aligned tables; mark `statement_semantic_mismatch`. |
 | `qveris_finance.news_dedup_cluster` | Returned 404 / capability not found in no-limit natural-language retest on 2026-07-07 | `qveris_finance.news_fin_tagged` | Do not call as a primary path unless `cap-detail` first confirms availability. |
 | `qveris_finance.news_fin_tagged` | Can return broad or truncated news sets when limits are weakly enforced | None | Use as qualitative context only; mark `overbroad_news` when relevance is weak or truncated. |

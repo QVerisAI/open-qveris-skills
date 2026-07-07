@@ -30,6 +30,9 @@
         "qveris_finance.mkt_l1_rt",
         "qveris_finance.fundamentals_is"
       ],
+      "rejected_payloads": [
+        "qveris_finance.fundamentals_cf: period_mismatch"
+      ],
       "numeric_sentiment_allowed": false,
       "directional_return_forecast_allowed": false
     }
@@ -44,6 +47,8 @@
     "sentiment_signal_confidence",
     "derived_valuation_ratios",
     "forward_consensus",
+    "fy2025_cash_flow_statement",
+    "period_mismatch",
     "target_price",
     "upside",
     "directional_return_forecast"
@@ -52,7 +57,8 @@
     "status": "limited",
     "warnings": [
       "Sentiment primary route failed; keep sentiment qualitative.",
-      "Derived ratios and consensus failed; valuation is partial and should show missing fields."
+      "Derived ratios and consensus failed; valuation is partial and should show missing fields.",
+      "Requested FY2025 annual cash flow was not available because the returned CF payload was a latest-quarter or TTM-shaped period mismatch."
     ],
     "stale_fields": [],
     "out_of_window_events": [],
@@ -103,6 +109,27 @@
       ],
       "source_provider": "internal_failover",
       "quality_note": "Market price may support partial valuation inputs but not target price or return claims."
+    },
+    {
+      "tool_name": "qveris_finance.fundamentals_cf",
+      "capability_id": "FUNDAMENTALS.CF",
+      "entity": "TSLA",
+      "market": "US",
+      "params": {
+        "symbol": "TSLA",
+        "market": "US",
+        "period": "annual",
+        "limit": 1
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T05:45:00Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "fy2025_cash_flow_statement",
+        "period_mismatch"
+      ],
+      "source_provider": "qveris_internal",
+      "quality_note": "Requested FY2025 annual cash flow, but returned payload did not match the requested period; do not use as FY2025 cash-flow evidence."
     }
   ],
   "disclaimer": "Not investment advice.",

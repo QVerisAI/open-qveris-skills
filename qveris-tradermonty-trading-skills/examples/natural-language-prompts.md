@@ -1,5 +1,15 @@
 # Natural Language Examples
 
+## Minimal Prompts
+
+```text
+用 qveris-tradermonty-trading-skills 看当前美国市场 regime。
+```
+
+```text
+用 qveris-tradermonty-trading-skills 看这个只读组合风险：AAPL 40%、NVDA 35%、MSFT 25%。
+```
+
 ## US Market Regime Monitor
 
 ```text

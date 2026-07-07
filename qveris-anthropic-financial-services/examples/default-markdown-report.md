@@ -25,6 +25,7 @@ State only conclusions supported by validated QVeris payloads. Keep rejected sta
 - `earnings_actual_surprise`: unavailable or failed, so beat/miss is not supported.
 - `transcripts_earnings_call`: unavailable, so management quotes are not supported.
 - `fundamentals_cf`: excluded if fiscal period or net income conflicts with IS.
+- `FY2025 cash flow`: missing if an annual/FY request returns a latest-quarter or TTM-shaped payload after one stricter documented-period retry.
 
 ## What This Can Support
 
@@ -35,12 +36,17 @@ State only conclusions supported by validated QVeris payloads. Keep rejected sta
 ## What This Cannot Support
 
 - Investment recommendation.
-- Target price or upside.
+- Cannot support target price or upside.
 - Beat/miss without actual and consensus.
 - Management quotes without transcript evidence.
 
 ## Trace Appendix
 
-Use a compact table for user-facing trace. Include full `qveris_trace` JSON only when requested or when preparing schema fixtures.
+| qveris_finance capability | Parameters | Status | Fallback |
+|---|---|---|---|
+| `qveris_finance.event_calendar_earnings` | `symbol=NVDA`, `market=US` | example status | none |
+| `qveris_finance.earnings_actual_surprise` | `symbol=NVDA`, `market=US` | example missing | calendar plus consensus only |
+
+Include full `qveris_trace` JSON only when requested or when preparing schema fixtures.
 
 Not investment advice.

@@ -1,6 +1,6 @@
 COMPOSE := docker compose -f dev-infra/stock-copilot-pro/docker-compose.yml
 
-.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw
+.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw validate-finance-reports
 
 up:
 	$(COMPOSE) up -d skill-dev
@@ -45,3 +45,12 @@ test-e2e:
 test-openclaw:  ## OpenClaw 端到端测试（8 个 case，需要 openclaw 容器运行）
 	$(COMPOSE) --profile openclaw exec openclaw \
 		node /workspace/dev-infra/stock-copilot-pro/openclaw-e2e.mjs
+
+validate-finance-reports:
+	python scripts/validate_qveris_finance_report.py \
+		qveris-anthropic-financial-services/examples/default-markdown-report.md \
+		qveris-anthropic-financial-services/examples/natural-language-test-output-2026-07-07.md \
+		qveris-finance-skills/examples/default-markdown-report.md \
+		qveris-finance-skills/examples/natural-language-test-output-2026-07-07.md \
+		qveris-tradermonty-trading-skills/examples/default-markdown-report.md \
+		qveris-tradermonty-trading-skills/examples/natural-language-test-output-2026-07-07.md

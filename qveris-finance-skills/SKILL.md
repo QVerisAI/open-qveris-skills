@@ -24,6 +24,7 @@ Source record:
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
 - Resolve the security with `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, and `qveris_finance.ref_company_profile`.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted in a natural-language request, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
+- Use the shared retry policy at `../references/qveris-finance-retry-policy.md`; retry transient 5xx/transport failures at most 2 times, do not blind-retry 404s, and hard reject semantic mismatches.
 - Include `qveris_trace` for each factor and expose stale or missing inputs.
 - Treat QVeris `_meta.source_provider` as provenance only; never call, request credentials for, depend on, or print those internal providers directly.
 - Normalize trace provenance: `qveris_trace[].tool_name` and any human-readable trace labels must use only `qveris_finance.*` capability names. If QVeris returns vendor/provider IDs in `_meta.source_provider` or `_meta.failover_log`, expose only abstract labels such as `qveris_internal`, `internal_failover`, or `unknown`; describe the event as internal provider failover without printing vendor IDs.
@@ -38,6 +39,8 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 - Use evidence status labels from the shared rubric: `complete`, `partial`, `proxy_only`, or `insufficient`.
 - Require at least 2 observations for multi-day bars before computing liquidity, return, correlation, realized volatility, drawdown, or trend.
 - Reject index or benchmark payloads whose returned symbol, name, or asset type does not match the requested benchmark; mark `semantic_mismatch`.
+- If a requested annual/FY statement such as FY2025 cash flow returns a latest-quarter or TTM-shaped payload, treat the current call as `period_mismatch`, not as requested-period evidence.
+- After a `period_mismatch`, inspect `cap-detail` and retry once with stricter documented fields such as `fiscal_year`, `fiscal_period`, `period_type`, `period`, or `limit`; if the payload still does not match, mark the requested statement missing, for example `FY2025 cash flow missing due to period mismatch`.
 - Treat `qveris_finance.news_fin_tagged` as qualitative context only when sentiment or cluster routes are unavailable. Do not derive numeric sentiment, strong catalysts, or directional risk conclusions from tagged news alone.
 - Use manual trailing valuation inputs only when required QVeris fields are present and label them as calculated. Do not infer forward multiples unless consensus or derived-ratio evidence succeeds.
 
@@ -61,6 +64,7 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 
 - If `qveris_finance.sentiment_text_signals` returns a provider error, fall back to `qveris_finance.news_fin_tagged` and derive only a qualitative news-context factor.
 - Mark quantitative sentiment score fields as missing unless `qveris_finance.sentiment_text_signals` succeeds.
+- If a statement payload returns a different period than requested, keep it out of aligned valuation tables, retry once with stricter documented period parameters when available, and move unresolved mismatches to `missing_fields` plus `data_quality.warnings`.
 - If `qveris_finance.fundamentals_derived_ratios`, `qveris_finance.estimates_consensus`, or `qveris_finance.earnings_actual_surprise` fail, keep valuation and earnings factors as partial inputs with missing numeric fields; do not convert them into directional return claims.
 - Set `qveris_trace[].fallback_used: true` and include `primary_tool_unavailable` in `missing_fields` for fallback sentiment output.
 
@@ -83,6 +87,10 @@ Do not use dynamic data-package installs, any non-QVeris finance data provider, 
 ## References
 
 - Read `references/qveris-tool-map.md` before choosing tool calls.
+- Read `../references/qveris-finance-retry-policy.md` when a CAP call fails, needs retry, or needs fallback classification.
+- Check `../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` when deciding whether a capability belongs on the primary path.
 - Use `examples/default-markdown-report.md` as the primary user-facing output example.
 - Use `fixtures/qveris/sample-output.json`, `fixtures/qveris/fallback-output.json`, and `fixtures/qveris/budget-limited-output.json` as schema fixtures only.
 - Use `examples/natural-language-prompts.md` for copyable natural-language test prompts.
+- Use `examples/natural-language-test-output-2026-07-07.md` as a dated reviewer output record.
+- Run `scripts/validate_qveris_finance_report.py <markdown-report>` on generated reviewer reports when updating examples or fixtures.

@@ -12,6 +12,7 @@ Source: Tradermonty Trading Skills, https://github.com/tradermonty/claude-tradin
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, benchmark, and payload shape before using a payload as evidence.
 - Apply the shared rubric at `../../references/qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, benchmark, or proxy checks are hard rejects.
+- Apply `../../references/qveris-finance-retry-policy.md` for retry/no-retry decisions and `../../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
 
 ## Direct CAP Invocation
 

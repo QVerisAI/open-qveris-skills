@@ -1,5 +1,15 @@
 # Natural Language Examples
 
+## Minimal Prompts
+
+```text
+用 qveris-finance-skills 做 TSLA 最近 7 天 sentiment 和 valuation note。
+```
+
+```text
+用 qveris-finance-skills 看 AAPL 最近财报、流动性和 beta。
+```
+
 ## Sentiment And Valuation Factor Note
 
 ```text
