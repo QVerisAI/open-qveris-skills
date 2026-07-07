@@ -77,3 +77,78 @@ export async function callTool({
     timeoutMs,
   });
 }
+
+export async function listCapabilities({
+  apiKey,
+  domain,
+  page = 1,
+  pageSize = 50,
+  timeoutMs = 30000,
+}) {
+  return requestJson("/capabilities", {
+    method: "GET",
+    apiKey,
+    query: {
+      domain,
+      page,
+      page_size: pageSize,
+    },
+    timeoutMs,
+  });
+}
+
+export async function searchCapabilities({
+  apiKey,
+  query,
+  domain = "finance",
+  limit = 5,
+  timeoutMs = 30000,
+}) {
+  return requestJson("/capabilities/search", {
+    method: "GET",
+    apiKey,
+    query: {
+      q: query,
+      domain,
+      limit,
+    },
+    timeoutMs,
+  });
+}
+
+export async function getCapability({
+  apiKey,
+  capabilityId,
+  timeoutMs = 30000,
+}) {
+  return requestJson(`/capabilities/${encodeURIComponent(capabilityId)}`, {
+    method: "GET",
+    apiKey,
+    timeoutMs,
+  });
+}
+
+export async function queryCapability({
+  apiKey,
+  capabilityId,
+  parameters,
+  strategy = "best",
+  searchId,
+  timeoutMs = 120000,
+}) {
+  const body = {
+    capability_id: capabilityId,
+    parameters,
+    strategy,
+  };
+  if (searchId) {
+    body.search_id = searchId;
+  }
+
+  return requestJson("/capabilities/query", {
+    method: "POST",
+    apiKey,
+    body,
+    timeoutMs,
+  });
+}

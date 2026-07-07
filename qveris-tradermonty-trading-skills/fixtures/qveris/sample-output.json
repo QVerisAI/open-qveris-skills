@@ -71,7 +71,7 @@
         "market_breadth",
         "macro_actual_vs_forecast"
       ],
-      "source_provider": "hangseng_polysource",
+      "source_provider": "internal_failover",
       "quality_note": "Proxy-only regime evidence; do not present as complete primary breadth or macro confirmation."
     }
   ],

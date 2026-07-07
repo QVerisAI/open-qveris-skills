@@ -5,7 +5,7 @@ description: QVeris-native adaptation of candidate 4, Finance Skills. Use for se
 
 # QVeris Finance Skills
 
-Use this skill to turn the Finance Skills candidate into standardized, trace-backed research factors: sentiment, valuation inputs, earnings recap, liquidity, and correlation. Preserve the factor framing; replace yfinance, dynamic data packages, and third-party APIs with QVeris.
+Use this skill to turn the Finance Skills candidate into standardized, trace-backed research factors: sentiment, valuation inputs, earnings recap, liquidity, and correlation. Preserve the factor framing; replace legacy data packages and third-party APIs with QVeris.
 
 Source record:
 
@@ -25,9 +25,19 @@ Source record:
 - Resolve the security with `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, and `qveris_finance.ref_company_profile`.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted in a natural-language request, default to `dry_run=false`, `max_calls=12`, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Include `qveris_trace` for each factor and expose stale or missing inputs.
-- Treat QVeris `_meta.source_provider` as provenance only; never call, request credentials for, or depend on those internal providers directly.
+- Treat QVeris `_meta.source_provider` as provenance only; never call, request credentials for, depend on, or print those internal providers directly.
+- Normalize trace provenance: `qveris_trace[].tool_name` and any human-readable trace labels must use only `qveris_finance.*` capability names. If QVeris returns vendor/provider IDs in `_meta.source_provider` or `_meta.failover_log`, expose only abstract labels such as `qveris_internal`, `internal_failover`, or `unknown`; describe the event as internal provider failover without printing vendor IDs.
+- In final user-facing output, do not name external providers even when explaining prohibited fallbacks; say "non-QVeris sources" or "external provider routes" instead.
 - Suppress `analyst_target_price`, `target_price`, price-objective, upside, buy/sell, and recommendation fields even if a QVeris payload contains them.
 - Sanity-check entity, market, date window, fiscal period, and payload shape before using data; if a payload is stale, cross-period, truncated, or semantically mismatched, mark it in `data_quality` and `missing_fields`.
+
+## CAP Invocation
+
+- Prefer native `qveris_finance.*` CAP functions when the environment exposes them.
+- If native functions are not exposed but the repo script is available, execute standardized CAP calls from the repository root with `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --params '<json>' --safe-json`.
+- Equivalent HTTP route: `POST https://qveris.ai/api/v1/capabilities/query` with `capability_id`, structured `parameters`, and `strategy: "best"`.
+- Use `cap-search` or `GET /capabilities/search` only when the CAP ID or parameter contract is uncertain; use `cap-detail` or `GET /capabilities/{capability_id}` to verify fields.
+- Use legacy QVeris `/search` plus `/tools/execute` only when the standardized CAP endpoint is unavailable; mark `legacy_cap_shim_used` in `data_quality.warnings` and keep trace names normalized to `qveris_finance.*`.
 
 ## Workflows
 
@@ -46,7 +56,11 @@ Source record:
 
 ## Output Requirements
 
-- Use `schemas/output.schema.json` and emit a factor table with value, direction, confidence, evidence, missing fields, and trace.
+- Return a Markdown user report by default, not a single large JSON object.
+- Use this report structure: `Summary`, `Factor Table`, `Evidence Used`, `Data Quality And Missing Fields`, `What This Can Support`, `What This Cannot Support`, and `Trace Appendix`.
+- Keep the factor table user-readable with value, direction, confidence, evidence, and missing fields. Put detailed `qveris_trace` in the appendix as a compact table or fenced JSON.
+- Use the full `schemas/output.schema.json` shape only when the user asks for machine-readable output or when preparing fixtures.
+- If `max_calls`, `dry_run`, or budget constraints prevent the main workflow from running, return a budget-limited Markdown report: state what was not called, do not infer missing factors, and list the next QVeris calls that would be needed.
 - Treat sentiment as explanatory input, not a return forecast.
 - Do not output buy/sell triggers, target prices, or rebalancing instructions.
 - Include `data_quality` with status, stale fields, out-of-window events, and suppressed fields when applicable.
@@ -54,9 +68,12 @@ Source record:
 
 ## Prohibited Capabilities
 
-Do not use yfinance, Adanos/Funda, dynamic data-package installs, EODHD, Yahoo, FMP, Alpha Vantage, Polygon, AkShare, Snowball, Sina, SEC scraping, Longbridge, FinViz, Alpaca, browser automation, cookies, login state, third-party API keys, automated trading, wallet/swap, buy/sell points, portfolio action instructions, or target price commitments.
+Do not use dynamic data-package installs, any non-QVeris finance data provider, SEC scraping, browser automation, cookies, login state, third-party API keys, automated trading, wallet/swap, buy/sell points, portfolio action instructions, or target price commitments. Provider names are listed in the source record only for internal migration context; do not repeat them in final output.
 
 ## References
 
 - Read `references/qveris-tool-map.md` before choosing tool calls.
 - Use `fixtures/qveris/sample-output.json` as the minimum output shape.
+- Use `fixtures/qveris/fallback-output.json` as the reviewer-facing example for qualitative sentiment and partial valuation fallback.
+- Use `fixtures/qveris/budget-limited-output.json` as the reviewer-facing example when controls prevent enough QVeris calls.
+- Use `examples/natural-language-prompts.md` for copyable natural-language test prompts.

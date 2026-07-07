@@ -147,7 +147,13 @@
               "string",
               "null"
             ],
-            "description": "QVeris internal provenance only; not a direct skill dependency."
+            "enum": [
+              "qveris_internal",
+              "internal_failover",
+              "unknown",
+              null
+            ],
+            "description": "Abstract QVeris provenance label only; never expose raw vendor/provider IDs."
           },
           "quality_note": {
             "type": "string"

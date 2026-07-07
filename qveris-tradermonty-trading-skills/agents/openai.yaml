@@ -1,4 +1,4 @@
 interface:
-  display_name: "QVeris Risk Regime"
-  short_description: "QVeris-only regime review with proxy/fallback guards"
-  default_prompt: "Use $qveris-tradermonty-trading-skills to review risk, regime, sector rotation, and data quality with QVeris. Separate primary evidence from VIX/rates/liquid-ETF proxies, include data_quality/missing_fields, suppress target/upside/recommendation fields, and do not give trading or portfolio action instructions."
+  display_name: "QVeris Risk Monitor"
+  short_description: "QVeris-only risk and regime monitoring, not trading"
+  default_prompt: "Use $qveris-tradermonty-trading-skills as a Markdown QVeris risk/regime monitoring report. Prefer direct qveris_finance.* CAP query/cap-query evidence, separate primary evidence from VIX/rates/liquid-ETF proxies, put trace details in an appendix, include data_quality/missing_fields, suppress target/upside/recommendation fields, and do not give trading or portfolio action instructions."

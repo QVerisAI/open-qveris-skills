@@ -1,11 +1,11 @@
 ---
 name: qveris-official
 description: >-
-  QVeris is a capability discovery and tool calling engine. Use discover to
-  find specialized API tools — real-time data, historical sequences, structured
-  reports, web extraction, PDF workflows, media generation, OCR, TTS,
-  translation, and more. Then call the selected tool. Discovery queries must
-  be English API capability descriptions. Requires QVERIS_API_KEY.
+  QVeris is a capability discovery and tool calling engine. Use standardized
+  capabilities/query for qveris_finance.* CAP workflows, or discover/call for
+  generic specialized API tools such as real-time data, historical sequences,
+  structured reports, web extraction, PDF workflows, media generation, OCR, TTS,
+  translation, and more. Requires QVERIS_API_KEY.
 homepage: https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-official
 env:
   - QVERIS_API_KEY
@@ -34,17 +34,21 @@ To look up facts, answers, or general information, use `web_search` instead.
 
 **Credential**: Only `QVERIS_API_KEY` is used. All requests go to `https://qveris.ai/api/v1` over HTTPS.
 
+**Finance CAP preference**: For `qveris_finance.*` workflows, prefer the standardized CAP endpoints (`/capabilities/search`, `/capabilities/{id}`, `/capabilities/query`) over legacy `/search` plus `/tools/execute`. Use legacy discover/call only when the standardized CAP endpoint is unavailable.
+
 ---
 
 ## Invocation Tiers
 
 Check availability in order and use the first working tier:
 
+For standardized finance capabilities, the first working route should execute `POST /api/v1/capabilities/query` with `capability_id` and structured `parameters`. Do not rediscover raw provider routes when a known `qveris_finance.*` capability maps directly to a CAP ID.
+
 **Tier 1 — Native tools** (most reliable): If `qveris_discover` and `qveris_call` tools are available in your environment, use them directly — skip all other tiers.
 
 **Tier 2 — `http_request` tool** (universal fallback): Call the QVeris HTTP API directly using the `http_request` tool (see [QVeris API Reference](#qveris-api-reference) below). Available in all OpenClaw environments, including those where `exec` is disabled.
 
-**Tier 3 — Script execution**: Run `node {baseDir}/scripts/qveris_tool.mjs discover/call/inspect` — only when `{baseDir}/scripts/` directory is present and the `exec` tool with `node` are available.
+**Tier 3 — Script execution**: Run `node {baseDir}/scripts/qveris_tool.mjs cap-list/cap-search/cap-detail/cap-query` for standardized CAPs, or `discover/call/inspect` for legacy generic tools. Use this only when `{baseDir}/scripts/` directory is present and the `exec` tool with `node` are available.
 
 **Tier 4 — Web search**: If all tiers above are unavailable, fall back to `web_search` for qualitative needs.
 
@@ -69,6 +73,15 @@ Check availability in order and use the first working tier:
 **Key distinction**: QVeris discover finds **API tools by capability type** (e.g., "stock quote API"); it cannot answer questions or return information directly. For factual questions → web_search. For structured data → discover the right tool first, then call it. When in doubt, ask: "Am I looking for a **tool** or for **information**?"
 
 ### Usage Flow
+
+For known standardized capabilities, especially `qveris_finance.*`, skip legacy discovery and call the CAP directly:
+
+1. **Map**: Convert the logical tool name to a CAP ID such as `qveris_finance.mkt_l1_rt` -> `MKT.L1.RT`. If uncertain, use `cap-search` or `/capabilities/search`.
+2. **Inspect when needed**: Use `cap-detail` or `GET /capabilities/{capability_id}` to verify required parameters and output fields.
+3. **Query**: Execute `cap-query` or `POST /capabilities/query` with structured `parameters` and `strategy: "best"`.
+4. **Normalize trace**: For finance outputs, keep user-facing trace names as `qveris_finance.*`; do not print raw provider routes from `_meta`.
+
+For generic non-standardized tools, use the legacy flow:
 
 1. **Discover**: Find tool candidates for the capability you need. Write the query as an English **tool type description** (e.g., `"stock quote real-time API"`). The query describes **what kind of tool** you need — not what data you want, not a factual question, and not an entity name.
 2. **Evaluate and call**: Select the best tool by `success_rate`, parameter clarity, and coverage. Use whichever tier is available — all tiers route authentication through the configured API key.
@@ -180,6 +193,34 @@ Authorization: Bearer ${QVERIS_API_KEY}
 Content-Type: application/json
 ```
 
+### Standardized capabilities
+
+Use these endpoints for `qveris_finance.*` CAP workflows.
+
+```
+GET /capabilities?domain=finance&page=1&page_size=50
+GET /capabilities/search?q=end%20of%20day%20bars&domain=finance&limit=5
+GET /capabilities/MKT.BARS.EOD
+POST /capabilities/query
+```
+
+`POST /capabilities/query` body:
+
+```json
+{
+  "capability_id": "MKT.BARS.EOD",
+  "parameters": {
+    "symbol": "AAPL",
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-03"
+  },
+  "strategy": "best",
+  "search_id": "optional-from-search"
+}
+```
+
+Response contains `success`, `execution_id`, `capability_id`, `data`, `elapsed_time_ms`, `cost`, `remaining_credits`, and optional `_meta`. Treat `_meta.source_provider`, `_meta.source_tool_id`, and `_meta.failover_log` as internal routing metadata; finance-facing outputs should normalize those fields before showing them to users.
+
 ### Discover tools
 
 ```
@@ -208,6 +249,29 @@ Body: {"tool_ids": ["<tool_id>"], "search_id": "<optional>"}
 ---
 
 ## Quick Start
+
+### Standardized CAP query for finance
+
+Prefer this path for `qveris_finance.*` workflows:
+
+```bash
+node {baseDir}/scripts/qveris_tool.mjs cap-search "level 1 stock quote" --domain finance
+node {baseDir}/scripts/qveris_tool.mjs cap-detail qveris_finance.mkt_l1_rt
+node {baseDir}/scripts/qveris_tool.mjs cap-query qveris_finance.mkt_l1_rt \
+  --params '{"symbol": "AAPL"}' \
+  --safe-json
+```
+
+Equivalent HTTP call:
+
+```json
+{
+  "method": "POST",
+  "url": "https://qveris.ai/api/v1/capabilities/query",
+  "headers": {"Authorization": "Bearer ${QVERIS_API_KEY}", "Content-Type": "application/json"},
+  "body": {"capability_id": "MKT.L1.RT", "parameters": {"symbol": "AAPL"}, "strategy": "best"}
+}
+```
 
 ### Tier 1 — Native tools (if available)
 
@@ -253,6 +317,7 @@ node {baseDir}/scripts/qveris_tool.mjs inspect openweathermap.weather.execute.v1
 
 ### Self-Check (before responding)
 
+- For `qveris_finance.*`, am I using `/capabilities/query` or `cap-query` first? If I am using legacy discover/call, explain that the standardized CAP route was unavailable.
 - Is my discover query a **tool type description** or a **factual question / entity name**? → If it contains specific company names, "is X listed?", or "what is Y?" — use web_search instead. Discover finds tools, not information.
 - Am I about to **state a live number or need an external capability**? → Discover the right API tool first, then call it; training knowledge does not contain live values.
 - Am I about to **use web_search for structured data** (prices, rates, rankings, time series)? → QVeris returns structured JSON directly; web_search needs search + page retrieval and gives unstructured HTML.

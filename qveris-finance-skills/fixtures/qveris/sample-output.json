@@ -64,7 +64,7 @@
         "qveris_finance.sentiment_text_signals: provider_error",
         "numeric_sentiment_score"
       ],
-      "source_provider": "finnhub",
+      "source_provider": "internal_failover",
       "quality_note": "Tagged-news fallback supports qualitative context only."
     }
   ],

@@ -65,7 +65,7 @@
         "earnings_surprise",
         "beat_miss"
       ],
-      "source_provider": "alphavantage",
+      "source_provider": "internal_failover",
       "quality_note": "Consensus fallback only; do not convert this into actual-surprise evidence."
     }
   ],
