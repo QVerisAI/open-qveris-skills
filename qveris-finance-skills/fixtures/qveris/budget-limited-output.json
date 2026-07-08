@@ -60,7 +60,7 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_company_profile",
-      "capability_id": "REF.COMPANY_PROFILE",
+      "capability_id": "qveris_finance.ref_company_profile",
       "entity": "EXAMPLE",
       "market": "US",
       "params": {

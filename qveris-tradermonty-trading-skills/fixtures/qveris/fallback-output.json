@@ -67,7 +67,7 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.index_vix",
-      "capability_id": "INDEX.VIX",
+      "capability_id": "qveris_finance.index_vix",
       "entity": "VIX",
       "market": "US",
       "params": {
@@ -88,7 +88,7 @@
     },
     {
       "tool_name": "qveris_finance.mkt_bars_adjusted",
-      "capability_id": "MKT.BARS.ADJUSTED",
+      "capability_id": "qveris_finance.mkt_bars_adjusted",
       "entity": "SPY",
       "market": "US",
       "params": {

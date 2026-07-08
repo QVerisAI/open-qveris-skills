@@ -1,0 +1,69 @@
+{
+  "skill": "qveris-a-share-data",
+  "source_record": {
+    "candidate_number": 57,
+    "original_repository": "A-Share Skill",
+    "github_url": "https://github.com/shouldnotappearcalm/a-share-skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-24",
+    "local_source_snapshot": "third_party/source_repos/57-a-share-skill",
+    "snapshot_latest_commit": "8494623 on 2026-06-24"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 6,
+    "max_age": "P1D",
+    "budget_note": "fallback after thin bars"
+  },
+  "analysis": {
+    "summary": "Quote context is available, but indicators are withheld because bars were insufficient for the requested lookback.",
+    "fallback": "latest quote only"
+  },
+  "risk_notes": [
+    "Do not compute moving averages or MACD from one observation.",
+    "Do not replace QVeris bars with original direct-source scripts."
+  ],
+  "missing_fields": [
+    "technical_indicators insufficient_observations",
+    "trend_context insufficient_observations",
+    "sector_heatmap capability_unavailable"
+  ],
+  "data_quality": {
+    "status": "partial",
+    "warnings": [
+      "insufficient_observations",
+      "capability_unavailable"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "entry_exit_trigger",
+      "position_size",
+      "buy_sell"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.mkt_bars_adjusted",
+      "capability_id": "qveris_finance.mkt_bars_adjusted",
+      "entity": "300750",
+      "market": "CN",
+      "params": {"symbol": "300750", "frequency": "1d", "count": 120},
+      "as_of": "2026-07-08",
+      "retrieved_at": "2026-07-08T10:45:00+08:00",
+      "fallback_used": true,
+      "missing_fields": [
+        "technical_indicators",
+        "trend_context"
+      ],
+      "source_provider": null,
+      "quality_note": "only_one_observation_returned"
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "entry_exit_trigger",
+    "position_size",
+    "buy_sell"
+  ]
+}

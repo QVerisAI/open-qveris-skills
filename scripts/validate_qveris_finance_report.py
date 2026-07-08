@@ -36,6 +36,11 @@ MOJIBAKE_REGEXES = [
     re.compile("\ufffd"),
     re.compile("[\u9300-\u95ff]\\?"),
     re.compile("\u6d93\u5d9d|\u6d93\u6cc9|\u9435\u7522|\u93c8\u20ac|\u934b\u934b|\u95c7\u70fd"),
+    re.compile(
+        r"\u951b|\u951f|\u9286|\u9239|\u20ac|\u947c|\u9427|"
+        r"\u975b\u7a9e|\u95be\u60f0|\u7490\u975b|\u93c3|\u93c8|\u935a|\u701b|"
+        r"\u6d93[\u4e00-\u9fff]{1,4}|\u9358|\u7039|\u93c3|\u9428|\u9365|\u6ae7|\u95b0"
+    ),
 ]
 
 ADVICE_PATTERNS = [
@@ -298,6 +303,7 @@ Not investment advice.
 
     bad_reports = {
         "mojibake": sample_report("\u6d93\u5d9d\u6cc9\u701b\u9388 / Not investment advice."),
+        "gbk_utf8_mojibake": sample_report("\u7490\u975b\u7a9e\u947c\u546d\u5f74 \u951b \u9427\u4ecb\u53ad"),
         "removed_cap_evidence": """# Summary
 
 Evidence status: `partial`.

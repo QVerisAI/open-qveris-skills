@@ -67,7 +67,7 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.estimates_consensus",
-      "capability_id": "ESTIMATES.CONSENSUS",
+      "capability_id": "qveris_finance.estimates_consensus",
       "entity": "NVDA",
       "market": "US",
       "params": {
@@ -88,7 +88,7 @@
     },
     {
       "tool_name": "qveris_finance.news_fin_tagged",
-      "capability_id": "NEWS.FIN.TAGGED",
+      "capability_id": "qveris_finance.news_fin_tagged",
       "entity": "NVDA",
       "market": "US",
       "params": {

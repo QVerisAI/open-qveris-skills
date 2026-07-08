@@ -1,0 +1,73 @@
+{
+  "skill": "qveris-a-share-data",
+  "source_record": {
+    "candidate_number": 57,
+    "original_repository": "A-Share Skill",
+    "github_url": "https://github.com/shouldnotappearcalm/a-share-skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-24",
+    "local_source_snapshot": "third_party/source_repos/57-a-share-skill",
+    "snapshot_latest_commit": "8494623 on 2026-06-24"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": "P1D",
+    "budget_note": "no live QVeris calls allowed"
+  },
+  "analysis": {
+    "summary": "No QVeris calls were made, so no quote, bars, technical context, event, or news conclusions are supported.",
+    "next_calls": [
+      "qveris_finance.ref_symbology",
+      "qveris_finance.mkt_l1_rt",
+      "qveris_finance.mkt_bars_adjusted"
+    ]
+  },
+  "risk_notes": [
+    "Budget-limited output cannot validate symbol identity or compute indicators."
+  ],
+  "missing_fields": [
+    "issuer_identity",
+    "quote",
+    "bars",
+    "technical_context",
+    "events",
+    "news"
+  ],
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": [
+      "not_called_due_to_max_calls"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "paper_trading",
+      "entry_exit_trigger",
+      "buy_sell"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "capability_id": "qveris_finance.ref_symbology",
+      "entity": "requested_symbol",
+      "market": "CN",
+      "params": {},
+      "as_of": "not_called",
+      "retrieved_at": "2026-07-08T10:50:00+08:00",
+      "fallback_used": true,
+      "missing_fields": [
+        "budget_limited_not_called"
+      ],
+      "source_provider": null,
+      "quality_note": "planned_call_not_executed"
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "paper_trading",
+    "entry_exit_trigger",
+    "buy_sell"
+  ]
+}

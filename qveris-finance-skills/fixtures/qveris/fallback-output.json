@@ -75,7 +75,7 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.news_fin_tagged",
-      "capability_id": "NEWS.FIN.TAGGED",
+      "capability_id": "qveris_finance.news_fin_tagged",
       "entity": "TSLA",
       "market": "US",
       "params": {
@@ -94,7 +94,7 @@
     },
     {
       "tool_name": "qveris_finance.mkt_l1_rt",
-      "capability_id": "MKT.L1.RT",
+      "capability_id": "qveris_finance.mkt_l1_rt",
       "entity": "TSLA",
       "market": "US",
       "params": {
@@ -112,7 +112,7 @@
     },
     {
       "tool_name": "qveris_finance.fundamentals_cf",
-      "capability_id": "FUNDAMENTALS.CF",
+      "capability_id": "qveris_finance.fundamentals_cf",
       "entity": "TSLA",
       "market": "US",
       "params": {

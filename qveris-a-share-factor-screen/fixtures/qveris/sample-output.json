@@ -1,0 +1,86 @@
+{
+  "skill": "qveris-a-share-factor-screen",
+  "source_record": {
+    "candidate_number": 32,
+    "original_repository": "Alphasift",
+    "github_url": "https://github.com/ZhuLinsen/alphasift",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-07-03",
+    "local_source_snapshot": "third_party/source_repos/32-alphasift",
+    "snapshot_latest_commit": "9f52274 on 2026-07-03"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 12,
+    "max_age": "P1D",
+    "budget_note": "small universe screen"
+  },
+  "analysis": {
+    "summary": "Small-universe factor screen with validated QVeris components and explicit denominator coverage. Cross-sectional rank is withheld unless comparability gates pass.",
+    "screen_results": [
+      {"security": "600519", "coverage_tier": "higher_coverage", "component_coverage": "3/5", "evidence_status": "partial"},
+      {"security": "300750", "coverage_tier": "partial_coverage", "component_coverage": "2/5", "evidence_status": "partial"}
+    ]
+  },
+  "risk_notes": [
+    "Coverage tier is not an expected return forecast or preference order.",
+    "Tagged news is qualitative context only."
+  ],
+  "missing_fields": [
+    "theme_heat",
+    "sentiment_score",
+    "valuation_ratios_for_some_names",
+    "cross_sectional_rank"
+  ],
+  "data_quality": {
+    "status": "partial",
+    "warnings": [
+      "some_factor_components_missing"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "operation_advice",
+      "target_price",
+      "buy_sell",
+      "rebalance"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "capability_id": "qveris_finance.ref_symbology",
+      "entity": "600519,300750,002594",
+      "market": "CN",
+      "params": {"symbols": ["600519", "300750", "002594"], "market": "CN"},
+      "as_of": "2026-07-08",
+      "retrieved_at": "2026-07-08T10:20:00+08:00",
+      "fallback_used": false,
+      "missing_fields": [],
+      "source_provider": null,
+      "quality_note": "universe_validated"
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "qveris_finance.news_fin_tagged",
+      "entity": "600519,300750,002594",
+      "market": "CN",
+      "params": {"symbols": ["600519", "300750", "002594"], "lookback_days": 7},
+      "as_of": "2026-07-08",
+      "retrieved_at": "2026-07-08T10:20:05+08:00",
+      "fallback_used": true,
+      "missing_fields": [
+        "sentiment_score"
+      ],
+      "source_provider": null,
+      "quality_note": "qualitative_news_context_only"
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "operation_advice",
+    "target_price",
+    "buy_sell",
+    "rebalance"
+  ]
+}
