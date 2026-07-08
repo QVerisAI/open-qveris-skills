@@ -11,6 +11,8 @@ Source: Tradermonty Trading Skills, https://github.com/tradermonty/claude-tradin
 - Treat QVeris `_meta.source_provider` as provenance only, never as a direct skill dependency, and never print raw vendor/provider IDs. Use `qveris_internal`, `internal_failover`, or `unknown` when provenance must be surfaced. In final output, say "non-QVeris sources" instead of naming prohibited providers.
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, benchmark, and payload shape before using a payload as evidence.
+- Treat failed, rejected, unavailable, or weak-relevance CAPs as trace/data-quality facts only. Do not list them in `Primary Evidence` as supporting evidence.
+- Summarize long or truncated payloads in full-workflow reports; mark `payload_summarized` or `payload_truncated` instead of expanding raw rows.
 - Apply the shared rubric at `../../references/qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, benchmark, or proxy checks are hard rejects.
 - Apply `../../references/qveris-finance-retry-policy.md` for retry/no-retry decisions and `../../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
 
@@ -67,6 +69,7 @@ Use structured parameters; do not pass the user request as a free-text parameter
 - Use `risk_beta_vol` as beta/vol monitor evidence when it passes identity checks, but do not present it as a full portfolio risk model without bars, benchmark, and correlation evidence.
 - Treat VIX, rates, and liquid ETF bars as proxy-only regime evidence unless primary index and breadth evidence pass validation.
 - Treat `news_fin_tagged` as qualitative context only; do not infer strong risk direction, strong catalysts, or numeric sentiment from tagged news alone.
+- Require news, ownership, and sector proxy rows to match the resolved holding or benchmark by symbol, company name, market, ISIN, asset type, or another explicit identity. Mark broad or wrong-entity rows as `entity_mix`, `weak_relevance`, or `overbroad_news`.
 - Treat monthly/stale rates as lagged proxy evidence only, not same-day market-regime confirmation.
 
 ## Cost And Budget Guardrails
@@ -109,6 +112,8 @@ If a raw response exposes an internal provider route, normalize it before writin
 | `qveris_finance.rates_govt_benchmark` can return monthly/stale rate observations | Use as lagged proxy evidence only; do not treat as same-day macro confirmation. |
 | `qveris_finance.news_fin_tagged` can return broad or truncated news sets when limits are weakly enforced | Use as qualitative context only; mark `overbroad_news` when relevance is weak or truncated. |
 | QVeris `_meta.failover_log` may show internal provider failover | Reflect this in `qveris_trace[].fallback_used` without treating providers as direct dependencies. |
+
+Removed or unavailable capabilities such as `qveris_finance.macro_actual_vs_forecast` and `qveris_finance.flow_sector_capital` must not appear in `Primary Evidence`. Record them only in `Data Quality And Missing Fields`, `missing_fields`, or `Trace Appendix` with `capability_unavailable` or `not_called`.
 
 ## Removed Or Replaced
 

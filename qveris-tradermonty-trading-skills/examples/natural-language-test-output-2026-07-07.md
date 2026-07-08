@@ -22,6 +22,8 @@ The skill produced a Markdown risk/regime monitor. It identified concentration a
 | Historical bars | `insufficient` | No VaR, drawdown, realized volatility, or correlation matrix. |
 | News/institutional | `partial` | Context only when payloads pass quality checks. |
 
+Failed, rejected, unavailable, and weak-relevance capabilities were kept out of `Primary Evidence` and reported below.
+
 ## Proxy Evidence
 
 | Proxy | Status | Handling |
@@ -39,6 +41,8 @@ The skill produced a Markdown risk/regime monitor. It identified concentration a
 | `macro_actual_vs_forecast` | unavailable, `404` | Use `event_calendar_macro` only as weak event context. |
 | `flow_sector_capital` | unavailable, `404` | Use top movers, constituents, and classification only as weaker sector context. |
 | `mkt_bars_adjusted` | possible one-row return | No correlation, VaR, trend, drawdown, or realized volatility. |
+| News or sector rows | issuer/benchmark relevance required | Mark `entity_mix` or `weak_relevance` when rows do not match the resolved holding or benchmark. |
+| Long payloads | summarized | Mark `payload_summarized` or `payload_truncated` instead of expanding raw rows. |
 
 ## Trace Appendix
 

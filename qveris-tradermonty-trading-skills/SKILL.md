@@ -43,6 +43,9 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 - Treat VIX, rates, and liquid ETF bars as proxy-only regime evidence unless primary index and breadth evidence pass validation.
 - Treat `qveris_finance.news_fin_tagged` as qualitative context only. Do not derive strong risk direction, strong catalysts, or numeric sentiment from tagged news alone.
 - Use `qveris_finance.risk_beta_vol` as beta/vol monitor evidence when available, but do not present it as a full portfolio risk model without usable bars, benchmark, and correlation inputs.
+- Keep invalid, failed, rejected, unavailable, or weak-relevance CAPs out of `Primary Evidence`. Put them only in `Data Quality And Missing Fields`, `missing_fields`, `Proxy Evidence`, or `Trace Appendix` with reason codes such as `capability_unavailable`, `semantic_mismatch`, `entity_mix`, `weak_relevance`, or `insufficient_observations`.
+- Apply issuer relevance checks to every news, ownership, and sector proxy row. If returned text refers to another entity or a broad theme rather than the resolved holding, mark `entity_mix` or `weak_relevance` and do not use it for a risk, catalyst, or sector-rotation conclusion.
+- Summarize long QVeris payloads in full-workflow reports. If a response is truncated or too large for a compact table, mark `payload_summarized` or `payload_truncated` and offer a single-capability note for inspection.
 
 ## CAP Invocation
 

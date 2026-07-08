@@ -44,6 +44,16 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 - After a `period_mismatch`, inspect `cap-detail` and retry once with stricter documented fields such as `fiscal_year`, `fiscal_period`, `period_type`, `period`, or `limit`; if the payload still does not match, mark the requested statement missing, for example `FY2025 cash flow missing due to period mismatch`.
 - Exclude CF from aligned tables when same-period CF net income materially conflicts with IS net income; mark `statement_semantic_mismatch`.
 - Treat `qveris_finance.news_fin_tagged` as qualitative context only when transcript or cluster routes are unavailable. Do not derive management quotes, numeric sentiment, strong catalysts, or strong risk direction from tagged news alone.
+- Keep invalid, failed, rejected, unavailable, or weak-relevance CAPs out of `Evidence Used`. Put them only in `Data Quality And Missing Fields`, `missing_fields`, or `Trace Appendix` with reason codes such as `capability_unavailable`, `semantic_mismatch`, `period_mismatch`, `entity_mix`, `weak_relevance`, or `insufficient_observations`.
+- Use `qveris_finance.research_analyst_reports` only after issuer and document-type relevance checks pass. Reject academic papers, technical articles, broad industry pages, and weak text matches as `weak_relevance`; do not treat them as sell-side analyst evidence.
+- Summarize long QVeris payloads in full-workflow reports. If a response is truncated or too large for a compact table, mark `payload_summarized` or `payload_truncated` and offer a single-capability note for inspection.
+
+## DCF Input Gate
+
+- Allowed DCF inputs: validated entity/profile, market quote, aligned IS/BS/CF rows that pass fiscal-period and statement-consistency checks, fresh FX, and explicitly returned consensus fields.
+- Conditional DCF inputs: stale or monthly rates only as lagged proxy assumptions, manual trailing ratios only when source fields are present, and tagged news only as qualitative risk context.
+- Denied DCF inputs: period-mismatched CF, CF excluded by statement mismatch, forward multiples inferred without consensus or derived-ratio evidence, analyst target/upside fields, buy/sell language, and growth assumptions derived from tagged news alone.
+- When denied inputs are present in QVeris payloads, list them in `Data Quality And Missing Fields` and leave the model input blank instead of filling a placeholder.
 
 ## CAP Invocation
 

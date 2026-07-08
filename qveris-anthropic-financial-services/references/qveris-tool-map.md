@@ -11,6 +11,8 @@ Source: Anthropic Financial Services, https://github.com/anthropics/financial-se
 - Treat QVeris `_meta.source_provider` as provenance only, never as a direct skill dependency, and never print raw vendor/provider IDs. Use `qveris_internal`, `internal_failover`, or `unknown` when provenance must be surfaced. In final output, say "non-QVeris sources" instead of naming prohibited providers.
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, fiscal period, and payload shape before using a payload as evidence.
+- Treat failed, rejected, unavailable, or weak-relevance CAPs as trace/data-quality facts only. Do not list them in `Evidence Used` as supporting evidence.
+- Summarize long or truncated payloads in full-workflow reports; mark `payload_summarized` or `payload_truncated` instead of expanding raw rows.
 - Apply `../../references/qveris-finance-retry-policy.md` for retry/no-retry decisions and `../../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
 - Apply the shared rubric at `../../references/qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, or statement-consistency checks are hard rejects.
 
@@ -73,7 +75,17 @@ Use structured parameters; do not pass the user request as a free-text parameter
 - If an annual/FY request returns a latest-quarter or TTM-shaped statement payload, reject it for the requested period, retry once with stricter documented period fields, and mark the requested statement missing if it still does not match.
 - Exclude same-period CF if CF net income materially conflicts with IS net income; mark `statement_semantic_mismatch`.
 - Treat `news_fin_tagged` as background context only when transcript or cluster routes fail; do not infer management quotes, numeric sentiment, or strong catalysts from tagged news alone.
+- Use `research_analyst_reports` only after issuer and document-type checks pass. Reject academic papers, technical articles, broad industry pages, and weak text matches as `weak_relevance`; keep them out of core analyst evidence.
+- Require news and research rows to match the resolved issuer by symbol, company name, market, ISIN, or another explicit issuer identity; otherwise mark `entity_mix` or `overbroad_news`.
 - Treat monthly or stale rates as lagged proxy inputs only, not same-day macro evidence.
+
+## DCF Input Gate
+
+| Input class | Rule |
+|---|---|
+| Validated entity, quote, aligned IS/BS/CF, fresh FX | Allowed as model inputs when trace-backed. |
+| Stale/monthly rates, manual trailing ratios, consensus with limited analyst count | Conditional; label as proxy, calculated, or low-confidence. |
+| Period-mismatched CF, statement-mismatched CF, target/upside fields, tagged-news growth assumptions, forward multiples inferred without consensus | Denied; place in `Data Quality And Missing Fields`, not model inputs. |
 
 ## Cost And Budget Guardrails
 

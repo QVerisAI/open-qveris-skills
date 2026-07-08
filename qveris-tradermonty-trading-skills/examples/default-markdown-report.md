@@ -19,6 +19,8 @@ State concentration from the user-provided weights. Label beta/vol as monitor ev
 | Bars | `insufficient` | Reject multi-day metrics if fewer than 2 observations return. |
 | Index/breadth | `insufficient` | Reject wrong-asset index payloads. |
 
+Unavailable, rejected, or weak-relevance CAPs are not supporting evidence in this section.
+
 ## Proxy Evidence
 
 VIX, rates, and liquid ETF bars are `proxy_only` unless primary index and breadth evidence pass validation. Monthly or stale rates are lagged proxies only.
@@ -29,6 +31,9 @@ VIX, rates, and liquid ETF bars are `proxy_only` unless primary index and breadt
 - `mkt_bars_adjusted`: reject VaR/correlation/volatility calculations from insufficient observations.
 - `event_calendar_macro`: macro-event context only, not actual-vs-forecast surprise.
 - `news_fin_tagged`: qualitative background only.
+- `macro_actual_vs_forecast` and `flow_sector_capital`: not called unless fresh `cap-detail` confirms availability.
+- `entity_mix` or `weak_relevance`: broad sector/news rows do not support holding-level risk conclusions.
+- `payload_summarized`: summarize long ownership/news payloads in full-workflow reports.
 
 ## What This Can Support
 

@@ -11,6 +11,8 @@ Source: Finance Skills, https://github.com/himself65/finance-skills, MIT, evalua
 - Treat QVeris `_meta.source_provider` as provenance only, never as a direct skill dependency, and never print raw vendor/provider IDs. Use `qveris_internal`, `internal_failover`, or `unknown` when provenance must be surfaced. In final output, say "non-QVeris sources" instead of naming prohibited providers.
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, fiscal period, and payload shape before using a payload as evidence.
+- Treat failed, rejected, unavailable, or weak-relevance CAPs as trace/data-quality facts only. Do not list them in `Evidence Used` or the positive side of the `Factor Table` as supporting evidence.
+- Summarize long or truncated payloads in full-workflow reports; mark `payload_summarized` or `payload_truncated` instead of expanding raw rows.
 - Apply `../../references/qveris-finance-retry-policy.md` for retry/no-retry decisions and `../../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
 - Apply the shared rubric at `../../references/qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, benchmark, or statement-consistency checks are hard rejects.
 
@@ -72,6 +74,7 @@ Use structured parameters; do not pass the user request as a free-text parameter
 - If an annual/FY request returns a latest-quarter or TTM-shaped statement payload, reject it for the requested period, retry once with stricter documented period fields, and mark the requested statement missing if it still does not match.
 - Exclude same-period CF if CF net income materially conflicts with IS net income; mark `statement_semantic_mismatch`.
 - Treat `news_fin_tagged` as qualitative context only when sentiment or cluster routes fail; do not infer numeric sentiment, strong catalysts, or directional risk from tagged news alone.
+- Require news and sentiment rows to match the resolved issuer by symbol, company name, market, ISIN, or another explicit issuer identity. Mark likely wrong-entity rows such as similarly named non-issuers as `entity_mix` and keep them out of factor values.
 - Label manual trailing ratios as calculated inputs; do not infer forward multiples unless `estimates_consensus` or `fundamentals_derived_ratios` succeeds.
 
 ## Cost And Budget Guardrails
@@ -102,6 +105,8 @@ Use structured parameters; do not pass the user request as a free-text parameter
 | `qveris_finance.index_levels` | Benchmark/index requests can resolve to the wrong security | None or validated ETF proxy | Hard reject if identity does not match requested index/benchmark; mark `semantic_mismatch`. |
 | `qveris_finance.fundamentals_cf` | CF fields can be cross-period, including annual requests returning latest-quarter or TTM-shaped data, or semantically inconsistent with IS | Stricter documented period params after `cap-detail` | Exclude from aligned valuation tables; if the retry still mismatches, mark the requested statement missing, e.g. `FY2025 cash flow missing due to period mismatch`; mark semantic conflicts as `statement_semantic_mismatch`. |
 | `qveris_finance.news_fin_tagged` | Can return broad or truncated news sets when limits are weakly enforced | None | Use as qualitative context only; mark `overbroad_news` when relevance is weak or truncated. |
+
+Removed or unavailable capabilities such as `qveris_finance.news_dedup_cluster` must not appear in `Evidence Used` or factor values. Record them only in `Data Quality And Missing Fields`, `missing_fields`, or `Trace Appendix` with `capability_unavailable` or `not_called`.
 
 ## Removed Or Replaced
 

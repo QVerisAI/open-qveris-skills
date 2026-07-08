@@ -23,6 +23,8 @@ The skill produced a Markdown factor note with qualitative news context and part
 | Consensus | `insufficient` | No forward multiple or expectation claim. |
 | Bars/liquidity | `partial` | One-row windows cannot support trend or volatility. |
 
+Unavailable or rejected CAPs were kept out of this evidence table and reported below.
+
 ## Data Quality And Missing Fields
 
 | Field | Status | Handling |
@@ -33,6 +35,8 @@ The skill produced a Markdown factor note with qualitative news context and part
 | `estimates_consensus` | missing after `503` | No forward valuation or expectation claim. |
 | `fundamentals_cf` | possible period mismatch | Retry once with stricter documented period params; unresolved mismatch becomes missing. |
 | `mkt_bars_adjusted` | insufficient observations | No multi-day trend, realized volatility, or correlation. |
+| `news_fin_tagged` | issuer relevance required | Wrong-entity rows would be marked `entity_mix` and excluded from sentiment evidence. |
+| Long payloads | summarized | Mark `payload_summarized` or `payload_truncated` instead of expanding raw rows. |
 
 ## Trace Appendix
 

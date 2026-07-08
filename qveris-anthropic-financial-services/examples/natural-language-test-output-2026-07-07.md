@@ -23,6 +23,8 @@ The skill produced a Markdown earnings context memo from QVeris CAP evidence. It
 | Transcript | `insufficient` | No management quotes. |
 | News | `proxy_only` | Qualitative context only. |
 
+Unavailable, rejected, or weak-relevance CAPs were kept out of this evidence table and reported below.
+
 ## Data Quality And Missing Fields
 
 | Field | Status | Handling |
@@ -31,6 +33,8 @@ The skill produced a Markdown earnings context memo from QVeris CAP evidence. It
 | `transcripts_earnings_call` | missing after repeated `503` | No management quotes or call-summary claims. |
 | `fundamentals_segment` | missing after repeated `503` | No segment-level conclusion. |
 | `news_fin_tagged` | available but truncated | Qualitative context only. |
+| `research_analyst_reports` | gated for issuer/document relevance | Weak academic or technical matches would be marked `weak_relevance`, not analyst evidence. |
+| Long payloads | summarized | Mark `payload_summarized` or `payload_truncated` instead of expanding raw rows. |
 
 ## Trace Appendix
 

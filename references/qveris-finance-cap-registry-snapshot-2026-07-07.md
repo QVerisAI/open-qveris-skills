@@ -38,9 +38,13 @@ This snapshot documents the CAP routes used by the three reviewer-ready finance 
 
 | Capability | Observed issue | Rule |
 |---|---|---|
-| `qveris_finance.news_dedup_cluster` | 404 / invalid capability | Do not call unless a fresh `cap-detail` confirms availability. |
-| `qveris_finance.macro_actual_vs_forecast` | 404 / invalid capability | Do not call unless a fresh `cap-detail` confirms availability. Use `event_calendar_macro` only as weaker event context. |
-| `qveris_finance.flow_sector_capital` | 404 / invalid capability | Do not call unless a fresh `cap-detail` confirms availability. Use top movers, constituents, and classification as weaker sector context. |
+| `qveris_finance.news_dedup_cluster` | 404 / invalid capability | Do not call or list as evidence unless a fresh `cap-detail` confirms availability. If unavailable, mark `capability_unavailable` or `not_called`; use tagged news only as qualitative context. |
+| `qveris_finance.macro_actual_vs_forecast` | 404 / invalid capability | Do not call or list as evidence unless a fresh `cap-detail` confirms availability. Use `event_calendar_macro` only as weaker event context and mark actual-vs-forecast missing. |
+| `qveris_finance.flow_sector_capital` | 404 / invalid capability | Do not call or list as evidence unless a fresh `cap-detail` confirms availability. Use top movers, constituents, and classification only as weaker sector context. |
+
+## Evidence Placement Rule
+
+Removed, failed, rejected, or weak-relevance capabilities are trace and data-quality facts, not supporting evidence. Keep them out of `Evidence Used`, `Factor Table`, and `Primary Evidence`; place them in `Data Quality And Missing Fields`, `missing_fields`, or `Trace Appendix` with a reason code such as `capability_unavailable`, `failed`, `semantic_mismatch`, `entity_mix`, `weak_relevance`, or `insufficient_observations`.
 
 ## Refresh Rule
 

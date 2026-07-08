@@ -43,6 +43,9 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 - After a `period_mismatch`, inspect `cap-detail` and retry once with stricter documented fields such as `fiscal_year`, `fiscal_period`, `period_type`, `period`, or `limit`; if the payload still does not match, mark the requested statement missing, for example `FY2025 cash flow missing due to period mismatch`.
 - Treat `qveris_finance.news_fin_tagged` as qualitative context only when sentiment or cluster routes are unavailable. Do not derive numeric sentiment, strong catalysts, or directional risk conclusions from tagged news alone.
 - Use manual trailing valuation inputs only when required QVeris fields are present and label them as calculated. Do not infer forward multiples unless consensus or derived-ratio evidence succeeds.
+- Keep invalid, failed, rejected, unavailable, or weak-relevance CAPs out of `Evidence Used` and the positive side of the `Factor Table`. Put them only in `Data Quality And Missing Fields`, `missing_fields`, or `Trace Appendix` with reason codes such as `capability_unavailable`, `semantic_mismatch`, `period_mismatch`, `entity_mix`, `weak_relevance`, or `insufficient_observations`.
+- Apply issuer relevance checks to every news and sentiment row. If returned text appears to refer to another entity, such as a similarly named company, mark `entity_mix`, lower confidence, and do not use it as sentiment or catalyst evidence.
+- Summarize long QVeris payloads in full-workflow reports. If a response is truncated or too large for a compact table, mark `payload_summarized` or `payload_truncated` and offer a single-capability note for inspection.
 
 ## CAP Invocation
 

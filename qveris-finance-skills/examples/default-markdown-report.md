@@ -14,6 +14,7 @@ The note can present qualitative news context and partial valuation inputs. It c
 | Valuation | `partial` | Use validated trailing inputs only. | Consensus or derived ratios if unavailable. |
 | Liquidity | `insufficient` | Do not compute from fewer than 2 bar observations. | Adequate bars window. |
 | Correlation | `insufficient` | Do not compute without validated benchmark and bars. | Valid benchmark/index payload. |
+| Entity relevance | `partial` | Use only news rows that match the resolved issuer. | Mixed-entity rows marked `entity_mix`. |
 
 ## Evidence Used
 
@@ -26,6 +27,9 @@ Use validated QVeris payloads only. A transport-success response that resolves t
 - `index_levels`: reject benchmark identity mismatches.
 - `fundamentals_cf`: exclude inconsistent CF from aligned valuation tables.
 - `FY2025 cash flow`: mark missing if an annual/FY request returns a latest-quarter or TTM-shaped payload after one stricter documented-period retry.
+- `news_dedup_cluster`: keep out of evidence unless fresh `cap-detail` confirms availability.
+- `entity_mix`: reject similarly named but different entities from sentiment/catalyst evidence.
+- `payload_summarized`: summarize long or truncated news payloads in full-factor reports.
 
 ## What This Can Support
 

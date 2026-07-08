@@ -16,6 +16,8 @@ The memo can summarize the available QVeris earnings context and market quote. I
 | Statements | `partial` | Use only aligned fiscal periods. |
 | Tagged news | `proxy_only` | Qualitative background only. |
 
+Do not list unavailable, rejected, or weak-relevance CAPs as supporting evidence in this section.
+
 ## Analysis
 
 State only conclusions supported by validated QVeris payloads. Keep rejected statement fields out of aligned tables and explain the rejection in data quality.
@@ -26,6 +28,8 @@ State only conclusions supported by validated QVeris payloads. Keep rejected sta
 - `transcripts_earnings_call`: unavailable, so management quotes are not supported.
 - `fundamentals_cf`: excluded if fiscal period or net income conflicts with IS.
 - `FY2025 cash flow`: missing if an annual/FY request returns a latest-quarter or TTM-shaped payload after one stricter documented-period retry.
+- `research_analyst_reports`: rejected as `weak_relevance` if rows are academic, technical, broad-topic, or not issuer-specific.
+- `payload_summarized`: long news, ownership, insider, transcript, or research payloads are summarized in full-workflow reports.
 
 ## What This Can Support
 
