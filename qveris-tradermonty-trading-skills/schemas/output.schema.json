@@ -116,7 +116,8 @@
             "pattern": "^qveris_finance\\."
           },
           "capability_id": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^qveris_finance\\."
           },
           "entity": {
             "type": "string"

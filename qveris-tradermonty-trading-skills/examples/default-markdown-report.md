@@ -8,7 +8,7 @@ The monitor can identify concentration and beta/vol evidence when QVeris payload
 
 ## Monitoring Read
 
-State concentration from the user-provided weights. Label beta/vol as monitor evidence, not a complete risk model, unless validated bars and benchmark data support the full calculation.
+State concentration from the user-provided weights using top1, top2, HHI, and effective holdings. Label beta/vol as monitor evidence, not a complete risk model, unless validated bars and benchmark data support the full calculation.
 
 ## Primary Evidence
 
@@ -29,6 +29,7 @@ VIX, rates, and liquid ETF bars are `proxy_only` unless primary index and breadt
 
 - `index_levels`: reject `SPX` responses that are not index evidence.
 - `mkt_bars_adjusted`: reject VaR/correlation/volatility calculations from insufficient observations.
+- `concentration_thresholds`: high when top1 >= 35%, top2 >= 60%, HHI >= 0.25, or effective holdings <= 4; elevated when top1 is 25%-35%, top2 is 45%-60%, HHI is 0.15-0.25, or effective holdings are 4-7.
 - `event_calendar_macro`: macro-event context only, not actual-vs-forecast surprise.
 - `news_fin_tagged`: qualitative background only.
 - `macro_actual_vs_forecast` and `flow_sector_capital`: not called unless fresh `cap-detail` confirms availability.

@@ -8,13 +8,13 @@ Source: Tradermonty Trading Skills, https://github.com/tradermonty/claude-tradin
 - Credential: `QVERIS_API_KEY` only.
 - Controls: accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; when omitted in natural language, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note.
 - Required trace fields: `tool_name`, `capability_id`, `entity`, `market`, `params`, `as_of`, `retrieved_at`, `fallback_used`, `missing_fields`.
-- Treat QVeris `_meta.source_provider` as provenance only, never as a direct skill dependency, and never print raw vendor/provider IDs. Use `qveris_internal`, `internal_failover`, or `unknown` when provenance must be surfaced. In final output, say "non-QVeris sources" instead of naming prohibited providers.
+- Treat raw QVeris response metadata as internal provenance only. `--safe-json` can still expose `_meta.routing_decision`, candidate route IDs, provider IDs, and failover details; never paste raw CAP script output into final reports or schema traces. Build sanitized trace rows that keep only `qveris_finance.*` names, normalized params, success/failure, retry/fallback status, validation result, and missing fields.
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, benchmark, and payload shape before using a payload as evidence.
 - Treat failed, rejected, unavailable, or weak-relevance CAPs as trace/data-quality facts only. Do not list them in `Primary Evidence` as supporting evidence.
 - Summarize long or truncated payloads in full-workflow reports; mark `payload_summarized` or `payload_truncated` instead of expanding raw rows.
-- Apply the shared rubric at `../../references/qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, benchmark, or proxy checks are hard rejects.
-- Apply `../../references/qveris-finance-retry-policy.md` for retry/no-retry decisions and `../../references/qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
+- Apply the bundled rubric in this references directory: `qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, benchmark, or proxy checks are hard rejects.
+- Apply the bundled `qveris-finance-retry-policy.md` for retry/no-retry decisions and `qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
 
 ## Direct CAP Invocation
 
@@ -55,14 +55,15 @@ Use structured parameters; do not pass the user request as a free-text parameter
 |---|---|
 | Single-symbol risk/beta | `{"symbol":"AAPL","market":"US","benchmark_symbol":"SPY"}` |
 | Portfolio symbol loop | Run one call per symbol when multi-symbol parameters fail: `{"symbol":"NVDA","market":"US"}` |
-| Index levels | `{"symbol":"SPX","market":"US","date":"2026-07-07"}`; sanity-check index identity before use |
+| Index levels | Conditional only: use `cap-detail` before calling; if calling `SPX`, sanity-check returned index identity before use |
 | VIX proxy | `{"symbol":"VIX","region":"US","date":"2026-07-07"}` |
 | Rates proxy | `{"symbol":"US10Y"}`; if rejected, inspect `RATES.GOVT_BENCHMARK` and retry with its documented fields |
-| Liquid ETF proxy bars | `{"symbol":"SPY","start_date":"2026-06-07","end_date":"2026-07-07","interval":"1day"}` |
+| Liquid ETF proxy bars | Conditional proxy only: use `{"symbol":"SPY","start_date":"2026-06-07","end_date":"2026-07-07","interval":"1day"}` only after accepting proxy status and reject fewer than 2 observations |
 | News and institutional context | `{"symbol":"MSFT","market":"US","limit":5}` |
 
 ## Evidence Gate Checklist
 
+- For weighted portfolios, compute concentration before CAP calls: `top1_weight`, `top2_weight`, `hhi = sum(weight^2)`, and `effective_holdings = 1 / hhi`. Label `high` when top1 >= 35%, top2 >= 60%, HHI >= 0.25, or effective holdings <= 4; label `elevated` when top1 is 25%-35%, top2 is 45%-60%, HHI is 0.15-0.25, or effective holdings are 4-7; otherwise label `moderate`. These are monitoring labels, not rebalance instructions.
 - Confirm returned symbol, company name, exchange, market, and asset type match each holding before citing holding-level data.
 - Confirm returned index or benchmark identity before using index payloads. Reject `SPX` or benchmark responses that resolve to a non-index security.
 - Require at least 2 observations for multi-day bars before computing return, trend, correlation, realized volatility, drawdown, liquidity, VaR, or portfolio risk metrics.
@@ -82,9 +83,9 @@ Use structured parameters; do not pass the user request as a free-text parameter
 
 | Workflow | QVeris tools |
 |---|---|
-| Portfolio risk | `qveris_finance.mkt_bars_adjusted`, `qveris_finance.risk_beta_vol`, `qveris_finance.index_levels`, `qveris_finance.ownership_institutional`, `qveris_finance.news_fin_tagged` |
-| Market regime | `qveris_finance.index_levels`, `qveris_finance.index_vix`, `qveris_finance.mkt_breadth_internals`, `qveris_finance.event_calendar_macro`, `qveris_finance.rates_govt_benchmark` |
-| Sector rotation | `qveris_finance.ref_classification_industry`, `qveris_finance.mkt_top_movers`, `qveris_finance.index_constituents` |
+| Portfolio risk | Holdings concentration, `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, `qveris_finance.ref_classification_industry`, `qveris_finance.risk_beta_vol`; add `qveris_finance.mkt_bars_adjusted` only when enough bars are needed and returned |
+| Market regime | Conditional `qveris_finance.index_levels` and `qveris_finance.mkt_breadth_internals` after `cap-detail`; otherwise validated `qveris_finance.index_vix`, `qveris_finance.event_calendar_macro`, `qveris_finance.rates_govt_benchmark`, or liquid ETF bars as proxy-only |
+| Sector rotation | `qveris_finance.ref_classification_industry`; conditional `qveris_finance.mkt_top_movers` and `qveris_finance.index_constituents` after `cap-detail` confirms params and returned row semantics |
 | Data-quality checker | Validate `as_of`, `missing_fields`, `fallback_used`, and staleness on every QVeris payload |
 | Earnings calendar | `qveris_finance.event_calendar_earnings` |
 
