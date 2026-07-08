@@ -76,7 +76,7 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 - Derive `fallback_used` from QVeris `_meta.failover_log` as well as explicit fallback tool choices.
 - Do not output trade prep, execution plan, rebalance instruction, buy/sell point, or target price commitment.
 - Include `data_quality` with status, stale fields, out-of-window events, and suppressed fields when applicable.
-- End with ASCII-only: `Not investment advice.`
+- End with a final non-empty line that is exactly `Not investment advice.`. Do not add a Chinese, bilingual, translated, or prefixed disclaimer line.
 
 ## Prohibited Capabilities
 

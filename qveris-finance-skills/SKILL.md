@@ -81,7 +81,7 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 - Treat sentiment as explanatory input, not a return forecast.
 - Do not output buy/sell triggers, target prices, or rebalancing instructions.
 - Include `data_quality` with status, stale fields, out-of-window events, and suppressed fields when applicable.
-- End with ASCII-only: `Not investment advice.`
+- End with a final non-empty line that is exactly `Not investment advice.`. Do not add a Chinese, bilingual, translated, or prefixed disclaimer line.
 
 ## Prohibited Capabilities
 

@@ -86,7 +86,7 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 - Use a two-layer trace: concise user-facing evidence table by default, full `qveris_trace` JSON only in the appendix when useful, when the user asks for machine-readable output, or when preparing schema fixtures.
 - If `max_calls`, `dry_run`, or budget constraints prevent the main workflow from running, return a budget-limited Markdown report: state what was not called, do not infer missing facts, and list the next QVeris calls that would be needed.
 - Separate evidence, interpretation, uncertainty, and next verification steps.
-- End with ASCII-only: `Not investment advice.`
+- End with a final non-empty line that is exactly `Not investment advice.`. Do not add a Chinese, bilingual, translated, or prefixed disclaimer line.
 
 ## Prohibited Capabilities
 

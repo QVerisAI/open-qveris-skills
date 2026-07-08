@@ -189,6 +189,10 @@ def validate_text(text: str, label: str) -> list[str]:
         if not pattern.search(text):
             errors.append(f"{label}: missing required report element: {name}")
 
+    nonempty_lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if nonempty_lines and nonempty_lines[-1] != "Not investment advice.":
+        errors.append(f"{label}: final non-empty line must be exactly: Not investment advice.")
+
     if "qveris_finance." not in text:
         errors.append(f"{label}: trace should include at least one qveris_finance.* capability")
 
@@ -209,6 +213,9 @@ def validate_text(text: str, label: str) -> list[str]:
 
         if contains_mojibake(line):
             errors.append(f"{label}:{line_no}: possible mojibake/encoding artifact")
+
+        if "Not investment advice." in line and line.strip() != "Not investment advice.":
+            errors.append(f"{label}:{line_no}: disclaimer line must be ASCII-only and exact")
 
         for pattern in ADVICE_PATTERNS:
             if re.search(pattern, lower) and not line_has_allowed_context(line):
@@ -317,6 +324,10 @@ Not investment advice.
         "single_bar_metric": sample_report("One bar returned and the 30-day trend is positive."),
         "weak_analyst": sample_report("Research analyst reports include academic technical material used as core evidence."),
         "period_mismatch_dcf": sample_report("DCF model input uses period_mismatch cash flow from `fundamentals_cf`."),
+        "mixed_disclaimer": sample_report("Body ok.").replace(
+            "Not investment advice.",
+            "garbled-prefix / Not investment advice.",
+        ),
     }
 
     errors: list[str] = []

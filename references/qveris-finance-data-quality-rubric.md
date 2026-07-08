@@ -53,4 +53,4 @@ When a field is cumulative in one payload and point-in-time in another, do not n
 - Default to a Markdown user report with concise trace tables. Put full machine-readable `qveris_trace` JSON only in an appendix, schema fixture, or when the user asks for it.
 - Every rejected payload must appear in `data_quality.warnings` or `missing_fields` with a product-readable reason such as `not_called`, `failed`, `rejected`, `capability_unavailable`, `semantic_mismatch`, `period_mismatch`, `entity_mix`, `weak_relevance`, `insufficient_observations`, `overbroad_news`, `payload_truncated`, `stale_proxy`, or `statement_semantic_mismatch`.
 - Never let a failed or rejected CAP appear as supporting evidence merely because it was called. Trace proves the call happened; evidence proves the payload survived validation.
-- End user-facing reports with `Not investment advice.`
+- End user-facing reports with a final non-empty line that is exactly `Not investment advice.`. Do not add a Chinese, bilingual, translated, or prefixed disclaimer line.
