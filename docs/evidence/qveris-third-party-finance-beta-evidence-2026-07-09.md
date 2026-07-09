@@ -45,6 +45,14 @@ Each new skill includes:
 - `examples/default-markdown-report.md`
 - `examples/natural-language-prompts.md`
 - `examples/natural-language-test-output-2026-07-09.md`
+- `examples/codex-fresh-live-output-2026-07-09.md`
+
+## Reviewer Fixes Applied
+
+- `limited` and `budget_limited` are now formally defined in the shared data-quality rubric and the three bundled skill copies. User-facing evidence status should prefer `complete`, `partial`, `proxy_only`, or `insufficient`; `limited` remains mainly a `data_quality.status` value.
+- Static default examples no longer put planned or required calls in `Evidence` or `Trace Appendix`. They place required next calls in Data Quality And Missing Fields, and Trace Appendix states that no live trace exists for the static example.
+- Fresh live output records were added for all three skills. The live CAP attempts returned `fetch failed`, so the outputs show `Evidence status: insufficient`, `data_quality.status: limited`, missing fields, and real failed trace rows.
+- Default `max_calls` policy was intentionally left unchanged in this batch.
 
 ## Finance Data-Quality Rules
 
@@ -76,22 +84,23 @@ Recorded locally on 2026-07-09:
 
 | Check | Result |
 |---|---|
-| `quick_validate.py qveris-alphaear-market-intelligence` | `Skill is valid!` |
-| `quick_validate.py qveris-daymade-financial-data-suite` | `Skill is valid!` |
-| `quick_validate.py qveris-uzi-equity-research` | `Skill is valid!` |
+| `python3 third_party/source_repos/42-awesome-finance-skills/skills/skill-creator/scripts/quick_validate.py qveris-alphaear-market-intelligence` | `Skill is valid!` |
+| `python3 third_party/source_repos/42-awesome-finance-skills/skills/skill-creator/scripts/quick_validate.py qveris-daymade-financial-data-suite` | `Skill is valid!` |
+| `python3 third_party/source_repos/42-awesome-finance-skills/skills/skill-creator/scripts/quick_validate.py qveris-uzi-equity-research` | `Skill is valid!` |
 | `python3 scripts/validate_qveris_finance_fixtures.py qveris-alphaear-market-intelligence qveris-daymade-financial-data-suite qveris-uzi-equity-research` | `ok: 9 QVeris finance JSON fixtures validated` |
 | `python3 scripts/validate_qveris_finance_fixtures.py` | `ok: 27 QVeris finance JSON fixtures validated` |
 | `python3 scripts/validate_qveris_finance_report.py --self-test` | `ok: self-test` |
-| New-skill Markdown report validation | 6 new report examples passed |
+| New-skill Markdown report validation | 9 new report examples passed |
 | `make validate-finance-reports` | Passed across the existing six finance skills plus the three new skills |
 | Provider leak grep on new examples and fixtures | No matches |
 | Advice/action-word grep on new Markdown examples | No matches |
 | Naked A-share ticker grep on new Markdown examples | No matches |
 | Mojibake grep on new skill files and docs | No matches |
 | Installed-copy check under current Codex skills directory | Three new `SKILL.md` files and local shared references present |
-| Minimal live CAP smoke for `qveris_finance.ref_symbology` / `qveris_finance.ref_security_master` | Attempted from PowerShell with `QVERIS_API_KEY` present; all three calls returned `fetch failed` |
+| `git diff --check` | Passed; Git reported line-ending warnings only |
+| Minimal live CAP smoke for `qveris_finance.ref_symbology` / `qveris_finance.ref_security_master` | Attempted from PowerShell with a QVeris credential present; all three calls returned `fetch failed` |
 
-`git diff --check` over the whole worktree is currently blocked by pre-existing unstaged changes in `third_party/finance-skill-star-rescreen-2026-07-07.json` and `.md` that were present before this batch. The batch should be staged independently and checked with `git diff --cached --check` before commit.
+The unrelated untracked `docs/evidence/qveris-a-share-three-skills-complete-report-2026-07-08.md` file was intentionally left outside this batch.
 
 Live CAP smoke commands attempted:
 

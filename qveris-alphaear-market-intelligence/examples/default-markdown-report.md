@@ -4,15 +4,11 @@
 
 Evidence status: `partial`.
 
-This report can support a QVeris-only market-intelligence read for issuer identity, price context, tagged-news background, and monitored evidence changes. It cannot support numeric sentiment, a forecast, or a trade trigger unless the relevant QVeris evidence succeeds and passes validation.
+This static default example defines the report contract. It does not claim any live QVeris payload, numeric sentiment, forecast, or trade trigger.
 
 ## Evidence
 
-| Claim | qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|---|
-| Issuer identity should be resolved before analysis. | `qveris_finance.ref_symbology` | `symbol=TSLA`, `market=US` | required | none |
-| Tagged news can provide background context. | `qveris_finance.news_fin_tagged` | `symbol=TSLA`, `market=US`, `limit=5` | qualitative only | none |
-| Numeric sentiment is not available unless the sentiment CAP succeeds. | `qveris_finance.sentiment_text_signals` | `symbol=TSLA`, `market=US`, recent window | missing in this example | tagged news only |
+No validated live payload is claimed in this default example. Evidence belongs here only after a QVeris payload is actually called and passes identity, window, shape, and relevance checks.
 
 ## Analysis
 
@@ -22,15 +18,12 @@ AlphaEar-style signal tracking is translated into monitoring language. A valid n
 
 - `missing_fields`: `validated_numeric_sentiment`, `validated_news_cluster`, `forecast_output`.
 - `data_quality.status`: `partial`.
+- Required next calls before a real report can cite evidence: `qveris_finance.ref_symbology`, `qveris_finance.news_fin_tagged`, and `qveris_finance.sentiment_text_signals` if numeric sentiment is requested.
 - Tagged news is qualitative only; it cannot support strong sentiment, strong catalyst, or directional risk by itself.
 - Suppressed fields: `forecast`, `target_price`, `upside`, `recommendation`, `buy_sell`.
 
 ## Trace Appendix
 
-| qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbol=TSLA`, `market=US` | planned required call | none |
-| `qveris_finance.news_fin_tagged` | `symbol=TSLA`, `market=US`, `limit=5` | qualitative context | none |
-| `qveris_finance.sentiment_text_signals` | `symbol=TSLA`, `market=US`, recent window | missing in example | tagged news only |
+No live `qveris_trace` is attached to this static default example because no CAP call was executed.
 
 Not investment advice.

@@ -2,7 +2,7 @@
 
 ## Summary
 
-Evidence status: `limited`.
+Evidence status: `proxy_only`.
 
 The natural-language test output degrades correctly when specialty LHB or flow evidence is unavailable. It can provide identity, market, and qualitative news context, but it cannot support hot-money or trap-risk conclusions.
 

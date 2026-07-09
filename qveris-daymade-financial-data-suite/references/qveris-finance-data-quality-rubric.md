@@ -9,6 +9,8 @@ Read `qveris-finance-retry-policy.md` with this rubric when a CAP call fails, re
 - `partial`: some primary evidence is unavailable, stale, or rejected, but remaining QVeris evidence can support a narrower statement.
 - `proxy_only`: only weaker proxy evidence is usable; keep conclusions low confidence and label the proxy clearly.
 - `insufficient`: evidence is missing or rejected, so the requested conclusion is not supported.
+- `limited`: runtime or payload quality was materially constrained, but some evidence may still support a narrower statement. Use this mainly as `data_quality.status`; prefer `partial`, `proxy_only`, or `insufficient` for user-facing evidence status.
+- `budget_limited`: the user or runtime call budget prevented the minimum useful evidence set. Use this as `data_quality.status` and do not infer missing facts.
 
 ## Hard Rejects
 

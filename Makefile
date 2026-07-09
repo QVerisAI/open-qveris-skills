@@ -72,10 +72,13 @@ validate-finance-reports: validate-finance-fixtures
 		qveris-a-share-data/examples/codex-fresh-e2e-output-2026-07-08.md \
 		qveris-alphaear-market-intelligence/examples/default-markdown-report.md \
 		qveris-alphaear-market-intelligence/examples/natural-language-test-output-2026-07-09.md \
+		qveris-alphaear-market-intelligence/examples/codex-fresh-live-output-2026-07-09.md \
 		qveris-daymade-financial-data-suite/examples/default-markdown-report.md \
 		qveris-daymade-financial-data-suite/examples/natural-language-test-output-2026-07-09.md \
+		qveris-daymade-financial-data-suite/examples/codex-fresh-live-output-2026-07-09.md \
 		qveris-uzi-equity-research/examples/default-markdown-report.md \
-		qveris-uzi-equity-research/examples/natural-language-test-output-2026-07-09.md
+		qveris-uzi-equity-research/examples/natural-language-test-output-2026-07-09.md \
+		qveris-uzi-equity-research/examples/codex-fresh-live-output-2026-07-09.md
 
 validate-finance-fixtures:
 	$(PYTHON) scripts/validate_qveris_finance_fixtures.py \

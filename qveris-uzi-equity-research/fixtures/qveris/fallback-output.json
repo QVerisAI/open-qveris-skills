@@ -18,7 +18,7 @@
   "analysis": {
     "workflow": "lhb_flow_fallback",
     "entity": "002594.SZ",
-    "evidence_status": "limited",
+    "evidence_status": "proxy_only",
     "summary": "Specialty flow evidence was not usable; the report falls back to identity, bars, and qualitative news context.",
     "action_language_allowed": false
   },

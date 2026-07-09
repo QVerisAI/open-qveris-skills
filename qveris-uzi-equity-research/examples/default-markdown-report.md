@@ -4,15 +4,11 @@
 
 Evidence status: `partial`.
 
-This report can support a QVeris-only equity research method audit for issuer identity, basic market context, validated ratios, and missing specialty layers. It cannot support a target output, upside/downside, LHB conclusion, trap-risk conclusion, or trading action without validated evidence.
+This static default example defines the equity research method-audit contract. It does not claim any live QVeris payload, target output, upside/downside, LHB conclusion, trap-risk conclusion, or trading action.
 
 ## Evidence
 
-| Claim | qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|---|
-| A-share identity must include the exchange suffix. | `qveris_finance.ref_symbology` | `symbol=600519.SH`, `market=CN` | required | none |
-| Valuation context is descriptive unless assumptions are complete. | `qveris_finance.fundamentals_derived_ratios` | `symbol=600519.SH`, `market=CN` | partial | no model output |
-| LHB and flow layers are conditional. | `qveris_finance.flow_dragon_tiger` | `symbol=600519.SH`, `market=CN`, `window=P30D` | not called in default example | capability verification required |
+No validated live payload is claimed in this default example. Evidence belongs here only after a QVeris payload is actually called and passes issuer, market, period, window, row-type, and relevance checks.
 
 ## Analysis
 
@@ -22,15 +18,12 @@ UZI-style deep analysis is converted into an evidence-backed method audit. The r
 
 - `missing_fields`: `validated_lhb_rows`, `validated_large_order_flow`, `validated_trap_risk_social_evidence`, `forward_valuation_assumptions`.
 - `data_quality.status`: `partial`.
+- Required next calls before a real method audit can cite evidence: `qveris_finance.ref_symbology`, `qveris_finance.fundamentals_derived_ratios`, and conditional `qveris_finance.flow_dragon_tiger` only after current CAP verification.
 - Tagged news alone cannot support proof of manipulation, fraud, strong sentiment, or directional risk.
 - Suppressed fields: `target_price`, `upside`, `recommendation`, `buy_sell`, `safe_to_trade`.
 
 ## Trace Appendix
 
-| qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbol=600519.SH`, `market=CN` | planned required call | none |
-| `qveris_finance.fundamentals_derived_ratios` | `symbol=600519.SH`, `market=CN` | descriptive context | no model output |
-| `qveris_finance.flow_dragon_tiger` | `symbol=600519.SH`, `market=CN`, `window=P30D` | conditional not called | capability verification required |
+No live `qveris_trace` is attached to this static default example because no CAP call was executed.
 
 Not investment advice.

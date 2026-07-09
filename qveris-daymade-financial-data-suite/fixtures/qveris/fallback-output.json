@@ -18,7 +18,7 @@
   "analysis": {
     "workflow": "statement_collection_fallback",
     "entity": "META",
-    "evidence_status": "limited",
+    "evidence_status": "partial",
     "summary": "Requested annual cash flow was missing because returned period did not match the request after stricter retry.",
     "defaults_allowed": false
   },

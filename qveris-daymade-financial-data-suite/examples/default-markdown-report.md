@@ -4,15 +4,11 @@
 
 Evidence status: `partial`.
 
-This report can support a QVeris-only financial data-pack read when issuer identity, market data, statement periods, ratios, estimates, and news rows pass validation. Missing financial fields remain missing; the report must not substitute default values.
+This static default example defines the financial data-pack report contract. It does not claim any live QVeris payload. Missing financial fields remain missing; the report must not substitute default values.
 
 ## Evidence
 
-| Claim | qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|---|
-| Issuer identity must be resolved before collecting a pack. | `qveris_finance.ref_security_master` | `symbol=NVDA`, `market=US` | required | none |
-| Annual statement context can be used only after period checks. | `qveris_finance.fundamentals_is` | `symbol=NVDA`, `period_type=annual`, `limit=3` | partial | statement alignment pending |
-| News and research rows require issuer relevance. | `qveris_finance.news_fin_tagged` | `symbol=NVDA`, `market=US`, `limit=5` | qualitative context | none |
+No validated live payload is claimed in this default example. Evidence belongs here only after a QVeris payload is actually called and passes issuer, period, window, shape, and relevance checks.
 
 ## Analysis
 
@@ -22,15 +18,12 @@ The Daymade-style pipeline is converted into a QVeris data-quality pack. Every f
 
 - `missing_fields`: `risk_free_rate`, `validated_research_reports`, `sector_flow`, `pharma_daily_specialty_fields`.
 - `data_quality.status`: `partial`.
+- Required next calls before a real data pack can cite evidence: `qveris_finance.ref_security_master`, `qveris_finance.fundamentals_is`, and `qveris_finance.news_fin_tagged`.
 - No default values are allowed for missing financial fields.
 - Suppressed fields: `target_price`, `upside`, `recommendation`, `buy_sell`.
 
 ## Trace Appendix
 
-| qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_security_master` | `symbol=NVDA`, `market=US` | planned required call | none |
-| `qveris_finance.fundamentals_is` | `symbol=NVDA`, `period_type=annual`, `limit=3` | partial context | statement alignment pending |
-| `qveris_finance.news_fin_tagged` | `symbol=NVDA`, `market=US`, `limit=5` | qualitative context | none |
+No live `qveris_trace` is attached to this static default example because no CAP call was executed.
 
 Not investment advice.

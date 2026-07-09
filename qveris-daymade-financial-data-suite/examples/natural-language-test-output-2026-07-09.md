@@ -2,7 +2,7 @@
 
 ## Summary
 
-Evidence status: `limited`.
+Evidence status: `partial`.
 
 The natural-language test output degrades correctly when an annual cash-flow request returns a mismatched period. The mismatched payload is rejected, the requested field is marked missing, and no default value is inserted.
 
