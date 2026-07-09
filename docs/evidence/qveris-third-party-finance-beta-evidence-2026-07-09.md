@@ -89,5 +89,16 @@ Recorded locally on 2026-07-09:
 | Naked A-share ticker grep on new Markdown examples | No matches |
 | Mojibake grep on new skill files and docs | No matches |
 | Installed-copy check under current Codex skills directory | Three new `SKILL.md` files and local shared references present |
+| Minimal live CAP smoke for `qveris_finance.ref_symbology` / `qveris_finance.ref_security_master` | Attempted from PowerShell with `QVERIS_API_KEY` present; all three calls returned `fetch failed` |
 
 `git diff --check` over the whole worktree is currently blocked by pre-existing unstaged changes in `third_party/finance-skill-star-rescreen-2026-07-07.json` and `.md` that were present before this batch. The batch should be staged independently and checked with `git diff --cached --check` before commit.
+
+Live CAP smoke commands attempted:
+
+```text
+node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.ref_symbology --param symbol=TSLA --param market=US --safe-json
+node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.ref_security_master --param symbol=NVDA --param market=US --safe-json
+node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.ref_symbology --param symbol=600519.SH --param market=CN --safe-json
+```
+
+All three returned `Error: fetch failed`. This does not invalidate the beta package; it confirms the need for the built-in failure path: limited retry, `missing_fields`, `data_quality`, and no inferred facts.
