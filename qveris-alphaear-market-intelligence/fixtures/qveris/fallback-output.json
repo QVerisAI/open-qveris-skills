@@ -1,0 +1,98 @@
+{
+  "skill": "qveris-alphaear-market-intelligence",
+  "source_record": {
+    "candidate_number": 42,
+    "original_repository": "Awesome Finance Skills / AlphaEar",
+    "github_url": "https://github.com/RKiding/Awesome-finance-skills",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-03-29",
+    "local_source_snapshot": "third_party/source_repos/42-awesome-finance-skills",
+    "snapshot_latest_commit": "853f09b on 2026-03-29"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 6,
+    "max_age": "P1D",
+    "budget_note": "Retry failed sentiment once, then fall back to tagged-news background."
+  },
+  "analysis": {
+    "workflow": "sentiment_note",
+    "entity": "NVDA",
+    "evidence_status": "proxy_only",
+    "summary": "Primary sentiment evidence failed; the output is limited to qualitative news context.",
+    "numeric_sentiment_allowed": false
+  },
+  "risk_notes": [
+    "Do not infer strong sentiment from tagged news alone.",
+    "No signal-strength conclusion is supported."
+  ],
+  "missing_fields": [
+    "qveris_finance.sentiment_text_signals: failed",
+    "numeric_sentiment_score",
+    "sentiment_magnitude",
+    "validated_news_cluster"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.sentiment_text_signals",
+      "capability_id": "qveris_finance.sentiment_text_signals",
+      "entity": "NVDA",
+      "market": "US",
+      "params": {
+        "symbol": "NVDA",
+        "market": "US",
+        "window": "P7D"
+      },
+      "as_of": "2026-07-09",
+      "retrieved_at": "2026-07-09T09:04:00+08:00",
+      "fallback_used": false,
+      "missing_fields": [
+        "provider_error",
+        "numeric_sentiment_score"
+      ],
+      "source_provider": "internal_failover",
+      "quality_note": "Primary sentiment path failed after limited retry."
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "qveris_finance.news_fin_tagged",
+      "entity": "NVDA",
+      "market": "US",
+      "params": {
+        "symbol": "NVDA",
+        "market": "US",
+        "limit": 5
+      },
+      "as_of": "2026-07-09",
+      "retrieved_at": "2026-07-09T09:04:20+08:00",
+      "fallback_used": true,
+      "missing_fields": [
+        "numeric_sentiment_score"
+      ],
+      "source_provider": "qveris_internal",
+      "quality_note": "Tagged-news fallback is qualitative only."
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "proxy_only",
+    "warnings": [
+      "Primary sentiment failed; tagged news is not enough for a numeric sentiment conclusion.",
+      "Signal tracker output is limited to evidence-changed notes."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "numeric_sentiment_score",
+      "forecast",
+      "target_price",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "numeric_sentiment_score",
+    "forecast",
+    "target_price",
+    "buy_sell"
+  ]
+}

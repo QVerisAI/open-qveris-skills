@@ -17,6 +17,9 @@ DEFAULT_SKILL_DIRS = (
     "qveris-a-stock-data-layer",
     "qveris-a-share-factor-screen",
     "qveris-a-share-data",
+    "qveris-alphaear-market-intelligence",
+    "qveris-daymade-financial-data-suite",
+    "qveris-uzi-equity-research",
 )
 
 

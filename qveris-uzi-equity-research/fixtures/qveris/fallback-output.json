@@ -1,0 +1,100 @@
+{
+  "skill": "qveris-uzi-equity-research",
+  "source_record": {
+    "candidate_number": 34,
+    "original_repository": "UZI-Skill",
+    "github_url": "https://github.com/wbh604/UZI-Skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-07",
+    "local_source_snapshot": "third_party/source_repos/34-uzi-skill",
+    "snapshot_latest_commit": "fce996c on 2026-07-07"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 8,
+    "max_age": "P1D",
+    "budget_note": "Use cap-detail before specialty LHB or flow calls; degrade when unavailable."
+  },
+  "analysis": {
+    "workflow": "lhb_flow_fallback",
+    "entity": "002594.SZ",
+    "evidence_status": "limited",
+    "summary": "Specialty flow evidence was not usable; the report falls back to identity, bars, and qualitative news context.",
+    "action_language_allowed": false
+  },
+  "risk_notes": [
+    "Missing LHB evidence cannot support hot-money conclusions.",
+    "Tagged news cannot prove trap risk or manipulation by itself."
+  ],
+  "missing_fields": [
+    "qveris_finance.flow_dragon_tiger: capability_unavailable",
+    "validated_lhb_rows",
+    "validated_large_order_flow",
+    "trap_risk_social_evidence"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.flow_dragon_tiger",
+      "capability_id": "qveris_finance.flow_dragon_tiger",
+      "entity": "002594.SZ",
+      "market": "CN",
+      "params": {
+        "symbol": "002594.SZ",
+        "market": "CN",
+        "window": "P30D"
+      },
+      "as_of": "2026-07-09",
+      "retrieved_at": "2026-07-09T09:26:00+08:00",
+      "fallback_used": false,
+      "missing_fields": [
+        "capability_unavailable"
+      ],
+      "source_provider": null,
+      "quality_note": "Specialty CAP not confirmed for this run."
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "qveris_finance.news_fin_tagged",
+      "entity": "002594.SZ",
+      "market": "CN",
+      "params": {
+        "symbol": "002594.SZ",
+        "market": "CN",
+        "limit": 5
+      },
+      "as_of": "2026-07-09",
+      "retrieved_at": "2026-07-09T09:26:25+08:00",
+      "fallback_used": true,
+      "missing_fields": [
+        "numeric_sentiment_score",
+        "validated_lhb_rows"
+      ],
+      "source_provider": "qveris_internal",
+      "quality_note": "Tagged news is fallback background only."
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "LHB and flow conclusions are not supported without validated specialty rows.",
+      "Trap-risk review remains incomplete because social-promotion evidence is unavailable."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell",
+      "safe_to_trade"
+    ]
+  },
+  "suppressed_fields": [
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell",
+    "safe_to_trade"
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "skill": "qveris-alphaear-market-intelligence",
+  "source_record": {
+    "candidate_number": 42,
+    "original_repository": "Awesome Finance Skills / AlphaEar",
+    "github_url": "https://github.com/RKiding/Awesome-finance-skills",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-03-29",
+    "local_source_snapshot": "third_party/source_repos/42-awesome-finance-skills",
+    "snapshot_latest_commit": "853f09b on 2026-03-29"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 8,
+    "max_age": "P1D",
+    "budget_note": "Prioritize identity, market data, news, and sentiment; skip optional forecast-like routes."
+  },
+  "analysis": {
+    "workflow": "market_intelligence_note",
+    "entity": "TSLA",
+    "evidence_status": "partial",
+    "summary": "Issuer identity and tagged-news context are usable; numeric sentiment is not included unless the sentiment CAP succeeds.",
+    "signal_monitoring": {
+      "action_language_allowed": false,
+      "forecast_allowed": false,
+      "read": "Monitoring note only."
+    }
+  },
+  "risk_notes": [
+    "Tagged news is background context only without validated sentiment rows.",
+    "Signal-monitor wording cannot become a trade trigger."
+  ],
+  "missing_fields": [
+    "validated_numeric_sentiment",
+    "validated_news_cluster",
+    "forecast_output"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "capability_id": "qveris_finance.ref_symbology",
+      "entity": "TSLA",
+      "market": "US",
+      "params": {
+        "symbol": "TSLA",
+        "market": "US"
+      },
+      "as_of": "2026-07-09",
+      "retrieved_at": "2026-07-09T09:00:00+08:00",
+      "fallback_used": false,
+      "missing_fields": [],
+      "source_provider": "qveris_internal",
+      "quality_note": "Issuer identity matched the requested symbol."
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "qveris_finance.news_fin_tagged",
+      "entity": "TSLA",
+      "market": "US",
+      "params": {
+        "symbol": "TSLA",
+        "market": "US",
+        "limit": 5
+      },
+      "as_of": "2026-07-09",
+      "retrieved_at": "2026-07-09T09:00:15+08:00",
+      "fallback_used": false,
+      "missing_fields": [
+        "numeric_sentiment_score"
+      ],
+      "source_provider": "qveris_internal",
+      "quality_note": "Tagged news supports qualitative context only."
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Numeric sentiment is missing because qveris_finance.sentiment_text_signals was not available in the sample path.",
+      "Forecast-style AlphaEar behavior is suppressed."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "forecast",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "forecast",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ]
+}

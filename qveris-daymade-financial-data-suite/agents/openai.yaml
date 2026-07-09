@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Daymade Financial Data Suite"
+  short_description: "QVeris-only financial data collection and daily report pipelines"
+  default_prompt: "Use $qveris-daymade-financial-data-suite for NVDA to collect QVeris-only financial, news, event, and data-quality context as a Markdown report with trace appendix and no investment advice."

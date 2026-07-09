@@ -1,0 +1,93 @@
+# QVeris Third-Party Finance Beta Evidence - 2026-07-09
+
+## Source Snapshots
+
+| Candidate | Source repo | Local snapshot | Snapshot commit |
+|---:|---|---|---|
+| 42 | https://github.com/RKiding/Awesome-finance-skills | `third_party/source_repos/42-awesome-finance-skills` | `853f09b` on 2026-03-29 |
+| 37 | https://github.com/daymade/claude-code-skills | `third_party/source_repos/37-daymade-claude-code-skills` | `d2d566f` on 2026-07-06 |
+| 34 | https://github.com/wbh604/UZI-Skill | `third_party/source_repos/34-uzi-skill` | `fce996c` on 2026-07-07 |
+
+`third_party/source_repos/` is ignored by the repository and used as a local evaluation cache, so the PR carries adaptation files and evidence rather than vendored source trees.
+
+## Adaptation Notes
+
+| Source | Preserved intent | Removed or downgraded runtime behavior |
+|---|---|---|
+| AlphaEar | Stock lookup, price/fundamental context, news, sentiment, signal monitoring, structured report writing. | Direct public feeds, local models, local databases, prediction markets, and forecasts. Forecast-like outputs are downgraded to monitoring notes. |
+| Daymade Financial Suite | Financial data collection, strict no-default missing-field handling, structured news/research/event pipelines, industry or pharma daily monitor. | Direct SDKs, direct public endpoints, credential setup, chat delivery, and non-QVeris source routing. |
+| UZI-Skill | Deep equity research, valuation frameworks, LHB/flow context, trap-risk review, IC-style report surface. | Persona voting, action-oriented conclusions, local scripts/caches, browser fallback, target outputs, and trading instructions. |
+
+## Product Contract
+
+The three skills should work from natural-language requests without the user repeating safety constraints. Each skill knows to:
+
+- Use QVeris finance CAP evidence only.
+- Produce Markdown user reports by default.
+- Include concise trace in the report and full trace in fixtures or appendix when needed.
+- Mark missing fields and data quality when CAP calls fail, return empty payloads, or pass transport but fail semantic validation.
+- Avoid investment advice, target output, upside/downside, buy/sell language, rebalancing, and execution plans.
+
+## Technical Contract
+
+Each new skill includes:
+
+- `SKILL.md`
+- `agents/openai.yaml`
+- `references/qveris-tool-map.md`
+- `references/qveris-finance-data-quality-rubric.md`
+- `references/qveris-finance-retry-policy.md`
+- `references/qveris-finance-cap-registry-snapshot-2026-07-07.md`
+- `schemas/output.schema.json`
+- `fixtures/qveris/sample-output.json`
+- `fixtures/qveris/fallback-output.json`
+- `fixtures/qveris/budget-limited-output.json`
+- `examples/default-markdown-report.md`
+- `examples/natural-language-prompts.md`
+- `examples/natural-language-test-output-2026-07-09.md`
+
+## Finance Data-Quality Rules
+
+Hard rejects are treated as normal paths:
+
+- Wrong entity, market, asset type, benchmark, or currency.
+- Wrong date window or fiscal period.
+- Annual/FY statement requests returning latest-quarter or TTM-shaped payloads after stricter retry.
+- Fewer than 2 bars supporting a multi-day metric.
+- Empty relevant fields, weak research relevance, entity-mixed news, or corrupted text.
+- Tagged news used as numeric sentiment, strong catalyst, or directional risk without a stronger QVeris sentiment or cluster result.
+
+## CAP Caveats Remaining
+
+These capabilities remain beta or conditional until live `cap-detail` and payload validation confirm them for the current run:
+
+- News clusters and sentiment scores.
+- A-share LHB, large-order flow, northbound flow, concept heat, sector heat, lock-up and limit-move details.
+- CN ETF option chains and technical indicator CAPs.
+- Non-empty analyst or research reports with validated issuer/report/date fields.
+- Pharma or sector daily specialty fields.
+- Forecast-like or prediction-style outputs.
+
+The skill-side behavior is complete for beta: unsupported or unstable CAPs become `missing_fields` and `data_quality` warnings rather than invented analysis.
+
+## Validation Evidence
+
+Recorded locally on 2026-07-09:
+
+| Check | Result |
+|---|---|
+| `quick_validate.py qveris-alphaear-market-intelligence` | `Skill is valid!` |
+| `quick_validate.py qveris-daymade-financial-data-suite` | `Skill is valid!` |
+| `quick_validate.py qveris-uzi-equity-research` | `Skill is valid!` |
+| `python3 scripts/validate_qveris_finance_fixtures.py qveris-alphaear-market-intelligence qveris-daymade-financial-data-suite qveris-uzi-equity-research` | `ok: 9 QVeris finance JSON fixtures validated` |
+| `python3 scripts/validate_qveris_finance_fixtures.py` | `ok: 27 QVeris finance JSON fixtures validated` |
+| `python3 scripts/validate_qveris_finance_report.py --self-test` | `ok: self-test` |
+| New-skill Markdown report validation | 6 new report examples passed |
+| `make validate-finance-reports` | Passed across the existing six finance skills plus the three new skills |
+| Provider leak grep on new examples and fixtures | No matches |
+| Advice/action-word grep on new Markdown examples | No matches |
+| Naked A-share ticker grep on new Markdown examples | No matches |
+| Mojibake grep on new skill files and docs | No matches |
+| Installed-copy check under current Codex skills directory | Three new `SKILL.md` files and local shared references present |
+
+`git diff --check` over the whole worktree is currently blocked by pre-existing unstaged changes in `third_party/finance-skill-star-rescreen-2026-07-07.json` and `.md` that were present before this batch. The batch should be staged independently and checked with `git diff --cached --check` before commit.

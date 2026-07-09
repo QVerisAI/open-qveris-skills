@@ -14,6 +14,10 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
   - `qveris-a-stock-data-layer/`: Broad China A-share data-layer reports for quotes, bars, fundamentals, news, events, flow-like context, and specialty A-share fields. Specialty fields degrade honestly when QVeris CAP evidence is missing.
   - `qveris-a-share-factor-screen/`: China A-share research screens and factor coverage notes. It produces research candidate pools, not rankings or recommendations when evidence is not comparable.
   - `qveris-a-share-data/`: China A-share quote, history, technical-context, event, sector, A+H/IPO timeline, and news data reads. Technical indicators are descriptive and never trade signals.
+- **QVeris third-party finance beta skills**:
+  - `qveris-alphaear-market-intelligence/`: QVeris-only adaptation of #42 Awesome Finance Skills / AlphaEar for stock context, news, sentiment availability, signal-monitor notes, and Markdown reports.
+  - `qveris-daymade-financial-data-suite/`: QVeris-only adaptation of #37 Daymade Financial Suite for financial data packs, news/research/event structuring, A-share news reads, and sector or pharma daily monitors.
+  - `qveris-uzi-equity-research/`: QVeris-only adaptation of #34 UZI-Skill for equity research method audits, valuation-input coverage, LHB/flow context, and trap-risk monitoring without investment advice.
 - `stock-copilot-pro/`: A **standalone global stock analysis skill** for ClawHub/OpenClaw style agents.
   - Includes multi-source routing (quote, fundamentals, technicals, sentiment), quality checks, and structured reports.
 - `third_party/`: Evaluation area for third-party skills being adapted into QVeris Featured Skills.
@@ -50,9 +54,12 @@ cp -a qveris-official ~/.codex/skills/
 cp -a qveris-a-share-data ~/.codex/skills/
 cp -a qveris-a-share-factor-screen ~/.codex/skills/
 cp -a qveris-a-stock-data-layer ~/.codex/skills/
+cp -a qveris-alphaear-market-intelligence ~/.codex/skills/
+cp -a qveris-daymade-financial-data-suite ~/.codex/skills/
+cp -a qveris-uzi-equity-research ~/.codex/skills/
 ```
 
-Standalone installs should either run in a Codex runtime that exposes native `qveris_finance.*` tools or include `qveris-official`. The repository CLI fallback (`qveris-official/scripts/qveris_tool.mjs`) is a repo-root development path; a copied A-share skill folder alone is not enough for that fallback.
+Standalone installs should either run in a Codex runtime that exposes native `qveris_finance.*` tools or include `qveris-official`. The repository CLI fallback (`qveris-official/scripts/qveris_tool.mjs`) is a repo-root development path; a copied QVeris finance skill folder alone is not enough for that fallback.
 
 Example prompts:
 
@@ -60,9 +67,14 @@ Example prompts:
 Use qveris-a-share-data to make a 30-day quote, bars, technical-context, event, and news read for 600519.SH.
 Use qveris-a-share-factor-screen to run a research screen for 600519.SH, 000001.SZ, and 000858.SZ.
 Use qveris-a-stock-data-layer to make an A-share data-layer coverage note for 600519.SH.
+Use qveris-alphaear-market-intelligence to make a TSLA market-intelligence note with sentiment availability and trace appendix.
+Use qveris-daymade-financial-data-suite to collect an NVDA QVeris-only financial data pack with missing_fields and data_quality.
+Use qveris-uzi-equity-research to audit valuation-method input coverage for 600519.SH without target output or trading action.
 ```
 
 Current beta caveat: A-share CAP coverage is partial. Live verification on 2026-07-08 showed usable evidence for quotes, EOD bars, industry classification, calendar events, lock-up, stock-level order-size flow, top movers, IPO calendar context, share structure, and tagged news. Some routes still degraded or failed in smoke tests, including LHB, northbound/cross-border flow, concept heat, CN ETF option chain, CAP-based sentiment score, CAP-based technical indicators, non-empty research reports, and non-empty news clusters. The skills are designed to mark these fields missing instead of inventing data.
+
+Current third-party finance beta caveat: #42, #37, and #34 preserve workflow intent from the source repositories but do not carry their direct data dependencies into runtime. AlphaEar forecasts, Daymade specialty pipelines, and UZI LHB/trap layers are QVeris-only and conditional; when a QVeris CAP is unavailable, stale, empty, or semantically mismatched, the skills mark missing fields instead of inventing a full analysis.
 
 ## Local development (not part of published skill package)
 
