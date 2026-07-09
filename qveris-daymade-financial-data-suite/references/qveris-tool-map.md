@@ -23,6 +23,19 @@ Source: Daymade Financial Suite, https://github.com/daymade/claude-code-skills, 
 | Events | `qveris_finance.event_calendar_earnings`, `qveris_finance.event_calendar_corp`, `qveris_finance.event_calendar_ipo` | Reject out-of-window or wrong-issuer events. |
 | News and research | `qveris_finance.news_fin_tagged`, `qveris_finance.sentiment_text_signals`, `qveris_finance.research_analyst_reports` | Research rows require issuer, report type, and date validation. |
 
+## Canonical Valuation Field Map
+
+Normalize these aliases before deciding whether a field is missing. Keep the raw field name in internal validation notes when useful, but expose only the canonical name in user-facing `missing_fields`.
+
+| Canonical field | Accepted QVeris aliases | Basis rule |
+|---|---|---|
+| `pe_ratio` | `pe_ratio`, `pe_ttm`, `trailing_pe` | Use only trailing/TTM basis unless a forward-period field is explicit. |
+| `price_to_sales` | `price_to_sales`, `ps_ratio_ttm`, `price_sales_ttm` | Use only matched issuer and same market currency. |
+| `price_to_book` | `price_to_book`, `pb_ratio`, `pb_ratio_ttm` | Require book-value basis to be clear. |
+| `ev_to_ebitda` | `ev_to_ebitda`, `ev_ebitda`, `enterprise_value_to_ebitda` | Require enterprise value and EBITDA basis to be present or QVeris-derived. |
+| `market_cap` | `market_cap`, `mkt_cap`, `market_value` | Require quote timestamp or as-of date. |
+| `free_cash_flow` | `free_cash_flow`, `fcf`, `operating_cash_flow_minus_capex` | Require CF period alignment and capex sign/basis clarity. |
+
 ## Conditional CAPs
 
 - Use `cap-detail` before A-share specialty news, industry daily, sector heat, pharma, research, cluster, or event-detail routes.
@@ -45,6 +58,8 @@ Source: Daymade Financial Suite, https://github.com/daymade/claude-code-skills, 
 - Wrong issuer, wrong market, wrong asset type, wrong currency, or wrong date window.
 - Defaults substituted for missing financial data.
 - Statement period mismatch or unclear basis used in an aligned data pack.
+- Same-period CF net income materially conflicting with IS net income used in an aligned data pack.
+- Valuation aliases treated as missing before applying the canonical valuation field map.
 - Research or analyst rows without issuer, report type, or date validation.
 - Tagged-news-only output used as numeric sentiment, strong catalyst, or directional risk.
 - Raw internal QVeris provider, route, failover, credential, or delivery-channel metadata in user-facing report or trace.

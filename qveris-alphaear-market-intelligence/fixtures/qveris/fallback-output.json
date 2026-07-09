@@ -19,7 +19,7 @@
     "workflow": "sentiment_note",
     "entity": "NVDA",
     "evidence_status": "proxy_only",
-    "summary": "Primary sentiment evidence failed; the output is limited to qualitative news context.",
+    "summary": "Primary sentiment evidence failed or returned empty signal fields; the output is limited to qualitative news context.",
     "numeric_sentiment_allowed": false
   },
   "risk_notes": [
@@ -27,8 +27,9 @@
     "No signal-strength conclusion is supported."
   ],
   "missing_fields": [
-    "qveris_finance.sentiment_text_signals: failed",
+    "qveris_finance.sentiment_text_signals: failed_or_empty",
     "numeric_sentiment_score",
+    "validated_sentiment_signal_fields",
     "sentiment_magnitude",
     "validated_news_cluster"
   ],
@@ -50,8 +51,7 @@
         "provider_error",
         "numeric_sentiment_score"
       ],
-      "source_provider": "internal_failover",
-      "quality_note": "Primary sentiment path failed after limited retry."
+      "quality_note": "Primary sentiment path failed or lacked non-empty signal/text cue fields after limited retry."
     },
     {
       "tool_name": "qveris_finance.news_fin_tagged",
@@ -69,7 +69,6 @@
       "missing_fields": [
         "numeric_sentiment_score"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Tagged-news fallback is qualitative only."
     }
   ],
@@ -77,13 +76,15 @@
   "data_quality": {
     "status": "proxy_only",
     "warnings": [
-      "Primary sentiment failed; tagged news is not enough for a numeric sentiment conclusion.",
+      "Primary sentiment failed or returned empty signal fields; tagged news is not enough for a numeric sentiment conclusion.",
+      "Empty sentiment signal/text cue fields are treated as sentiment_signal_empty.",
       "Signal tracker output is limited to evidence-changed notes."
     ],
     "stale_fields": [],
     "out_of_window_events": [],
     "suppressed_fields": [
       "numeric_sentiment_score",
+      "validated_sentiment_signal_fields",
       "forecast",
       "target_price",
       "buy_sell"

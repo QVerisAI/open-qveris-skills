@@ -83,7 +83,6 @@
         "earnings_surprise",
         "beat_miss"
       ],
-      "source_provider": "internal_failover",
       "quality_note": "Consensus fallback only; not evidence of actual surprise."
     },
     {
@@ -102,7 +101,6 @@
         "latest_transcript",
         "management_quotes"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "News context may describe catalysts but cannot be used as management-call evidence."
     }
   ],

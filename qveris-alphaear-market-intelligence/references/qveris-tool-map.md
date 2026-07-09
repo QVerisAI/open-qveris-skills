@@ -21,7 +21,7 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 | Fundamentals | `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf`, `qveris_finance.fundamentals_derived_ratios` | Require fiscal-period and basis alignment. |
 | Forward inputs | `qveris_finance.estimates_consensus` | Use only matching forward-period fields; otherwise mark missing. |
 | News context | `qveris_finance.news_fin_tagged` | Qualitative background only unless stronger evidence succeeds. |
-| Sentiment | `qveris_finance.sentiment_text_signals` | Numeric sentiment is allowed only when this CAP succeeds and rows match the issuer. |
+| Sentiment coverage | `qveris_finance.sentiment_text_signals` | Numeric or directional sentiment is allowed only when this CAP succeeds, rows match the issuer, and non-empty signal/text cue/score/label fields are present. Empty sentiment payloads are coverage gaps, not weak signals. |
 | Earnings/event context | `qveris_finance.event_calendar_earnings`, `qveris_finance.event_calendar_corp` | Reject out-of-window events. |
 
 ## Conditional CAPs
@@ -37,7 +37,7 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 | Stock search and prices | Resolve identity, quote, and bars through QVeris. |
 | Fundamentals | Use QVeris statement, ratio, and consensus CAPs with fiscal-period gates. |
 | Finance news | Use tagged news as background and events as dated evidence. |
-| Sentiment model | Use QVeris text sentiment only; otherwise qualitative context. |
+| Sentiment model | Use QVeris text sentiment only when non-empty issuer-matched sentiment fields are present; otherwise output a sentiment coverage check plus qualitative context. |
 | Signal tracker | Describe evidence changes without action language. |
 | Reporter | Produce Markdown report plus trace appendix. |
 | Forecast or prediction tools | Mark unsupported unless a current QVeris CAP is verified; never emit forecasts as advice. |
@@ -48,6 +48,7 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 - Fewer than 2 bars for multi-day return, trend, volatility, liquidity, drawdown, or correlation.
 - Statement period mismatch, including annual/FY requests returning latest-quarter or TTM-shaped payloads.
 - Tagged-news-only output used as numeric sentiment, strong catalyst, or directional risk.
+- Empty sentiment `signal`, `text_cue`, score, or label fields used as weak sentiment instead of `sentiment_signal_empty`.
 - Raw internal QVeris provider, route, failover, or model metadata in user-facing report or trace.
 
 ## Budget Order

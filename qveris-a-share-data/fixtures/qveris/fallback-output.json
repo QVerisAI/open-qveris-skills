@@ -56,7 +56,6 @@
         "technical_indicators",
         "trend_context"
       ],
-      "source_provider": null,
       "quality_note": "only_one_observation_returned"
     }
   ],

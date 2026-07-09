@@ -24,7 +24,9 @@
   },
   "risk_notes": [
     "Financial packs must not substitute default beta, growth, rate, or margin values.",
-    "Research rows require issuer and report-type validation before use."
+    "Research rows require issuer and report-type validation before use.",
+    "Valuation aliases such as pe_ttm must be normalized to canonical pe_ratio before missing-field checks.",
+    "Same-period CF net income must reconcile with IS net income before CF appears in aligned tables."
   ],
   "missing_fields": [
     "risk_free_rate",
@@ -46,7 +48,6 @@
       "retrieved_at": "2026-07-09T09:12:00+08:00",
       "fallback_used": false,
       "missing_fields": [],
-      "source_provider": "qveris_internal",
       "quality_note": "Security identity matched."
     },
     {
@@ -65,7 +66,6 @@
       "missing_fields": [
         "cash_flow_alignment"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Statement context is partial until cash flow and balance sheet align."
     }
   ],

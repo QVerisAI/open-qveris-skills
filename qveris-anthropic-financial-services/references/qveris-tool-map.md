@@ -8,7 +8,7 @@ Source: Anthropic Financial Services, https://github.com/anthropics/financial-se
 - Credential: `QVERIS_API_KEY` only.
 - Controls: accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; when omitted in natural language, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note.
 - Required trace fields: `tool_name`, `capability_id`, `entity`, `market`, `params`, `as_of`, `retrieved_at`, `fallback_used`, `missing_fields`.
-- Treat QVeris `_meta.source_provider` as provenance only, never as a direct skill dependency, and never print raw vendor/provider IDs. Use `qveris_internal`, `internal_failover`, or `unknown` when provenance must be surfaced. In final output, say "non-QVeris sources" instead of naming prohibited providers.
+- Treat QVeris `_meta.source_provider` as internal provenance only, never as a direct skill dependency, and never print or copy raw vendor/provider IDs into sanitized trace. In final output, say "non-QVeris sources" instead of naming prohibited providers.
 - Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
 - Validate requested entity, market, date window, fiscal period, and payload shape before using a payload as evidence.
 - Treat failed, rejected, unavailable, or weak-relevance CAPs as trace/data-quality facts only. Do not list them in `Evidence Used` as supporting evidence.

@@ -19,7 +19,7 @@
     "workflow": "market_intelligence_note",
     "entity": "TSLA",
     "evidence_status": "partial",
-    "summary": "Issuer identity and tagged-news context are usable; numeric sentiment is not included unless the sentiment CAP succeeds.",
+    "summary": "Issuer identity and tagged-news context are usable; numeric sentiment is not included unless the sentiment CAP succeeds with non-empty issuer-matched signal fields.",
     "signal_monitoring": {
       "action_language_allowed": false,
       "forecast_allowed": false,
@@ -27,11 +27,12 @@
     }
   },
   "risk_notes": [
-    "Tagged news is background context only without validated sentiment rows.",
+    "Tagged news is background context only without validated non-empty sentiment rows.",
     "Signal-monitor wording cannot become a trade trigger."
   ],
   "missing_fields": [
     "validated_numeric_sentiment",
+    "validated_sentiment_signal_fields",
     "validated_news_cluster",
     "forecast_output"
   ],
@@ -49,7 +50,6 @@
       "retrieved_at": "2026-07-09T09:00:00+08:00",
       "fallback_used": false,
       "missing_fields": [],
-      "source_provider": "qveris_internal",
       "quality_note": "Issuer identity matched the requested symbol."
     },
     {
@@ -66,9 +66,9 @@
       "retrieved_at": "2026-07-09T09:00:15+08:00",
       "fallback_used": false,
       "missing_fields": [
-        "numeric_sentiment_score"
+        "numeric_sentiment_score",
+        "validated_sentiment_signal_fields"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Tagged news supports qualitative context only."
     }
   ],
@@ -76,7 +76,7 @@
   "data_quality": {
     "status": "limited",
     "warnings": [
-      "Numeric sentiment is missing because qveris_finance.sentiment_text_signals was not available in the sample path.",
+      "Numeric sentiment is missing because qveris_finance.sentiment_text_signals was not available with non-empty signal fields in the sample path.",
       "Forecast-style AlphaEar behavior is suppressed."
     ],
     "stale_fields": [],

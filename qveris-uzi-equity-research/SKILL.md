@@ -47,7 +47,9 @@ Source record:
 - Require at least 2 observations before computing returns, trends, liquidity, volatility, drawdown, or correlation.
 - Require statement periods and measurement basis to align before using valuation inputs.
 - If an annual or FY statement request returns latest-quarter or TTM-shaped data, retry once with stricter documented period parameters after `cap-detail`; if still mismatched, mark the requested period missing.
+- For CN/A-share requests, read the A-share availability matrix in `references/qveris-tool-map.md` before calling financials or valuation routes. Do not assume US-style IS/CF/derived-ratio support applies to A shares; unsupported or unverified CN financial layers must become `capability_unavailable` or `market_support_unverified`.
 - Use LHB, large-order flow, lock-up, top-mover, concept, or sector specialty data only after `cap-detail` confirms the QVeris CAP and returned row semantics for the current run.
+- When LHB or flow is explicitly requested and `cap-detail` or alias discovery is unavailable, use the dated registry snapshot to attempt at most one direct canonical CAP ID fallback for the requested layer, such as `qveris_finance.flow_dragon_tiger`, `qveris_finance.flow_large_order`, `qveris_finance.flow_northbound`, or `qveris_finance.flow_cross_border`. If that direct call fails, returns empty payload, or mismatches row semantics, mark the layer missing.
 - Treat tagged news as qualitative background only unless sentiment or cluster evidence succeeds and passes issuer relevance checks.
 - Do not present trap-risk flags as proven fraud or as a trading instruction; present them as monitored evidence and missing fields.
 
@@ -64,7 +66,7 @@ Source record:
 
 1. Deep research note: resolve issuer, collect profile, quote/bars, statements, ratios, estimates, news/events, and data-quality status.
 2. Valuation-method audit: list required inputs, validate each input, show which assumptions are supported, missing, stale, or period-mismatched.
-3. LHB or flow context: call specialty CAPs only after `cap-detail`; otherwise state that the LHB or flow layer is missing.
+3. LHB or flow context: call specialty CAPs only after `cap-detail`, or use one canonical CAP ID fallback from the registry snapshot when discovery is unavailable; otherwise state that the LHB or flow layer is missing.
 4. Trap-risk review: use validated news, event, bars, financial-quality, and specialty evidence to flag observed risk signals without making action recommendations.
 5. Budget-limited run: prioritize identity, bars/quote, fundamentals, and explicit missing fields; skip optional specialty routes when calls are limited.
 

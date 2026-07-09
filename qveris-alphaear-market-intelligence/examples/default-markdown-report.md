@@ -16,9 +16,10 @@ AlphaEar-style signal tracking is translated into monitoring language. A valid n
 
 ## Data Quality And Missing Fields
 
-- `missing_fields`: `validated_numeric_sentiment`, `validated_news_cluster`, `forecast_output`.
+- `missing_fields`: `validated_numeric_sentiment`, `validated_sentiment_signal_fields`, `validated_news_cluster`, `forecast_output`.
 - `data_quality.status`: `partial`.
 - Required next calls before a real report can cite evidence: `qveris_finance.ref_symbology`, `qveris_finance.news_fin_tagged`, and `qveris_finance.sentiment_text_signals` if numeric sentiment is requested.
+- If sentiment rows have empty `signal`, `text_cue`, score, or label fields, mark `sentiment_signal_empty` and present only a signal-coverage check.
 - Tagged news is qualitative only; it cannot support strong sentiment, strong catalyst, or directional risk by itself.
 - Suppressed fields: `forecast`, `target_price`, `upside`, `recommendation`, `buy_sell`.
 

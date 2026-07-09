@@ -142,19 +142,6 @@
               "type": "string"
             }
           },
-          "source_provider": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "enum": [
-              "qveris_internal",
-              "internal_failover",
-              "unknown",
-              null
-            ],
-            "description": "Abstract QVeris provenance label only; never expose raw vendor/provider IDs."
-          },
           "quality_note": {
             "type": "string"
           }

@@ -18,7 +18,7 @@ UZI-style deep analysis is converted into an evidence-backed method audit. The r
 
 - `missing_fields`: `validated_lhb_rows`, `validated_large_order_flow`, `validated_trap_risk_social_evidence`, `forward_valuation_assumptions`.
 - `data_quality.status`: `partial`.
-- Required next calls before a real method audit can cite evidence: `qveris_finance.ref_symbology`, `qveris_finance.fundamentals_derived_ratios`, and conditional `qveris_finance.flow_dragon_tiger` only after current CAP verification.
+- Required next calls before a real method audit can cite evidence: `qveris_finance.ref_symbology`, CN financial or ratio CAPs only after the A-share availability matrix confirms support, and conditional `qveris_finance.flow_dragon_tiger` direct fallback only when LHB is explicitly requested and discovery is unavailable.
 - Tagged news alone cannot support proof of manipulation, fraud, strong sentiment, or directional risk.
 - Suppressed fields: `target_price`, `upside`, `recommendation`, `buy_sell`, `safe_to_trade`.
 

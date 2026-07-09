@@ -61,7 +61,6 @@
       "retrieved_at": "2026-07-08T10:00:00+08:00",
       "fallback_used": false,
       "missing_fields": [],
-      "source_provider": null,
       "quality_note": "identity_validated"
     },
     {
@@ -74,7 +73,6 @@
       "retrieved_at": "2026-07-08T10:00:03+08:00",
       "fallback_used": false,
       "missing_fields": [],
-      "source_provider": null,
       "quality_note": "window_validated"
     }
   ],

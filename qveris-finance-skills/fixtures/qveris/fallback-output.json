@@ -89,7 +89,6 @@
         "numeric_sentiment_score",
         "sentiment_signal_confidence"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Fallback news context only; do not emit a numeric sentiment score."
     },
     {
@@ -107,7 +106,6 @@
         "derived_valuation_ratios",
         "forward_consensus"
       ],
-      "source_provider": "internal_failover",
       "quality_note": "Market price may support partial valuation inputs but not target price or return claims."
     },
     {
@@ -128,7 +126,6 @@
         "fy2025_cash_flow_statement",
         "period_mismatch"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Requested FY2025 annual cash flow, but returned payload did not match the requested period; do not use as FY2025 cash-flow evidence."
     }
   ],

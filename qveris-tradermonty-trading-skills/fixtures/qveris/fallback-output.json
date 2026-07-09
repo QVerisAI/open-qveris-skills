@@ -83,7 +83,6 @@
         "macro_actual_vs_forecast_unavailable",
         "rates_govt_benchmark"
       ],
-      "source_provider": "internal_failover",
       "quality_note": "VIX proxy only; not complete market regime evidence."
     },
     {
@@ -102,7 +101,6 @@
         "primary_index_levels",
         "market_breadth"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Liquid ETF proxy must be labeled separately from primary index evidence."
     }
   ],

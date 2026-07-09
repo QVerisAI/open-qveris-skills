@@ -50,7 +50,6 @@
       "missing_fields": [
         "period_mismatch"
       ],
-      "source_provider": "internal_failover",
       "quality_note": "Returned payload did not match requested fiscal period."
     },
     {
@@ -72,7 +71,6 @@
         "period_mismatch",
         "annual_cash_flow"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Stricter retry still did not return FY2025 annual cash flow."
     }
   ],

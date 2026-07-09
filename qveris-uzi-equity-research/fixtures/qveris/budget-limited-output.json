@@ -48,7 +48,6 @@
       "missing_fields": [
         "budget_limited_not_called"
       ],
-      "source_provider": null,
       "quality_note": "Planned call not executed."
     }
   ],

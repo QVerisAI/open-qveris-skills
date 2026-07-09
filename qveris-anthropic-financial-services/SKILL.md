@@ -28,8 +28,8 @@ Source record:
 - Use the shared retry policy at `../references/qveris-finance-retry-policy.md`; retry transient 5xx/transport failures at most 2 times, do not blind-retry 404s, and hard reject semantic mismatches.
 - Include `qveris_trace` for every numeric claim, quote, event, and conclusion.
 - Report `missing_fields`; do not fill missing data as fact.
-- Treat QVeris `_meta.source_provider` as provenance only; never call, request credentials for, depend on, or print those internal providers directly.
-- Normalize trace provenance: `qveris_trace[].tool_name` and any human-readable trace labels must use only `qveris_finance.*` capability names. If QVeris returns vendor/provider IDs in `_meta.source_provider` or `_meta.failover_log`, expose only abstract labels such as `qveris_internal`, `internal_failover`, or `unknown`; describe the event as internal provider failover without printing vendor IDs.
+- Treat QVeris `_meta.source_provider` as internal provenance only; never call, request credentials for, depend on, print, or copy it into sanitized trace.
+- Normalize trace provenance: `qveris_trace[].tool_name` and any human-readable trace labels must use only `qveris_finance.*` capability names. If QVeris returns vendor/provider IDs in `_meta.source_provider` or `_meta.failover_log`, drop those fields from sanitized trace and describe only the QVeris capability status, validation result, fallback, and missing fields.
 - In final user-facing output, do not name external providers even when explaining prohibited fallbacks; say "non-QVeris sources" or "external provider routes" instead.
 - Suppress `analyst_target_price`, `target_price`, price-objective, upside, buy/sell, and recommendation fields even if a QVeris payload contains them.
 - Sanity-check entity, market, date window, fiscal period, and payload shape before using data; if a payload is stale, cross-period, truncated, or semantically mismatched, mark it in `data_quality` and `missing_fields`.

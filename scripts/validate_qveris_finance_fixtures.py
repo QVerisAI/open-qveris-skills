@@ -140,9 +140,8 @@ def validate_finance_trace(fixture: dict[str, Any], label: str) -> list[str]:
             value = item.get(key)
             if not isinstance(value, str) or not value.startswith("qveris_finance."):
                 errors.append(f"{item_label}.{key}: must start with qveris_finance., got {value!r}")
-        source_provider = item.get("source_provider")
-        if source_provider not in (None, "qveris_internal", "internal_failover", "unknown"):
-            errors.append(f"{item_label}.source_provider: raw provider leak {source_provider!r}")
+        if "source_provider" in item:
+            errors.append(f"{item_label}.source_provider: provider fields are not allowed in sanitized trace")
 
     return errors
 

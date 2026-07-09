@@ -1,6 +1,6 @@
 ---
 name: qveris-alphaear-market-intelligence
-description: QVeris-native adaptation of candidate 42, Awesome Finance Skills / AlphaEar. Use for stock lookup, price/fundamental context, finance news, sentiment notes, signal-monitor updates, and market-intelligence reports that must use qveris_finance.* evidence, honest fallback, Markdown output, traceability, and no investment advice.
+description: QVeris-native adaptation of candidate 42, Awesome Finance Skills / AlphaEar. Use for stock lookup, price/fundamental context, finance news, sentiment coverage checks, signal-monitor updates, and market-intelligence reports that must use qveris_finance.* evidence, honest fallback, Markdown output, traceability, and no investment advice.
 ---
 
 # QVeris AlphaEar Market Intelligence
@@ -21,7 +21,7 @@ Source record:
 
 ## Source Adaptation
 
-- Preserve the original AlphaEar intent: ticker lookup, stock price context, financial fundamentals, finance news, sentiment analysis, signal evolution, and structured reporting.
+- Preserve the original AlphaEar intent: ticker lookup, stock price context, financial fundamentals, finance news, sentiment coverage checks, signal evolution, and structured reporting.
 - Treat original scripts, local models, local databases, prediction-market feeds, and time-series forecast logic as migration context only.
 - Convert forecasts and "investment signal" wording into descriptive monitoring: evidence can show what changed, but not whether to act.
 - Use tagged news only as background unless a QVeris sentiment or cluster capability succeeds and passes issuer relevance checks.
@@ -47,6 +47,7 @@ Source record:
 - Require financial statements and derived ratios to match fiscal year, fiscal period, period end, and basis.
 - If an annual or FY statement request returns latest-quarter or TTM-shaped data, retry once with stricter documented period parameters after `cap-detail`; if still mismatched, mark the requested period missing.
 - Use `qveris_finance.news_fin_tagged` as qualitative background only unless `qveris_finance.sentiment_text_signals` succeeds.
+- Treat `qveris_finance.sentiment_text_signals` as usable sentiment evidence only when issuer-matched rows contain non-empty sentiment direction, score, magnitude, or text cue fields. If `signal`, `text_cue`, score, or label fields are empty, mark `sentiment_signal_empty` and report only a signal-coverage check.
 - Do not infer strong sentiment, strong catalysts, or directional risk from tagged news alone.
 - Treat removed or unverified routes such as news clusters, prediction-market feeds, and forecast models as `capability_unavailable` unless current `cap-detail` confirms a QVeris finance CAP.
 
@@ -61,8 +62,8 @@ Source record:
 
 ## Workflows
 
-1. Market-intelligence note: resolve issuer, collect profile, quote/bars, fundamentals, news context, sentiment if available, and monitoring read.
-2. Sentiment note: use QVeris sentiment first; if unavailable, use tagged news only as qualitative context with low confidence.
+1. Market-intelligence note: resolve issuer, collect profile, quote/bars, fundamentals, news context, sentiment coverage if available, and monitoring read.
+2. Sentiment coverage check: use QVeris sentiment first; if it fails, is empty, or has no issuer-matched non-empty signal/text fields, say sentiment coverage is missing and use tagged news only as qualitative context with low confidence.
 3. Signal-monitor update: compare new validated evidence against the user's prior thesis or watch item, then label evidence as changed/unchanged/unsupported without action language.
 4. Report assembly: write Summary, Evidence, Analysis, Data Quality And Missing Fields, Trace Appendix, and final disclaimer.
 5. Budget-limited run: call identity/profile first, then the minimum requested evidence; omit optional sentiment, news, or ratios when `max_calls` is too low.
@@ -72,7 +73,7 @@ Source record:
 - If QVeris returns 503, fetch failure, timeout, or all candidates failed, retry at most twice under the shared retry policy.
 - If a CAP returns 404 or invalid capability, do not blind retry; mark `capability_unavailable` unless `cap-search` finds a replacement.
 - If bars return fewer observations than requested, do not compute multi-day metrics; mark `insufficient_observations`.
-- If sentiment or cluster routes fail, use tagged news as background only and mark numeric sentiment missing.
+- If sentiment or cluster routes fail, or if sentiment succeeds but returns empty `signal`, `text_cue`, score, or label fields, use tagged news as background only and mark numeric sentiment missing.
 - If a successful payload is semantically wrong, exclude it from evidence and record `semantic_mismatch`, `period_mismatch`, `entity_mix`, `weak_relevance`, or `encoding_artifact`.
 - If `max_calls` blocks the minimum useful workflow, return a budget-limited report rather than filling gaps.
 

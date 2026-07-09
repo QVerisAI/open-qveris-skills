@@ -22,6 +22,8 @@ The requested FY2025 cash flow is missing due to period mismatch. The report can
 - `missing_fields`: `FY2025 cash flow missing due to period mismatch`, `free_cash_flow`, `capex_basis`, `cash_flow_statement_alignment`.
 - `data_quality.status`: `limited`.
 - A successful transport response is not usable evidence when the requested period does not match.
+- Reconcile same-period CF net income to IS net income before using CF in aligned financial tables; reject material conflicts as `statement_semantic_mismatch`.
+- Normalize valuation aliases such as `pe_ttm` to canonical `pe_ratio` before marking valuation fields missing.
 - Suppressed fields: `target_price`, `upside`, `recommendation`, `buy_sell`.
 
 ## Trace Appendix

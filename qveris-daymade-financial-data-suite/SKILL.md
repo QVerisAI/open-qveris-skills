@@ -44,7 +44,9 @@ Source record:
 - Resolve every issuer through `qveris_finance.ref_symbology` or `qveris_finance.ref_security_master`.
 - Require market, exchange, asset type, currency, and date window to match the request.
 - Preserve sign conventions only when QVeris explicitly documents them. If a field basis is unclear, mark `measurement_basis_unclear`.
-- For aligned financial packs, require IS, BS, CF, ratios, estimates, and market data to share issuer identity and compatible fiscal periods.
+- For aligned financial packs, require IS, BS, CF, ratios, estimates, and market data to share issuer identity, fiscal year, fiscal period, and period ending date.
+- Reject same-period statement semantic conflicts. If CF net income materially conflicts with IS net income under the shared rubric thresholds, exclude CF from aligned tables and mark `statement_semantic_mismatch`.
+- Apply the canonical valuation field map in `references/qveris-tool-map.md` before marking valuation fields missing; do not treat aliases such as `pe_ttm` and `pe_ratio` as different facts without checking basis.
 - If a requested annual/FY period returns latest-quarter or TTM-shaped data, retry once with stricter documented parameters after `cap-detail`; if still mismatched, mark the requested field missing.
 - Use analyst or research rows only after issuer, report type, and date fields pass validation. Suppress recommendation and target fields.
 - Treat tagged news as qualitative background only unless QVeris sentiment, cluster, or structured event evidence succeeds.

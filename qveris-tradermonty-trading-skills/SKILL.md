@@ -28,7 +28,7 @@ Source record:
 - Include `qveris_trace` for every risk, market, sector, macro, and calendar claim.
 - Data-quality checks must inspect `as_of`, `missing_fields`, `fallback_used`, and staleness on each QVeris payload.
 - Treat raw QVeris response metadata as internal provenance only. `--safe-json` can still include `_meta.routing_decision`, candidate route IDs, provider IDs, or failover details; never paste raw `qveris_tool.mjs` output into a final report or fixture trace without sanitizing it first.
-- Normalize trace provenance: `qveris_trace[].tool_name`, `qveris_trace[].capability_id`, and any human-readable trace labels must use only `qveris_finance.*` capability names. Drop or abstract `_meta.source_provider`, `_meta.routing_decision`, `_meta.failover_log`, candidate provider IDs, raw route IDs, and vendor/tool IDs as `qveris_internal`, `internal_failover`, or `unknown`.
+- Normalize trace provenance: `qveris_trace[].tool_name`, `qveris_trace[].capability_id`, and any human-readable trace labels must use only `qveris_finance.*` capability names. Drop `_meta.source_provider`, `_meta.routing_decision`, `_meta.failover_log`, candidate provider IDs, raw route IDs, and vendor/tool IDs from sanitized trace.
 - In final user-facing output, do not name external providers even when explaining prohibited fallbacks; say "non-QVeris sources" or "external provider routes" instead.
 - Suppress `analyst_target_price`, `target_price`, price-objective, upside, buy/sell, and recommendation fields even if a QVeris payload contains them.
 - Sanity-check entity, market, date window, benchmark, and payload shape before using data; if a payload is stale, truncated, or semantically mismatched, mark it in `data_quality` and `missing_fields`.

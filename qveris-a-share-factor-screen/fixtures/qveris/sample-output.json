@@ -57,7 +57,6 @@
       "retrieved_at": "2026-07-08T10:20:00+08:00",
       "fallback_used": false,
       "missing_fields": [],
-      "source_provider": null,
       "quality_note": "universe_validated"
     },
     {
@@ -72,7 +71,6 @@
       "missing_fields": [
         "sentiment_score"
       ],
-      "source_provider": null,
       "quality_note": "qualitative_news_context_only"
     }
   ],

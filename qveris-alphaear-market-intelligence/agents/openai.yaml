@@ -1,4 +1,4 @@
 interface:
   display_name: "QVeris AlphaEar Market Intelligence"
-  short_description: "QVeris-only stock, news, sentiment, and signal-monitor reports"
+  short_description: "QVeris-only stock, news, sentiment coverage, and signal-monitor reports"
   default_prompt: "Use $qveris-alphaear-market-intelligence for TSLA to produce a Markdown QVeris-only market intelligence report with evidence, data_quality, missing_fields, trace appendix, and no investment advice."

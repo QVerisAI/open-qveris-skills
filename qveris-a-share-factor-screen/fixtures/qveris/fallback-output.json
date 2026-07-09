@@ -56,7 +56,6 @@
         "sentiment_score",
         "news_cluster"
       ],
-      "source_provider": null,
       "quality_note": "fallback_context_only"
     }
   ],

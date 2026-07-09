@@ -19,6 +19,8 @@ The Daymade-style pipeline is converted into a QVeris data-quality pack. Every f
 - `missing_fields`: `risk_free_rate`, `validated_research_reports`, `sector_flow`, `pharma_daily_specialty_fields`.
 - `data_quality.status`: `partial`.
 - Required next calls before a real data pack can cite evidence: `qveris_finance.ref_security_master`, `qveris_finance.fundamentals_is`, and `qveris_finance.news_fin_tagged`.
+- Apply the canonical valuation alias map before marking valuation fields missing, for example `pe_ttm` can satisfy canonical `pe_ratio` when basis checks pass.
+- Same-period CF net income must reconcile with IS net income under the shared materiality thresholds before CF appears in an aligned table.
 - No default values are allowed for missing financial fields.
 - Suppressed fields: `target_price`, `upside`, `recommendation`, `buy_sell`.
 

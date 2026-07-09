@@ -24,7 +24,8 @@
   },
   "risk_notes": [
     "Valuation output is an assumption audit only.",
-    "A-share specialty evidence must pass current cap-detail and row-level identity checks."
+    "A-share specialty evidence must pass current cap-detail or one canonical direct fallback plus row-level identity checks.",
+    "CN financials and ratios must pass the A-share availability matrix before use."
   ],
   "missing_fields": [
     "validated_lhb_rows",
@@ -46,7 +47,6 @@
       "retrieved_at": "2026-07-09T09:22:00+08:00",
       "fallback_used": false,
       "missing_fields": [],
-      "source_provider": "qveris_internal",
       "quality_note": "A-share symbol resolved with exchange suffix."
     },
     {
@@ -64,7 +64,6 @@
       "missing_fields": [
         "forward_assumptions"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Ratios can support descriptive valuation context only."
     }
   ],

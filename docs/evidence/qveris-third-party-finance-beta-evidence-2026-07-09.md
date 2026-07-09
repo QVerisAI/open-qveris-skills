@@ -53,6 +53,10 @@ Each new skill includes:
 - Static default examples no longer put planned or required calls in `Evidence` or `Trace Appendix`. They place required next calls in Data Quality And Missing Fields, and Trace Appendix states that no live trace exists for the static example.
 - Fresh live output records were added for all three skills. The live CAP attempts returned `fetch failed`, so the outputs show `Evidence status: insufficient`, `data_quality.status: limited`, missing fields, and real failed trace rows.
 - Default `max_calls` policy was intentionally left unchanged in this batch.
+- AlphaEar sentiment output is now framed as a sentiment coverage check unless `qveris_finance.sentiment_text_signals` returns issuer-matched non-empty signal/text cue/score fields.
+- Daymade financial packs now document canonical valuation aliases and same-period IS/CF semantic reconciliation before aligned table use.
+- UZI A-share research now includes an A-share availability matrix and one-attempt canonical CAP ID fallback for explicitly requested LHB/flow layers when discovery is unavailable.
+- Sanitized JSON trace fixtures and schemas no longer allow `source_provider`; the fixture validator fails if provider fields appear.
 
 ## Finance Data-Quality Rules
 
@@ -63,6 +67,7 @@ Hard rejects are treated as normal paths:
 - Annual/FY statement requests returning latest-quarter or TTM-shaped payloads after stricter retry.
 - Fewer than 2 bars supporting a multi-day metric.
 - Empty relevant fields, weak research relevance, entity-mixed news, or corrupted text.
+- Empty sentiment `signal`, `text_cue`, score, or label fields cannot support a sentiment read.
 - Tagged news used as numeric sentiment, strong catalyst, or directional risk without a stronger QVeris sentiment or cluster result.
 
 ## CAP Caveats Remaining
