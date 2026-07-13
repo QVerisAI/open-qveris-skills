@@ -1,6 +1,6 @@
 # Summary
 
-This A-share data read validates the requested symbol with QVeris, uses QVeris bars for technical context, and removes the source repo's trading and paper-trading behavior. Technical indicators are descriptive calculations, not entry or exit signals.
+This static contract example illustrates an A-share data-read layout and does not claim live QVeris calls. A real run with missing bars, events, or heat context must switch to `Latest Snapshot And Coverage Notes` and list unavailable deliverables first.
 
 Controls: `dry_run=false`, `max_calls=7`, `max_age=P1D`, `budget_note=single-security A-share data read`.
 
@@ -30,11 +30,9 @@ Suppressed fields: paper trading, account/order actions, entry/exit triggers, po
 
 # Trace Appendix
 
-| Tool | Params | Result | Fallback | Notes |
-|---|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbol=300750.SZ`, `market=CN` | success | false | identity matched |
-| `qveris_finance.mkt_l1_rt` | `symbol=300750.SZ`, `market=CN` | success | false | quote timestamp validated |
-| `qveris_finance.mkt_bars_adjusted` | `symbol=300750.SZ`, `frequency=1d`, `count=120` | success | false | indicators may be calculated |
-| `qveris_finance.news_fin_tagged` | `symbol=300750.SZ`, `lookback_days=7` | success | true | qualitative only |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. Illustrative evidence rows above are report-shape examples, not observed results.
 
 Not investment advice.

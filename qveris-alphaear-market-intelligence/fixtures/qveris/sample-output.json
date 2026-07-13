@@ -17,9 +17,10 @@
   },
   "analysis": {
     "workflow": "market_intelligence_note",
+    "report_mode": "coverage_monitor",
     "entity": "TSLA",
     "evidence_status": "partial",
-    "summary": "Issuer identity and tagged-news context are usable; numeric sentiment is not included unless the sentiment CAP succeeds with non-empty issuer-matched signal fields.",
+    "summary": "A full market-intelligence note is unavailable because bars, fundamentals, events, and non-empty sentiment signals are missing. This output is a coverage monitor with issuer identity and qualitative tagged-news context only.",
     "signal_monitoring": {
       "action_language_allowed": false,
       "forecast_allowed": false,
@@ -39,37 +40,29 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_symbology",
-      "capability_id": "qveris_finance.ref_symbology",
-      "entity": "TSLA",
-      "market": "US",
       "params": {
         "symbol": "TSLA",
         "market": "US"
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:00:00+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "Issuer identity matched the requested symbol."
+      "missing_fields": []
     },
     {
       "tool_name": "qveris_finance.news_fin_tagged",
-      "capability_id": "qveris_finance.news_fin_tagged",
-      "entity": "TSLA",
-      "market": "US",
       "params": {
         "symbol": "TSLA",
         "market": "US",
         "limit": 5
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:00:15+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
       "missing_fields": [
         "numeric_sentiment_score",
         "validated_sentiment_signal_fields"
-      ],
-      "quality_note": "Tagged news supports qualitative context only."
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -95,5 +88,6 @@
     "upside",
     "recommendation",
     "buy_sell"
-  ]
+  ],
+  "observed_call_count": 2
 }

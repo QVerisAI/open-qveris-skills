@@ -52,4 +52,4 @@ Do not use source-repo dependencies or direct routes: `akshare`, `MyTT`, source-
 
 ## Trace Labels
 
-Trace entries must expose only `qveris_finance.*` capability names, parameters, status, fallback, and rejection/missing-field reasons. Do not expose internal provider route names.
+Trace entries must come only from saved `observed_calls` and expose exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`. Use `execution_id=null` when the observed call returned none; never expose internal provider/route metadata or add planned calls.

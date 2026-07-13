@@ -24,8 +24,9 @@ The skill should stop at an honest degradation path. It can say issuer identity 
 
 ## Trace Appendix
 
-| qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbol=600519.SH`, `market=CN` | failed: fetch failed | none |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

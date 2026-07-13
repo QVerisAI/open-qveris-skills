@@ -30,11 +30,13 @@ Source record:
 ## Runtime Contract
 
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
+- Execute every finance data call through a native standardized CAP or `POST /capabilities/query` / `cap-query`; never use generic discovery, `/tools/execute`, or a raw finance tool ID as fallback.
 - Default natural-language output to a Markdown user report, not a JSON object.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Read `references/qveris-finance-data-quality-rubric.md` before using QVeris payloads as evidence.
 - Use `references/qveris-finance-retry-policy.md` for 5xx, fetch failures, 404s, payload truncation, and semantic mismatches.
-- Normalize all trace labels to `qveris_finance.*`; do not print raw vendor, route, source-provider, or failover names.
+- Build trace, call counts, retries, and timestamps only from saved `observed_calls`. Never invent an execution ID or a call that was only planned; use `execution_id=null` when an observed call returned no ID.
+- Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Sanity-check entity, market, exchange, asset type, currency, date window, fiscal period, and payload shape before using data.
 - Treat a successful transport response with wrong A-share identity, wrong date window, wrong fiscal period, or too-thin bars as rejected evidence.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, and trade execution plans even if present in a QVeris payload.
@@ -54,6 +56,7 @@ Source record:
 
 ## CAP Invocation
 
+- Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
 - Prefer native `qveris_finance.*` tools when exposed by the runtime.
 - If native tools are unavailable and the run is in this repository root, use the repository CLI: `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
 - If the skill is installed standalone without native `qveris_finance.*` tools and without `qveris-official`, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
@@ -62,18 +65,19 @@ Source record:
 
 ## Workflows
 
-1. Security data layer: resolve symbol, security master, company profile, industry, and theme.
-2. Quote/history layer: call real-time quote plus adjusted or EOD bars for the requested window; compute simple derived fields only after bars pass observation checks.
-3. Financial layer: call income statement, balance sheet, cash flow, and derived ratios only with explicit period validation.
-4. News/research/event layer: call tagged finance news, text sentiment when available, analyst reports when relevant, and corporate calendar for dated events.
-5. Sector/concept layer: use validated security-master metadata first; use classification, constituents, and top movers only after `cap-detail` succeeds, and label them as proxy evidence when true flow or heatmap CAPs are unavailable.
-6. A-share specialty layer: attempt LHB, unlock, limit-move, investor Q&A, ETF options, or capital-flow data only after `cap-detail` confirms the exact QVeris CAP and params for the current run.
+1. Identity gate: resolve symbol and security master. Stop the run if canonical A-share identity cannot be validated.
+2. Requested-window bars: fetch the exact requested window next. If bars fail identity/window validation or are too thin for the requested analysis, return a latest snapshot or insufficient report and stop optional fan-out.
+3. One financial/valuation layer: call only the single statement or valuation layer most relevant to the request; validate market support and period before expanding.
+4. Event/news layer: call corporate event or tagged news only when requested or needed for the core answer.
+5. Optional specialty layer: spend remaining budget on at most one requested classification, flow, LHB, unlock, limit-move, investor-Q&A, or ETF-option route after `cap-detail` confirms its contract.
+6. Expand only after the preceding core gates succeed. Do not fan out across ten source layers merely because they exist in the source skill.
 
 ## Fallback Policy
 
 - If QVeris returns 503, fetch failure, timeout, or all candidates failed, retry at most twice under the shared retry policy.
 - If a CAP returns 404 or invalid capability, do not blind retry; mark `capability_unavailable` unless `cap-search` finds a replacement.
 - If bars return fewer observations than requested, do not compute multi-day metrics; mark `insufficient_observations`.
+- If identity, requested-window bars, or the requested financial layer fails its semantic gate, stop specialty fan-out and return the partial result with exact required next calls.
 - If A-share specialty data is unavailable, return a partial data-layer report with missing fields rather than substituting web or legacy endpoints.
 - If a successful payload contains corrupted text fields, exclude the corrupted fields from the report body and mark `encoding_artifact`; do not translate, repair, or infer the intended wording.
 - If only tagged news is available, write background context with low confidence; do not infer strong sentiment, strong catalysts, or directional risk.
@@ -82,6 +86,8 @@ Source record:
 
 - Use level-2 Markdown headings exactly for this user-report structure: `## Summary`, `## Evidence`, `## Analysis`, `## Data Quality And Missing Fields`, and `## Trace Appendix`. Do not replace these headings with bold text.
 - Include a concise evidence table with claim, `qveris_finance.*` capability, parameters, status, and fallback.
+- Render the Trace Appendix with the exact parseable header `| tool_name | params | status | execution_id | fallback_used | missing_fields |`; use compact JSON values, one row per observed attempt, and no planned/not-called rows.
+- For live, fresh, or E2E output, save and validate an `observed_calls.v1` sidecar whose calls record `request_kind=capabilities/query` and canonical `capability_id`; without a verified sidecar, place the unverified note before `## Trace Appendix` and emit only the exact header plus separator with no rows.
 - Put full `qveris_trace` JSON only in the appendix, schema fixture, or when the user asks for machine-readable output.
 - Include `missing_fields`, `data_quality.status`, stale fields, rejected payload reasons, and suppressed fields.
 - End user-facing reports with `Not investment advice.`
@@ -92,6 +98,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 
 ## References
 
+- Use shared finance contract version `2026-07-13.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share data-layer report.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

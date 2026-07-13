@@ -1,6 +1,37 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "QVeris Finance Skill Output",
+  "$defs": {
+    "sanitizedParamValue": {
+      "oneOf": [
+        {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sanitizedParamValue"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "not": {
+              "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])"
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/sanitizedParamValue"
+          }
+        }
+      ]
+    }
+  },
   "type": "object",
   "required": [
     "skill",
@@ -10,6 +41,7 @@
     "risk_notes",
     "missing_fields",
     "data_quality",
+    "observed_call_count",
     "qveris_trace",
     "disclaimer",
     "suppressed_fields"
@@ -94,19 +126,19 @@
         "type": "string"
       }
     },
+    "observed_call_count": {
+      "type": "integer",
+      "minimum": 0
+    },
     "qveris_trace": {
       "type": "array",
-      "minItems": 1,
       "items": {
         "type": "object",
         "required": [
           "tool_name",
-          "capability_id",
-          "entity",
-          "market",
           "params",
-          "as_of",
-          "retrieved_at",
+          "status",
+          "execution_id",
           "fallback_used",
           "missing_fields"
         ],
@@ -115,24 +147,30 @@
             "type": "string",
             "pattern": "^qveris_finance\\."
           },
-          "capability_id": {
-            "type": "string",
-            "pattern": "^qveris_finance\\."
-          },
-          "entity": {
-            "type": "string"
-          },
-          "market": {
-            "type": "string"
-          },
           "params": {
-            "type": "object"
+            "type": "object",
+            "propertyNames": {
+              "not": {
+                "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])"
+              }
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/sanitizedParamValue"
+            }
           },
-          "as_of": {
-            "type": "string"
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failed",
+              "rejected"
+            ]
           },
-          "retrieved_at": {
-            "type": "string"
+          "execution_id": {
+            "type": [
+              "string",
+              "null"
+            ]
           },
           "fallback_used": {
             "type": "boolean"
@@ -142,9 +180,6 @@
             "items": {
               "type": "string"
             }
-          },
-          "quality_note": {
-            "type": "string"
           }
         },
         "additionalProperties": false

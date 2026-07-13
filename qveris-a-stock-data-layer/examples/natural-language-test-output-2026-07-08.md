@@ -23,10 +23,9 @@ Missing fields: `lhb_records`, `unlock_calendar`, `limit_board_pool`, `capital_f
 
 # Trace Appendix
 
-| Tool | Params | Success/Failure | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbol=<requested>`, `market=CN` | success required | false |
-| `qveris_finance.mkt_l1_rt` | `symbol=<requested>`, `market=CN` | success or missing | false |
-| `qveris_finance.mkt_bars_adjusted` | requested window | success or insufficient observations | false |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. Required calls above are a plan, not trace rows.
 
 Not investment advice.

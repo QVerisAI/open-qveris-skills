@@ -28,9 +28,9 @@ The report should state that LHB, large-order flow, and trap-risk layers are inc
 
 ## Trace Appendix
 
-| qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|
-| `qveris_finance.flow_dragon_tiger` | `symbol=002594.SZ`, `market=CN`, `window=P30D` | capability unavailable | none |
-| `qveris_finance.news_fin_tagged` | `symbol=002594.SZ`, `market=CN`, `limit=5` | fallback qualitative context | LHB unavailable |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. The fallback scenario above is a behavior test, not a saved call trace.
 
 Not investment advice.

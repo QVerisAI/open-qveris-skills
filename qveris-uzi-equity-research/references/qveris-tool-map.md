@@ -6,9 +6,9 @@ Source: UZI-Skill, https://github.com/wbh604/UZI-Skill, MIT, evaluation recent a
 
 - Runtime data source: `qveris_finance.*` CAP tools only.
 - Credential: `QVERIS_API_KEY` only.
-- Required trace fields: `tool_name`, `capability_id`, `entity`, `market`, `params`, `as_of`, `retrieved_at`, `fallback_used`, `missing_fields`.
-- Trace `capability_id` values must also use normalized `qveris_finance.*` names, not short CAP codes.
-- Treat raw QVeris response metadata as internal provenance only. Build sanitized trace rows that keep only normalized capability names, parameters, success/failure, fallback, validation result, and missing fields.
+- Required trace fields: `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, `missing_fields`.
+- Build rows only from saved `observed_calls`; use normalized `qveris_finance.*` tool names and `execution_id=null` when the call returned none.
+- Treat raw QVeris response metadata as internal provenance only. Strip provider, route, candidate, failover, model, persona, and wrapper metadata from the sanitized trace.
 - UZI-derived review labels are monitoring language only. Do not convert them into actions.
 
 ## Primary CAPs
@@ -85,6 +85,7 @@ Use only when the user explicitly asks for the layer and live discovery is unava
 
 1. `qveris_finance.ref_symbology`
 2. `qveris_finance.ref_security_master`
-3. Quote/bars and fundamentals required for the requested review
-4. News/events and research context when relevant
-5. Conditional A-share specialty discovery only when requested
+3. One requested 20/60-day bar window
+4. CN financial availability check
+5. At most one explicitly requested specialty call
+6. Peers, news, events, research, and extra discovery only after the core gates succeed

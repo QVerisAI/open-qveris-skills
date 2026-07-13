@@ -27,9 +27,9 @@ The report should say that the sentiment layer is incomplete. The monitoring rea
 
 ## Trace Appendix
 
-| qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|
-| `qveris_finance.sentiment_text_signals` | `symbol=NVDA`, `market=US`, `window=P7D` | failed or empty | none |
-| `qveris_finance.news_fin_tagged` | `symbol=NVDA`, `market=US`, `limit=5` | fallback qualitative context | sentiment failed |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. The fallback scenario above is a behavior test, not a saved call trace.
 
 Not investment advice.

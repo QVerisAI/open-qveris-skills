@@ -53,29 +53,9 @@ Suppressed fields: target prices, ratings, buy/sell wording, upside/downside, an
 
 ## Trace Appendix
 
-```json
-{
-  "qveris_trace": [
-    {"capability":"qveris_finance.ref_symbology","params":{"symbol":"600519.SH","market":"CN","date":"2026-07-08"},"status":"success","validation":"usable_identity","execution_id":"d876dd5b-1a35-4d0c-af93-90514a17b94d"},
-    {"capability":"qveris_finance.ref_security_master","params":{"symbol":"600519.SH","market":"CN","date":"2026-07-08"},"status":"success","validation":"usable_a_share_listing","execution_id":"a3d75d79-c17a-492e-a324-d3436f7546bc"},
-    {"capability":"qveris_finance.mkt_l1_rt","params":{"symbol":"600519.SH","market":"CN"},"status":"success","validation":"usable_timestamped_quote","execution_id":"73ecdb3c-c924-4d64-b320-d6b01f6e06b7"},
-    {"capability":"qveris_finance.mkt_bars_adjusted","params":{"symbol":"600519.SH","market":"CN","start_date":"2026-06-08","end_date":"2026-07-08","interval":"D"},"status":"success","validation":"21_observations_latest_2026_07_07","execution_id":"c880b93b-129c-43d6-b3c6-298b3ab2ba67"},
-    {"capability":"qveris_finance.ref_company_profile","params":{"symbol":"600519.SH","market":"CN","date":"2026-07-08"},"status":"failed","reason":"503_and_fetch_failed_after_retries","execution_ids":["ce0c69ca-5cd5-4164-9013-95287389a4ed","19674","ab34efd2-f33c-4272-b108-9a9c089330fb"]},
-    {"capability":"qveris_finance.fundamentals_bs","params":{"symbol":"600519.SH","market":"CN","date":"2026-07-08"},"status":"success","validation":"usable_latest_q1_2026_snapshot","execution_id":"40ca2d69-d1fd-4890-a2cf-34d491168a1b"},
-    {"capability":"qveris_finance.fundamentals_is","status":"failed","reason":"unsupported_market_CN","execution_id":"c83f0a31-9d92-4e1f-8e9f-a4313810a551"},
-    {"capability":"qveris_finance.fundamentals_cf","status":"failed","reason":"unsupported_market_CN","execution_id":"3a3ecff2-80ad-4f40-b299-4ec7ed1c7a4f"},
-    {"capability":"qveris_finance.fundamentals_derived_ratios","status":"failed","reason":"unsupported_market_CN","execution_id":"f6ae1a2e-f927-474b-9b3f-6f6cb5cd9f6a"},
-    {"capability":"qveris_finance.ref_classification_industry","status":"success","validation":"usable","execution_id":"96732fe2-68bb-4f3b-80e7-2022bfc03c66"},
-    {"capability":"qveris_finance.ref_classification_theme","status":"partial","reason":"payload_truncated_blank_theme_name","execution_id":"dd7c0448-fc1b-48dd-83b3-0d3e34b648b6"},
-    {"capability":"qveris_finance.event_calendar_corp","status":"success","validation":"usable_issuer_event","execution_id":"afc328c2-a3f8-4332-9972-13637a05f27d"},
-    {"capability":"qveris_finance.news_fin_tagged","status":"rejected","reason":"entity_mix_unrelated_symbols","execution_id":"c969a520-87af-489c-b886-ac81845fcd3a"},
-    {"capability":"qveris_finance.sentiment_text_signals","status":"failed","reason":"503_all_candidates_failed","execution_id":"09061ea3-55c3-461b-bb97-2636edcdac0d"},
-    {"capability":"qveris_finance.flow_large_order","status":"success","validation":"usable_21_stock_level_rows","execution_id":"e84a6d7e-433c-4e31-9987-0d61d9be20d9"},
-    {"capability":"qveris_finance.mkt_cn_lock_up","status":"partial","validation":"one_2026_row_usable_one_2025_row_excluded","execution_id":"7b0680be-f5f5-4ced-982a-3181338f5f5f"},
-    {"capability":"qveris_finance.ownership_share_structure","status":"success","validation":"usable","execution_id":"af3c284d-09da-4196-aa13-4240720e6bee"},
-    {"capability":"qveris_finance.ref_equity_structure","status":"success","validation":"usable_effective_2026_03_31","execution_id":"1fc9f987-b3f3-491c-bbb2-e99db5515362"}
-  ]
-}
-```
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

@@ -28,21 +28,11 @@ Missing fields: `technical_indicator_cap_values`, `theme_tags`, `concept_heat`, 
 
 Rejected payloads: `qveris_finance.flow_sector_capital` for sector-flow semantics in this smoke run.
 
-# Trace Appendix
+## Trace Appendix
 
-| Tool | Params | Success/Failure | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_security_master` | `symbol=600519.SH`, `market=CN` | success, 1 row | false |
-| `qveris_finance.mkt_l1_rt` | `symbol=600519.SH`, `market=CN` | success, 1 row | false |
-| `qveris_finance.mkt_bars_eod` | `symbol=600519.SH`, `market=CN`, `start_date=2026-06-01`, `end_date=2026-06-30`, `interval=1d` | success, 21 rows | false |
-| `qveris_finance.analytics_tech_indicators` | `symbol=600519.SH`, `indicator_name=RSI`, `interval=1d` | failed, 503 | true |
-| `qveris_finance.ref_classification_industry` | `symbol=600519.SH`, `market=CN` | success, 1 row | false |
-| `qveris_finance.mkt_top_movers` | `market=CN`, `mode=gainers`, `limit=5` | success, 1 payload | false |
-| `qveris_finance.flow_large_order` | `symbol=600519.SH`, `market=CN`, `start_date=2026-06-01`, `end_date=2026-07-08` | success, 21 rows | false |
-| `qveris_finance.flow_dragon_tiger` | `symbol=600519.SH`, `market=CN`, `start_date=2026-06-01`, `end_date=2026-07-08` | failed, 503 | true |
-| `qveris_finance.flow_northbound` | `symbol=600519.SH`, `date=2026-07-07` | failed, 503 | true |
-| `qveris_finance.opt_chain` | `symbol=510050.SH`, `market=CN` | failed, 422 | true |
-| `qveris_finance.news_fin_tagged` | `symbol=600519.SH`, `market=CN`, `start_date=2026-07-01`, `end_date=2026-07-08` | success, 8 rows | false |
-| `qveris_finance.sentiment_text_signals` | `symbol=600519.SH`, `market=CN`, `start_date=2026-07-01`, `end_date=2026-07-08` | failed, 503 | true |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

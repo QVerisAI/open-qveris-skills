@@ -65,10 +65,20 @@ Do not use source-repo dependencies or direct routes: `mootdx`, direct HTTP endp
 Trace entries must expose only:
 
 - `qveris_finance.*` tool name
-- capability ID
 - parameters
-- success/failure
+- status
+- observed execution ID or `null`
 - fallback flag
 - missing fields or rejection reason
 
-Never expose raw provider IDs, source-provider names, failover logs, cookies, or non-QVeris endpoints.
+Use the exact keys `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`, sourced only from saved `observed_calls`. Never expose raw provider IDs, source-provider names, failover logs, cookies, or non-QVeris endpoints.
+
+## Budget Order
+
+1. Canonical A-share identity.
+2. Exact requested-window bars.
+3. One requested statement or valuation layer.
+4. One requested event or news layer.
+5. At most one requested specialty route after its core contract is confirmed.
+
+Stop optional fan-out when identity, bars, or the requested financial layer fails validation.

@@ -17,6 +17,7 @@
   },
   "analysis": {
     "workflow": "sentiment_note",
+    "report_mode": "coverage_monitor",
     "entity": "NVDA",
     "evidence_status": "proxy_only",
     "summary": "Primary sentiment evidence failed or returned empty signal fields; the output is limited to qualitative news context.",
@@ -36,40 +37,32 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.sentiment_text_signals",
-      "capability_id": "qveris_finance.sentiment_text_signals",
-      "entity": "NVDA",
-      "market": "US",
       "params": {
         "symbol": "NVDA",
         "market": "US",
         "window": "P7D"
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:04:00+08:00",
+      "status": "failed",
+      "execution_id": null,
       "fallback_used": false,
       "missing_fields": [
         "provider_error",
         "numeric_sentiment_score"
-      ],
-      "quality_note": "Primary sentiment path failed or lacked non-empty signal/text cue fields after limited retry."
+      ]
     },
     {
       "tool_name": "qveris_finance.news_fin_tagged",
-      "capability_id": "qveris_finance.news_fin_tagged",
-      "entity": "NVDA",
-      "market": "US",
       "params": {
         "symbol": "NVDA",
         "market": "US",
         "limit": 5
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:04:20+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": true,
       "missing_fields": [
         "numeric_sentiment_score"
-      ],
-      "quality_note": "Tagged-news fallback is qualitative only."
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -95,5 +88,6 @@
     "forecast",
     "target_price",
     "buy_sell"
-  ]
+  ],
+  "observed_call_count": 2
 }

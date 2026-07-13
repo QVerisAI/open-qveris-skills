@@ -19,8 +19,13 @@
     "workflow": "financial_data_pack",
     "entity": "NVDA",
     "evidence_status": "partial",
-    "summary": "Identity and statement-context calls are represented; missing fields remain missing rather than filled with defaults.",
-    "defaults_allowed": false
+    "summary": "Identity and one income-statement call are represented. No aligned three-statement table or cash-flow quality ratio is produced because BS and CF calls are missing.",
+    "defaults_allowed": false,
+    "aligned_statement_table": [],
+    "cash_flow_reconciliation": {
+      "status": "not_run_missing_bs_cf",
+      "quality_ratios_allowed": false
+    }
   },
   "risk_notes": [
     "Financial packs must not substitute default beta, growth, rate, or margin values.",
@@ -32,41 +37,36 @@
     "risk_free_rate",
     "validated_research_reports",
     "sector_flow",
-    "pharma_daily_specialty_fields"
+    "pharma_daily_specialty_fields",
+    "aligned_balance_sheet",
+    "aligned_cash_flow",
+    "cash_flow_reconciliation"
   ],
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_security_master",
-      "capability_id": "qveris_finance.ref_security_master",
-      "entity": "NVDA",
-      "market": "US",
       "params": {
         "symbol": "NVDA",
         "market": "US"
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:12:00+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "Security identity matched."
+      "missing_fields": []
     },
     {
       "tool_name": "qveris_finance.fundamentals_is",
-      "capability_id": "qveris_finance.fundamentals_is",
-      "entity": "NVDA",
-      "market": "US",
       "params": {
         "symbol": "NVDA",
         "period_type": "annual",
         "limit": 3
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:12:30+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
       "missing_fields": [
         "cash_flow_alignment"
-      ],
-      "quality_note": "Statement context is partial until cash flow and balance sheet align."
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -90,5 +90,6 @@
     "upside",
     "recommendation",
     "buy_sell"
-  ]
+  ],
+  "observed_call_count": 2
 }

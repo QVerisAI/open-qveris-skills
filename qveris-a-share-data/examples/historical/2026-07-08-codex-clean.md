@@ -43,23 +43,9 @@
 
 ## Trace Appendix
 
-```json
-[
-  {"capability":"qveris_finance.ref_symbology","execution_id":"5c3bedb1-c7a6-4a34-b7cc-82c0e8497fc6","status":"complete","valid_result_count":1},
-  {"capability":"qveris_finance.ref_security_master","execution_id":"2f550e6a-c10e-4ba0-b839-813f35d67d81","status":"complete","valid_result_count":1},
-  {"capability":"qveris_finance.mkt_l1_rt","execution_id":"42cf6f80-f5d1-4a23-b38b-0fd7463d0c51","status":"rejected","reason":"stale_timestamp_2025-06-16"},
-  {"capability":"qveris_finance.mkt_bars_eod","execution_id":"151e9194-6dee-4c32-b963-50cda3400156","status":"complete","valid_result_count":21},
-  {"capability":"qveris_finance.mkt_bars_adjusted","execution_id":"5653acfa-27b8-4a8d-b5a3-a09b24d49289","status":"complete","valid_result_count":21},
-  {"capability":"qveris_finance.ref_classification_industry","execution_id":"0fe2c573-52da-4f02-89a4-3fc50dfd825e","status":"complete","valid_result_count":1},
-  {"capability":"qveris_finance.event_calendar_corp","execution_id":"27192a5e-8080-477c-a0e9-6e8c04f71a95","status":"partial","valid_in_window_count":1,"rejected_reason":"out_of_window_rows_filtered"},
-  {"capability":"qveris_finance.event_calendar_earnings","execution_id":"fc239c10-15a3-45c4-9e72-4d7f884d8e49","status":"rejected","reason":"out_of_window_event"},
-  {"capability":"qveris_finance.news_fin_tagged","execution_id":"6d7aec7c-d487-4ef1-9822-4d4f45a0666b","status":"rejected","reason":"entity_mix"},
-  {"capability":"qveris_finance.news_fin_tagged","execution_id":"3ba7fd67-f8e3-4004-9ca2-4ac656c81ad5","status":"rejected","reason":"weak_relevance"},
-  {"capability":"qveris_finance.sentiment_text_signals","execution_id":"1a5f6959-714d-4104-ae1a-6caa239b77a0","status":"failed","reason":"503_all_candidates_failed"},
-  {"capability":"qveris_finance.sentiment_text_signals","execution_id":"3b6a149a-cce9-4829-b406-b2025b3dde1b","status":"failed","reason":"503_all_candidates_failed_retry"},
-  {"capability":"qveris_finance.ref_company_profile","execution_id":"57a237b4-ecac-467a-bc01-9fab3e90f312","status":"failed","reason":"503_all_candidates_failed"},
-  {"capability":"qveris_finance.ref_company_profile","execution_id":"e49f948f-565d-4b67-a565-f84e020f55e3","status":"failed","reason":"503_all_candidates_failed_retry"}
-]
-```
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

@@ -16,7 +16,8 @@
     "budget_note": "fallback after thin bars"
   },
   "analysis": {
-    "summary": "Quote context is available, but indicators are withheld because bars were insufficient for the requested lookback.",
+    "report_mode": "Latest Snapshot And Coverage Notes",
+    "summary": "The requested multi-day technical read and sector heatmap cannot be delivered because bars are too thin and the heat route is unavailable. Only latest-point context is retained.",
     "fallback": "latest quote only"
   },
   "risk_notes": [
@@ -45,18 +46,18 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.mkt_bars_adjusted",
-      "capability_id": "qveris_finance.mkt_bars_adjusted",
-      "entity": "300750",
-      "market": "CN",
-      "params": {"symbol": "300750", "frequency": "1d", "count": 120},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:45:00+08:00",
+      "params": {
+        "symbol": "300750",
+        "frequency": "1d",
+        "count": 120
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": true,
       "missing_fields": [
         "technical_indicators",
         "trend_context"
-      ],
-      "quality_note": "only_one_observation_returned"
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -64,5 +65,6 @@
     "entry_exit_trigger",
     "position_size",
     "buy_sell"
-  ]
+  ],
+  "observed_call_count": 1
 }

@@ -25,6 +25,9 @@ AlphaEar-style signal tracking is translated into monitoring language. A valid n
 
 ## Trace Appendix
 
-No live `qveris_trace` is attached to this static default example because no CAP call was executed.
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`; no CAP call was executed.
 
 Not investment advice.

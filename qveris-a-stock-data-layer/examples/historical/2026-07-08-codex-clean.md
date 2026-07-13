@@ -53,26 +53,9 @@ Coverage status: `partial`，核心证券识别、日线行情、行业分类、
 
 ## Trace Appendix
 
-| Label | Capability | Execution / Result | Validation |
-|---|---|---|---|
-| `qveris_finance.ref_symbology` | `REF.SYMBOLOGY` | success, `600519.SS`, CN, SHH, CNY | accepted |
-| `qveris_finance.ref_security_master` | `REF.SECURITY_MASTER` | success, `600519.SH`, sector/industry present | accepted |
-| `qveris_finance.ref_company_profile` | `REF.COMPANY_PROFILE` | 503 twice | missing |
-| `qveris_finance.mkt_l1_rt` | `MKT.L1.RT` | success, timestamp `2025-06-16` | rejected stale |
-| `qveris_finance.mkt_bars_adjusted` | `MKT.BARS.ADJUSTED` | success, 21 rows, `2026-06-08` to `2026-07-07` | accepted |
-| `qveris_finance.ref_classification_industry` | `REF.CLASSIFICATION.INDUSTRY` | success, 食品饮料/白酒Ⅱ/白酒Ⅲ | accepted |
-| `qveris_finance.news_fin_tagged` | `NEWS.FIN.TAGGED` | success transport, 8 rows | rejected entity mismatch |
-| `qveris_finance.event_calendar_corp` | `EVENT.CALENDAR.CORP` | success, dividend history | accepted after issuer/window filter |
-| `qveris_finance.fundamentals_bs` | `FUNDAMENTALS.BS` | success, 2026Q1 | accepted |
-| `qveris_finance.fundamentals_is` | `FUNDAMENTALS.IS` | 422 unsupported CN market | missing |
-| `qveris_finance.fundamentals_cf` | `FUNDAMENTALS.CF` | 422 unsupported CN market | missing |
-| `qveris_finance.flow_large_order` | `FLOW.LARGE_ORDER` | success, 21 rows | accepted |
-| `qveris_finance.ownership_share_structure` | `OWNERSHIP.SHARE_STRUCTURE` | success, date `2026-05-27` | accepted |
-| `qveris_finance.mkt_cn_lock_up` | `MKT.CN.LOCK_UP` | success transport, rows outside requested future window | rejected window mismatch |
-| `qveris_finance.flow_northbound` | `FLOW.NORTHBOUND` | 400 missing date, then 503 with `date=2026-07-07` | missing |
-| `qveris_finance.flow_dragon_tiger` | `FLOW.DRAGON_TIGER` | 503 | missing |
-| `qveris_finance.mkt_cn_concept` | `MKT.CN.CONCEPT` | 503 | missing |
-| `qveris_finance.mkt_cn_bonus` | `MKT.CN.BONUS` | success, shareholder plan records | accepted as historical event context only |
-| `qveris_finance.ref_classification_theme` | `REF.CLASSIFICATION.THEME` | success but truncated/repetitive; blank `theme_name` | not core evidence |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

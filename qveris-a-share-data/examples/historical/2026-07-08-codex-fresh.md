@@ -32,48 +32,9 @@ Suppressed fields: provider routing metadata, raw vendor names, trading actions,
 
 ## Trace Appendix
 
-```json
-{
-  "qveris_trace": [
-    {
-      "capability": "qveris_finance.ref_symbology",
-      "parameters": {"symbol": "600519.SH", "market": "CN"},
-      "status": "complete",
-      "execution_id": "f56fb8ad-c3c1-4502-8164-75ab1b882cf6"
-    },
-    {
-      "capability": "qveris_finance.ref_security_master",
-      "parameters": {"symbol": "600519.SH", "market": "CN"},
-      "status": "complete",
-      "execution_id": "39bc7ca0-0ae3-4bdf-852f-4288b9299428"
-    },
-    {
-      "capability": "qveris_finance.mkt_l1_rt",
-      "parameters": {"symbol": "600519.SH", "market": "CN"},
-      "status": "complete",
-      "execution_id": "1394fa0d-c362-4821-a890-4d3c98a578e5"
-    },
-    {
-      "capability": "qveris_finance.event_calendar_earnings",
-      "parameters": {"symbol": "600519.SH", "market": "CN", "start_date": "2026-07-01", "end_date": "2026-07-15"},
-      "status": "insufficient",
-      "reason": "out_of_window_event",
-      "execution_id": "c9ad6aa2-f627-4a87-96a0-2c0edcbbfb47"
-    },
-    {
-      "capability": "qveris_finance.event_calendar_corp",
-      "parameters": {"symbol": "600519.SH", "market": "CN", "start_date": "2026-07-01", "end_date": "2026-07-15"},
-      "status": "insufficient",
-      "reason": "out_of_window_event",
-      "execution_id": "cfd240ce-0d80-4256-8754-9bb1bd5fa508"
-    },
-    {
-      "capability": "qveris_finance.mkt_cn_lock_up",
-      "status": "capability_unavailable",
-      "reason": "HTTP 404 during cap-detail"
-    }
-  ]
-}
-```
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

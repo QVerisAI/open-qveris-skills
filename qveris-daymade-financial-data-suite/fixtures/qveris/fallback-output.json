@@ -35,28 +35,21 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.fundamentals_cf",
-      "capability_id": "qveris_finance.fundamentals_cf",
-      "entity": "META",
-      "market": "US",
       "params": {
         "symbol": "META",
         "period": "annual",
         "fiscal_year": 2025,
         "limit": 1
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:16:00+08:00",
+      "status": "rejected",
+      "execution_id": null,
       "fallback_used": false,
       "missing_fields": [
         "period_mismatch"
-      ],
-      "quality_note": "Returned payload did not match requested fiscal period."
+      ]
     },
     {
       "tool_name": "qveris_finance.fundamentals_cf",
-      "capability_id": "qveris_finance.fundamentals_cf",
-      "entity": "META",
-      "market": "US",
       "params": {
         "symbol": "META",
         "period_type": "annual",
@@ -64,14 +57,13 @@
         "fiscal_period": "FY",
         "limit": 1
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:16:20+08:00",
+      "status": "rejected",
+      "execution_id": null,
       "fallback_used": true,
       "missing_fields": [
         "period_mismatch",
         "annual_cash_flow"
-      ],
-      "quality_note": "Stricter retry still did not return FY2025 annual cash flow."
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -95,5 +87,6 @@
     "upside",
     "recommendation",
     "buy_sell"
-  ]
+  ],
+  "observed_call_count": 2
 }

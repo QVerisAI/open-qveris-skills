@@ -36,35 +36,27 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_symbology",
-      "capability_id": "qveris_finance.ref_symbology",
-      "entity": "600519.SH",
-      "market": "CN",
       "params": {
         "symbol": "600519.SH",
         "market": "CN"
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:22:00+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "A-share symbol resolved with exchange suffix."
+      "missing_fields": []
     },
     {
       "tool_name": "qveris_finance.fundamentals_derived_ratios",
-      "capability_id": "qveris_finance.fundamentals_derived_ratios",
-      "entity": "600519.SH",
-      "market": "CN",
       "params": {
         "symbol": "600519.SH",
         "market": "CN"
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:22:30+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
       "missing_fields": [
         "forward_assumptions"
-      ],
-      "quality_note": "Ratios can support descriptive valuation context only."
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -90,5 +82,6 @@
     "recommendation",
     "buy_sell",
     "safe_to_trade"
-  ]
+  ],
+  "observed_call_count": 2
 }

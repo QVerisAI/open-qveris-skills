@@ -48,15 +48,9 @@ Because the valuation/quality capability returned `unsupported_market` for CN an
 
 ## Trace Appendix
 
-| Capability | Parameters | Status | Fallback | Rejection / Note |
-|---|---|---|---|---|
-| `qveris_finance.ref_security_master` | `symbol=600519.SH`, `market=CN` | success | false | Valid identity |
-| `qveris_finance.ref_security_master` | `symbol=000001.SZ`, `market=CN` | success | false | Partial fields only |
-| `qveris_finance.ref_security_master` | `symbol=000858.SZ`, `market=CN` | success | false | Partial fields only |
-| `qveris_finance.ref_symbology` | each symbol, `market=CN` | mixed | false | `600519.SH` valid; `.SZ` names rejected due `.SH` mismatch |
-| `qveris_finance.mkt_bars_eod` | `2026-06-08` to `2026-07-08`, `interval=D`, `market=CN` | mixed | false | `600519.SH`: 21 bars; `.SZ`: 1 bar each |
-| `qveris_finance.mkt_l1_rt` | each symbol, `market=CN` | mixed | false | `.SZ` valid point snapshots; `600519.SH` stale timestamp |
-| `qveris_finance.fundamentals_derived_ratios` | each symbol, `market=CN`, `date=2026-07-08` | failure | false | CN market unsupported |
-| `qveris_finance.ref_classification_industry` | each symbol, `market=CN` | mixed | false | `600519.SH`, `000001.SZ` valid; `000858.SZ` semantic mismatch |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

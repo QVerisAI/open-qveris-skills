@@ -30,12 +30,13 @@ Source record:
 ## Runtime Contract
 
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
+- Execute every finance data call through a native standardized CAP or `POST /capabilities/query` / `cap-query`; never use generic discovery, `/tools/execute`, or a raw finance tool ID as fallback.
 - Default natural-language output to Markdown, not a large JSON object.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note.
 - Read `references/qveris-finance-data-quality-rubric.md` before using any payload as evidence.
 - Use `references/qveris-finance-retry-policy.md` for 5xx, fetch failures, 404s, payload truncation, and semantic mismatches.
-- Normalize every trace label and `capability_id` to `qveris_finance.*`.
-- Do not print raw vendor, route, candidate-provider, model, failover, or routing metadata from QVeris safe JSON.
+- Build trace, call counts, retries, and timestamps only from saved `observed_calls`. Never invent an execution ID or planned call; use `execution_id=null` when an observed call returned no ID.
+- Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, models, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Reject transport-success payloads that return the wrong entity, wrong benchmark, wrong date window, wrong fiscal period, too-thin bars, empty relevant fields, or corrupted text.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, trade triggers, automated execution plans, and prediction commitments.
 
@@ -49,10 +50,12 @@ Source record:
 - Use `qveris_finance.news_fin_tagged` as qualitative background only unless `qveris_finance.sentiment_text_signals` succeeds.
 - Treat `qveris_finance.sentiment_text_signals` as usable sentiment evidence only when issuer-matched rows contain non-empty sentiment direction, score, magnitude, or text cue fields. If `signal`, `text_cue`, score, or label fields are empty, mark `sentiment_signal_empty` and report only a signal-coverage check.
 - Do not infer strong sentiment, strong catalysts, or directional risk from tagged news alone.
+- Emit `changed` or `unchanged` only from a comparison record containing `baseline_as_of`, `baseline_value`, `current_as_of`, `current_value`, and `comparison_basis`. If any field is absent, set the comparison status to `unsupported`.
 - Treat removed or unverified routes such as news clusters, prediction-market feeds, and forecast models as `capability_unavailable` unless current `cap-detail` confirms a QVeris finance CAP.
 
 ## CAP Invocation
 
+- Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
 - Prefer native `qveris_finance.*` tools when exposed by the runtime.
 - If native tools are unavailable and the run is in this repository root, use: `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
 - If installed standalone without native `qveris_finance.*` tools and without `qveris-official`, mark `tool_runtime_missing`; do not use web, legacy providers, local databases, or invented data as fallback.
@@ -62,11 +65,12 @@ Source record:
 
 ## Workflows
 
-1. Market-intelligence note: resolve issuer, collect profile, quote/bars, fundamentals, news context, sentiment coverage if available, and monitoring read.
-2. Sentiment coverage check: use QVeris sentiment first; if it fails, is empty, or has no issuer-matched non-empty signal/text fields, say sentiment coverage is missing and use tagged news only as qualitative context with low confidence.
-3. Signal-monitor update: compare new validated evidence against the user's prior thesis or watch item, then label evidence as changed/unchanged/unsupported without action language.
-4. Report assembly: write Summary, Evidence, Analysis, Data Quality And Missing Fields, Trace Appendix, and final disclaimer.
-5. Budget-limited run: call identity/profile first, then the minimum requested evidence; omit optional sentiment, news, or ratios when `max_calls` is too low.
+1. Select output mode before collection. Use `full_note` only when identity, requested-window price evidence, requested fundamental/event layers, and issuer-relevant news/sentiment coverage all pass; otherwise use `coverage_monitor`.
+2. Market-intelligence note: resolve issuer, collect profile, quote/bars, fundamentals, news context, sentiment coverage if available, and monitoring read.
+3. Sentiment coverage check: use QVeris sentiment first; if it fails, is empty, or has no issuer-matched non-empty signal/text fields, say sentiment coverage is missing and use tagged news only as qualitative context with low confidence.
+4. Signal-monitor update: compare new validated evidence against the user's prior thesis or watch item, then label evidence as changed/unchanged/unsupported without action language.
+5. Report assembly: put only validated layers in Evidence. In `coverage_monitor`, open the Summary with the unavailable full-note layers and keep unverified layers exclusively in Data Quality And Missing Fields.
+6. Budget-limited run: call identity/profile first, then the minimum requested evidence; omit optional sentiment, news, or ratios when `max_calls` is too low.
 
 ## Fallback Policy
 
@@ -81,6 +85,9 @@ Source record:
 
 - Use level-2 Markdown headings exactly: `## Summary`, `## Evidence`, `## Analysis`, `## Data Quality And Missing Fields`, and `## Trace Appendix`.
 - Include a concise evidence table with claim, `qveris_finance.*` capability, parameters, status, and fallback.
+- State `report_mode: full_note` or `report_mode: coverage_monitor` in Summary.
+- Render the Trace Appendix with the exact parseable header `| tool_name | params | status | execution_id | fallback_used | missing_fields |`; use compact JSON values, one row per observed attempt, and no planned/not-called rows.
+- For live, fresh, or E2E output, save and validate an `observed_calls.v1` sidecar whose calls record `request_kind=capabilities/query` and canonical `capability_id`; without a verified sidecar, place the unverified note before `## Trace Appendix` and emit only the exact header plus separator with no rows.
 - Include `missing_fields`, `data_quality.status`, rejected payload reasons, stale fields, and suppressed fields.
 - Put full `qveris_trace` JSON only in the appendix, schema fixture, or when the user asks for machine-readable output.
 - End user-facing reports with a final non-empty line that is exactly `Not investment advice.`
@@ -91,6 +98,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 
 ## References
 
+- Use shared finance contract version `2026-07-13.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

@@ -28,10 +28,9 @@ Missing fields: `full_market_universe`, `theme_heat`, `sentiment_score`, `cross_
 
 # Trace Appendix
 
-| Tool | Params | Success/Failure | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbols=<universe>`, `market=CN` | success required | false |
-| `qveris_finance.mkt_bars_adjusted` | `lookback_days=<factor_window>` | success or insufficient observations | false |
-| `qveris_finance.news_fin_tagged` | `lookback_days=7` | qualitative only | true |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. Required calls above are a plan, not trace rows.
 
 Not investment advice.

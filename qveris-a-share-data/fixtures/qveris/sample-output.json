@@ -50,27 +50,26 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_symbology",
-      "capability_id": "qveris_finance.ref_symbology",
-      "entity": "300750",
-      "market": "CN",
-      "params": {"symbol": "300750", "market": "CN"},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:40:00+08:00",
+      "params": {
+        "symbol": "300750",
+        "market": "CN"
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "identity_validated"
+      "missing_fields": []
     },
     {
       "tool_name": "qveris_finance.mkt_bars_adjusted",
-      "capability_id": "qveris_finance.mkt_bars_adjusted",
-      "entity": "300750",
-      "market": "CN",
-      "params": {"symbol": "300750", "frequency": "1d", "count": 120},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:40:04+08:00",
+      "params": {
+        "symbol": "300750",
+        "frequency": "1d",
+        "count": 120
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "indicator_inputs_validated"
+      "missing_fields": []
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -80,5 +79,6 @@
     "position_size",
     "stop_loss",
     "buy_sell"
-  ]
+  ],
+  "observed_call_count": 2
 }

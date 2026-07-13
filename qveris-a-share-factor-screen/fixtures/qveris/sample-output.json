@@ -16,26 +16,55 @@
     "budget_note": "small universe screen"
   },
   "analysis": {
-    "summary": "Small-universe factor screen with validated QVeris components and explicit denominator coverage. Cross-sectional rank is withheld unless comparability gates pass.",
+    "summary": "Only universe identity and qualitative news context are represented by observed calls. No factor values or per-security rank are supported.",
+    "comparable_subset": [],
+    "ranking_status": "withheld_no_complete_comparable_subset",
     "screen_results": [
-      {"security": "600519", "coverage_tier": "higher_coverage", "component_coverage": "3/5", "evidence_status": "partial"},
-      {"security": "300750", "coverage_tier": "partial_coverage", "component_coverage": "2/5", "evidence_status": "partial"}
+      {
+        "security": "600519",
+        "coverage_tier": "insufficient",
+        "component_coverage": "0/5",
+        "evidence_status": "insufficient",
+        "factor_gaps": [
+          "valuation_quality",
+          "liquidity",
+          "stability",
+          "momentum_60d",
+          "theme_heat"
+        ]
+      },
+      {
+        "security": "300750",
+        "coverage_tier": "insufficient",
+        "component_coverage": "0/5",
+        "evidence_status": "insufficient",
+        "factor_gaps": [
+          "valuation_quality",
+          "liquidity",
+          "stability",
+          "momentum_60d",
+          "theme_heat",
+          "events"
+        ]
+      }
     ]
   },
   "risk_notes": [
-    "Coverage tier is not an expected return forecast or preference order.",
+    "Coverage tier is not a rank, expected-return forecast, or preference order.",
     "Tagged news is qualitative context only."
   ],
   "missing_fields": [
     "theme_heat",
     "sentiment_score",
-    "valuation_ratios_for_some_names",
+    "validated_bars_for_all_names",
+    "valuation_quality_for_all_names",
     "cross_sectional_rank"
   ],
   "data_quality": {
-    "status": "partial",
+    "status": "insufficient",
     "warnings": [
-      "some_factor_components_missing"
+      "factor_calls_not_observed",
+      "qualitative_news_not_a_numeric_factor"
     ],
     "stale_fields": [],
     "out_of_window_events": [],
@@ -49,29 +78,35 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_symbology",
-      "capability_id": "qveris_finance.ref_symbology",
-      "entity": "600519,300750,002594",
-      "market": "CN",
-      "params": {"symbols": ["600519", "300750", "002594"], "market": "CN"},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:20:00+08:00",
+      "params": {
+        "symbols": [
+          "600519",
+          "300750",
+          "002594"
+        ],
+        "market": "CN"
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "universe_validated"
+      "missing_fields": []
     },
     {
       "tool_name": "qveris_finance.news_fin_tagged",
-      "capability_id": "qveris_finance.news_fin_tagged",
-      "entity": "600519,300750,002594",
-      "market": "CN",
-      "params": {"symbols": ["600519", "300750", "002594"], "lookback_days": 7},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:20:05+08:00",
+      "params": {
+        "symbols": [
+          "600519",
+          "300750",
+          "002594"
+        ],
+        "lookback_days": 7
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": true,
       "missing_fields": [
         "sentiment_score"
-      ],
-      "quality_note": "qualitative_news_context_only"
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -80,5 +115,6 @@
     "target_price",
     "buy_sell",
     "rebalance"
-  ]
+  ],
+  "observed_call_count": 2
 }

@@ -16,11 +16,24 @@
     "budget_note": "standard data-layer read"
   },
   "analysis": {
-    "summary": "Issuer, quote, bars, and research context are QVeris-validated; specialty A-share layers remain missing unless current cap-detail confirms them.",
+    "summary": "Identity and the requested-window bars are represented by observed calls. Financial, research, event, and specialty layers were not called and remain missing.",
     "layers": [
-      {"name": "market_data", "status": "complete"},
-      {"name": "research", "status": "partial"},
-      {"name": "specialty_a_share", "status": "insufficient"}
+      {
+        "name": "market_data",
+        "status": "complete"
+      },
+      {
+        "name": "financial",
+        "status": "not_called"
+      },
+      {
+        "name": "research_and_events",
+        "status": "not_called"
+      },
+      {
+        "name": "specialty_a_share",
+        "status": "insufficient"
+      }
     ]
   },
   "risk_notes": [
@@ -33,7 +46,10 @@
     "capital_flow_minute",
     "limit_board_pool",
     "etf_option_greeks",
-    "investor_qa"
+    "investor_qa",
+    "requested_financial_layer",
+    "issuer_relevant_research",
+    "corporate_events"
   ],
   "data_quality": {
     "status": "partial",
@@ -53,27 +69,26 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_symbology",
-      "capability_id": "qveris_finance.ref_symbology",
-      "entity": "600519",
-      "market": "CN",
-      "params": {"symbol": "600519", "market": "CN"},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:00:00+08:00",
+      "params": {
+        "symbol": "600519",
+        "market": "CN"
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "identity_validated"
+      "missing_fields": []
     },
     {
       "tool_name": "qveris_finance.mkt_bars_adjusted",
-      "capability_id": "qveris_finance.mkt_bars_adjusted",
-      "entity": "600519",
-      "market": "CN",
-      "params": {"symbol": "600519", "start_date": "2026-06-08", "end_date": "2026-07-08"},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:00:03+08:00",
+      "params": {
+        "symbol": "600519",
+        "start_date": "2026-06-08",
+        "end_date": "2026-07-08"
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": false,
-      "missing_fields": [],
-      "quality_note": "window_validated"
+      "missing_fields": []
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -83,5 +98,6 @@
     "upside_downside",
     "buy_sell",
     "execution_plan"
-  ]
+  ],
+  "observed_call_count": 2
 }

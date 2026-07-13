@@ -28,6 +28,10 @@ import {
   queryCapability,
   searchCapabilities,
 } from "./qveris_client.mjs";
+import {
+  isLikelyLegacyFinanceRouteIdentifier,
+  sanitizeProviderRouteMetadata,
+} from "./qveris_sanitize.mjs";
 
 const FINANCE_CAPABILITY_ALIASES = {
   "qveris_finance.ref_classification_industry": "REF.CLASSIFICATION.INDUSTRY",
@@ -345,35 +349,6 @@ function displayCapabilityDetail(result) {
   }
 }
 
-function omitProviderRouteMeta(meta) {
-  if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
-    return meta;
-  }
-  const { source_provider, source_tool_id, failover_log, ...safeMeta } = meta;
-  return safeMeta;
-}
-
-function sanitizeProviderRouteMetadata(value) {
-  if (Array.isArray(value)) {
-    return value.map((item) => sanitizeProviderRouteMetadata(item));
-  }
-  if (!value || typeof value !== "object") {
-    return value;
-  }
-
-  const sanitized = {};
-  for (const [key, child] of Object.entries(value)) {
-    if (key === "_meta") {
-      sanitized[key] = sanitizeProviderRouteMetadata(omitProviderRouteMeta(child));
-    } else if (key === "source_provider" || key === "source_tool_id" || key === "failover_log") {
-      continue;
-    } else {
-      sanitized[key] = sanitizeProviderRouteMetadata(child);
-    }
-  }
-  return sanitized;
-}
-
 function displayCapabilityQueryResult(result) {
   const success = result.success ?? false;
   const execTime = result.elapsed_time_ms ?? "N/A";
@@ -399,7 +374,7 @@ function displayCapabilityQueryResult(result) {
 
   if (result._meta) {
     console.log("\nMetadata (provider route fields omitted; use --json for raw metadata):");
-    console.log(JSON.stringify(omitProviderRouteMeta(result._meta), null, 2));
+    console.log(JSON.stringify(sanitizeProviderRouteMetadata(result._meta), null, 2));
   }
 }
 
@@ -655,6 +630,15 @@ function parseArgs(argv) {
 
 async function main() {
   const args = parseArgs(process.argv);
+  if (
+    args.command === "call"
+    && isLikelyLegacyFinanceRouteIdentifier(args.toolId)
+  ) {
+    console.error(
+      "Error: legacy raw finance routes are disabled. Use cap-query with a qveris_finance.* alias or canonical CAP ID; if the CAP is unavailable, report capability_unavailable.",
+    );
+    process.exit(2);
+  }
   const apiKey = readQverisApiKey();
 
   try {

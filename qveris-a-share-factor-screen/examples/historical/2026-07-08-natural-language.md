@@ -33,19 +33,11 @@ Missing fields: `comparable_multi_day_bars_for_all_names`, `valuation_ratios`, `
 
 Rejected computations: multi-day momentum, liquidity, volatility, and factor rank, because two securities returned only one bar in the requested window.
 
-# Trace Appendix
+## Trace Appendix
 
-| Tool | Params | Success/Failure | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_security_master` | `symbol=600519.SH`, `market=CN` | success, 1 row | false |
-| `qveris_finance.ref_security_master` | `symbol=000001.SZ`, `market=CN` | success, 1 row | false |
-| `qveris_finance.ref_security_master` | `symbol=000858.SZ`, `market=CN` | success, 1 row | false |
-| `qveris_finance.mkt_l1_rt` | `symbol=600519.SH`, `market=CN` | success, 1 row | false |
-| `qveris_finance.mkt_l1_rt` | `symbol=000001.SZ`, `market=CN` | success, 1 row | false |
-| `qveris_finance.mkt_l1_rt` | `symbol=000858.SZ`, `market=CN` | success, 1 row | false |
-| `qveris_finance.mkt_bars_eod` | `symbol=600519.SH`, `market=CN`, `start_date=2026-06-01`, `end_date=2026-06-30` | success, 21 rows | false |
-| `qveris_finance.mkt_bars_eod` | `symbol=000001.SZ`, `market=CN`, `start_date=2026-06-01`, `end_date=2026-06-30` | insufficient observations, 1 row | true |
-| `qveris_finance.mkt_bars_eod` | `symbol=000858.SZ`, `market=CN`, `start_date=2026-06-01`, `end_date=2026-06-30` | insufficient observations, 1 row | true |
-| `qveris_finance.fundamentals_derived_ratios` | `symbols=600519.SH,000001.SZ,000858.SZ`, `market=CN` | failed, 422 | true |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.

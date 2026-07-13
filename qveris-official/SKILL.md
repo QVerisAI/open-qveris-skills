@@ -34,7 +34,7 @@ To look up facts, answers, or general information, use `web_search` instead.
 
 **Credential**: Only `QVERIS_API_KEY` is used. All requests go to `https://qveris.ai/api/v1` over HTTPS.
 
-**Finance CAP preference**: For `qveris_finance.*` workflows, prefer the standardized CAP endpoints (`/capabilities/search`, `/capabilities/{id}`, `/capabilities/query`) over legacy `/search` plus `/tools/execute`. Use legacy discover/call only when the standardized CAP endpoint is unavailable.
+**Finance CAP requirement**: For `qveris_finance.*` workflows, use the standardized CAP endpoints (`/capabilities/search`, `/capabilities/{id}`, `/capabilities/query`). Legacy `/search` plus `/tools/execute`, generic `discover`/`call`, and raw finance tool IDs are not fallbacks. If the standardized CAP runtime is unavailable, report `tool_runtime_missing` or `capability_unavailable` instead of selecting a raw provider route.
 
 ---
 
@@ -42,7 +42,7 @@ To look up facts, answers, or general information, use `web_search` instead.
 
 Check availability in order and use the first working tier:
 
-For standardized finance capabilities, the first working route should execute `POST /api/v1/capabilities/query` with `capability_id` and structured `parameters`. Do not rediscover raw provider routes when a known `qveris_finance.*` capability maps directly to a CAP ID.
+For standardized finance capabilities, execute `POST /api/v1/capabilities/query` with `capability_id` and structured `parameters`. Do not rediscover or call raw provider routes. The tiers below apply to generic, non-finance tools unless they expose the standardized finance CAP endpoints directly.
 
 **Tier 1 — Native tools** (most reliable): If `qveris_discover` and `qveris_call` tools are available in your environment, use them directly — skip all other tiers.
 
@@ -74,14 +74,14 @@ For standardized finance capabilities, the first working route should execute `P
 
 ### Usage Flow
 
-For known standardized capabilities, especially `qveris_finance.*`, skip legacy discovery and call the CAP directly:
+For known standardized capabilities, especially `qveris_finance.*`, skip legacy discovery and call the CAP directly. Do not switch to a raw finance tool ID when the CAP call fails:
 
 1. **Map**: Convert the logical tool name to a CAP ID such as `qveris_finance.mkt_l1_rt` -> `MKT.L1.RT`. If uncertain, use `cap-search` or `/capabilities/search`.
 2. **Inspect when needed**: Use `cap-detail` or `GET /capabilities/{capability_id}` to verify required parameters and output fields.
 3. **Query**: Execute `cap-query` or `POST /capabilities/query` with structured `parameters` and `strategy: "best"`.
-4. **Normalize trace**: For finance outputs, keep user-facing trace names as `qveris_finance.*`; do not print raw provider routes from `_meta`.
+4. **Normalize trace**: For finance outputs, keep user-facing trace names as `qveris_finance.*`; recursively remove provider, route, candidate, failover, credential, raw tool-ID metadata, and provider API URLs from every output surface, including nested fields under `_meta`, `parameters`, result objects, prose, Evidence, and Sources.
 
-For generic non-standardized tools, use the legacy flow:
+For generic non-standardized, non-finance tools, use the legacy flow:
 
 1. **Discover**: Find tool candidates for the capability you need. Write the query as an English **tool type description** (e.g., `"stock quote real-time API"`). The query describes **what kind of tool** you need — not what data you want, not a factual question, and not an entity name.
 2. **Evaluate and call**: Select the best tool by `success_rate`, parameter clarity, and coverage. Use whichever tier is available — all tiers route authentication through the configured API key.

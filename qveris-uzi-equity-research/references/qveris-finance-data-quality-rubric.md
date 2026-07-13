@@ -3,6 +3,12 @@
 Use this rubric for every QVeris finance skill before turning a CAP payload into evidence.
 Read `qveris-finance-retry-policy.md` with this rubric when a CAP call fails, returns the wrong shape, or needs a fallback.
 
+## Canonical CAP Invocation
+
+- For the six audited finance skills, every finance data call must use a native `qveris_finance.*` tool or `POST /capabilities/query` / `cap-query` with a canonical CAP ID. Legacy `/search` + `/tools/execute`, generic `discover` + `call`, and raw tool IDs are not finance fallbacks.
+- If the standardized CAP runtime or requested canonical CAP is unavailable, mark `tool_runtime_missing` or `capability_unavailable` and narrow the report. Do not recover by selecting a raw provider route.
+- A saved observed call must record `request_kind=capabilities/query`, the canonical `capability_id`, and the logical `qveris_finance.*` `tool_name`. The saved response `capability_id` must equal the call record.
+
 ## Evidence Status
 
 - `complete`: primary QVeris evidence is available, fresh enough for the request, and passes identity, window, and shape checks.
@@ -14,6 +20,11 @@ Read `qveris-finance-retry-policy.md` with this rubric when a CAP call fails, re
 
 ## Hard Rejects
 
+- Reject provider and routing leakage anywhere in the output or observed-call artifact, including prose, Evidence, Sources, URLs, params, nested response fields, and Trace. Remove provider names, provider API URLs, raw route IDs, candidates, failover state, credentials, and raw tool IDs recursively.
+- Reject report-wide fact contradictions. Compute a canonical fact record once, including technical relations such as `close_vs_ma20` and `close_vs_ma60`, and render every summary/body occurrence from that record. If two sections disagree, neither relation may be presented until reconciled.
+- Reject `changed` or `unchanged` comparison claims unless the same comparison record includes `baseline_as_of`, `baseline_value`, `current_as_of`, `current_value`, and `comparison_basis`. Without that evidence use `unsupported`, not a directional comparison status.
+- Reject direct claims that capex or capital investment compressed net income unless an aligned depreciation, amortization, impairment, disposal, or write-down bridge supports the profit effect. Capex may be described as a cash-investing or free-cash-flow item without implying a direct net-income cause.
+- Reject displayed derived financial values unless their row records `formula`, `numerator`, `denominator`, `unit`, `currency`, `period_end`, `source_fields`, `execution_ids`, and `status`. If any required input provenance is unavailable, mark the metric unsupported and do not calculate it.
 - Reject unvalidated evidence placement. `Evidence Used`, `Factor Table`, and `Primary Evidence` may contain only validated evidence that can support the stated claim. Invalid, failed, rejected, unavailable, or weak-relevance CAPs belong only in `Data Quality And Missing Fields`, `missing_fields`, or `Trace Appendix`.
 - Reject removed capability evidence. `NEWS.DEDUP_CLUSTER`, `MACRO.ACTUAL_VS_FORECAST`, and `FLOW.SECTOR_CAPITAL` are not primary evidence unless a fresh `cap-detail` confirms availability in the current run. If unavailable, mark `capability_unavailable` or `not_called`; do not list them as evidence.
 - Reject identity mismatches. Returned symbol, company name, exchange, market, asset type, index name, or benchmark must match the requested entity. Mark mismatches as `semantic_mismatch`.
@@ -53,7 +64,15 @@ When a field is cumulative in one payload and point-in-time in another, do not n
 
 ## Trace And Output
 
-- Default to a Markdown user report with concise trace tables. Put full machine-readable `qveris_trace` JSON only in an appendix, schema fixture, or when the user asks for it.
+- Build trace, call counts, retry counts, and call timestamps only from the runtime's saved `observed_calls`. Never infer them from a plan, expected workflow, prose notes, or the number of requested securities.
+- Add one trace row per observed call attempt, including retries. Do not add planned, skipped, budget-blocked, or merely discovered capabilities to `qveris_trace`; list those as missing or required next calls instead.
+- For every report labeled live, fresh, or E2E, save an independent `observed_calls.v1` sidecar artifact containing each sanitized response, response SHA-256, observed timestamp, `request_kind=capabilities/query`, canonical `capability_id`, params, returned execution ID, and derived trace row. Validate the report Trace Appendix against that artifact row-for-row and require the recorded capability ID to match the saved response. A static fixture or Markdown table alone is not proof of observation.
+- If an older report has no independent observed-calls artifact, label its trace unverified and use an empty trace table; do not preserve or translate unverifiable IDs, retries, counts, or results as observed facts.
+- Copy `execution_id` only when the observed call returned it. Otherwise emit JSON `null` / Markdown `null`; never synthesize an ID. Omit call timestamps unless the observed call returned one and the report contract explicitly requests it.
+- Use this exact sanitized trace contract in every finance skill: `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`. Allow only `qveris_finance.*` in `tool_name`; strip capability aliases, provider, route, candidate, failover, credential, model, and wrapper metadata.
+- Use `status=success` only for an observed transport-success call, `status=failed` for an observed call failure, and `status=rejected` when an observed transport-success payload fails semantic validation. Evidence acceptance remains separate from call status.
+- Render Markdown Trace Appendix tables with this exact header and order: `| tool_name | params | status | execution_id | fallback_used | missing_fields |`. Markdown uses the same `fallback_used` field name as JSON; encode `params` as compact JSON and `missing_fields` as a JSON array so the row is machine-parseable.
+- Default to a Markdown user report with the sanitized trace table. Put full machine-readable `qveris_trace` JSON only in an appendix, schema fixture, or when the user asks for it.
 - Every rejected payload must appear in `data_quality.warnings` or `missing_fields` with a product-readable reason such as `not_called`, `failed`, `rejected`, `capability_unavailable`, `semantic_mismatch`, `period_mismatch`, `entity_mix`, `weak_relevance`, `insufficient_observations`, `overbroad_news`, `payload_truncated`, `stale_proxy`, `statement_semantic_mismatch`, or `encoding_artifact`.
 - Never let a failed or rejected CAP appear as supporting evidence merely because it was called. Trace proves the call happened; evidence proves the payload survived validation.
 - End user-facing reports with a final non-empty line that is exactly `Not investment advice.`. Do not add a Chinese, bilingual, translated, or prefixed disclaimer line.

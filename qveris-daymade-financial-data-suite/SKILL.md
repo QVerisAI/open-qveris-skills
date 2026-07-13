@@ -30,12 +30,13 @@ Source record:
 ## Runtime Contract
 
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
+- Execute every finance data call through a native standardized CAP or `POST /capabilities/query` / `cap-query`; never use generic discovery, `/tools/execute`, or a raw finance tool ID as fallback.
 - Default natural-language output to Markdown, not a large JSON object.
 - Accept `dry_run`, `max_calls`, `max_age`, `budget_note`, `symbols`, `market`, `sector`, and `report_date`; echo the effective controls.
 - Read `references/qveris-finance-data-quality-rubric.md` before using any payload as evidence.
 - Use `references/qveris-finance-retry-policy.md` for 5xx, fetch failures, 404s, payload truncation, and semantic mismatches.
-- Normalize every trace label and `capability_id` to `qveris_finance.*`.
-- Do not print raw vendor, route, candidate-provider, failover, credential, or routing metadata from QVeris safe JSON.
+- Build trace, call counts, retries, and timestamps only from saved `observed_calls`. Never invent an execution ID or planned call; use `execution_id=null` when an observed call returned no ID.
+- Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Treat transport success as insufficient until identity, window, period, shape, freshness, and relevance checks pass.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, trade triggers, automated execution plans, and delivery-channel instructions.
 
@@ -47,6 +48,9 @@ Source record:
 - For aligned financial packs, require IS, BS, CF, ratios, estimates, and market data to share issuer identity, fiscal year, fiscal period, and period ending date.
 - Reject same-period statement semantic conflicts. If CF net income materially conflicts with IS net income under the shared rubric thresholds, exclude CF from aligned tables and mark `statement_semantic_mismatch`.
 - Apply the canonical valuation field map in `references/qveris-tool-map.md` before marking valuation fields missing; do not treat aliases such as `pe_ttm` and `pe_ratio` as different facts without checking basis.
+- Build an aligned-statement table before deriving any cross-statement ratio. For every IS/BS/CF value include canonical field, value, currency, period end, fiscal period, period type, measurement basis, and source field. Keep unaligned rows outside the table.
+- Separate cash-flow reconciliation from operating-quality ratios. First reconcile CF net income to IS net income; only after that gate passes may CF-derived quality ratios be calculated.
+- Treat capex as a direct cash-investing/free-cash-flow input only. Do not say capital investment compressed net income unless an aligned depreciation, amortization, impairment, disposal, or write-down bridge supports the profit effect; otherwise describe the observations without causal wording.
 - If a requested annual/FY period returns latest-quarter or TTM-shaped data, retry once with stricter documented parameters after `cap-detail`; if still mismatched, mark the requested field missing.
 - Use analyst or research rows only after issuer, report type, and date fields pass validation. Suppress recommendation and target fields.
 - Treat tagged news as qualitative background only unless QVeris sentiment, cluster, or structured event evidence succeeds.
@@ -54,6 +58,7 @@ Source record:
 
 ## CAP Invocation
 
+- Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
 - Prefer native `qveris_finance.*` tools when exposed by the runtime.
 - If native tools are unavailable and the run is in this repository root, use: `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
 - If installed standalone without native `qveris_finance.*` tools and without `qveris-official`, mark `tool_runtime_missing`; do not use web, legacy providers, SDKs, credential installers, or invented data as fallback.
@@ -64,7 +69,7 @@ Source record:
 ## Workflows
 
 1. Financial data pack: resolve issuer, collect quote/bars, statements, ratios, estimates, and event context; output missing fields instead of defaults.
-2. News/research structuring: collect tagged news, research rows when validated, and event calendar context; classify rows by relevance and confidence.
+2. News/research structuring: collect tagged news, research rows when validated, and event calendar context; attach `issuer_relevance`, `row_type`, and `why_included` to every row. Put weak-relevance rows in background only, never issuer catalyst evidence.
 3. A-share news read: resolve full exchange suffix, collect QVeris news/events only, and mark unsupported source-specific feeds as `capability_unavailable`.
 4. Pharma or sector daily report: define the requested sector/universe, validate each symbol, collect quote/bars and news/events, and avoid unsupported heat/flow claims.
 5. Budget-limited run: prioritize identity, requested core data, and data-quality trace; skip optional research, sentiment, or sector breadth when calls are limited.
@@ -81,6 +86,10 @@ Source record:
 
 - Use level-2 Markdown headings exactly: `## Summary`, `## Evidence`, `## Analysis`, `## Data Quality And Missing Fields`, and `## Trace Appendix`.
 - Include a concise evidence table with claim, `qveris_finance.*` capability, parameters, status, and fallback.
+- For financial packs, include the aligned-statement table and a separate reconciliation table; never imply three-statement alignment from period labels alone.
+- For sector/pharma reports, include `issuer_relevance`, `row_type`, and `why_included` columns for every news/research/event row.
+- Render the Trace Appendix with the exact parseable header `| tool_name | params | status | execution_id | fallback_used | missing_fields |`; use compact JSON values, one row per observed attempt, and no planned/not-called rows.
+- For live, fresh, or E2E output, save and validate an `observed_calls.v1` sidecar whose calls record `request_kind=capabilities/query` and canonical `capability_id`; without a verified sidecar, place the unverified note before `## Trace Appendix` and emit only the exact header plus separator with no rows.
 - Include `missing_fields`, `data_quality.status`, rejected payload reasons, stale fields, and suppressed fields.
 - Put full `qveris_trace` JSON only in the appendix, schema fixture, or when the user asks for machine-readable output.
 - End user-facing reports with a final non-empty line that is exactly `Not investment advice.`
@@ -91,6 +100,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 
 ## References
 
+- Use shared finance contract version `2026-07-13.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

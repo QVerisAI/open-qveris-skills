@@ -45,18 +45,20 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.news_fin_tagged",
-      "capability_id": "qveris_finance.news_fin_tagged",
-      "entity": "CN_A_SHARE_SMALL_UNIVERSE",
-      "market": "CN",
-      "params": {"symbols": ["600519", "300750"], "lookback_days": 7},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:25:00+08:00",
+      "params": {
+        "symbols": [
+          "600519",
+          "300750"
+        ],
+        "lookback_days": 7
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": true,
       "missing_fields": [
         "sentiment_score",
         "news_cluster"
-      ],
-      "quality_note": "fallback_context_only"
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -64,5 +66,6 @@
     "operation_advice",
     "buy_sell",
     "rebalance"
-  ]
+  ],
+  "observed_call_count": 1
 }

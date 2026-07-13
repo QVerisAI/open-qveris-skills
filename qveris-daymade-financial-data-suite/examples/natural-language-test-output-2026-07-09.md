@@ -28,9 +28,9 @@ The requested FY2025 cash flow is missing due to period mismatch. The report can
 
 ## Trace Appendix
 
-| qveris_finance capability | Parameters | Status | Fallback |
-|---|---|---|---|
-| `qveris_finance.fundamentals_cf` | `symbol=META`, `period=annual`, `fiscal_year=2025`, `limit=1` | rejected period mismatch | stricter retry |
-| `qveris_finance.fundamentals_cf` | `symbol=META`, `period_type=annual`, `fiscal_year=2025`, `fiscal_period=FY`, `limit=1` | missing after retry | none |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. The retry scenario above is a behavior test, not a saved call trace.
 
 Not investment advice.

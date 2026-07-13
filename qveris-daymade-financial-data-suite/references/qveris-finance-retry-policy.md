@@ -15,7 +15,10 @@ Use this shared policy for every QVeris finance skill in this repository.
 
 ## Trace Requirements
 
-- Record original attempts and retries with the same `qveris_finance.*` tool name.
+- Record original attempts and retries only when they exist in saved `observed_calls`, with one row per attempt and the same `qveris_finance.*` tool name.
+- Persist every live/E2E attempt in the independent observed-calls artifact before rendering retry or fallback claims in Markdown.
+- Derive retry and observed-call counts from those rows; never state that a retry occurred merely because this policy allowed one.
+- Use the exact shared fields `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`. Copy an execution ID only when the call returned one; otherwise use `null`.
 - Set `fallback_used=true` when a fallback capability or proxy class supports the final claim.
 - Keep raw provider route names out of user prose, `qveris_trace`, and `data_quality`.
 - Use status labels from `qveris-finance-data-quality-rubric.md`: `complete`, `partial`, `proxy_only`, or `insufficient`.

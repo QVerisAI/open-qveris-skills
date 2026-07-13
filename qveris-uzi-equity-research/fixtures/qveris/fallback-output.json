@@ -34,41 +34,19 @@
   ],
   "qveris_trace": [
     {
-      "tool_name": "qveris_finance.flow_dragon_tiger",
-      "capability_id": "qveris_finance.flow_dragon_tiger",
-      "entity": "002594.SZ",
-      "market": "CN",
-      "params": {
-        "symbol": "002594.SZ",
-        "market": "CN",
-        "window": "P30D"
-      },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:26:00+08:00",
-      "fallback_used": false,
-      "missing_fields": [
-        "capability_unavailable"
-      ],
-      "quality_note": "Specialty CAP not confirmed for this run."
-    },
-    {
       "tool_name": "qveris_finance.news_fin_tagged",
-      "capability_id": "qveris_finance.news_fin_tagged",
-      "entity": "002594.SZ",
-      "market": "CN",
       "params": {
         "symbol": "002594.SZ",
         "market": "CN",
         "limit": 5
       },
-      "as_of": "2026-07-09",
-      "retrieved_at": "2026-07-09T09:26:25+08:00",
+      "status": "success",
+      "execution_id": null,
       "fallback_used": true,
       "missing_fields": [
         "numeric_sentiment_score",
         "validated_lhb_rows"
-      ],
-      "quality_note": "Tagged news is fallback background only."
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -94,5 +72,6 @@
     "recommendation",
     "buy_sell",
     "safe_to_trade"
-  ]
+  ],
+  "observed_call_count": 1
 }

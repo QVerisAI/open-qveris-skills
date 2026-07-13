@@ -45,18 +45,17 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.mkt_top_movers",
-      "capability_id": "qveris_finance.mkt_top_movers",
-      "entity": "CN_A_SHARE_MARKET",
-      "market": "CN",
-      "params": {"market": "CN", "limit": 20},
-      "as_of": "2026-07-08",
-      "retrieved_at": "2026-07-08T10:05:00+08:00",
+      "params": {
+        "market": "CN",
+        "limit": 20
+      },
+      "status": "success",
+      "execution_id": null,
       "fallback_used": true,
       "missing_fields": [
         "capital_flow",
         "limit_board_pool"
-      ],
-      "quality_note": "proxy_only_not_flow_evidence"
+      ]
     }
   ],
   "disclaimer": "Not investment advice.",
@@ -64,5 +63,6 @@
     "target_price",
     "rating",
     "buy_sell"
-  ]
+  ],
+  "observed_call_count": 1
 }

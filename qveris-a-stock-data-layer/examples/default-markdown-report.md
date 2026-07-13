@@ -1,6 +1,6 @@
 # Summary
 
-This A-share data-layer read validates the requested issuer through QVeris, uses quote and bars evidence for the market-data layer, and keeps unverified specialty layers out of the conclusion. LHB, unlock calendar, capital flow, limit-board pools, ETF options, and investor Q&A are listed as missing until a current QVeris CAP confirms those fields.
+This static contract example illustrates an A-share data-layer layout and does not claim live QVeris calls. A real run must validate identity, requested-window bars, and one requested financial layer before optional fan-out.
 
 Controls: `dry_run=false`, `max_calls=6`, `max_age=P1D`, `budget_note=standard data-layer read`.
 
@@ -31,11 +31,9 @@ Suppressed fields: target prices, ratings, upside/downside language, buy/sell wo
 
 # Trace Appendix
 
-| Tool | Params | Result | Fallback | Notes |
-|---|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbol=600519.SH`, `market=CN` | success | false | identity matched |
-| `qveris_finance.mkt_l1_rt` | `symbol=600519.SH`, `market=CN` | success | false | quote timestamp validated |
-| `qveris_finance.mkt_bars_adjusted` | `symbol=600519.SH`, `start_date=2026-06-08`, `end_date=2026-07-08` | success | false | enough observations for simple context |
-| `qveris_finance.research_analyst_reports` | `symbol=600519.SH`, `limit=5` | empty or not validated | false | missing; not used as positive evidence |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. Illustrative evidence rows above are report-shape examples, not observed results.
 
 Not investment advice.

@@ -1,0 +1,17 @@
+{
+  "version": "2026-07-13.3",
+  "files": {
+    "references/qveris-finance-data-quality-rubric.md": "9889b1fa38a1e7ab2cf2884cac982eecfbab550fba950dec6edb1cadaf9c484f",
+    "references/qveris-finance-retry-policy.md": "a3edd1a822938fad7e23bab02108737dbaa9ea9a0adb4e8519d3a7aafc98fba4",
+    "references/qveris-finance-cap-registry-snapshot-2026-07-07.md": "e179545ba9499170f217b4bb5e1361aa3926c38c109d04ab821f08213f31eb19",
+    "schemas/qveris-finance-output.schema.json": "6bd47427c2138a57f2ae5bfb276ed525d36fe4ef8c7e89459e40a2a3fab841dd"
+  },
+  "skill_copies": [
+    "qveris-a-share-factor-screen",
+    "qveris-a-stock-data-layer",
+    "qveris-a-share-data",
+    "qveris-alphaear-market-intelligence",
+    "qveris-daymade-financial-data-suite",
+    "qveris-uzi-equity-research"
+  ]
+}

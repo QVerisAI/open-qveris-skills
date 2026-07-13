@@ -6,9 +6,9 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 
 - Runtime data source: `qveris_finance.*` CAP tools only.
 - Credential: `QVERIS_API_KEY` only.
-- Required trace fields: `tool_name`, `capability_id`, `entity`, `market`, `params`, `as_of`, `retrieved_at`, `fallback_used`, `missing_fields`.
-- Trace `capability_id` values must also use normalized `qveris_finance.*` names, not short CAP codes.
-- Treat raw QVeris response metadata as internal provenance only. Build sanitized trace rows that keep only normalized capability names, parameters, success/failure, fallback, validation result, and missing fields.
+- Required trace fields: `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, `missing_fields`.
+- Build rows only from saved `observed_calls`; use normalized `qveris_finance.*` tool names and `execution_id=null` when the call returned none.
+- Treat raw QVeris response metadata as internal provenance only. Strip provider, route, candidate, failover, model, and wrapper metadata from the sanitized trace.
 - Apply `qveris-finance-data-quality-rubric.md` and `qveris-finance-retry-policy.md` before using any payload as evidence.
 
 ## Primary CAPs
@@ -58,3 +58,5 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 3. Requested core evidence, such as bars, fundamentals, news, or sentiment
 4. Optional ratios, consensus, events, or extra news rows
 5. Conditional CAP discovery only when the user asked for that feature
+
+Select `full_note` only when every requested core layer validates. Otherwise select `coverage_monitor` and list the missing layers in the first Summary sentence.

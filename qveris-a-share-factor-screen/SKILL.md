@@ -30,11 +30,13 @@ Source record:
 ## Runtime Contract
 
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
+- Execute every finance data call through a native standardized CAP or `POST /capabilities/query` / `cap-query`; never use generic discovery, `/tools/execute`, or a raw finance tool ID as fallback.
 - Default natural-language output to a Markdown user report, not a JSON object.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Read `references/qveris-finance-data-quality-rubric.md` before using QVeris payloads as factor evidence.
 - Use `references/qveris-finance-retry-policy.md` for failed calls, invalid capabilities, payload truncation, and semantic mismatches.
-- Normalize all trace labels to `qveris_finance.*`; do not print raw vendor, route, source-provider, or failover names.
+- Build trace, call counts, retries, and timestamps only from saved `observed_calls`. Never invent an execution ID, retry, timestamp, per-security call, or result from the intended workflow; use `execution_id=null` when an observed call returned no ID.
+- Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Treat screening output as a research candidate pool, not as investment advice or an action list.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, and trade execution plans even if present in QVeris payloads.
 
@@ -43,7 +45,8 @@ Source record:
 - Resolve the universe with `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, or an explicit user-supplied ticker list. Use `qveris_finance.index_constituents` only after current `cap-detail` confirms params and fields.
 - If the user asks for full-market screening and no validated full-universe route is available within budget, return a budget-limited report with required next calls; do not silently screen a tiny proxy universe.
 - For A-share requests, reject securities whose returned market, exchange, listing class, or asset type does not match the requested mainland equity universe.
-- Require comparable windows before ranking factors: same price window for momentum/liquidity/volatility; same fiscal period for valuation/quality; same market convention for cross-sectional ranks.
+- Assign every requested security a coverage tier before showing any factor values: `complete_comparable`, `partial_not_ranked`, `proxy_only`, or `insufficient`. Show the comparable subset and per-security factor gaps explicitly.
+- Require comparable windows before ranking factors: identical validated factor set, price window, fiscal period, measurement basis, and market convention. Rank only the complete comparable subset, never the full requested universe when coverage differs.
 - Require at least 2 bars for simple multi-day metrics and at least the requested lookback length plus one observation for lookback indicators.
 - Do not compute percentiles or ranks from fewer than 3 comparable securities; output per-name notes instead.
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted company names, industry labels, event titles, news snippets, or research titles in factor evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
@@ -53,6 +56,7 @@ Source record:
 
 ## CAP Invocation
 
+- Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
 - Prefer native `qveris_finance.*` tools when exposed by the runtime.
 - If native tools are unavailable and the run is in this repository root, use the repository CLI: `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
 - If the skill is installed standalone without native `qveris_finance.*` tools and without `qveris-official`, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
@@ -64,9 +68,10 @@ Source record:
 1. Scope the screen: identify universe, as-of date, factor set, maximum calls, and whether post-hoc evaluation is requested.
 2. Resolve the universe: validate each identifier and keep unresolved or non-A-share instruments out of the scored set.
 3. Collect factor inputs: use bars for momentum/liquidity/volatility, statements and derived ratios for valuation/quality, classification for sector context, and sentiment/news only within their evidence limits.
-4. Score transparently: calculate component scores only from validated fields; remove missing components from the denominator and show coverage percentage.
-5. Report the screen: present coverage tiers and per-name evidence notes by default; add rank only when all comparability gates pass.
-6. Evaluate post-hoc only when requested: fetch evaluation-window bars after the `as_of` date, label the result as historical evaluation, and avoid return forecasts.
+4. Partition coverage: produce the coverage tier, comparable subset, and per-security missing-factor matrix before scoring.
+5. Score transparently: calculate scores only inside a subset with the identical complete factor denominator. Do not renormalize different denominators into a cross-security rank.
+6. Report the screen: show coverage tiers and gaps first; add rank only for the complete comparable subset when every comparability gate and the three-security minimum pass.
+7. Evaluate post-hoc only when requested: fetch evaluation-window bars after the `as_of` date, label the result as historical evaluation, and avoid return forecasts.
 
 ## Fallback Policy
 
@@ -81,7 +86,8 @@ Source record:
 
 - Use level-2 Markdown headings exactly for this user-report structure: `## Summary`, `## Screen Results`, `## Evidence`, `## Analysis`, `## Data Quality And Missing Fields`, and `## Trace Appendix`. Do not replace these headings with bold text.
 - Include a factor table with security, validated factor values, component coverage, evidence status, and missing fields. Use rank columns only when comparability gates pass; otherwise use coverage tier or per-name notes.
-- Include a concise trace table with `qveris_finance.*` capability, parameters, success/failure, fallback, and rejection reason.
+- Render the Trace Appendix with the exact parseable header `| tool_name | params | status | execution_id | fallback_used | missing_fields |`; use compact JSON for `params` and `missing_fields`, one row per observed attempt, and no rows for planned or budget-blocked calls.
+- For live, fresh, or E2E output, save and validate an `observed_calls.v1` sidecar whose calls record `request_kind=capabilities/query` and canonical `capability_id`; without a verified sidecar, place the unverified note before `## Trace Appendix` and emit only the exact header plus separator with no rows.
 - Put full `qveris_trace` JSON only in the appendix, schema fixture, or when the user asks for machine-readable output.
 - End user-facing reports with `Not investment advice.`
 
@@ -91,6 +97,7 @@ Do not output investment recommendations, buy/sell triggers, target prices, upsi
 
 ## References
 
+- Use shared finance contract version `2026-07-13.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share factor screen.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

@@ -24,10 +24,9 @@ Missing fields: `sector_heatmap`, `a_h_mapping`, `ipo_timeline`, `capital_flow`,
 
 # Trace Appendix
 
-| Tool | Params | Success/Failure | Fallback |
-|---|---|---|---|
-| `qveris_finance.ref_symbology` | `symbol=<requested>`, `market=CN` | success required | false |
-| `qveris_finance.mkt_bars_adjusted` | `count=<lookback>` | success or insufficient observations | false |
-| `qveris_finance.news_fin_tagged` | `lookback_days=7` | qualitative only | true |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. Required calls above are a plan, not trace rows.
 
 Not investment advice.

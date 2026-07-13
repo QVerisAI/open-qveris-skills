@@ -6,9 +6,9 @@ Source: Daymade Financial Suite, https://github.com/daymade/claude-code-skills, 
 
 - Runtime data source: `qveris_finance.*` CAP tools only.
 - Credential: `QVERIS_API_KEY` only.
-- Required trace fields: `tool_name`, `capability_id`, `entity`, `market`, `params`, `as_of`, `retrieved_at`, `fallback_used`, `missing_fields`.
-- Trace `capability_id` values must also use normalized `qveris_finance.*` names, not short CAP codes.
-- Treat raw QVeris response metadata as internal provenance only. Build sanitized trace rows that keep only normalized capability names, parameters, success/failure, fallback, validation result, and missing fields.
+- Required trace fields: `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, `missing_fields`.
+- Build rows only from saved `observed_calls`; use normalized `qveris_finance.*` tool names and `execution_id=null` when the call returned none.
+- Treat raw QVeris response metadata as internal provenance only. Strip provider, route, candidate, failover, credential, and wrapper metadata from the sanitized trace.
 - Missing financial fields must remain missing. Do not substitute defaults for beta, rates, growth, shares, margins, or statement fields.
 
 ## Primary CAPs
@@ -35,6 +35,12 @@ Normalize these aliases before deciding whether a field is missing. Keep the raw
 | `ev_to_ebitda` | `ev_to_ebitda`, `ev_ebitda`, `enterprise_value_to_ebitda` | Require enterprise value and EBITDA basis to be present or QVeris-derived. |
 | `market_cap` | `market_cap`, `mkt_cap`, `market_value` | Require quote timestamp or as-of date. |
 | `free_cash_flow` | `free_cash_flow`, `fcf`, `operating_cash_flow_minus_capex` | Require CF period alignment and capex sign/basis clarity. |
+
+## Aligned Statement Contract
+
+Before calculating a cross-statement ratio, emit one row per fact with `canonical_field`, `value`, `currency`, `period_end`, `fiscal_period`, `period_type`, `measurement_basis`, and `source_field`. Exclude any row that differs in issuer, currency, period end, fiscal period, or basis. Reconcile CF net income to IS net income separately; only a passing reconciliation may unlock CF-derived operating-quality ratios.
+
+For every news, research, or event row, emit `issuer_relevance`, `row_type`, and `why_included`. `weak` relevance belongs in background only.
 
 ## Conditional CAPs
 

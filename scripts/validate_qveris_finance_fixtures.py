@@ -22,6 +22,39 @@ DEFAULT_SKILL_DIRS = (
     "qveris-uzi-equity-research",
 )
 
+STRICT_TRACE_SKILLS = {
+    "qveris-a-stock-data-layer",
+    "qveris-a-share-factor-screen",
+    "qveris-a-share-data",
+    "qveris-alphaear-market-intelligence",
+    "qveris-daymade-financial-data-suite",
+    "qveris-uzi-equity-research",
+}
+
+SENSITIVE_PARAM_KEY_RE = re.compile(
+    r"(^|_)(provider|route|routing|candidate|candidates|failover|credential|"
+    r"api_key|source_tool_id|tool_id|cap_tool_id)($|_)",
+    re.I,
+)
+
+
+def normalize_param_key(key: Any) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", str(key).strip().lower()).strip("_")
+
+
+def sensitive_param_paths(value: Any, path: str = "params") -> list[str]:
+    paths: list[str] = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            child_path = f"{path}.{key}"
+            if SENSITIVE_PARAM_KEY_RE.search(normalize_param_key(key)):
+                paths.append(child_path)
+            paths.extend(sensitive_param_paths(child, child_path))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            paths.extend(sensitive_param_paths(child, f"{path}[{index}]"))
+    return paths
+
 
 def json_type_name(value: Any) -> str:
     if value is None:
@@ -120,28 +153,80 @@ def validate_node(value: Any, schema: dict[str, Any], path: str) -> list[str]:
     return errors
 
 
-def validate_finance_trace(fixture: dict[str, Any], label: str) -> list[str]:
+def validate_finance_trace(fixture: dict[str, Any], label: str, *, strict_trace: bool) -> list[str]:
     errors: list[str] = []
 
     if fixture.get("disclaimer") != "Not investment advice.":
         errors.append(f"{label}: disclaimer must be exactly 'Not investment advice.'")
 
     trace = fixture.get("qveris_trace")
-    if not isinstance(trace, list) or not trace:
-        errors.append(f"{label}: qveris_trace must be a non-empty list")
+    if not isinstance(trace, list):
+        errors.append(f"{label}: qveris_trace must be a list")
         return errors
+
+    if not strict_trace:
+        if not trace:
+            errors.append(f"{label}: qveris_trace must be a non-empty list")
+            return errors
+        for index, item in enumerate(trace):
+            item_label = f"{label}:qveris_trace[{index}]"
+            if not isinstance(item, dict):
+                errors.append(f"{item_label}: trace item must be an object")
+                continue
+            for key in ("tool_name", "capability_id"):
+                value = item.get(key)
+                if not isinstance(value, str) or not value.startswith("qveris_finance."):
+                    errors.append(f"{item_label}.{key}: must start with qveris_finance., got {value!r}")
+            if "source_provider" in item:
+                errors.append(f"{item_label}.source_provider: provider fields are not allowed")
+        return errors
+
+    observed_call_count = fixture.get("observed_call_count")
+    if observed_call_count != len(trace):
+        errors.append(
+            f"{label}: observed_call_count must equal qveris_trace length "
+            f"({observed_call_count!r} != {len(trace)})"
+        )
+
+    controls = fixture.get("controls")
+    if isinstance(controls, dict) and (controls.get("dry_run") is True or controls.get("max_calls") == 0):
+        if trace:
+            errors.append(f"{label}: dry-run/max_calls=0 fixture cannot contain observed trace rows")
+
+    required_keys = {
+        "tool_name",
+        "params",
+        "status",
+        "execution_id",
+        "fallback_used",
+        "missing_fields",
+    }
 
     for index, item in enumerate(trace):
         item_label = f"{label}:qveris_trace[{index}]"
         if not isinstance(item, dict):
             errors.append(f"{item_label}: trace item must be an object")
             continue
-        for key in ("tool_name", "capability_id"):
-            value = item.get(key)
-            if not isinstance(value, str) or not value.startswith("qveris_finance."):
-                errors.append(f"{item_label}.{key}: must start with qveris_finance., got {value!r}")
-        if "source_provider" in item:
-            errors.append(f"{item_label}.source_provider: provider fields are not allowed in sanitized trace")
+        actual_keys = set(item)
+        if actual_keys != required_keys:
+            errors.append(
+                f"{item_label}: trace keys must be exactly {sorted(required_keys)!r}, "
+                f"got {sorted(actual_keys)!r}"
+            )
+        value = item.get("tool_name")
+        if not isinstance(value, str) or not value.startswith("qveris_finance."):
+            errors.append(f"{item_label}.tool_name: must start with qveris_finance., got {value!r}")
+        if item.get("status") not in {"success", "failed", "rejected"}:
+            errors.append(f"{item_label}.status: invalid observed-call status {item.get('status')!r}")
+        for sensitive_path in sensitive_param_paths(item.get("params")):
+            errors.append(f"{item_label}.{sensitive_path}: internal metadata key is forbidden")
+        execution_id = item.get("execution_id")
+        if execution_id is not None and not isinstance(execution_id, str):
+            errors.append(f"{item_label}.execution_id: must be a string or null")
+        if isinstance(execution_id, str):
+            normalized_id = execution_id.strip().lower()
+            if not normalized_id or re.match(r"^(fixture|synthetic|planned|mock|example)[-_]", normalized_id):
+                errors.append(f"{item_label}.execution_id: synthetic/placeholder IDs are forbidden")
 
     return errors
 
@@ -168,9 +253,48 @@ def iter_skill_schema_dirs(root: Path, requested_dirs: list[str]) -> list[Path]:
     return dirs
 
 
+def run_self_test() -> list[str]:
+    base_trace = {
+        "tool_name": "qveris_finance.ref_symbology",
+        "params": {"symbol": "600519.SH", "market": "CN"},
+        "status": "success",
+        "execution_id": None,
+        "fallback_used": False,
+        "missing_fields": [],
+    }
+    clean = {
+        "disclaimer": "Not investment advice.",
+        "controls": {"dry_run": False, "max_calls": 1},
+        "observed_call_count": 1,
+        "qveris_trace": [base_trace],
+    }
+    errors: list[str] = []
+    if validate_finance_trace(clean, "self-test-clean", strict_trace=True):
+        errors.append("self-test-clean: expected pass but failed")
+
+    leaked_trace = dict(base_trace)
+    leaked_trace["params"] = {
+        "symbol": "600519.SH",
+        "nested": {"provider": "hidden", "route": "hidden", "candidate": "hidden"},
+    }
+    leaked = dict(clean)
+    leaked["qveris_trace"] = [leaked_trace]
+    leak_errors = validate_finance_trace(leaked, "self-test-leak", strict_trace=True)
+    if len([error for error in leak_errors if "internal metadata key" in error]) != 3:
+        errors.append("self-test-leak: expected provider/route/candidate rejection")
+    return errors
+
+
 def main() -> int:
     root = Path.cwd()
     requested_dirs = sys.argv[1:]
+    if requested_dirs == ["--self-test"]:
+        self_test_errors = run_self_test()
+        if self_test_errors:
+            print("\n".join(self_test_errors), file=sys.stderr)
+            return 1
+        print("ok: self-test")
+        return 0
     errors: list[str] = []
     checked = 0
 
@@ -191,7 +315,13 @@ def main() -> int:
                 continue
             errors.extend(validate_node(fixture, schema, str(fixture_path)))
             if isinstance(fixture, dict):
-                errors.extend(validate_finance_trace(fixture, str(fixture_path)))
+                errors.extend(
+                    validate_finance_trace(
+                        fixture,
+                        str(fixture_path),
+                        strict_trace=skill_dir.name in STRICT_TRACE_SKILLS,
+                    )
+                )
 
     if checked == 0:
         errors.append("no qveris finance fixtures found")

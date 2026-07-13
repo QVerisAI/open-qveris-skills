@@ -40,15 +40,9 @@ Missing evidence: CN valuation/quality ratios, multi-day EOD bars for `300750.SZ
 
 ## Trace Appendix
 
-| Capability | Parameters | Success / Failure | Fallback | Rejection Reason |
-|---|---|---|---|---|
-| `qveris_finance.ref_security_master` | `600519.SH`, CN, 2026-07-08 | success | no | none |
-| `qveris_finance.ref_security_master` | `300750.SZ`, CN, 2026-07-08 | failed after retry | `qveris_finance.ref_symbology` | provider_error |
-| `qveris_finance.ref_security_master` | `002594.SZ`, CN, 2026-07-08 | failed after retry | `qveris_finance.ref_symbology` | provider_error |
-| `qveris_finance.ref_symbology` | `300750.SZ`, CN, 2026-07-08 | success | yes | partial suffix normalization |
-| `qveris_finance.ref_symbology` | `002594.SZ`, CN, 2026-07-08 | success | yes | partial suffix normalization |
-| `qveris_finance.mkt_bars_eod` | all three, CN, 2026-06-10 to 2026-07-08, D | success | no | one-bar windows rejected for multi-day factors on `300750.SZ`, `002594.SZ` |
-| `qveris_finance.fundamentals_derived_ratios` | all three, CN, 2026-07-08 | failed | no | unsupported_market |
-| `qveris_finance.ref_classification_industry` | all three, CN, 2026-07-08 | mixed | no | semantic_mismatch for `300750.SZ`, `002594.SZ` |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
+|---|---|---|---|---|---|
+
+Observed call count: `0`. This historical pre-contract output has no independent observed-calls artifact; prior trace claims are not treated as verified.
 
 Not investment advice.
