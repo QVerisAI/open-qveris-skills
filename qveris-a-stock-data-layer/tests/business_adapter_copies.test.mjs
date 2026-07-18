@@ -71,3 +71,13 @@ test("A-stock fallback policy allows only explicit canonical CAP downgrades", as
   assert.match(skillText, /qveris-finance-capability-fallbacks\.json/);
   assert.match(skillText, /cap-query-chain/);
 });
+
+test("A-stock daily MA and RSI use validated adjusted daily bars without interval reinterpretation", async () => {
+  const skillText = await readFile(new URL("../SKILL.md", import.meta.url), "utf8");
+  const toolMap = await readFile(new URL("../references/qveris-tool-map.md", import.meta.url), "utf8");
+  for (const text of [skillText, toolMap]) {
+    assert.match(text, /qveris_finance\.mkt_bars_adjusted/);
+    assert.match(text, /MA5.*MA20.*RSI14/i);
+    assert.match(text, /daily.*intraday|日线.*分钟/i);
+  }
+});

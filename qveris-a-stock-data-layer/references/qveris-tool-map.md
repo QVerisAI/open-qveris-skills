@@ -14,6 +14,7 @@ Source snapshot used for this map: `third_party/source_repos/58-a-stock-data` at
 | Industry context | `qveris_finance.ref_security_master`, `qveris_finance.ref_company_profile`, `qveris_finance.ref_classification_industry` | Sector or industry metadata when present in validated security/company payloads | Treat as classification context, not sector-flow evidence; theme payloads may be empty. |
 | Real-time quote | `qveris_finance.mkt_l1_rt` | Latest price/volume snapshot | Require quote timestamp and matched security. |
 | Historical bars | `qveris_finance.mkt_bars_adjusted` | Returns, volume, trend, liquidity inputs | Require requested window and at least 2 observations for multi-day metrics. |
+| Daily technical indicators | `qveris_finance.mkt_bars_adjusted` | MA5, MA20, RSI14 calculated from adjusted daily closes | Require enough warm-up observations, record formulas and adjustment basis, and never reinterpret daily as intraday minutes. |
 | Financial statements | `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf` | Revenue, profit, balance sheet, cash flow | Require period alignment; reject annual/FY mismatch. |
 | Ratios | `qveris_finance.fundamentals_derived_ratios` | Valuation/quality inputs | Use only when period and issuer match. |
 | Tagged news | `qveris_finance.news_fin_tagged` | Qualitative news context | Do not infer strong sentiment or catalysts by itself. |
