@@ -418,6 +418,15 @@ test("allows disclosed future event dates only inside an explicit event-calendar
   });
   assert.equal(accepted.success, true);
 
+  const lockUpSchema = { ...eventSchema, capability_id: "MKT.CN.LOCK_UP" };
+  const lockUpAccepted = await executeFinanceCapability({
+    capability: lockUpSchema.capability_id,
+    parameters,
+    context: { cut_off: "2026-07-17", future_event_end_date: "2026-09-15" },
+    transport: transport({ capabilityDetail: lockUpSchema, responses: [response] }),
+  });
+  assert.equal(lockUpAccepted.success, true);
+
   const marketSchema = { ...eventSchema, capability_id: "MKT.BARS.ADJUSTED" };
   const marketRejected = await executeFinanceCapability({
     capability: marketSchema.capability_id,

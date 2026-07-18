@@ -673,7 +673,7 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
   const cutoff = context.cut_off ?? context.cutoff ?? context.as_of_date;
   if (cutoff) {
     const cutoffTime = dateValue(cutoff);
-    const futureEventEnd = /^EVENT\.CALENDAR\./.test(capabilityId)
+    const futureEventEnd = (/^EVENT\.CALENDAR\./.test(capabilityId) || capabilityId === "MKT.CN.LOCK_UP")
       ? dateValue(context.future_event_end_date)
       : NaN;
     const allowedEnd = Number.isFinite(futureEventEnd)
