@@ -10,6 +10,9 @@ Route finance CAP calls through the active business Skill's `{baseDir}/scripts/q
 1. Read the live finance catalog and live cap-detail, then resolve the requested `qveris_finance.*` name to the current canonical CAP ID instead of a static ID table.
 2. Build an allow-list from live parameter definitions; drop undocumented optional inputs and refuse execution if no enforceable parameter schema is available.
 3. Never copy `sample_parameters`. Fill required values only from explicit business context or a lossless equivalent input name, and refuse execution when required values remain missing.
+   - Treat an explicitly supplied `underlying` or `underlying_symbol` as the same security only when the live contract requires `symbol`; never change the instrument.
+   - After a provider explicitly reports a missing `granularity`, use `daily` only for a request that already contains one exact `date` and whose live enum includes `daily`.
+   - After a provider explicitly rejects `period` with quarter-end codes, map an explicit `Q1/Q2/Q3/Q4/FY` context to `0331/0630/0930/1231`. Keep the result rejected if the corrected call still lacks data, fields, or period identity.
 4. Permit only equivalent mainland-security encodings (`.SH`, `.SS`, the same bare six-digit code; `.SZ`, the same bare code). Never replace the security entity.
 5. Make at most three actual attempts using legal original parameters, a required/semantic minimum, and an error-guided or equivalent-code correction. An error without a parameter clue does not authorize guessing.
 6. Stop immediately for wrong entity, market, date, period, future data, or stale real-time data. `success=false` remains failed even when data is present.

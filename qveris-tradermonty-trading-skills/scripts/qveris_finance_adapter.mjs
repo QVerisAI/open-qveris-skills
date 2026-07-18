@@ -246,6 +246,17 @@ export async function executeFinanceCapability({
     lastParameters = candidate;
     selectedResponse = response;
     selectedIndex = audit.attempts.length;
+    if (!assessment.ready && !assessment.semantic_failure && candidateIndex + 1 >= candidates.length) {
+      const guided = errorGuidedParameters({
+        detail: resolved.detail,
+        parameters: candidate,
+        response,
+        context,
+      });
+      if (guided && !audit.attempts.some((attempt) => sameJson(attempt.parameters, guided))) {
+        candidates.push(guided, ...equivalentSymbolParameters(guided));
+      }
+    }
     if (assessment.ready) {
       stop = true;
     } else if (assessment.semantic_failure) {
@@ -330,7 +341,7 @@ function explicitOrEquivalentValue(name, parameters, context) {
   if (context[name] !== undefined) return context[name];
   if (context.parameters?.[name] !== undefined) return context.parameters[name];
   const equivalents = {
-    symbol: ["ticker", "security_code"],
+    symbol: ["ticker", "security_code", "underlying", "underlying_symbol"],
     ticker: ["symbol", "security_code"],
     date: ["as_of_date"],
     end_date: ["as_of_date"],
@@ -395,22 +406,52 @@ function errorGuidedParameters({ detail, parameters, response, context }) {
   const missing = text.match(/missing_required_tool_input\s*[:=]\s*([a-zA-Z0-9_]+)/i)?.[1]
     ?? text.match(/missing required(?: tool)? input\s+["']?([a-zA-Z0-9_]+)/i)?.[1];
   if (missing && definitions.has(missing) && parameters[missing] === undefined) {
-    const value = explicitOrEquivalentValue(missing, parameters, context);
+    const value = explicitOrEquivalentValue(missing, parameters, context)
+      ?? safeMissingValue(missing, definitions.get(missing), parameters);
     if (value !== undefined) {
       const converted = convertLosslessly(value, definitions.get(missing));
       if (converted.ok) return { ...parameters, [missing]: converted.value };
     }
   }
-  const enumMatch = text.match(/(?:invalid|unsupported)\s+([a-zA-Z0-9_]+).*?(?:one of|allowed(?: values)?)[^a-zA-Z0-9]+([^\n;]+)/i);
+  const enumMatch = text.match(/(?:invalid|unsupported)\s+([a-zA-Z0-9_]+).*?(?:must\s+be\s+one\s+of|one\s+of|allowed(?:\s+values)?)[^a-zA-Z0-9]+([^\n;]+)/i);
   if (enumMatch && definitions.has(enumMatch[1])) {
     const name = enumMatch[1];
     const choices = enumChoices(definitions.get(name), enumMatch[2]);
     const requested = context[name] ?? context.parameters?.[name] ?? parameters[name];
     const equivalent = choices.find((choice) => String(choice).toLowerCase() === String(requested).toLowerCase());
     if (equivalent !== undefined && equivalent !== parameters[name]) return { ...parameters, [name]: equivalent };
+    const semantic = safeEnumRepair(name, choices, parameters, context);
+    if (semantic !== undefined && semantic !== parameters[name]) return { ...parameters, [name]: semantic };
     if (choices.length === 1 && choices[0] !== parameters[name]) return { ...parameters, [name]: choices[0] };
   }
   return null;
+}
+
+function safeMissingValue(name, definition, parameters) {
+  const choices = enumChoices(definition);
+  if (name === "granularity" && parameters.date !== undefined) {
+    return choices.find((choice) => String(choice).toLowerCase() === "daily");
+  }
+  return undefined;
+}
+
+function safeEnumRepair(name, choices, parameters, context) {
+  if (name !== "period") return undefined;
+  if (!isExplicitAshareRequest(parameters, context)) return undefined;
+  const normalized = new Map(choices.map((choice) => [String(choice).toUpperCase(), choice]));
+  const periodCode = String(context.fiscal_period ?? context.parameters?.fiscal_period ?? "").toUpperCase();
+  const requested = String(context.period ?? context.parameters?.period ?? parameters.period ?? "").toLowerCase();
+  const fiscalMap = { Q1: "0331", Q2: "0630", Q3: "0930", Q4: "1231", FY: "1231" };
+  const target = fiscalMap[periodCode] ?? (requested === "annual" ? "1231" : undefined);
+  if (!target) return undefined;
+  return normalized.get(target);
+}
+
+function isExplicitAshareRequest(parameters, context) {
+  const market = parameters.market ?? context.market ?? context.parameters?.market;
+  if (market !== undefined && marketEquivalent(market, "CN")) return true;
+  const symbol = parameters.symbol ?? parameters.ticker ?? context.symbol ?? context.ticker;
+  return typeof symbol === "string" && /^\d{6}\.(?:SH|SS|SZ)$/i.test(symbol.trim());
 }
 
 function enumChoices(definition, hinted) {

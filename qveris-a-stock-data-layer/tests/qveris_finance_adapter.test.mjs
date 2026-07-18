@@ -122,6 +122,19 @@ test("fills required fields only from explicit context or safe equivalent names"
   assert.equal("symbol" in missing.parameters, false);
 });
 
+test("maps an explicitly requested option underlying to the live symbol parameter", () => {
+  const schema = detail({
+    capability_id: "OPT.CHAIN",
+    params: [{ name: "symbol", type: "string", required: true }],
+  });
+  const adapted = adaptFinanceParameters({
+    detail: schema,
+    parameters: { underlying: "510050.SH" },
+  });
+  assert.deepEqual(adapted.parameters, { symbol: "510050.SH" });
+  assert.deepEqual(adapted.missing_required, []);
+});
+
 test("uses an error-named missing field when the value exists in explicit context", async () => {
   const schema = detail({
     capability_id: "FUNDAMENTALS.IS",
@@ -147,6 +160,88 @@ test("uses an error-named missing field when the value exists in explicit contex
   assert.equal(result.success, true);
   assert.equal(client.calls.length, 2);
   assert.deepEqual(client.calls[1].parameters, { symbol: "600519.SH", period: "FY2025" });
+});
+
+test("maps an FY request to the provider-declared year-end code after an explicit enum error", async () => {
+  const schema = detail({
+    capability_id: "FUNDAMENTALS.IS",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "period", type: "string", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "period" }, { name: "revenue" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [
+      { success: false, execution_id: "exec-1", message: "missing_required_tool_input:period" },
+      { success: false, execution_id: "exec-2", message: "Invalid period: annual. Must be one of: 0331, 0630, 0930, 1231" },
+      { success: true, execution_id: "exec-3", result: { data: [{ symbol: "600519.SH", period: "FY2025", revenue: 2 }] } },
+    ],
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH" },
+    context: { period: "annual", fiscal_period: "FY", fiscal_year: 2025 },
+    transport: client,
+  });
+  assert.equal(result.success, true);
+  assert.deepEqual(client.calls.map((call) => call.parameters.period ?? null), [null, "annual", "1231"]);
+});
+
+test("does not apply A-share quarter-end period codes to a non-CN security", async () => {
+  const schema = detail({
+    capability_id: "FUNDAMENTALS.IS",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "period", type: "string", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "period" }, { name: "revenue" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [
+      { success: false, execution_id: "exec-1", message: "missing_required_tool_input:period" },
+      { success: false, execution_id: "exec-2", message: "Invalid period: annual. Must be one of: 0331, 0630, 0930, 1231" },
+      { success: true, execution_id: "exec-3", result: { data: [{ symbol: "AAPL", period: "FY2025", revenue: 2 }] } },
+    ],
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "AAPL" },
+    context: { market: "US", period: "annual", fiscal_period: "FY", fiscal_year: 2025 },
+    transport: client,
+  });
+  assert.equal(result.success, false);
+  assert.deepEqual(client.calls.map((call) => call.parameters.period ?? null), [null, "annual"]);
+});
+
+test("uses daily granularity only when a provider requires it for an explicit single date", async () => {
+  const schema = detail({
+    capability_id: "FLOW.DRAGON_TIGER",
+    params: [
+      { name: "symbol", type: "string", required: false },
+      { name: "date", type: "date", required: false },
+      { name: "granularity", type: "string", required: false, enum: ["daily", "weekly", "monthly"] },
+    ],
+    one_of_required: [["symbol", "granularity"]],
+    field_spec: { required: [{ name: "date" }, { name: "symbol" }, { name: "reason" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [
+      { success: false, execution_id: "exec-1", message: "missing_required_tool_input:granularity" },
+      { success: true, execution_id: "exec-2", result: { data: [{ date: "2025-01-15", symbol: "300750.SZ", reason: "turnover" }] } },
+    ],
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "300750.SZ", date: "2025-01-15" },
+    context: { market: "CN" },
+    transport: client,
+  });
+  assert.equal(result.success, true);
+  assert.deepEqual(client.calls[1].parameters, { symbol: "300750.SZ", date: "2025-01-15", granularity: "daily" });
 });
 
 test("retries only equivalent A-share symbol encodings and never changes the entity", async () => {
