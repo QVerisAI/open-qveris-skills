@@ -26,28 +26,7 @@ Prefer standardized CAP query over legacy tool discovery:
 - Discovery route: use `cap-search` and `cap-detail` only to verify unknown capability IDs or params.
 - Legacy route: use `/search` plus `/tools/execute` only if CAP query is unavailable; add `legacy_cap_shim_used` to `data_quality.warnings`.
 
-Common CAP IDs for this skill:
-
-| qveris_finance name | capability_id |
-|---|---|
-| `qveris_finance.ref_symbology` | `REF.SYMBOLOGY` |
-| `qveris_finance.ref_security_master` | `REF.SECURITY_MASTER` |
-| `qveris_finance.ref_company_profile` | `REF.COMPANY_PROFILE` |
-| `qveris_finance.news_fin_tagged` | `NEWS.FIN.TAGGED` |
-| `qveris_finance.sentiment_text_signals` | `SENTIMENT.TEXT_SIGNALS` |
-| `qveris_finance.fundamentals_is` | `FUNDAMENTALS.IS` |
-| `qveris_finance.fundamentals_bs` | `FUNDAMENTALS.BS` |
-| `qveris_finance.fundamentals_cf` | `FUNDAMENTALS.CF` |
-| `qveris_finance.fundamentals_derived_ratios` | `FUNDAMENTALS.DERIVED_RATIOS` |
-| `qveris_finance.mkt_l1_rt` | `MKT.L1.RT` |
-| `qveris_finance.estimates_consensus` | `ESTIMATES.CONSENSUS` |
-| `qveris_finance.event_calendar_earnings` | `EVENT.CALENDAR.EARNINGS` |
-| `qveris_finance.earnings_actual_surprise` | `EARNINGS.ACTUAL_SURPRISE` |
-| `qveris_finance.transcripts_earnings_call` | `TRANSCRIPTS.EARNINGS_CALL` |
-| `qveris_finance.mkt_bars_adjusted` | `MKT.BARS.ADJUSTED` |
-| `qveris_finance.mkt_breadth_internals` | `MKT.BREADTH.INTERNALS` |
-| `qveris_finance.risk_beta_vol` | `RISK.BETA_VOL` |
-| `qveris_finance.index_levels` | `INDEX.LEVELS` |
+Use only the logical `qveris_finance.*` names listed in the workflow tables below. The public adapter resolves their current canonical IDs from the live catalog and live cap-detail on every call. Do not copy a historical CAP ID from this document into a request.
 
 ## Common Parameter Templates
 

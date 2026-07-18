@@ -59,6 +59,7 @@ Source record:
 - Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
 - Prefer native `qveris_finance.*` tools when exposed by the runtime.
 - If native tools are unavailable and the run is in this repository root, use the repository CLI: `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
+- Treat that CLI as the public CAP adapter: it resolves the current CAP ID and live cap-detail, allow-lists/coerces params, normalizes A-share symbols, and may retry once with error-guided or minimal params. Build artifacts and report Trace only from its `final_params`, `observed_calls`, and `qveris_trace`; never copy the requested params over an observed retry.
 - If the skill is installed standalone without native `qveris_finance.*` tools and without `qveris-official`, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
 - Use `cap-search` only when the capability ID is uncertain. Use `cap-detail` before adding any unvalidated A-share specialty, classification, research-report, corporate-event, EOD-bar, or top-mover capability to the run.
 - Keep `cap-detail` and failed calls in the trace appendix when they influence missing fields or fallback status.

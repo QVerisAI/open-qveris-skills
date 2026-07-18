@@ -51,6 +51,7 @@ Read `../references/qveris-finance-data-quality-rubric.md` before using QVeris p
 
 - Prefer native `qveris_finance.*` CAP functions when the environment exposes them.
 - If native functions are not exposed but the repo script is available, execute standardized CAP calls from the repository root with `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
+- Treat that CLI as the public CAP adapter: it resolves the current CAP ID and live cap-detail, allow-lists/coerces params, normalizes A-share symbols, and may retry once with error-guided or minimal params. Build artifacts and report Trace only from its `final_params`, `observed_calls`, and `qveris_trace`; never copy the requested params over an observed retry.
 - Equivalent HTTP route: `POST https://qveris.ai/api/v1/capabilities/query` with `capability_id`, structured `parameters`, and `strategy: "best"`.
 - Use `cap-search` or `GET /capabilities/search` only when the CAP ID or parameter contract is uncertain; use `cap-detail` or `GET /capabilities/{capability_id}` to verify fields.
 - Use legacy QVeris `/search` plus `/tools/execute` only when the standardized CAP endpoint is unavailable; mark `legacy_cap_shim_used` in `data_quality.warnings` and keep trace names normalized to `qveris_finance.*`.

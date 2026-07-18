@@ -34,7 +34,7 @@ To look up facts, answers, or general information, use `web_search` instead.
 
 **Credential**: Only `QVERIS_API_KEY` is used. All requests go to `https://qveris.ai/api/v1` over HTTPS.
 
-**Finance CAP requirement**: For `qveris_finance.*` workflows, use the standardized CAP endpoints (`/capabilities/search`, `/capabilities/{id}`, `/capabilities/query`). Legacy `/search` plus `/tools/execute`, generic `discover`/`call`, and raw finance tool IDs are not fallbacks. If the standardized CAP runtime is unavailable, report `tool_runtime_missing` or `capability_unavailable` instead of selecting a raw provider route.
+**Finance CAP requirement**: For `qveris_finance.*` workflows, use the standardized CAP endpoints (`/capabilities`, `/capabilities/{id}`, `/capabilities/query`). When this repository is available, use `scripts/qveris_tool.mjs cap-detail/cap-query` as the public adapter: it resolves current CAP IDs from the live catalog, validates against live cap-detail, normalizes inputs, performs one bounded parameter retry, and records exact observed Trace. Legacy `/search` plus `/tools/execute`, generic `discover`/`call`, and raw finance tool IDs are not fallbacks. If the standardized CAP runtime is unavailable, report `tool_runtime_missing` or `capability_unavailable` instead of selecting a raw provider route.
 
 ---
 
@@ -74,12 +74,13 @@ For standardized finance capabilities, execute `POST /api/v1/capabilities/query`
 
 ### Usage Flow
 
-For known standardized capabilities, especially `qveris_finance.*`, skip legacy discovery and call the CAP directly. Do not switch to a raw finance tool ID when the CAP call fails:
+For standardized `qveris_finance.*` capabilities, skip legacy discovery and do not switch to a raw finance tool ID when a CAP fails:
 
-1. **Map**: Convert the logical tool name to a CAP ID such as `qveris_finance.mkt_l1_rt` -> `MKT.L1.RT`. If uncertain, use `cap-search` or `/capabilities/search`.
-2. **Inspect when needed**: Use `cap-detail` or `GET /capabilities/{capability_id}` to verify required parameters and output fields.
-3. **Query**: Execute `cap-query` or `POST /capabilities/query` with structured `parameters` and `strategy: "best"`.
-4. **Normalize trace**: For finance outputs, keep user-facing trace names as `qveris_finance.*`; recursively remove provider, route, candidate, failover, credential, raw tool-ID metadata, and provider API URLs from every output surface, including nested fields under `_meta`, `parameters`, result objects, prose, Evidence, and Sources.
+1. **Resolve live**: `cap-detail` and `cap-query` read `/capabilities?domain=finance` and match the requested logical name or stale punctuation variant to the current canonical CAP ID. Never maintain a hand-written ID map.
+2. **Preflight live**: Read `GET /capabilities/{id}` on every execution. Allow-list parameters, coerce declared types, fill only documented non-identity required values, normalize `.SH/.SZ/.SS` and unambiguous six-digit A-share codes, and refuse missing identity, market conflicts, ambiguous exchanges, or a missing parameter schema.
+3. **Query and retry narrowly**: Execute `/capabilities/query`. After a parameter-class failure, retry once by removing an optional input named by the error or by sending required-plus-identity minimal params. Refresh an invalid CAP only when the live catalog now resolves a different ID. Do not apply this retry to semantic or generic provider failures.
+4. **Use observed output**: Read `final_params`, `observed_calls`, and `qveris_trace` from the adapter result. Trace has exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`; never reconstruct it from requested params or planned calls.
+5. **Sanitize recursively**: Keep user-facing names as `qveris_finance.*`; remove provider, route, candidate, failover, credential, raw tool-ID metadata, and provider API URLs from every output surface.
 
 For generic non-standardized, non-finance tools, use the legacy flow:
 
@@ -159,7 +160,9 @@ When `discover` returns multiple tools, evaluate before selecting:
 
 Failures are almost always caused by incorrect parameters, wrong types, or selecting the wrong tool — not by platform instability. Diagnose your inputs before concluding a tool is broken.
 
-**Attempt 1 — Fix parameters**: Read the error message. Check types and formats. Fix and retry.
+**Finance CAP adapter**: Parameter validation and one error-guided/minimal retry are automatic. Use the adapter's final error, `parameter_audit`, `retry_events`, and observed Trace; do not add another blind retry or copy the original parameters into the Trace.
+
+**Attempt 1 — Fix parameters**: For generic non-finance tools, read the error message. Check types and formats. Fix and retry.
 
 **Attempt 2 — Simplify**: Drop optional parameters. Try standard values (e.g., well-known ticker). Retry.
 

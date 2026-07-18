@@ -47,9 +47,23 @@ export function isLikelyLegacyFinanceRouteIdentifier(value) {
   return FINANCE_ROUTE_HINT_RE.test(identifier);
 }
 
+function isSensitiveMetadataDescriptor(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+  const descriptorName = value.key ?? value.field ?? value.field_name ?? value.parameter ?? value.parameter_name ?? value.name;
+  if (!isSensitiveMetadataKey(descriptorName)) {
+    return false;
+  }
+  return ["type", "description", "required", "label", "value", "schema", "enum", "allowed_values"]
+    .some((key) => Object.hasOwn(value, key));
+}
+
 export function sanitizeProviderRouteMetadata(value) {
   if (Array.isArray(value)) {
-    return value.map((item) => sanitizeProviderRouteMetadata(item));
+    return value
+      .filter((item) => !isSensitiveMetadataDescriptor(item))
+      .map((item) => sanitizeProviderRouteMetadata(item));
   }
   if (typeof value === "string") {
     return value

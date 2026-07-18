@@ -5,8 +5,9 @@ import { createHash } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import { queryCapability } from "../qveris-official/scripts/qveris_client.mjs";
+import * as qverisClient from "../qveris-official/scripts/qveris_client.mjs";
 import { readQverisApiKey } from "../qveris-official/scripts/qveris_env.mjs";
+import { executeFinanceCapability } from "../qveris-official/scripts/qveris_finance_adapter.mjs";
 import { sanitizeProviderRouteMetadata } from "../qveris-official/scripts/qveris_sanitize.mjs";
 
 const CASES = [
@@ -14,14 +15,12 @@ const CASES = [
     skill: "qveris-a-share-factor-screen",
     caseId: "a-share-factor-identity-coverage",
     toolName: "qveris_finance.ref_symbology",
-    capabilityId: "REF.SYMBOLOGY",
     params: { symbol: "600519.SH", market: "CN" },
   },
   {
     skill: "qveris-a-stock-data-layer",
     caseId: "a-stock-requested-window-bars",
     toolName: "qveris_finance.mkt_bars_eod",
-    capabilityId: "MKT.BARS.EOD",
     params: {
       symbol: "600519.SH",
       market: "CN",
@@ -34,28 +33,24 @@ const CASES = [
     skill: "qveris-a-share-data",
     caseId: "a-share-latest-snapshot",
     toolName: "qveris_finance.mkt_l1_rt",
-    capabilityId: "MKT.L1.RT",
     params: { symbol: "600519.SH", market: "CN" },
   },
   {
     skill: "qveris-alphaear-market-intelligence",
     caseId: "alphaear-news-coverage-monitor",
     toolName: "qveris_finance.news_fin_tagged",
-    capabilityId: "NEWS.FIN.TAGGED",
     params: { symbol: "NVDA", market: "US", limit: 5 },
   },
   {
     skill: "qveris-daymade-financial-data-suite",
     caseId: "daymade-annual-income-statement",
     toolName: "qveris_finance.fundamentals_is",
-    capabilityId: "FUNDAMENTALS.IS",
     params: { symbol: "NVDA", market: "US", period_type: "annual", limit: 1 },
   },
   {
     skill: "qveris-uzi-equity-research",
     caseId: "uzi-a-share-specialty-gate",
     toolName: "qveris_finance.flow_dragon_tiger",
-    capabilityId: "FLOW.DRAGON_TIGER",
     params: {
       symbol: "002594.SZ",
       market: "CN",
@@ -91,18 +86,31 @@ function markdownJson(value) {
   return `\`${JSON.stringify(value)}\``;
 }
 
-function renderReport(testCase, artifactName, observedCall) {
-  const { status, execution_id: executionId, missing_fields: missingFields } = observedCall;
+function renderTraceRows(trace) {
+  return trace.map((row) => `| \`${row.tool_name}\` | ${markdownJson(row.params)} | ${row.status} | ${row.execution_id ?? "null"} | ${row.fallback_used} | ${markdownJson(row.missing_fields)} |`).join("\n");
+}
+
+function renderReport(testCase, artifactName, execution) {
+  const trace = execution.qveris_trace ?? [];
+  const finalTrace = trace.at(-1);
+  const status = finalTrace?.status ?? "rejected";
+  const missingFields = finalTrace?.missing_fields ?? [execution.adapter_error?.code ?? "adapter_preflight_failed"];
+  const observedCount = execution.observed_calls?.length ?? 0;
   const evidence = status === "success"
-    ? "One live transport-success CAP response was observed. It supports only this narrow route check, not a complete research conclusion."
-    : "The live CAP attempt failed, so it supplies call-availability evidence only and no positive market or issuer evidence.";
+    ? `${observedCount} live CAP attempt(s) were observed and the final attempt succeeded. This supports only the narrow route check, not a complete research conclusion.`
+    : observedCount > 0
+      ? `${observedCount} live CAP attempt(s) were observed, but the final attempt failed. They supply call-availability evidence only and no positive market or issuer evidence.`
+      : "The public adapter rejected the case before transport because live CAP resolution or parameter preflight could not be completed. No call is claimed.";
   const quality = status === "success" ? "partial" : "insufficient";
+  const preflightNote = observedCount === 0
+    ? "Adapter preflight did not produce an observed call; the Trace table is intentionally empty.\n\n"
+    : "";
 
   return `# ${testCase.skill} Live E2E
 
 ## Summary
 
-Case \`${testCase.caseId}\` executed one live QVeris CAP call. Observed status: \`${status}\`; broader skill conclusions remain out of scope for this contract check.
+Case \`${testCase.caseId}\` ran through the public finance adapter. Final observed status: \`${status}\`; broader skill conclusions remain out of scope for this contract check.
 
 ## Evidence
 
@@ -116,64 +124,70 @@ This run verifies the live trace-to-artifact contract. It does not infer missing
 
 - \`data_quality.status\`: \`${quality}\`.
 - \`missing_fields\`: ${markdownJson(missingFields)}.
+- Requested logical CAP: \`${testCase.toolName}\`.
+- Final transmitted params: ${markdownJson(execution.final_params ?? {})}.
+- Resolved CAP ID: \`${execution.resolution?.capability_id ?? "unresolved"}\` from \`${execution.resolution?.detail_source ?? "unavailable"}\`.
 - Observed-call artifact: \`${artifactName}\`.
 - Raw provider, route, candidate, failover, and credential metadata is removed recursively before the artifact is saved.
 
 ## Trace Appendix
 
-| tool_name | params | status | execution_id | fallback_used | missing_fields |
+${preflightNote}| tool_name | params | status | execution_id | fallback_used | missing_fields |
 |---|---|---|---|---|---|
-| \`${testCase.toolName}\` | ${markdownJson(testCase.params)} | ${status} | ${executionId ?? "null"} | false | ${markdownJson(missingFields)} |
+${renderTraceRows(trace)}
 
-Observed call count: \`1\`.
+Observed call count: \`${observedCount}\`.
 
 Not investment advice.
 `;
 }
 
 async function runCase(apiKey, testCase, dateTag) {
-  const requestedAt = new Date().toISOString();
-  let response;
+  let execution;
   try {
-    response = await queryCapability({
+    execution = await executeFinanceCapability({
+      client: qverisClient,
       apiKey,
-      capabilityId: testCase.capabilityId,
+      requestedCapability: testCase.toolName,
       parameters: testCase.params,
       strategy: "best",
       timeoutMs: 120000,
     });
   } catch (error) {
-    response = {
-      success: false,
-      execution_id: null,
-      capability_id: testCase.capabilityId,
-      parameters: testCase.params,
-      error_message: error instanceof Error ? error.message : String(error),
+    execution = {
+      adapter_version: "qveris_finance_adapter.v1",
+      resolution: null,
+      final_params: {},
+      parameter_audit: null,
+      retry_events: [],
+      observed_calls: [],
+      qveris_trace: [],
+      adapter_error: {
+        code: error?.code ?? "adapter_preflight_failed",
+        message: error instanceof Error ? error.message : String(error),
+      },
     };
   }
 
-  const sanitizedResponse = sanitizeProviderRouteMetadata(response);
-  const status = sanitizedResponse.success === true ? "success" : "failed";
-  const missingFields = status === "success" ? [] : ["cap_call_failed"];
-  const observedCall = {
-    tool_name: testCase.toolName,
-    request_kind: "capabilities/query",
-    capability_id: testCase.capabilityId,
-    params: testCase.params,
-    status,
-    execution_id: sanitizedResponse.execution_id ?? null,
-    fallback_used: false,
-    missing_fields: missingFields,
-    observed_at: sanitizedResponse.created_at ?? requestedAt,
-    response_sha256: sha256(sanitizedResponse),
-    response: sanitizedResponse,
-  };
+  const sanitizedExecution = sanitizeProviderRouteMetadata(execution);
+  const observedCalls = sanitizedExecution.observed_calls ?? [];
+  for (const observedCall of observedCalls) {
+    if (observedCall.response_sha256 !== sha256(observedCall.response)) {
+      throw new Error(`Adapter response hash mismatch for ${testCase.caseId}`);
+    }
+  }
   const artifact = {
     artifact_version: "observed_calls.v1",
+    adapter_version: sanitizedExecution.adapter_version,
     skill: testCase.skill,
     case_id: testCase.caseId,
     recorded_at: new Date().toISOString(),
-    observed_calls: [observedCall],
+    resolution: sanitizedExecution.resolution,
+    final_params: sanitizedExecution.final_params,
+    parameter_audit: sanitizedExecution.parameter_audit,
+    retry_events: sanitizedExecution.retry_events,
+    observed_calls: observedCalls,
+    ...(sanitizedExecution.adapter_error ? { adapter_error: sanitizedExecution.adapter_error } : {}),
   };
 
   const baseName = `live-e2e-output-${dateTag}`;
@@ -182,10 +196,16 @@ async function runCase(apiKey, testCase, dateTag) {
   await writeFile(path.join(exampleDir, artifactName), `${JSON.stringify(artifact, null, 2)}\n`, "utf8");
   await writeFile(
     path.join(exampleDir, `${baseName}.md`),
-    renderReport(testCase, artifactName, observedCall),
+    renderReport(testCase, artifactName, sanitizedExecution),
     "utf8",
   );
-  return { skill: testCase.skill, status, executionId: observedCall.execution_id };
+  const finalCall = observedCalls.at(-1);
+  return {
+    skill: testCase.skill,
+    status: finalCall?.status ?? "rejected",
+    executionId: finalCall?.execution_id ?? null,
+    observedCallCount: observedCalls.length,
+  };
 }
 
 async function main() {
@@ -197,7 +217,7 @@ async function main() {
   const apiKey = readQverisApiKey();
   for (const testCase of CASES) {
     const result = await runCase(apiKey, testCase, dateTag);
-    console.log(`${result.skill}: ${result.status} execution_id=${result.executionId ?? "null"}`);
+    console.log(`${result.skill}: ${result.status} observed_calls=${result.observedCallCount} execution_id=${result.executionId ?? "null"}`);
   }
 }
 

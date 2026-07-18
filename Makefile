@@ -91,7 +91,7 @@ run-finance-live-e2e:
 	$(NODE) scripts/run_qveris_finance_live_e2e.mjs
 
 validate-qveris-sanitizer:
-	$(NODE) --test qveris-official/tests/qveris_sanitize.test.mjs
+	$(NODE) --test qveris-official/tests/*.test.mjs
 
 validate-finance-contract-self-tests:
 	$(PYTHON) scripts/validate_qveris_finance_fixtures.py --self-test

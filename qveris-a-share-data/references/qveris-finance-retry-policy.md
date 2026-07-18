@@ -2,6 +2,19 @@
 
 Use this shared policy for every QVeris finance skill in this repository.
 
+
+## Public Adapter Preflight
+
+When the repository CLI is available, route finance CAP calls through `qveris-official/scripts/qveris_tool.mjs cap-query`. On every execution it must:
+
+1. Read the live finance catalog and live cap-detail, then resolve the requested `qveris_finance.*` name to the current canonical CAP ID instead of a static ID table.
+2. Build an allow-list from live parameter definitions; drop undocumented optional inputs and refuse execution if no enforceable parameter schema is available.
+3. Fill only documented required non-identity values from cap-detail defaults/examples, coerce declared types, and never substitute a sample security for a missing issuer identity.
+4. Normalize A-share symbols (`.SS` to `.SH`, preserve `.SH/.SZ`, infer exchange for unambiguous six-digit codes) and reject symbol/market conflicts or ambiguous exchanges.
+5. Retry at most once after a parameter-class failure: remove an optional parameter named by the error, otherwise retry with required-plus-identity minimal params. Do not retry semantic mismatches or generic provider failures in this adapter.
+6. On an invalid CAP response, refresh the live catalog and retry only if the current canonical CAP ID changed.
+7. Persist the exact transmitted params and every observed attempt in `final_params`, `observed_calls`, and the six-field `qveris_trace`; recursively sanitize provider/route/candidate metadata.
+
 ## Retry Classes
 
 | Failure class | Examples | Retry rule | Output rule |

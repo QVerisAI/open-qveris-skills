@@ -484,8 +484,8 @@ def validate_observed_calls_artifact(path: Path, text: str) -> list[str]:
     if artifact.get("skill") != report_skill_name(path):
         errors.append(f"{artifact_path}: skill does not match report directory")
     calls = artifact.get("observed_calls")
-    if not isinstance(calls, list) or not calls:
-        errors.append(f"{artifact_path}: observed_calls must be a non-empty list")
+    if not isinstance(calls, list):
+        errors.append(f"{artifact_path}: observed_calls must be a list")
         return errors
 
     expected_rows: list[dict[str, object]] = []
@@ -820,6 +820,29 @@ Not investment advice.
         tampered = report.replace("real-execution-id", "different-execution-id")
         if not validate_observed_calls_artifact(report_path, tampered):
             errors.append("self-test-artifact: expected tampered trace rejection")
+
+        empty_report_path = examples_dir / "live-e2e-output-empty-self-test.md"
+        empty_report = sample_report("Requested `qveris_finance.ref_symbology`; adapter preflight rejected the call.")
+        empty_report = empty_report.replace(
+            "| `qveris_finance.ref_symbology` | `{}` | success | null | false | `[]` |\n",
+            "",
+        ).replace(
+            "\nNot investment advice.\n",
+            "\nObserved call count: `0`.\n\nNot investment advice.\n",
+        )
+        empty_report_path.write_text(empty_report, encoding="utf-8")
+        empty_artifact = {
+            "artifact_version": "observed_calls.v1",
+            "skill": "qveris-a-share-data",
+            "case_id": "empty-self-test",
+            "recorded_at": "2026-07-13T00:00:00Z",
+            "observed_calls": [],
+        }
+        empty_report_path.with_suffix(".observed-calls.json").write_text(
+            json.dumps(empty_artifact), encoding="utf-8"
+        )
+        if validate_observed_calls_artifact(empty_report_path, empty_report):
+            errors.append("self-test-empty-artifact: expected zero-call preflight artifact to pass")
 
     for name, report in bad_reports.items():
         if not validate_text(report, f"self-test-{name}"):

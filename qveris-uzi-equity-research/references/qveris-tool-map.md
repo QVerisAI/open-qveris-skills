@@ -26,7 +26,7 @@ Source: UZI-Skill, https://github.com/wbh604/UZI-Skill, MIT, evaluation recent a
 ## Conditional A-Share CAPs
 
 - Use `cap-detail` before LHB, large-order flow, northbound flow, lock-up, limit-move, concept, sector heat, top-mover, or investor-interaction routes.
-- If `cap-detail` or alias discovery is unavailable for an explicitly requested LHB or flow layer, attempt at most one direct canonical CAP ID fallback from the table below, then stop and mark missing on failure or semantic mismatch.
+- If live catalog or cap-detail resolution is unavailable for an explicitly requested LHB or flow layer, stop and mark it missing. Do not bypass the adapter with a dated canonical CAP ID.
 - Only use rows whose stock identity, market, date, and row type match the requested analysis.
 - If a specialty route is unavailable, empty, or semantically mismatched, mark `capability_unavailable`, `empty_payload`, or `semantic_mismatch`; do not use legacy data.
 
@@ -43,16 +43,16 @@ Use this matrix before applying US-style research defaults to a CN/A-share reque
 | Derived ratios | Conditional | Use only when CAP returns non-empty CN issuer-matched fields; otherwise mark missing rather than calculating unsupported valuation outputs. |
 | Estimates/forward inputs | Conditional | Do not infer forward multiples without issuer-matched consensus or estimate fields. |
 | Research reports | Conditional | Require non-empty issuer/report/date fields; suppress ratings and targets. |
-| LHB/hot money | Conditional specialty | Use `qveris_finance.flow_dragon_tiger` after detail or direct canonical fallback; row type must identify LHB data. |
-| Large-order flow | Conditional specialty | Use `qveris_finance.flow_large_order` after detail or direct canonical fallback; stock/date rows must match. |
-| Northbound/cross-border flow | Conditional specialty | Use `qveris_finance.flow_northbound` or `qveris_finance.flow_cross_border` after detail or direct canonical fallback; keep missing on 503/empty/mismatch. |
+| LHB/hot money | Conditional specialty | Resolve `qveris_finance.flow_dragon_tiger` through the live adapter; row type must identify LHB data. |
+| Large-order flow | Conditional specialty | Resolve `qveris_finance.flow_large_order` through the live adapter; stock/date rows must match. |
+| Northbound/cross-border flow | Conditional specialty | Resolve `qveris_finance.flow_northbound` or `qveris_finance.flow_cross_border` through the live adapter; keep missing on unavailable/empty/mismatch. |
 | News/sentiment/trap risk | Qualitative unless stronger evidence succeeds | Tagged news is background only; no proof of manipulation, fraud, strong sentiment, or directional risk from tagged news alone. |
 
-## Canonical A-Share Specialty Fallbacks
+## Logical A-Share Specialty Names
 
-Use only when the user explicitly asks for the layer and live discovery is unavailable or unstable.
+Use these stable logical names only when the user explicitly asks for the layer. The public adapter must resolve the current canonical CAP ID from the live catalog before execution.
 
-| Requested layer | Canonical fallback CAP ID | Stop condition |
+| Requested layer | Logical CAP name | Stop condition |
 |---|---|---|
 | LHB / dragon-tiger list | `qveris_finance.flow_dragon_tiger` | Stop after one failed, empty, or semantically mismatched direct call. |
 | Large-order flow | `qveris_finance.flow_large_order` | Stop after one failed, empty, or mismatched direct call. |

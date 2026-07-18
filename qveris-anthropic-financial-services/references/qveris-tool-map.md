@@ -26,32 +26,7 @@ Prefer standardized CAP query over legacy tool discovery:
 - Discovery route: use `cap-search` and `cap-detail` only to verify unknown capability IDs or params.
 - Legacy route: use `/search` plus `/tools/execute` only if CAP query is unavailable; add `legacy_cap_shim_used` to `data_quality.warnings`.
 
-Common CAP IDs for this skill:
-
-| qveris_finance name | capability_id |
-|---|---|
-| `qveris_finance.ref_symbology` | `REF.SYMBOLOGY` |
-| `qveris_finance.ref_security_master` | `REF.SECURITY_MASTER` |
-| `qveris_finance.ref_company_profile` | `REF.COMPANY_PROFILE` |
-| `qveris_finance.event_calendar_earnings` | `EVENT.CALENDAR.EARNINGS` |
-| `qveris_finance.earnings_actual_surprise` | `EARNINGS.ACTUAL_SURPRISE` |
-| `qveris_finance.estimates_consensus` | `ESTIMATES.CONSENSUS` |
-| `qveris_finance.fundamentals_is` | `FUNDAMENTALS.IS` |
-| `qveris_finance.fundamentals_bs` | `FUNDAMENTALS.BS` |
-| `qveris_finance.fundamentals_cf` | `FUNDAMENTALS.CF` |
-| `qveris_finance.fundamentals_segment` | `FUNDAMENTALS.SEGMENT` |
-| `qveris_finance.transcripts_earnings_call` | `TRANSCRIPTS.EARNINGS_CALL` |
-| `qveris_finance.news_fin_tagged` | `NEWS.FIN.TAGGED` |
-| `qveris_finance.mkt_l1_rt` | `MKT.L1.RT` |
-| `qveris_finance.ref_classification_industry` | `REF.CLASSIFICATION.INDUSTRY` |
-| `qveris_finance.ref_classification_theme` | `REF.CLASSIFICATION.THEME` |
-| `qveris_finance.fundamentals_derived_ratios` | `FUNDAMENTALS.DERIVED_RATIOS` |
-| `qveris_finance.rates_govt_benchmark` | `RATES.GOVT_BENCHMARK` |
-| `qveris_finance.fx_spot` | `FX.SPOT` |
-| `qveris_finance.research_analyst_reports` | `RESEARCH.ANALYST_REPORTS` |
-| `qveris_finance.event_calendar_corp` | `EVENT.CALENDAR.CORP` |
-| `qveris_finance.ownership_institutional` | `OWNERSHIP.INSTITUTIONAL` |
-| `qveris_finance.ownership_insider_trades` | `OWNERSHIP.INSIDER_TRADES` |
+Use only the logical `qveris_finance.*` names listed in the workflow tables below. The public adapter resolves their current canonical IDs from the live catalog and live cap-detail on every call. Do not copy a historical CAP ID from this document into a request.
 
 ## Common Parameter Templates
 

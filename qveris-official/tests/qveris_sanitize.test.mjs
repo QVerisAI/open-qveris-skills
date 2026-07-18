@@ -67,6 +67,28 @@ test("removes sensitive metadata at every nesting level", () => {
   });
 });
 
+test("removes sensitive metadata represented as schema or billing descriptors", () => {
+  const sanitized = sanitizeProviderRouteMetadata({
+    pricing_dimensions: [
+      { key: "source_tool_id", value: "*", label: "Routed tool" },
+      { key: "region", value: "CN", label: "Region" },
+    ],
+    field_spec: [
+      { name: "source_provider", type: "string", description: "internal" },
+      { name: "symbol", type: "string", description: "public" },
+    ],
+    dropped_params: [
+      { name: "provider", reason: "not_in_cap_detail" },
+    ],
+  });
+
+  assert.deepEqual(sanitized, {
+    pricing_dimensions: [{ key: "region", value: "CN", label: "Region" }],
+    field_spec: [{ name: "symbol", type: "string", description: "public" }],
+    dropped_params: [{ name: "provider", reason: "not_in_cap_detail" }],
+  });
+});
+
 test("redacts raw finance routes and provider API URLs in string values", () => {
   const sanitized = sanitizeProviderRouteMetadata({
     raw_route: "removed by key",
