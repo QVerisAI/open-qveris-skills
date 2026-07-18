@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { sanitizeProviderRouteMetadata } from "./qveris_sanitize.mjs";
 
 export const ADAPTATION_SCHEMA_VERSION = "qveris.finance-parameter-adaptation.v1";
+export const CAPABILITY_FALLBACK_SCHEMA_VERSION = "qveris.finance-capability-fallback.v1";
 
 const MAX_ATTEMPTS = 3;
 const SEMANTIC_PARAMETER_NAMES = new Set([
@@ -285,6 +286,117 @@ export async function executeFinanceCapability({
       conversion_errors: adapted.conversion_errors,
     },
     final_params: selectedAttempt?.parameters ?? null,
+    observed_calls: observedCalls,
+    qveris_trace: observedCalls.map(({ tool_name, params, status, execution_id, fallback_used, missing_fields }) => ({
+      tool_name,
+      params,
+      status,
+      execution_id,
+      fallback_used,
+      missing_fields,
+    })),
+  });
+}
+
+export async function executeFinanceCapabilityChain({
+  requests,
+  transport,
+  strategy = "best",
+  searchId,
+  timeoutMs = 60_000,
+  maxCapabilities = 3,
+}) {
+  if (!Array.isArray(requests) || requests.length === 0) {
+    throw adapterError("fallback_chain_required", "Finance fallback chain requires at least one explicit CAP request.");
+  }
+  const limit = Math.min(MAX_ATTEMPTS, Number(maxCapabilities));
+  if (!Number.isInteger(limit) || limit < 1 || requests.length > limit) {
+    throw adapterError("fallback_chain_limit", `Finance fallback chain may contain at most ${MAX_ATTEMPTS} CAP requests.`);
+  }
+  const evidenceStatuses = new Set(["complete", "partial", "proxy_only"]);
+  const normalized = requests.map((request, index) => {
+    if (!request || typeof request !== "object" || Array.isArray(request)) {
+      throw adapterError("invalid_fallback_request", `Fallback request ${index + 1} must be an object.`);
+    }
+    const capability = String(request.capability ?? "").trim();
+    if (!/^qveris_finance\.[a-z0-9_]+$/i.test(capability)) {
+      throw adapterError("invalid_fallback_capability", `Fallback request ${index + 1} must use qveris_finance.*.`);
+    }
+    const evidenceStatus = request.evidence_status ?? (index === 0 ? "complete" : "partial");
+    if (!evidenceStatuses.has(evidenceStatus)) {
+      throw adapterError("invalid_fallback_evidence_status", `Fallback request ${index + 1} has an invalid evidence_status.`);
+    }
+    return {
+      capability,
+      parameters: request.parameters ?? {},
+      context: request.context ?? {},
+      evidence_status: evidenceStatus,
+      degradation_reason: request.degradation_reason ?? null,
+      allow_after_semantic_failure: request.allow_after_semantic_failure === true,
+    };
+  });
+  const distinct = new Set(normalized.map((request) => normalizeCapabilityName(request.capability)));
+  if (distinct.size !== normalized.length) {
+    throw adapterError("duplicate_fallback_capability", "Finance fallback chain cannot repeat a capability.");
+  }
+
+  const attempts = [];
+  const observedCalls = [];
+  let selectedResult = null;
+  let selectedIndex = null;
+  let lastResult = null;
+  for (let index = 0; index < normalized.length; index += 1) {
+    const request = normalized[index];
+    const result = await executeFinanceCapability({
+      capability: request.capability,
+      parameters: request.parameters,
+      context: request.context,
+      transport,
+      strategy,
+      searchId,
+      timeoutMs,
+    });
+    lastResult = result;
+    const calls = Array.isArray(result.observed_calls) ? result.observed_calls : [];
+    for (const call of calls) observedCalls.push({ ...call, fallback_used: index > 0 || call.fallback_used === true });
+    attempts.push({
+      capability_index: index + 1,
+      requested_capability: request.capability,
+      canonical_name: result.canonical_name ?? null,
+      capability_id: result.capability_id ?? null,
+      evidence_status: request.evidence_status,
+      degradation_reason: request.degradation_reason,
+      success: result.success === true,
+      reason_code: result.reason_code ?? result.adaptation?.attempts?.at(-1)?.reason_code ?? null,
+      execution_ids: calls.map((call) => call.execution_id).filter(Boolean),
+      response_hash: sha256(result),
+    });
+    if (result.success === true) {
+      selectedResult = result;
+      selectedIndex = index;
+      break;
+    }
+    if (semanticReason(result) && !request.allow_after_semantic_failure) break;
+  }
+
+  const selectedRequest = selectedIndex === null ? null : normalized[selectedIndex];
+  const fallbackAudit = {
+    schema_version: CAPABILITY_FALLBACK_SCHEMA_VERSION,
+    requested_capability: normalized[0].capability,
+    selected_capability: selectedResult?.canonical_name ?? null,
+    selected_capability_index: selectedIndex === null ? null : selectedIndex + 1,
+    evidence_status: selectedRequest?.evidence_status ?? "insufficient",
+    degradation_reason: selectedRequest?.degradation_reason ?? null,
+    attempts,
+    final_status: selectedResult ? "accepted" : "rejected",
+  };
+  const base = selectedResult ?? lastResult ?? { success: false, reason_code: "fallback_chain_failed" };
+  return sanitizeProviderRouteMetadata({
+    ...base,
+    success: selectedResult !== null,
+    ...(selectedResult ? {} : { reason_code: base.reason_code ?? "fallback_chain_failed" }),
+    evidence_status: fallbackAudit.evidence_status,
+    fallback_audit: fallbackAudit,
     observed_calls: observedCalls,
     qveris_trace: observedCalls.map(({ tool_name, params, status, execution_id, fallback_used, missing_fields }) => ({
       tool_name,
@@ -712,6 +824,11 @@ function requireTransport(transport, methods) {
   if (!transport || methods.some((method) => typeof transport[method] !== "function")) {
     throw adapterError("invalid_transport", `Finance adapter transport must implement: ${methods.join(", ")}.`);
   }
+}
+
+function semanticReason(result) {
+  const reason = String(result?.reason_code ?? result?.adaptation?.attempts?.at(-1)?.reason_code ?? "").toLowerCase();
+  return /semantic|wrong_(?:entity|market)|entity_mismatch|market_mismatch|date_window|period_mismatch|future_data|stale_data/.test(reason);
 }
 
 function adapterError(code, message) {

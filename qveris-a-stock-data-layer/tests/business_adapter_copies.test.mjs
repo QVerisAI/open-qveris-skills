@@ -51,3 +51,23 @@ test("qveris-official no longer contains the finance adapter", async () => {
   assert.doesNotMatch(skillText, /finance-parameter-adaptation|finance adapter/i);
   assert.doesNotMatch(toolText, /qveris_finance_adapter|--adapt/);
 });
+
+test("A-stock fallback policy allows only explicit canonical CAP downgrades", async () => {
+  const policyUrl = new URL("../references/qveris-finance-capability-fallbacks.json", import.meta.url);
+  const skillUrl = new URL("../SKILL.md", import.meta.url);
+  const policy = JSON.parse(await readFile(policyUrl, "utf8"));
+  const skillText = await readFile(skillUrl, "utf8");
+  assert.equal(policy.schema_version, "qveris.finance-capability-fallback-policy.v1");
+  assert.equal(policy.max_capabilities_per_chain, 3);
+  assert.equal(new Set(policy.rules.map((rule) => rule.requested)).size, policy.rules.length);
+  for (const rule of policy.rules) {
+    assert.match(rule.requested, /^qveris_finance\.[a-z0-9_]+$/);
+    assert.match(rule.fallback, /^qveris_finance\.[a-z0-9_]+$/);
+    assert.notEqual(rule.requested, rule.fallback);
+    assert.ok(["complete", "partial", "proxy_only"].includes(rule.evidence_status));
+    assert.ok(rule.requirements.length > 0);
+    assert.ok(rule.forbidden_claims.length > 0);
+  }
+  assert.match(skillText, /qveris-finance-capability-fallbacks\.json/);
+  assert.match(skillText, /cap-query-chain/);
+});

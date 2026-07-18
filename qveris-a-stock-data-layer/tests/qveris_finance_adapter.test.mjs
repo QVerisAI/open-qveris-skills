@@ -3,8 +3,10 @@ import test from "node:test";
 
 import {
   ADAPTATION_SCHEMA_VERSION,
+  CAPABILITY_FALLBACK_SCHEMA_VERSION,
   adaptFinanceParameters,
   executeFinanceCapability,
+  executeFinanceCapabilityChain,
   resolveFinanceCapability,
   symbolsEquivalent,
 } from "../scripts/qveris_finance_adapter.mjs";
@@ -44,6 +46,21 @@ function transport({ registry, capabilityDetail = detail(), responses = [] } = {
     async queryCapability(input) {
       calls.push(structuredClone(input));
       return structuredClone(responses[calls.length - 1] ?? responses.at(-1));
+    },
+  };
+}
+
+function fallbackTransport(details, responses) {
+  const calls = [];
+  const queues = new Map(Object.entries(responses).map(([key, values]) => [key, [...values]]));
+  return {
+    calls,
+    async listCapabilities() { return { results: Object.values(details), total: Object.keys(details).length }; },
+    async getCapability({ capabilityId }) { return details[capabilityId]; },
+    async queryCapability(input) {
+      calls.push(structuredClone(input));
+      const queue = queues.get(input.capabilityId) ?? [];
+      return structuredClone(queue.length > 1 ? queue.shift() : queue[0]);
     },
   };
 }
@@ -402,4 +419,92 @@ test("emits a sanitized, hash-backed adaptation audit", async () => {
   });
   const text = JSON.stringify(result);
   assert.doesNotMatch(text, /secret-provider|secret-route|secret-token|provider_id/);
+});
+
+test("uses an explicit second CAP and marks the result as degraded fallback evidence", async () => {
+  const details = {
+    "MKT.L1.RT": detail({
+      capability_id: "MKT.L1.RT",
+      params: [{ name: "symbol", type: "string", required: true }],
+      field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "price" }] },
+    }),
+    "MKT.BARS.ADJUSTED": detail({
+      capability_id: "MKT.BARS.ADJUSTED",
+      params: [
+        { name: "symbol", type: "string", required: true },
+        { name: "start_date", type: "date", required: false },
+        { name: "end_date", type: "date", required: false },
+      ],
+      field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "close" }] },
+    }),
+  };
+  const client = fallbackTransport(details, {
+    "MKT.L1.RT": [{ success: false, execution_id: "quote-failed", reason_code: "provider_business_error" }],
+    "MKT.BARS.ADJUSTED": [{ success: true, execution_id: "bars-ok", result: { data: [{ symbol: "600519.SH", date: "2026-07-17", close: 1400 }] } }],
+  });
+  const result = await executeFinanceCapabilityChain({
+    requests: [
+      { capability: "qveris_finance.mkt_l1_rt", parameters: { symbol: "600519.SH" }, evidence_status: "complete" },
+      {
+        capability: "qveris_finance.mkt_bars_adjusted",
+        parameters: { symbol: "600519.SH", start_date: "2026-07-17", end_date: "2026-07-17" },
+        evidence_status: "proxy_only",
+        degradation_reason: "latest_completed_session_close_not_realtime",
+      },
+    ],
+    transport: client,
+  });
+  assert.equal(result.success, true);
+  assert.equal(result.canonical_name, "qveris_finance.mkt_bars_adjusted");
+  assert.equal(result.evidence_status, "proxy_only");
+  assert.equal(result.fallback_audit.schema_version, CAPABILITY_FALLBACK_SCHEMA_VERSION);
+  assert.equal(result.fallback_audit.selected_capability_index, 2);
+  assert.equal(result.fallback_audit.degradation_reason, "latest_completed_session_close_not_realtime");
+  assert.deepEqual(result.observed_calls.map((call) => call.execution_id), ["quote-failed", "quote-failed", "quote-failed", "bars-ok"]);
+  assert.equal(result.qveris_trace.at(-1).fallback_used, true);
+});
+
+test("does not cross to another CAP after a semantic failure unless explicitly allowed", async () => {
+  const details = {
+    "MKT.L1.RT": detail({
+      capability_id: "MKT.L1.RT",
+      params: [{ name: "symbol", type: "string", required: true }],
+      field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "price" }] },
+    }),
+    "MKT.BARS.ADJUSTED": detail({
+      capability_id: "MKT.BARS.ADJUSTED",
+      params: [{ name: "symbol", type: "string", required: true }],
+      field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "close" }] },
+    }),
+  };
+  const client = fallbackTransport(details, {
+    "MKT.L1.RT": [{ success: true, execution_id: "wrong-entity", result: { data: [{ symbol: "000001.SZ", date: "2026-07-17", price: 1 }] } }],
+    "MKT.BARS.ADJUSTED": [{ success: true, execution_id: "must-not-run", result: { data: [{ symbol: "600519.SH", date: "2026-07-17", close: 1400 }] } }],
+  });
+  const result = await executeFinanceCapabilityChain({
+    requests: [
+      { capability: "qveris_finance.mkt_l1_rt", parameters: { symbol: "600519.SH" } },
+      { capability: "qveris_finance.mkt_bars_adjusted", parameters: { symbol: "600519.SH" }, evidence_status: "proxy_only" },
+    ],
+    transport: client,
+  });
+  assert.equal(result.success, false);
+  assert.equal(result.fallback_audit.attempts.length, 1);
+  assert.equal(client.calls.length, 1);
+});
+
+test("rejects implicit, duplicate, or overlong CAP fallback chains", async () => {
+  const client = fallbackTransport({}, {});
+  await assert.rejects(executeFinanceCapabilityChain({ requests: [], transport: client }), (error) => error.code === "fallback_chain_required");
+  await assert.rejects(executeFinanceCapabilityChain({
+    requests: [
+      { capability: "qveris_finance.mkt_l1_rt" },
+      { capability: "qveris_finance.mkt_l1_rt" },
+    ],
+    transport: client,
+  }), (error) => error.code === "duplicate_fallback_capability");
+  await assert.rejects(executeFinanceCapabilityChain({
+    requests: [1, 2, 3, 4].map((value) => ({ capability: `qveris_finance.test_${value}` })),
+    transport: client,
+  }), (error) => error.code === "fallback_chain_limit");
 });

@@ -35,6 +35,7 @@ Source record:
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Read `references/qveris-finance-data-quality-rubric.md` before using QVeris payloads as evidence.
 - Use `references/qveris-finance-retry-policy.md` for 5xx, fetch failures, 404s, payload truncation, and semantic mismatches.
+- Read `references/qveris-finance-capability-fallbacks.json` before replacing a failed CAP. Use only a listed same-claim fallback, preserve its declared evidence downgrade, and keep unlisted capabilities missing.
 - Build trace, call counts, retries, and timestamps only from saved `observed_calls`. Never invent an execution ID or a call that was only planned; use `execution_id=null` when an observed call returned no ID.
 - Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Sanity-check entity, market, exchange, asset type, currency, date window, fiscal period, and payload shape before using data.
@@ -64,6 +65,7 @@ Source record:
 - If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
 - Use `cap-search` only when the capability ID is uncertain. Use `cap-detail` before adding any unvalidated A-share specialty, classification, research-report, corporate-event, EOD-bar, or top-mover capability to the run.
 - Keep `cap-detail` and failed calls in the trace appendix when they influence missing fields or fallback status.
+- For a listed replacement, use `cap-query-chain --chain-json <JSON>` or make the same explicit canonical CAP calls through the native runtime. A chain may contain at most three distinct `qveris_finance.*` CAPs; record `qveris.finance-capability-fallback.v1`, and never hide the failed primary CAP.
 
 ## Workflows
 
@@ -81,6 +83,7 @@ Source record:
 - If bars return fewer observations than requested, do not compute multi-day metrics; mark `insufficient_observations`.
 - If identity, requested-window bars, or the requested financial layer fails its semantic gate, stop specialty fan-out and return the partial result with exact required next calls.
 - If A-share specialty data is unavailable, return a partial data-layer report with missing fields rather than substituting web or legacy endpoints.
+- Do not treat a proxy fallback as equivalent primary evidence. Apply the exact `complete`, `partial`, or `proxy_only` status and forbidden-claim list from `references/qveris-finance-capability-fallbacks.json`.
 - If a successful payload contains corrupted text fields, exclude the corrupted fields from the report body and mark `encoding_artifact`; do not translate, repair, or infer the intended wording.
 - If only tagged news is available, write background context with low confidence; do not infer strong sentiment, strong catalysts, or directional risk.
 
@@ -101,6 +104,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 ## References
 
 - Use shared finance contract version `2026-07-18.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
+- Use `references/qveris-finance-capability-fallbacks.json` for the audited cross-CAP replacement boundary.
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share data-layer report.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

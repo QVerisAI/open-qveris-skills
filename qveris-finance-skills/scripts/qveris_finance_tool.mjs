@@ -2,6 +2,7 @@
 
 import {
   executeFinanceCapability,
+  executeFinanceCapabilityChain,
   resolveFinanceCapability,
 } from "./qveris_finance_adapter.mjs";
 import {
@@ -11,7 +12,7 @@ import {
 } from "./qveris_finance_client.mjs";
 import { sanitizeProviderRouteMetadata } from "./qveris_sanitize.mjs";
 
-const VERSION = "qveris-business-finance-tool/1.0.0";
+const VERSION = "qveris-business-finance-tool/1.1.0";
 const argv = process.argv.slice(2);
 
 if (argv.includes("--version") || argv[0] === "version") {
@@ -25,8 +26,9 @@ Usage:
   qveris_finance_tool.mjs cap-list [--page N] [--page-size N]
   qveris_finance_tool.mjs cap-detail <qveris_finance.name|CAP.ID>
   qveris_finance_tool.mjs cap-query <qveris_finance.name|CAP.ID> [--params JSON] [--param KEY=VALUE] [--context-json JSON]
+  qveris_finance_tool.mjs cap-query-chain --chain-json '[{"capability":"qveris_finance.name","parameters":{},"context":{},"evidence_status":"complete"}]'
 
-Every cap-query uses the Skill-owned audited adapter. Raw provider routes are unsupported.`);
+Every query uses the Skill-owned audited adapter. A chain contains at most three explicit qveris_finance.* CAP requests. Raw provider routes are unsupported.`);
   process.exit(0);
 }
 
@@ -61,6 +63,17 @@ try {
       strategy: stringFlag("--strategy", "best"),
       searchId: stringFlag("--search-id", undefined),
       timeoutMs: integerFlag("--timeout", 60) * 1000,
+    });
+    output(result);
+  } else if (command === "cap-query-chain") {
+    const requests = arrayFlag("--chain-json");
+    const result = await executeFinanceCapabilityChain({
+      requests,
+      transport,
+      strategy: stringFlag("--strategy", "best"),
+      searchId: stringFlag("--search-id", undefined),
+      timeoutMs: integerFlag("--timeout", 60) * 1000,
+      maxCapabilities: integerFlag("--max-capabilities", 3),
     });
     output(result);
   } else {
@@ -103,6 +116,15 @@ function objectFlag(name, fallback) {
   let value;
   try { value = JSON.parse(raw); } catch (error) { throw new Error(`${name} is invalid JSON: ${error.message}`); }
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error(`${name} must decode to a JSON object.`);
+  return value;
+}
+
+function arrayFlag(name) {
+  const raw = stringFlag(name, undefined);
+  if (raw === undefined) throw new Error(`${name} is required.`);
+  let value;
+  try { value = JSON.parse(raw); } catch (error) { throw new Error(`${name} is invalid JSON: ${error.message}`); }
+  if (!Array.isArray(value) || value.length === 0) throw new Error(`${name} must decode to a non-empty JSON array.`);
   return value;
 }
 
