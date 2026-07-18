@@ -1,22 +1,5 @@
 const BASE_URL = "https://qveris.ai/api/v1";
 
-export class QVerisHttpError extends Error {
-  constructor({ status, method, path, payload, responseText }) {
-    const code = payload?.error?.code ?? payload?.code ?? null;
-    const serverMessage = payload?.error?.message ?? payload?.message ?? payload?.detail ?? null;
-    super(
-      `HTTP ${status}${code ? ` (${code})` : ""} for ${method} ${path}${serverMessage ? `: ${serverMessage}` : ""}`,
-    );
-    this.name = "QVerisHttpError";
-    this.status = status;
-    this.method = method;
-    this.path = path;
-    this.code = code ?? `http_${status}`;
-    this.payload = payload;
-    this.responseText = responseText;
-  }
-}
-
 async function requestJson(path, { method = "POST", query = {}, body, timeoutMs = 30000, apiKey }) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -41,19 +24,7 @@ async function requestJson(path, { method = "POST", query = {}, body, timeoutMs 
 
     if (!response.ok) {
       const text = await response.text();
-      let payload = null;
-      try {
-        payload = text ? JSON.parse(text) : null;
-      } catch {
-        payload = null;
-      }
-      throw new QVerisHttpError({
-        status: response.status,
-        method,
-        path,
-        payload,
-        responseText: text,
-      });
+      throw new Error(`HTTP ${response.status}: ${text}`);
     }
 
     return await response.json();

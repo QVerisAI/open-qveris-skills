@@ -5,11 +5,6 @@ import { createHash } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 
-import * as qverisClient from "../qveris-official/scripts/qveris_client.mjs";
-import { readQverisApiKey } from "../qveris-official/scripts/qveris_env.mjs";
-import { executeFinanceCapability } from "../qveris-official/scripts/qveris_finance_adapter.mjs";
-import { sanitizeProviderRouteMetadata } from "../qveris-official/scripts/qveris_sanitize.mjs";
-
 const CASES = [
   {
     skill: "qveris-a-share-factor-screen",
@@ -58,6 +53,24 @@ const CASES = [
       end_date: "2026-07-13",
     },
   },
+  {
+    skill: "qveris-anthropic-financial-services",
+    caseId: "anthropic-derived-ratios-contract",
+    toolName: "qveris_finance.fundamentals_derived_ratios",
+    params: { symbol: "NVDA", market: "US" },
+  },
+  {
+    skill: "qveris-finance-skills",
+    caseId: "finance-skills-tagged-news-contract",
+    toolName: "qveris_finance.news_fin_tagged",
+    params: { symbol: "AAPL", market: "US" },
+  },
+  {
+    skill: "qveris-tradermonty-trading-skills",
+    caseId: "tradermonty-adjusted-bars-contract",
+    toolName: "qveris_finance.mkt_bars_adjusted",
+    params: { symbol: "SPY", market: "US", start_date: "2026-06-01", end_date: "2026-06-30" },
+  },
 ];
 
 function canonicalize(value) {
@@ -94,13 +107,13 @@ function renderReport(testCase, artifactName, execution) {
   const trace = execution.qveris_trace ?? [];
   const finalTrace = trace.at(-1);
   const status = finalTrace?.status ?? "rejected";
-  const missingFields = finalTrace?.missing_fields ?? [execution.adapter_error?.code ?? "adapter_preflight_failed"];
+  const missingFields = finalTrace?.missing_fields ?? [execution.reason_code ?? execution.adapter_error?.code ?? "adapter_preflight_failed"];
   const observedCount = execution.observed_calls?.length ?? 0;
   const evidence = status === "success"
     ? `${observedCount} live CAP attempt(s) were observed and the final attempt succeeded. This supports only the narrow route check, not a complete research conclusion.`
     : observedCount > 0
       ? `${observedCount} live CAP attempt(s) were observed, but the final attempt failed. They supply call-availability evidence only and no positive market or issuer evidence.`
-      : "The public adapter rejected the case before transport because live CAP resolution or parameter preflight could not be completed. No call is claimed.";
+      : "The Skill-owned adapter rejected the case before transport because live CAP resolution or parameter preflight could not be completed. No call is claimed.";
   const quality = status === "success" ? "partial" : "insufficient";
   const preflightNote = observedCount === 0
     ? "Adapter preflight did not produce an observed call; the Trace table is intentionally empty.\n\n"
@@ -110,7 +123,7 @@ function renderReport(testCase, artifactName, execution) {
 
 ## Summary
 
-Case \`${testCase.caseId}\` ran through the public finance adapter. Final observed status: \`${status}\`; broader skill conclusions remain out of scope for this contract check.
+Case \`${testCase.caseId}\` ran through the Skill-owned finance adapter. Final observed status: \`${status}\`; broader skill conclusions remain out of scope for this contract check.
 
 ## Evidence
 
@@ -144,18 +157,27 @@ Not investment advice.
 
 async function runCase(apiKey, testCase, dateTag) {
   let execution;
+  const [{ executeFinanceCapability }, { financeTransport }, { sanitizeProviderRouteMetadata }] = await Promise.all([
+    import(`../${testCase.skill}/scripts/qveris_finance_adapter.mjs`),
+    import(`../${testCase.skill}/scripts/qveris_finance_client.mjs`),
+    import(`../${testCase.skill}/scripts/qveris_sanitize.mjs`),
+  ]);
   try {
     execution = await executeFinanceCapability({
-      client: qverisClient,
-      apiKey,
-      requestedCapability: testCase.toolName,
+      capability: testCase.toolName,
       parameters: testCase.params,
+      context: {
+        ...(testCase.params.market ? { market: testCase.params.market } : {}),
+        ...(testCase.params.period ? { period: testCase.params.period } : {}),
+        ...(testCase.params.end_date ? { cut_off: testCase.params.end_date } : {}),
+      },
+      transport: financeTransport(apiKey),
       strategy: "best",
       timeoutMs: 120000,
     });
   } catch (error) {
     execution = {
-      adapter_version: "qveris_finance_adapter.v1",
+      adapter_version: "qveris.finance-parameter-adaptation.v1",
       resolution: null,
       final_params: {},
       parameter_audit: null,
@@ -178,7 +200,7 @@ async function runCase(apiKey, testCase, dateTag) {
   }
   const artifact = {
     artifact_version: "observed_calls.v1",
-    adapter_version: sanitizedExecution.adapter_version,
+    adapter_version: sanitizedExecution.adaptation?.schema_version ?? sanitizedExecution.adapter_version,
     skill: testCase.skill,
     case_id: testCase.caseId,
     recorded_at: new Date().toISOString(),
@@ -214,7 +236,8 @@ async function main() {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateTag ?? "")) {
     throw new Error("--date must use YYYY-MM-DD");
   }
-  const apiKey = readQverisApiKey();
+  const apiKey = process.env.QVERIS_API_KEY?.trim();
+  if (!apiKey) throw new Error("QVERIS_API_KEY is not set");
   for (const testCase of CASES) {
     const result = await runCase(apiKey, testCase, dateTag);
     console.log(`${result.skill}: ${result.status} observed_calls=${result.observedCallCount} execution_id=${result.executionId ?? "null"}`);

@@ -54,12 +54,12 @@ Read `references/qveris-finance-data-quality-rubric.md` before using QVeris payl
 
 ## CAP Invocation
 
-- Prefer native `qveris_finance.*` CAP functions when the environment exposes them.
-- If native functions are not exposed but the repo script is available, execute standardized CAP calls from the repository root with `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
-- Treat that CLI as the public CAP adapter: it resolves the current CAP ID and live cap-detail, allow-lists/coerces params, normalizes A-share symbols, and may retry once with error-guided or minimal params. Build artifacts and report Trace only from its `final_params`, `observed_calls`, and `qveris_trace`; never copy the requested params over an observed retry.
-- Equivalent HTTP route: `POST https://qveris.ai/api/v1/capabilities/query` with `capability_id`, structured `parameters`, and `strategy: "best"`.
+- Use native `qveris_finance.*` tools only when that runtime applies the same Skill-owned adapter and returns a `qveris.finance-parameter-adaptation.v1` audit; otherwise use this Skill's CLI.
+- If native functions are not exposed but the repo script is available, execute standardized CAP calls from the repository root with `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
+- Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, filters and losslessly converts parameters, never copies sample values, permits at most three fully audited attempts, and rejects `success=false`, missing required fields, wrong entity/market/date/period, and stale real-time data. Use only its `qveris.finance-parameter-adaptation.v1` audit and actual attempt parameters in Trace.
+- Direct HTTP CAP calls are transport implementation details of `scripts/qveris_finance_client.mjs`; workflow code must not bypass the Skill-owned adapter.
 - Use `cap-search` or `GET /capabilities/search` only when the CAP ID or parameter contract is uncertain; use `cap-detail` or `GET /capabilities/{capability_id}` to verify fields.
-- Use legacy QVeris `/search` plus `/tools/execute` only when the standardized CAP endpoint is unavailable; mark `legacy_cap_shim_used` in `data_quality.warnings` and keep trace names normalized to `qveris_finance.*`.
+- Generic QVeris discovery, `/tools/execute`, raw provider routes, and legacy finance shims are prohibited fallbacks.
 - Build a sanitized `qveris_trace` object from the call result. Keep capability name, normalized params, success/failure, retry/fallback status, validation result, and missing fields. Exclude raw `_meta.routing_decision`, provider lists, candidate route IDs, and any source-provider names even if they appear in `--safe-json`.
 
 ## Workflows

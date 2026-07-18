@@ -2,7 +2,7 @@ COMPOSE := docker compose -f dev-infra/stock-copilot-pro/docker-compose.yml
 PYTHON ?= python3
 NODE ?= node
 
-.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e validate-qveris-sanitizer validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
+.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e validate-qveris-sanitizer validate-finance-business-adapters validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
 
 up:
 	$(COMPOSE) up -d skill-dev
@@ -48,7 +48,7 @@ test-openclaw:  ## OpenClaw 端到端测试（8 个 case，需要 openclaw 容�
 	$(COMPOSE) --profile openclaw exec openclaw \
 		node /workspace/dev-infra/stock-copilot-pro/openclaw-e2e.mjs
 
-validate-finance-reports: validate-finance-fixtures validate-finance-contract-self-tests validate-qveris-sanitizer
+validate-finance-reports: validate-finance-fixtures validate-finance-contract-self-tests validate-qveris-sanitizer validate-finance-business-adapters
 	$(PYTHON) scripts/validate_qveris_finance_report.py \
 		qveris-anthropic-financial-services/examples/default-markdown-report.md \
 		qveris-anthropic-financial-services/examples/natural-language-test-output-2026-07-07.md \
@@ -92,6 +92,11 @@ run-finance-live-e2e:
 
 validate-qveris-sanitizer:
 	$(NODE) --test qveris-official/tests/*.test.mjs
+
+validate-finance-business-adapters:
+	$(NODE) --test \
+		qveris-a-stock-data-layer/tests/qveris_finance_adapter.test.mjs \
+		qveris-a-stock-data-layer/tests/business_adapter_copies.test.mjs
 
 validate-finance-contract-self-tests:
 	$(PYTHON) scripts/validate_qveris_finance_fixtures.py --self-test

@@ -3,17 +3,17 @@
 Use this shared policy for every QVeris finance skill in this repository.
 
 
-## Public Adapter Preflight
+## Skill-owned Adapter Preflight
 
-When the repository CLI is available, route finance CAP calls through `qveris-official/scripts/qveris_tool.mjs cap-query`. On every execution it must:
+Route finance CAP calls through the active business Skill's `{baseDir}/scripts/qveris_finance_tool.mjs cap-query`. Each business Skill carries a byte-identical standalone adapter bundle; `qveris-official` is not the finance adaptation layer. On every execution it must:
 
 1. Read the live finance catalog and live cap-detail, then resolve the requested `qveris_finance.*` name to the current canonical CAP ID instead of a static ID table.
 2. Build an allow-list from live parameter definitions; drop undocumented optional inputs and refuse execution if no enforceable parameter schema is available.
-3. Fill only documented required non-identity values from cap-detail defaults/examples, coerce declared types, and never substitute a sample security for a missing issuer identity.
-4. Normalize A-share symbols (`.SS` to `.SH`, preserve `.SH/.SZ`, infer exchange for unambiguous six-digit codes) and reject symbol/market conflicts or ambiguous exchanges.
-5. Retry at most once after a parameter-class failure: remove an optional parameter named by the error, otherwise retry with required-plus-identity minimal params. Do not retry semantic mismatches or generic provider failures in this adapter.
-6. On an invalid CAP response, refresh the live catalog and retry only if the current canonical CAP ID changed.
-7. Persist the exact transmitted params and every observed attempt in `final_params`, `observed_calls`, and the six-field `qveris_trace`; recursively sanitize provider/route/candidate metadata.
+3. Never copy `sample_parameters`. Fill required values only from explicit business context or a lossless equivalent input name, and refuse execution when required values remain missing.
+4. Permit only equivalent mainland-security encodings (`.SH`, `.SS`, the same bare six-digit code; `.SZ`, the same bare code). Never replace the security entity.
+5. Make at most three actual attempts using legal original parameters, a required/semantic minimum, and an error-guided or equivalent-code correction. An error without a parameter clue does not authorize guessing.
+6. Stop immediately for wrong entity, market, date, period, future data, or stale real-time data. `success=false` remains failed even when data is present.
+7. Persist `qveris.finance-parameter-adaptation.v1`, detail/parameter/response hashes, exact attempts, `final_params`, `observed_calls`, and the six-field `qveris_trace`; recursively sanitize provider/route/candidate/credential metadata.
 
 ## Retry Classes
 
@@ -38,7 +38,7 @@ When the repository CLI is available, route finance CAP calls through `qveris-of
 
 ## Stop Conditions
 
-- Stop after 2 failed retries for one capability in one report.
+- Stop after 3 total adapter attempts (at most 2 retries) for one capability in one report.
 - Stop immediately for confirmed `404` unless `cap-detail` discovers the capability under a different ID.
 - Stop immediately for semantic mismatches; do not use a wrong-but-successful payload.
 - When retries would exceed `max_calls`, return a budget-limited report instead of silently dropping trace.

@@ -50,7 +50,7 @@ Use this matrix before applying US-style research defaults to a CN/A-share reque
 
 ## Logical A-Share Specialty Names
 
-Use these stable logical names only when the user explicitly asks for the layer. The public adapter must resolve the current canonical CAP ID from the live catalog before execution.
+Use these stable logical names only when the user explicitly asks for the layer. The Skill-owned adapter must resolve the current canonical CAP ID from the live catalog before execution.
 
 | Requested layer | Logical CAP name | Stop condition |
 |---|---|---|

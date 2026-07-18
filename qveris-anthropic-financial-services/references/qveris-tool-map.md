@@ -21,12 +21,12 @@ Source: Anthropic Financial Services, https://github.com/anthropics/financial-se
 Prefer standardized CAP query over legacy tool discovery:
 
 - Native route: call the exposed `qveris_finance.*` function directly, if present.
-- Script route: from the repository root, run `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<name> --param key=value --safe-json`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
+- Script route: run `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<name> --param key=value`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
 - HTTP route: `POST /api/v1/capabilities/query` with `capability_id`, structured `parameters`, and `strategy: "best"`.
 - Discovery route: use `cap-search` and `cap-detail` only to verify unknown capability IDs or params.
 - Legacy route: use `/search` plus `/tools/execute` only if CAP query is unavailable; add `legacy_cap_shim_used` to `data_quality.warnings`.
 
-Use only the logical `qveris_finance.*` names listed in the workflow tables below. The public adapter resolves their current canonical IDs from the live catalog and live cap-detail on every call. Do not copy a historical CAP ID from this document into a request.
+Use only the logical `qveris_finance.*` names listed in the workflow tables below. The Skill-owned adapter resolves their current canonical IDs from the live catalog and live cap-detail on every call. Do not copy a historical CAP ID from this document into a request.
 
 ## Common Parameter Templates
 

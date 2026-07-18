@@ -30,7 +30,7 @@ Source record:
 ## Runtime Contract
 
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY`.
-- Execute every finance data call through a native standardized CAP or `POST /capabilities/query` / `cap-query`; never use generic discovery, `/tools/execute`, or a raw finance tool ID as fallback.
+- Execute every finance data call through this Skill's `scripts/qveris_finance_adapter.mjs`, or through a native wrapper that runs the byte-identical adapter; never call `/capabilities/query` directly from the workflow.
 - Default natural-language output to a Markdown user report, not a JSON object.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Read `references/qveris-finance-data-quality-rubric.md` before using QVeris payloads as factor evidence.
@@ -57,10 +57,10 @@ Source record:
 ## CAP Invocation
 
 - Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
-- Prefer native `qveris_finance.*` tools when exposed by the runtime.
-- If native tools are unavailable and the run is in this repository root, use the repository CLI: `node qveris-official/scripts/qveris_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
-- Treat that CLI as the public CAP adapter: it resolves the current CAP ID and live cap-detail, allow-lists/coerces params, normalizes A-share symbols, and may retry once with error-guided or minimal params. Build artifacts and report Trace only from its `final_params`, `observed_calls`, and `qveris_trace`; never copy the requested params over an observed retry.
-- If the skill is installed standalone without native `qveris_finance.*` tools and without `qveris-official`, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
+- Use native `qveris_finance.*` tools only when that runtime applies the same Skill-owned adapter and returns a `qveris.finance-parameter-adaptation.v1` audit; otherwise use this Skill's CLI.
+- If native tools are unavailable and the run is in this repository root, use the repository CLI: `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
+- Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, filters and losslessly converts parameters, never copies sample values, permits at most three fully audited attempts, and rejects `success=false`, missing required fields, wrong entity/market/date/period, and stale real-time data. Use only its `qveris.finance-parameter-adaptation.v1` audit and actual attempt parameters in Trace.
+- If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
 - Use `cap-detail` before calling sensitive or uncertain routes such as constituents, classification, analyst reports, corporate events, EOD bars, top movers, or text sentiment.
 - Keep failed, rejected, or not-called capabilities in `Data Quality And Missing Fields` and the trace appendix, not in the evidence table.
 
@@ -98,7 +98,7 @@ Do not output investment recommendations, buy/sell triggers, target prices, upsi
 
 ## References
 
-- Use shared finance contract version `2026-07-13.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
+- Use shared finance contract version `2026-07-18.2`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share factor screen.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

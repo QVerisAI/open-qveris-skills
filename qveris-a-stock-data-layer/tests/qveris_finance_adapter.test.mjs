@@ -1,0 +1,310 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+
+import {
+  ADAPTATION_SCHEMA_VERSION,
+  adaptFinanceParameters,
+  executeFinanceCapability,
+  resolveFinanceCapability,
+  symbolsEquivalent,
+} from "../scripts/qveris_finance_adapter.mjs";
+
+function detail(overrides = {}) {
+  return {
+    capability_id: "FLOW.SECTOR.CAPITAL",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "market", type: "string", required: false },
+      { name: "limit", type: "integer", required: false },
+      { name: "adjusted", type: "boolean", required: false },
+    ],
+    field_spec: {
+      required: [
+        { name: "symbol", type: "string" },
+        { name: "date", type: "date" },
+        { name: "net_flow", type: "number" },
+      ],
+    },
+    remaining_credits: 99,
+    ...overrides,
+  };
+}
+
+function transport({ registry, capabilityDetail = detail(), responses = [] } = {}) {
+  const calls = [];
+  return {
+    calls,
+    async listCapabilities() {
+      return { results: registry ?? [capabilityDetail], total: (registry ?? [capabilityDetail]).length };
+    },
+    async getCapability({ capabilityId }) {
+      assert.equal(capabilityId, capabilityDetail.capability_id);
+      return capabilityDetail;
+    },
+    async queryCapability(input) {
+      calls.push(structuredClone(input));
+      return structuredClone(responses[calls.length - 1] ?? responses.at(-1));
+    },
+  };
+}
+
+function success(data = [{ symbol: "600519.SH", date: "2026-07-17", net_flow: 1 }], id = "exec-1") {
+  return { success: true, execution_id: id, result: { data } };
+}
+
+test("resolves canonical finance names from the live registry without a stale alias table", async () => {
+  const live = detail();
+  const client = transport({ registry: [live] });
+  const resolved = await resolveFinanceCapability({
+    capability: "qveris_finance.flow_sector_capital",
+    transport: client,
+  });
+  assert.equal(resolved.capability_id, "FLOW.SECTOR.CAPITAL");
+  assert.equal(resolved.canonical_name, "qveris_finance.flow_sector_capital");
+  assert.match(resolved.detail_hash, /^sha256:[a-f0-9]{64}$/);
+});
+
+test("continues live registry pagination when the server returns fewer rows than requested", async () => {
+  const live = detail();
+  const pages = [];
+  const client = transport({ registry: [] });
+  client.listCapabilities = async ({ page }) => {
+    pages.push(page);
+    return page === 1
+      ? { results: [{ capability_id: "MKT.L1.RT" }], total: 2 }
+      : { results: [live], total: 2 };
+  };
+  const resolved = await resolveFinanceCapability({ capability: "qveris_finance.flow_sector_capital", transport: client });
+  assert.equal(resolved.capability_id, "FLOW.SECTOR.CAPITAL");
+  assert.deepEqual(pages, [1, 2]);
+});
+
+test("reports an absent live capability instead of inventing a route", async () => {
+  const client = transport({ registry: [detail()] });
+  await assert.rejects(
+    resolveFinanceCapability({ capability: "qveris_finance.investor_qa", transport: client }),
+    (error) => error.code === "capability_unavailable",
+  );
+});
+
+test("filters unknown inputs, removes inner capability_id, and converts only lossless scalar types", () => {
+  const adapted = adaptFinanceParameters({
+    detail: detail(),
+    parameters: {
+      capability_id: "WRONG.ROUTE",
+      symbol: 600519,
+      market: "CN",
+      limit: "20",
+      adjusted: "true",
+      provider: "do-not-forward",
+    },
+  });
+  assert.deepEqual(adapted.parameters, {
+    symbol: "600519",
+    market: "CN",
+    limit: 20,
+    adjusted: true,
+  });
+  assert.deepEqual(adapted.dropped_parameters.sort(), ["capability_id", "provider"]);
+  assert.deepEqual(adapted.missing_required, []);
+});
+
+test("fills required fields only from explicit context or safe equivalent names", () => {
+  const adapted = adaptFinanceParameters({
+    detail: detail(),
+    parameters: { ticker: "600519.SH" },
+    context: { market: "CN" },
+  });
+  assert.deepEqual(adapted.parameters, { symbol: "600519.SH" });
+
+  const missing = adaptFinanceParameters({ detail: detail(), parameters: {} });
+  assert.deepEqual(missing.missing_required, ["symbol"]);
+  assert.equal("symbol" in missing.parameters, false);
+});
+
+test("uses an error-named missing field when the value exists in explicit context", async () => {
+  const schema = detail({
+    capability_id: "FUNDAMENTALS.IS",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "period", type: "string", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "period" }, { name: "revenue" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [
+      { success: false, execution_id: "exec-1", message: "missing_required_tool_input:period" },
+      { success: true, execution_id: "exec-2", result: { data: [{ symbol: "600519.SH", period: "FY2025", revenue: 2 }] } },
+    ],
+  });
+  const result = await executeFinanceCapability({
+    capability: "qveris_finance.fundamentals_is",
+    parameters: { symbol: "600519.SH" },
+    context: { period: "FY2025" },
+    transport: client,
+  });
+  assert.equal(result.success, true);
+  assert.equal(client.calls.length, 2);
+  assert.deepEqual(client.calls[1].parameters, { symbol: "600519.SH", period: "FY2025" });
+});
+
+test("retries only equivalent A-share symbol encodings and never changes the entity", async () => {
+  const client = transport({
+    responses: [
+      { success: false, execution_id: "exec-1", message: "symbol format rejected" },
+      { success: false, execution_id: "exec-2", message: "symbol format rejected" },
+      success(undefined, "exec-3"),
+    ],
+  });
+  const result = await executeFinanceCapability({
+    capability: "qveris_finance.flow_sector_capital",
+    parameters: { symbol: "600519.SH", market: "CN", extra: "drop" },
+    transport: client,
+  });
+  assert.equal(client.calls.length, 3);
+  assert.deepEqual(client.calls.map((call) => call.parameters.symbol), ["600519.SH", "600519.SS", "600519"]);
+  assert.ok(client.calls.every((call) => symbolsEquivalent(call.parameters.symbol, "600519.SH")));
+  assert.equal(result.adaptation.selected_attempt, 3);
+});
+
+test("never exceeds three actual attempts", async () => {
+  const client = transport({ responses: [{ success: false, execution_id: "exec-x", message: "format rejected" }] });
+  const result = await executeFinanceCapability({
+    capability: "FLOW.SECTOR.CAPITAL",
+    parameters: { symbol: "600519.SH" },
+    transport: client,
+  });
+  assert.equal(client.calls.length, 3);
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts.length, 3);
+});
+
+test("stops immediately on wrong-market semantic data", async () => {
+  const client = transport({
+    responses: [success([{ symbol: "BTC-USDT", market: "CRYPTO", date: "2026-07-17", net_flow: 1 }])],
+  });
+  const result = await executeFinanceCapability({
+    capability: "FLOW.SECTOR.CAPITAL",
+    parameters: { symbol: "600519.SH", market: "CN" },
+    context: { market: "CN" },
+    transport: client,
+  });
+  assert.equal(client.calls.length, 1);
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts[0].reason_code, "semantic_market_mismatch");
+});
+
+test("accepts documented output aliases without weakening success=true", async () => {
+  const schema = detail({
+    capability_id: "FUNDAMENTALS.DERIVED_RATIOS",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "pe" }, { name: "pb" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [{
+      success: true,
+      execution_id: "exec-ratios",
+      result: { data: [{ symbol: "600519.SH", pe_ttm: 20, pb_ratio: 4 }] },
+    }],
+  });
+  const result = await executeFinanceCapability({
+    capability: "FUNDAMENTALS.DERIVED_RATIOS",
+    parameters: { symbol: "600519.SH" },
+    transport: client,
+  });
+  assert.equal(result.success, true);
+
+  const failedClient = transport({ capabilityDetail: schema, responses: [{ success: false, execution_id: "exec-fail", result: { data: [{ symbol: "600519.SH", pe_ttm: 20, pb_ratio: 4 }] } }] });
+  const failed = await executeFinanceCapability({ capability: schema.capability_id, parameters: { symbol: "600519.SH" }, transport: failedClient });
+  assert.equal(failed.success, false);
+});
+
+test("validates fiscal years while treating annual and FY labels as equivalent", async () => {
+  const schema = detail({
+    capability_id: "FUNDAMENTALS.IS",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "period", type: "string", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "period" }, { name: "revenue" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [{ success: true, execution_id: "exec-fy", result: { data: [{ symbol: "600519.SH", period: "FY2025", revenue: 2 }] } }],
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH", period: "annual" },
+    context: { fiscal_year: 2025 },
+    transport: client,
+  });
+  assert.equal(result.success, true);
+});
+
+test("accepts CN sector identifiers but rejects data outside an explicit date window", async () => {
+  const schema = detail({
+    params: [
+      { name: "sector", type: "string", required: true },
+      { name: "market", type: "string", required: false },
+      { name: "start_date", type: "date", required: false },
+      { name: "end_date", type: "date", required: false },
+    ],
+  });
+  const sectorClient = transport({
+    capabilityDetail: schema,
+    responses: [{ success: true, execution_id: "exec-sector", result: { data: [{ symbol: "801010.SL", date: "2026-07-17", net_flow: 1, market: "CN" }] } }],
+  });
+  const accepted = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { sector: "银行", market: "CN" },
+    transport: sectorClient,
+  });
+  assert.equal(accepted.success, true);
+
+  const windowClient = transport({
+    capabilityDetail: schema,
+    responses: [{ success: true, execution_id: "exec-window", result: { data: [{ symbol: "801010.SL", date: "2026-06-30", net_flow: 1, market: "CN" }] } }],
+  });
+  const rejected = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { sector: "银行", market: "CN", start_date: "2026-07-01", end_date: "2026-07-17" },
+    transport: windowClient,
+  });
+  assert.equal(rejected.success, false);
+  assert.equal(rejected.adaptation.attempts[0].reason_code, "semantic_date_window_mismatch");
+});
+
+test("emits a sanitized, hash-backed adaptation audit", async () => {
+  const client = transport({
+    responses: [{
+      ...success(),
+      provider: "secret-provider",
+      route: "secret-route",
+      credential: "secret-token",
+      result: { data: [{ symbol: "600519.SH", date: "2026-07-17", net_flow: 1 }], provider_id: "hidden" },
+    }],
+  });
+  const result = await executeFinanceCapability({
+    capability: "qveris_finance.flow_sector_capital",
+    parameters: { symbol: "600519.SH" },
+    transport: client,
+  });
+  assert.equal(result.adaptation.schema_version, ADAPTATION_SCHEMA_VERSION);
+  assert.match(result.adaptation.detail_hash, /^sha256:[a-f0-9]{64}$/);
+  assert.match(result.adaptation.attempts[0].parameters_hash, /^sha256:[a-f0-9]{64}$/);
+  assert.equal(result.adaptation.attempts[0].execution_id, "exec-1");
+  assert.equal(result.observed_calls.length, 1);
+  assert.equal(result.observed_calls[0].response_sha256, result.adaptation.attempts[0].response_hash);
+  assert.deepEqual(result.qveris_trace[0], {
+    tool_name: "qveris_finance.flow_sector_capital",
+    params: { symbol: "600519.SH" },
+    status: "success",
+    execution_id: "exec-1",
+    fallback_used: false,
+    missing_fields: [],
+  });
+  const text = JSON.stringify(result);
+  assert.doesNotMatch(text, /secret-provider|secret-route|secret-token|provider_id/);
+});

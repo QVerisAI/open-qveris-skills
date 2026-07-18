@@ -18,24 +18,65 @@
  */
 
 import { readQverisApiKey } from "./qveris_env.mjs";
-import * as qverisClient from "./qveris_client.mjs";
 import {
-  executeFinanceCapability,
-  inspectFinanceCapability,
-} from "./qveris_finance_adapter.mjs";
+  callTool,
+  discoverTools,
+  getBaseUrl,
+  getCapability,
+  inspectToolsByIds,
+  listCapabilities,
+  queryCapability,
+  searchCapabilities,
+} from "./qveris_client.mjs";
 import {
   isLikelyLegacyFinanceRouteIdentifier,
   sanitizeProviderRouteMetadata,
 } from "./qveris_sanitize.mjs";
 
-const {
-  callTool,
-  discoverTools,
-  getBaseUrl,
-  inspectToolsByIds,
-  listCapabilities,
-  searchCapabilities,
-} = qverisClient;
+const FINANCE_CAPABILITY_ALIASES = {
+  "qveris_finance.ref_classification_industry": "REF.CLASSIFICATION.INDUSTRY",
+  "qveris_finance.ref_classification_theme": "REF.CLASSIFICATION.THEME",
+  "qveris_finance.ref_company_profile": "REF.COMPANY_PROFILE",
+  "qveris_finance.ref_security_master": "REF.SECURITY_MASTER",
+  "qveris_finance.ref_symbology": "REF.SYMBOLOGY",
+  "qveris_finance.event_calendar_corp": "EVENT.CALENDAR.CORP",
+  "qveris_finance.event_calendar_earnings": "EVENT.CALENDAR.EARNINGS",
+  "qveris_finance.event_calendar_macro": "EVENT.CALENDAR.MACRO",
+  "qveris_finance.news_fin_tagged": "NEWS.FIN.TAGGED",
+  "qveris_finance.earnings_actual_surprise": "EARNINGS.ACTUAL_SURPRISE",
+  "qveris_finance.estimates_consensus": "ESTIMATES.CONSENSUS",
+  "qveris_finance.estimates_ratings_targets": "ESTIMATES.RATINGS_TARGETS",
+  "qveris_finance.fundamentals_bs": "FUNDAMENTALS.BS",
+  "qveris_finance.fundamentals_cf": "FUNDAMENTALS.CF",
+  "qveris_finance.fundamentals_derived_ratios": "FUNDAMENTALS.DERIVED_RATIOS",
+  "qveris_finance.fundamentals_is": "FUNDAMENTALS.IS",
+  "qveris_finance.fundamentals_segment": "FUNDAMENTALS.SEGMENT",
+  "qveris_finance.fx_spot": "FX.SPOT",
+  "qveris_finance.index_constituents": "INDEX.CONSTITUENTS",
+  "qveris_finance.index_levels": "INDEX.LEVELS",
+  "qveris_finance.index_vix": "INDEX.VIX",
+  "qveris_finance.mkt_bars_adjusted": "MKT.BARS.ADJUSTED",
+  "qveris_finance.mkt_bars_eod": "MKT.BARS.EOD",
+  "qveris_finance.mkt_bars_intraday": "MKT.BARS.INTRADAY",
+  "qveris_finance.mkt_breadth_internals": "MKT.BREADTH.INTERNALS",
+  "qveris_finance.mkt_l1_rt": "MKT.L1.RT",
+  "qveris_finance.mkt_top_movers": "MKT.TOP_MOVERS",
+  "qveris_finance.ownership_insider_trades": "OWNERSHIP.INSIDER_TRADES",
+  "qveris_finance.ownership_institutional": "OWNERSHIP.INSTITUTIONAL",
+  "qveris_finance.rates_govt_benchmark": "RATES.GOVT_BENCHMARK",
+  "qveris_finance.research_analyst_reports": "RESEARCH.ANALYST_REPORTS",
+  "qveris_finance.risk_beta_vol": "RISK.BETA_VOL",
+  "qveris_finance.sentiment_text_signals": "SENTIMENT.TEXT_SIGNALS",
+  "qveris_finance.transcripts_earnings_call": "TRANSCRIPTS.EARNINGS_CALL",
+};
+
+function normalizeCapabilityId(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) {
+    return raw;
+  }
+  return FINANCE_CAPABILITY_ALIASES[raw.toLowerCase()] ?? raw;
+}
 
 function parseParamValue(rawValue) {
   const value = String(rawValue ?? "");
@@ -277,12 +318,6 @@ function displayCapabilityDetail(result) {
 
   console.log(`\n${name}`);
   console.log(`Capability ID: ${capabilityId}`);
-  if (result.detail_source) {
-    console.log(`Detail source: ${result.detail_source}`);
-  }
-  if (result.detail_warning) {
-    console.log(`Detail warning: ${result.detail_warning}`);
-  }
   console.log(desc);
 
   const params = result.params ?? [];
@@ -296,10 +331,7 @@ function displayCapabilityDetail(result) {
     }
   }
 
-  const rawFieldSpec = result.field_spec ?? [];
-  const fieldSpec = Array.isArray(rawFieldSpec)
-    ? rawFieldSpec
-    : [...(rawFieldSpec.required ?? []), ...(rawFieldSpec.optional ?? [])];
+  const fieldSpec = result.field_spec ?? [];
   if (fieldSpec.length > 0) {
     console.log("\nFields:");
     for (const field of fieldSpec.slice(0, 30)) {
@@ -346,35 +378,6 @@ function displayCapabilityQueryResult(result) {
   }
 }
 
-function displayFinanceAdapterResult(execution) {
-  const resolution = execution.resolution ?? {};
-  console.log("\nFinance CAP adapter");
-  console.log(`Resolved: ${resolution.requested_capability ?? "N/A"} -> ${resolution.capability_id ?? "N/A"}`);
-  console.log(`Detail source: ${resolution.detail_source ?? "N/A"}`);
-  if (resolution.detail_warning) {
-    console.log(`Detail warning: ${resolution.detail_warning}`);
-  }
-  console.log(`Final params: ${JSON.stringify(execution.final_params ?? {})}`);
-
-  const dropped = execution.parameter_audit?.dropped_params ?? [];
-  if (dropped.length > 0) {
-    console.log(`Dropped params: ${dropped.map((item) => `${item.name} (${item.reason})`).join(", ")}`);
-  }
-
-  displayCapabilityQueryResult(execution.response ?? {});
-  console.log("\nTrace (tool_name | params | status | execution_id | fallback_used | missing_fields):");
-  for (const row of execution.qveris_trace ?? []) {
-    console.log([
-      row.tool_name,
-      JSON.stringify(row.params),
-      row.status,
-      row.execution_id ?? "null",
-      String(row.fallback_used),
-      JSON.stringify(row.missing_fields),
-    ].join(" | "));
-  }
-}
-
 function printUsage() {
   const baseUrl = getBaseUrl();
   console.log(`QVeris Capability Discovery & Tool Calling CLI
@@ -399,8 +402,7 @@ Commands:
 
 Notes:
   cap-query is preferred for qveris_finance.* workflows because it uses capability_id + parameters
-  cap-detail/cap-query resolve qveris_finance.* names from the live finance catalog; no static CAP ID map is used
-  cap-query filters against live cap-detail, coerces declared types, normalizes A-share symbols, retries one parameter failure with error-guided or minimal params, and records exact final params plus Trace
+  cap-query accepts known finance aliases such as qveris_finance.mkt_l1_rt and normalizes them to CAP IDs
   discover returns tool candidates and metadata, not final data results
   call returns the execution result
   all requests are routed to ${baseUrl}
@@ -417,7 +419,7 @@ Options:
   --strategy NAME    Capability routing strategy: best, cheapest, or balanced (default: best)
   --max-size N       Max response size in bytes (default: 20480)
   --timeout N        Request timeout in seconds (default: 30 for discover/inspect, 60 for call)
-  --json             Output JSON instead of formatted display; finance adapter output is always sanitized
+  --json             Output raw JSON instead of formatted display
   --safe-json        Output JSON with provider route metadata removed
   --help             Show this help message
 
@@ -496,7 +498,7 @@ function parseArgs(argv) {
       console.error("Error: cap-detail command requires a capability_id argument");
       process.exit(1);
     }
-    parsed.capabilityId = args[1];
+    parsed.capabilityId = normalizeCapabilityId(args[1]);
     parsed.timeout = 30;
 
     for (let i = 2; i < args.length; i++) {
@@ -513,7 +515,7 @@ function parseArgs(argv) {
       console.error("Error: cap-query command requires a capability_id argument");
       process.exit(1);
     }
-    parsed.capabilityId = args[1];
+    parsed.capabilityId = normalizeCapabilityId(args[1]);
     parsed.params = "{}";
     parsed.paramOverrides = [];
     parsed.strategy = "best";
@@ -648,8 +650,8 @@ async function main() {
         pageSize: args.pageSize,
         timeoutMs: args.timeout * 1000,
       });
-      if (args.json || args.safeJson) {
-        console.log(JSON.stringify(args.safeJson ? sanitizeProviderRouteMetadata(result) : result, null, 2));
+      if (args.json) {
+        console.log(JSON.stringify(result, null, 2));
       } else {
         displayCapabilityResults(result);
       }
@@ -661,20 +663,19 @@ async function main() {
         limit: args.limit,
         timeoutMs: args.timeout * 1000,
       });
-      if (args.json || args.safeJson) {
-        console.log(JSON.stringify(args.safeJson ? sanitizeProviderRouteMetadata(result) : result, null, 2));
+      if (args.json) {
+        console.log(JSON.stringify(result, null, 2));
       } else {
         displayCapabilityResults(result);
       }
     } else if (args.command === "cap-detail") {
-      const result = await inspectFinanceCapability({
-        client: qverisClient,
+      const result = await getCapability({
         apiKey,
-        requestedCapability: args.capabilityId,
+        capabilityId: args.capabilityId,
         timeoutMs: args.timeout * 1000,
       });
-      if (args.json || args.safeJson) {
-        console.log(JSON.stringify(sanitizeProviderRouteMetadata(result), null, 2));
+      if (args.json) {
+        console.log(JSON.stringify(result, null, 2));
       } else {
         displayCapabilityDetail(result);
       }
@@ -686,19 +687,20 @@ async function main() {
         console.error(e.message);
         process.exit(1);
       }
-      const result = await executeFinanceCapability({
-        client: qverisClient,
+      const result = await queryCapability({
         apiKey,
-        requestedCapability: args.capabilityId,
+        capabilityId: args.capabilityId,
         parameters: params,
         strategy: args.strategy,
         searchId: args.searchId,
         timeoutMs: args.timeout * 1000,
       });
-      if (args.safeJson || args.json) {
+      if (args.safeJson) {
+        console.log(JSON.stringify(sanitizeProviderRouteMetadata(result), null, 2));
+      } else if (args.json) {
         console.log(JSON.stringify(result, null, 2));
       } else {
-        displayFinanceAdapterResult(result);
+        displayCapabilityQueryResult(result);
       }
     } else if (args.command === "discover") {
       const result = await discoverTools({
