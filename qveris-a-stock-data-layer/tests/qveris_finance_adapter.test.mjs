@@ -175,7 +175,7 @@ test("maps an FY request to the provider-declared year-end code after an explici
     capabilityDetail: schema,
     responses: [
       { success: false, execution_id: "exec-1", message: "missing_required_tool_input:period" },
-      { success: false, execution_id: "exec-2", message: "Invalid period: annual. Must be one of: 0331, 0630, 0930, 1231" },
+      { success: false, execution_id: "exec-2", message: "Invalid period: annual. Must be one of: 0331, 0630, 0930, 1231 The call did not return valid data. Please verify the request parameters." },
       { success: true, execution_id: "exec-3", result: { data: [{ symbol: "600519.SH", period: "FY2025", revenue: 2 }] } },
     ],
   });

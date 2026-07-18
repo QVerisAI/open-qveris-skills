@@ -439,11 +439,13 @@ function safeEnumRepair(name, choices, parameters, context) {
   if (name !== "period") return undefined;
   if (!isExplicitAshareRequest(parameters, context)) return undefined;
   const normalized = new Map(choices.map((choice) => [String(choice).toUpperCase(), choice]));
+  const quarterEndChoices = new Set(choices.flatMap((choice) => String(choice).match(/\b(?:0331|0630|0930|1231)\b/g) ?? []));
   const periodCode = String(context.fiscal_period ?? context.parameters?.fiscal_period ?? "").toUpperCase();
   const requested = String(context.period ?? context.parameters?.period ?? parameters.period ?? "").toLowerCase();
   const fiscalMap = { Q1: "0331", Q2: "0630", Q3: "0930", Q4: "1231", FY: "1231" };
   const target = fiscalMap[periodCode] ?? (requested === "annual" ? "1231" : undefined);
   if (!target) return undefined;
+  if (quarterEndChoices.has(target)) return target;
   return normalized.get(target);
 }
 
