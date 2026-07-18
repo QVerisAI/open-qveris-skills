@@ -388,6 +388,47 @@ test("accepts CN sector identifiers but rejects data outside an explicit date wi
   assert.equal(rejected.adaptation.attempts[0].reason_code, "semantic_date_window_mismatch");
 });
 
+test("allows disclosed future event dates only inside an explicit event-calendar horizon", async () => {
+  const eventSchema = detail({
+    capability_id: "EVENT.CALENDAR.EARNINGS",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "start_date", type: "date", required: false },
+      { name: "end_date", type: "date", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "event_type" }] },
+  });
+  const parameters = { symbol: "688981.SH", start_date: "2026-06-01", end_date: "2026-09-15" };
+  const response = { success: true, execution_id: "exec-event", result: { data: [{ symbol: "688981.SH", date: "2026-08-30", event_type: "earnings_release" }] } };
+
+  const rejected = await executeFinanceCapability({
+    capability: eventSchema.capability_id,
+    parameters,
+    context: { cut_off: "2026-07-17" },
+    transport: transport({ capabilityDetail: eventSchema, responses: [response] }),
+  });
+  assert.equal(rejected.success, false);
+  assert.equal(rejected.adaptation.attempts[0].reason_code, "semantic_future_data");
+
+  const accepted = await executeFinanceCapability({
+    capability: eventSchema.capability_id,
+    parameters,
+    context: { cut_off: "2026-07-17", future_event_end_date: "2026-09-15" },
+    transport: transport({ capabilityDetail: eventSchema, responses: [response] }),
+  });
+  assert.equal(accepted.success, true);
+
+  const marketSchema = { ...eventSchema, capability_id: "MKT.BARS.ADJUSTED" };
+  const marketRejected = await executeFinanceCapability({
+    capability: marketSchema.capability_id,
+    parameters,
+    context: { cut_off: "2026-07-17", future_event_end_date: "2026-09-15" },
+    transport: transport({ capabilityDetail: marketSchema, responses: [response] }),
+  });
+  assert.equal(marketRejected.success, false);
+  assert.equal(marketRejected.adaptation.attempts[0].reason_code, "semantic_future_data");
+});
+
 test("emits a sanitized, hash-backed adaptation audit", async () => {
   const client = transport({
     responses: [{

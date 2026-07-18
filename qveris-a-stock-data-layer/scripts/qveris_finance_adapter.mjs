@@ -673,8 +673,14 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
   const cutoff = context.cut_off ?? context.cutoff ?? context.as_of_date;
   if (cutoff) {
     const cutoffTime = dateValue(cutoff);
+    const futureEventEnd = /^EVENT\.CALENDAR\./.test(capabilityId)
+      ? dateValue(context.future_event_end_date)
+      : NaN;
+    const allowedEnd = Number.isFinite(futureEventEnd)
+      ? Math.max(cutoffTime, futureEventEnd) + 24 * 60 * 60 * 1000 - 1
+      : cutoffTime + 24 * 60 * 60 * 1000 - 1;
     const dates = collectValues(data, new Set(["date", "trade_date", "datetime", "timestamp"])).map(dateValue).filter(Number.isFinite);
-    if (Number.isFinite(cutoffTime) && dates.some((value) => value > cutoffTime + 24 * 60 * 60 * 1000 - 1)) {
+    if (Number.isFinite(cutoffTime) && dates.some((value) => value > allowedEnd)) {
       return { ok: false, reason_code: "semantic_future_data", reason: "returned data is later than the declared cutoff" };
     }
   }
