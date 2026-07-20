@@ -516,7 +516,17 @@ function errorGuidedParameters({ detail, parameters, response, context }) {
   const text = errorText(response);
   const definitions = new Map(parameterDefinitions(detail).map((definition) => [definition.name, definition]));
   const missing = text.match(/missing_required_tool_input\s*[:=]\s*([a-zA-Z0-9_]+)/i)?.[1]
-    ?? text.match(/missing required(?: tool)? input\s+["']?([a-zA-Z0-9_]+)/i)?.[1];
+    ?? text.match(/missing required(?: tool)? (?:input|parameter)\s*[:=]?\s*["']?([a-zA-Z0-9_]+)/i)?.[1];
+  if (
+    String(detail?.capability_id ?? "").toUpperCase() === "FLOW.DRAGON_TIGER"
+    && String(missing ?? "").toLowerCase() === "edate"
+    && definitions.has("date")
+    && parameters.date === undefined
+    && parameters.end_date !== undefined
+  ) {
+    const converted = convertLosslessly(parameters.end_date, definitions.get("date"));
+    if (converted.ok) return { ...parameters, date: converted.value };
+  }
   if (missing && definitions.has(missing) && parameters[missing] === undefined) {
     const value = explicitOrEquivalentValue(missing, parameters, context)
       ?? safeMissingValue(missing, definitions.get(missing), parameters);

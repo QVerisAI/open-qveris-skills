@@ -261,6 +261,53 @@ test("uses daily granularity only when a provider requires it for an explicit si
   assert.deepEqual(client.calls[1].parameters, { symbol: "300750.SZ", date: "2025-01-15", granularity: "daily" });
 });
 
+test("maps a dragon-tiger edate error to the canonical end date without exposing provider fields", async () => {
+  const schema = detail({
+    capability_id: "FLOW.DRAGON_TIGER",
+    params: [
+      { name: "symbol", type: "string", required: false },
+      { name: "date", type: "date", required: false },
+      { name: "start_date", type: "date", required: false },
+      { name: "end_date", type: "date", required: false },
+      { name: "market", type: "string", required: false },
+      { name: "granularity", type: "string", required: false, enum: ["daily", "weekly", "monthly"] },
+    ],
+    one_of_required: [["symbol", "granularity"]],
+    field_spec: { required: [{ name: "date" }, { name: "symbol" }, { name: "reason" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [
+      { success: false, execution_id: "exec-1", message: "Missing required parameter: edate (required for mode='detail')" },
+      { success: true, execution_id: "exec-2", result: { data: [{ date: "2026-07-17", symbol: "300750.SZ", reason: "turnover" }] } },
+    ],
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: {
+      symbol: "300750.SZ",
+      start_date: "2026-06-01",
+      end_date: "2026-07-17",
+      market: "CN",
+      granularity: "daily",
+    },
+    context: { market: "CN", cut_off: "2026-07-17" },
+    transport: client,
+  });
+
+  assert.equal(result.success, true);
+  assert.equal(client.calls.length, 2);
+  assert.deepEqual(client.calls[1].parameters, {
+    symbol: "300750.SZ",
+    date: "2026-07-17",
+    start_date: "2026-06-01",
+    end_date: "2026-07-17",
+    market: "CN",
+    granularity: "daily",
+  });
+  assert.equal(Object.hasOwn(client.calls[1].parameters, "edate"), false);
+});
+
 test("retries only equivalent A-share symbol encodings and never changes the entity", async () => {
   const client = transport({
     responses: [
