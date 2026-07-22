@@ -10,6 +10,7 @@ Source: UZI-Skill, https://github.com/wbh604/UZI-Skill, MIT, evaluation recent a
 - Build rows only from saved `observed_calls`; use normalized `qveris_finance.*` tool names and `execution_id=null` when the call returned none.
 - Treat raw QVeris response metadata as internal provenance only. Strip provider, route, candidate, failover, model, persona, and wrapper metadata from the sanitized trace.
 - UZI-derived review labels are monitoring language only. Do not convert them into actions.
+- Judge evidence from hydrated `result.data`, required values, and semantic identity; record envelope `success` only as `envelope_success`. Fetch and hash signed full-content research results before validating them.
 
 ## Primary CAPs
 

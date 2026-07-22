@@ -12,6 +12,9 @@ const SENSITIVE_METADATA_TOKENS = new Set([
   "cap_tool_id",
   "original_order",
   "final_order",
+  "full_content_file_url",
+  "full_content_url",
+  "signed_url",
 ]);
 
 const RAW_ROUTE_IDENTIFIER_RE = /^[a-z][a-z0-9_-]*(?:\.[a-z][a-z0-9_-]*)+\.v\d+(?:\.[a-z0-9_-]+)*$/i;
@@ -33,7 +36,7 @@ export function isSensitiveMetadataKey(key) {
     return true;
   }
   return /(^|_)(provider|route|routing|candidate|candidates|failover|credential)($|_)/.test(normalized)
-    || /(^|_)(api_key|source_tool_id|tool_id|cap_tool_id|original_order|final_order)($|_)/.test(normalized);
+    || /(^|_)(api_key|source_tool_id|tool_id|cap_tool_id|original_order|final_order|full_content_file_url|full_content_url|signed_url)($|_)/.test(normalized);
 }
 
 export function isLikelyLegacyFinanceRouteIdentifier(value) {

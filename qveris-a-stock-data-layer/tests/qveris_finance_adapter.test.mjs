@@ -32,10 +32,12 @@ function detail(overrides = {}) {
   };
 }
 
-function transport({ registry, capabilityDetail = detail(), responses = [] } = {}) {
+function transport({ registry, capabilityDetail = detail(), responses = [], fullContent } = {}) {
   const calls = [];
+  const fullContentCalls = [];
   return {
     calls,
+    fullContentCalls,
     async listCapabilities() {
       return { results: registry ?? [capabilityDetail], total: (registry ?? [capabilityDetail]).length };
     },
@@ -46,6 +48,11 @@ function transport({ registry, capabilityDetail = detail(), responses = [] } = {
     async queryCapability(input) {
       calls.push(structuredClone(input));
       return structuredClone(responses[calls.length - 1] ?? responses.at(-1));
+    },
+    async fetchFullContent(input) {
+      fullContentCalls.push(structuredClone(input));
+      if (fullContent instanceof Error) throw fullContent;
+      return structuredClone(fullContent);
     },
   };
 }
@@ -354,7 +361,7 @@ test("stops immediately on wrong-market semantic data", async () => {
   assert.equal(result.adaptation.attempts[0].reason_code, "semantic_market_mismatch");
 });
 
-test("accepts documented output aliases without weakening success=true", async () => {
+test("accepts documented output aliases with data-first contract diagnostics", async () => {
   const schema = detail({
     capability_id: "FUNDAMENTALS.DERIVED_RATIOS",
     params: [{ name: "symbol", type: "string", required: true }],
@@ -376,8 +383,132 @@ test("accepts documented output aliases without weakening success=true", async (
   assert.equal(result.success, true);
 
   const failedClient = transport({ capabilityDetail: schema, responses: [{ success: false, execution_id: "exec-fail", result: { data: [{ symbol: "600519.SH", pe_ttm: 20, pb_ratio: 4 }] } }] });
-  const failed = await executeFinanceCapability({ capability: schema.capability_id, parameters: { symbol: "600519.SH" }, transport: failedClient });
-  assert.equal(failed.success, false);
+  const acceptedDataFirst = await executeFinanceCapability({ capability: schema.capability_id, parameters: { symbol: "600519.SH" }, transport: failedClient });
+  assert.equal(acceptedDataFirst.success, true);
+  assert.equal(acceptedDataFirst.adaptation.attempts[0].envelope_success, false);
+  assert.equal(acceptedDataFirst.adaptation.attempts[0].contract_clean, false);
+});
+
+test("hydrates full-content payloads before validating research rows", async () => {
+  const schema = detail({
+    capability_id: "RESEARCH.ANALYST_REPORTS",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "title" }] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [{
+      success: true,
+      execution_id: "research-full",
+      full_content_file_url: "https://files.example.test/signed-result",
+      result: { data: null },
+    }],
+    fullContent: {
+      success: true,
+      execution_id: "research-full",
+      result: { data: [{ symbol: "600519", date: "2026-07-21", title: "贵州茅台研究报告" }] },
+    },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH" },
+    transport: client,
+  });
+  assert.equal(result.success, true);
+  assert.equal(client.fullContentCalls.length, 1);
+  assert.equal(result.full_content_audit.fetched, true);
+  assert.match(result.full_content_audit.content_hash, /^sha256:[a-f0-9]{64}$/);
+  assert.doesNotMatch(JSON.stringify(result), /files\.example\.test|full_content_file_url/);
+});
+
+test("rejects present-but-null required outputs", async () => {
+  const schema = detail({
+    capability_id: "FLOW.LARGE_ORDER",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [
+      { name: "symbol" }, { name: "date" }, { name: "super_large_net" },
+      { name: "large_net" }, { name: "medium_net" }, { name: "small_net" },
+    ] },
+  });
+  const client = transport({
+    capabilityDetail: schema,
+    responses: [{ success: true, execution_id: "null-tiers", result: { data: [{
+      symbol: "300750.SZ", date: "2026-07-20", super_large_net: null,
+      large_net: null, medium_net: null, small_net: null, main_net: 10,
+    }] } }],
+  });
+  const result = await executeFinanceCapability({ capability: schema.capability_id, parameters: { symbol: "300750.SZ" }, transport: client });
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts[0].reason_code, "missing_required_output_fields");
+});
+
+test("rejects degenerate flow, empty sentiment semantics, and weekend daily flow", async () => {
+  const flowSchema = detail({
+    capability_id: "FLOW.NORTHBOUND",
+    params: [{ name: "date", type: "date", required: true }],
+    field_spec: { required: [{ name: "date" }, { name: "net_flow" }] },
+  });
+  const zeroFlow = await executeFinanceCapability({
+    capability: flowSchema.capability_id,
+    parameters: { date: "2026-07-20" },
+    transport: transport({ capabilityDetail: flowSchema, responses: [{
+      success: true, execution_id: "zero-flow", result: { data: [
+        { date: "2026-07-20", net_flow: 0, inflow: 0, outflow: 0 },
+        { date: "2026-07-21", net_flow: 0, inflow: 0, outflow: 0 },
+      ] },
+    }] }),
+  });
+  assert.equal(zeroFlow.success, false);
+  assert.equal(zeroFlow.adaptation.attempts[0].reason_code, "semantic_degenerate_flow");
+
+  const sentimentSchema = detail({
+    capability_id: "SENTIMENT.TEXT_SIGNALS",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "source" }] },
+  });
+  const emptySentiment = await executeFinanceCapability({
+    capability: sentimentSchema.capability_id,
+    parameters: { symbol: "002594.SZ" },
+    transport: transport({ capabilityDetail: sentimentSchema, responses: [{
+      success: true, execution_id: "coverage-only", result: { data: [{ symbol: "002594.SZ", date: "2026-07-21", source: "research", article_count: 18 }] },
+    }] }),
+  });
+  assert.equal(emptySentiment.success, false);
+  assert.equal(emptySentiment.adaptation.attempts[0].reason_code, "semantic_sentiment_signal_empty");
+
+  const largeOrderSchema = detail({
+    capability_id: "FLOW.LARGE_ORDER",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "main_net" }] },
+  });
+  const weekend = await executeFinanceCapability({
+    capability: largeOrderSchema.capability_id,
+    parameters: { symbol: "300750.SZ" },
+    context: { market: "CN" },
+    transport: transport({ capabilityDetail: largeOrderSchema, responses: [{
+      success: true, execution_id: "weekend-flow", result: { data: [{ symbol: "300750.SZ", date: "2026-07-18", main_net: 10 }] },
+    }] }),
+  });
+  assert.equal(weekend.success, false);
+  assert.equal(weekend.adaptation.attempts[0].reason_code, "semantic_non_trading_date");
+});
+
+test("rejects stale real-time data against the declared cutoff without extra freshness context", async () => {
+  const schema = detail({
+    capability_id: "MKT.L1.RT",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "timestamp" }, { name: "price" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH" },
+    context: { cut_off: "2026-07-22", maximum_age_days: 7 },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true, execution_id: "stale-quote", result: { data: [{ symbol: "600519.SH", timestamp: "2025-01-15T00:00:00Z", price: 1400 }] },
+    }] }),
+  });
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts[0].reason_code, "semantic_stale_data");
 });
 
 test("validates fiscal years while treating annual and FY labels as equivalent", async () => {

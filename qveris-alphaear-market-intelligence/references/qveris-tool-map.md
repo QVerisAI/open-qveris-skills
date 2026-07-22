@@ -10,6 +10,7 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 - Build rows only from saved `observed_calls`; use normalized `qveris_finance.*` tool names and `execution_id=null` when the call returned none.
 - Treat raw QVeris response metadata as internal provenance only. Strip provider, route, candidate, failover, model, and wrapper metadata from the sanitized trace.
 - Apply `qveris-finance-data-quality-rubric.md` and `qveris-finance-retry-policy.md` before using any payload as evidence.
+- Judge evidence from hydrated `result.data`, required values, and semantic identity; record envelope `success` only as `envelope_success`. Fetch and hash signed full-content results before validating them.
 
 ## Primary CAPs
 

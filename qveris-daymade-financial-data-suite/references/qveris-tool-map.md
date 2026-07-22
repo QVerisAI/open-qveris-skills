@@ -10,6 +10,7 @@ Source: Daymade Financial Suite, https://github.com/daymade/claude-code-skills, 
 - Build rows only from saved `observed_calls`; use normalized `qveris_finance.*` tool names and `execution_id=null` when the call returned none.
 - Treat raw QVeris response metadata as internal provenance only. Strip provider, route, candidate, failover, credential, and wrapper metadata from the sanitized trace.
 - Missing financial fields must remain missing. Do not substitute defaults for beta, rates, growth, shares, margins, or statement fields.
+- Judge evidence from hydrated `result.data`, required values, and semantic identity; record envelope `success` only as `envelope_success`. Fetch and hash signed full-content research results before validating them.
 
 ## Primary CAPs
 

@@ -15,8 +15,9 @@ Route finance CAP calls through the active business Skill's `{baseDir}/scripts/q
    - After a provider explicitly rejects `period` with quarter-end codes, map an explicit `Q1/Q2/Q3/Q4/FY` context to `0331/0630/0930/1231`. Keep the result rejected if the corrected call still lacks data, fields, or period identity.
 4. Permit only equivalent mainland-security encodings (`.SH`, `.SS`, the same bare six-digit code; `.SZ`, the same bare code). Never replace the security entity.
 5. Make at most three actual attempts using legal original parameters, a required/semantic minimum, and an error-guided or equivalent-code correction. An error without a parameter clue does not authorize guessing.
-6. Stop immediately for wrong entity, market, date, period, future data, or stale real-time data. `success=false` remains failed even when data is present.
-7. Persist `qveris.finance-parameter-adaptation.v1`, detail/parameter/response hashes, exact attempts, `final_params`, `observed_calls`, and the six-field `qveris_trace`; recursively sanitize provider/route/candidate/credential metadata.
+6. Stop immediately for wrong entity, market, date, period, future data, stale real-time data, all-zero flow, empty sentiment semantics, or non-trading-date daily flow. Do not use the envelope `success` flag as the sole result gate: a `success=false` response may pass only under the shared data-first rule; a `success=true` response may still be rejected.
+7. Fetch and validate an HTTPS `full_content_file_url` before judging the payload. A failed full-content fetch is not a retry success and the signed URL must never be persisted.
+8. Persist `qveris.finance-parameter-adaptation.v1`, detail/parameter/response/content hashes, `envelope_success`, `contract_clean`, exact attempts, `final_params`, `observed_calls`, and the six-field `qveris_trace`; recursively sanitize provider/route/candidate/credential/signed-URL metadata.
 
 ## Retry Classes
 

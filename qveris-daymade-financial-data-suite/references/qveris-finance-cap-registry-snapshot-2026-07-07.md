@@ -2,6 +2,14 @@
 
 This snapshot documents CAP routes used by QVeris finance skills in this repository as of 2026-07-07, with later audit notes where relevant. Treat it as a dated audit artifact, not a promise that the live registry will remain unchanged.
 
+## 2026-07-22 Runtime Audit Addendum
+
+- Resolve every logical name from the live registry. The current canonical forward-estimates ID is `ESTIMATES.CONSENSUS` for `qveris_finance.estimates_consensus`; the retired `FUNDAMENTALS.CONSENSUS` spelling must not be hard-coded.
+- `EVENT.CALENDAR.CORP` is query-shape sensitive: a broad `600519.SH` query can return usable corporate events while an issuer-plus-window query may legitimately be empty. Do not change the issuer merely to obtain data for a benchmark assertion.
+- `FLOW.DRAGON_TIGER` list semantics use a trading `date` and `granularity=daily` without a stock symbol. A symbol-scoped request asks whether that issuer appeared on the list and may be a healthy empty result.
+- `RESEARCH.ANALYST_REPORTS` may return a signed full-content object; fetch and validate it before declaring the CAP empty.
+- Current A-share hard semantic blockers remain service/data issues, not parameter problems, when reproduced: stale `MKT.L1.RT`, wrong-issuer/market `NEWS.FIN.TAGGED`, all-zero `FLOW.CROSS_BORDER` or `FLOW.NORTHBOUND`, and out-of-window `MKT.CN.LOCK_UP`. Keep those layers missing until a fresh call passes the semantic gates.
+
 ## Primary Callable Routes
 
 | Capability | Skill usage | Status |

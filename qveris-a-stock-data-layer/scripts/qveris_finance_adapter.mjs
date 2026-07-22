@@ -199,6 +199,7 @@ export async function executeFinanceCapability({
         searchId,
         timeoutMs,
       });
+      response = await hydrateFullContentResponse({ response, transport, timeoutMs });
     } catch (error) {
       response = {
         success: false,
@@ -222,7 +223,8 @@ export async function executeFinanceCapability({
       parameters_hash: sha256(candidate),
       execution_id: executionId(response),
       success: assessment.ready,
-      provider_success: response?.success === true,
+      envelope_success: response?.success === true,
+      contract_clean: assessment.ready && response?.success === true,
       result_status: assessment.ready ? "accepted" : "rejected",
       reason_code: assessment.reason_code,
       rejection_reason: assessment.ready ? null : assessment.rejection_reason,
@@ -616,21 +618,32 @@ function equivalentSymbolVariants(value) {
 
 function assessResult({ detail, capabilityId, parameters, context, response }) {
   const data = responseData(response);
-  if (response?.success !== true) {
+  const statusCode = Number(response?.status_code ?? response?.result?.status_code);
+  if (Number.isFinite(statusCode) && statusCode >= 400) {
     return {
       ready: false,
       semantic_failure: false,
       reason_code: response?.execution_outcome?.reason_code ?? response?.result?.error_type ?? "provider_business_error",
-      rejection_reason: errorText(response).slice(0, 400) || "provider success was not true",
+      rejection_reason: errorText(response).slice(0, 400) || `provider returned HTTP ${statusCode}`,
     };
   }
-  if (!executionId(response)) return rejection("missing_execution_id", "success=true response has no execution ID");
-  if (!usable(data)) return rejection("empty_result", "success=true response has no usable data");
+  if (!executionId(response)) return rejection("missing_execution_id", "response has no execution ID");
+  if (!usable(data)) {
+    return rejection(
+      response?.execution_outcome?.reason_code ?? response?.result?.error_type ?? "empty_result",
+      errorText(response).slice(0, 400) || "response has no usable data",
+    );
+  }
   const missingFields = missingRequiredOutputFields(detail, data);
   if (missingFields.length > 0) return rejection("missing_required_output_fields", `missing required output fields: ${missingFields.join(", ")}`);
   const semantics = semanticAssessment({ capabilityId, parameters, context, data });
   if (!semantics.ok) return { ready: false, semantic_failure: true, reason_code: semantics.reason_code, rejection_reason: semantics.reason };
-  return { ready: true, semantic_failure: false, reason_code: "accepted", rejection_reason: null };
+  return {
+    ready: true,
+    semantic_failure: false,
+    reason_code: response?.success === true ? "accepted" : "accepted_data_first",
+    rejection_reason: null,
+  };
 }
 
 function rejection(reasonCode, reason) {
@@ -653,6 +666,16 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
   }
   if (expectedSymbol && returnedSymbols.length > 0 && !returnedSymbols.some((value) => symbolsEquivalent(value, expectedSymbol))) {
     return { ok: false, reason_code: "semantic_entity_mismatch", reason: `returned entity does not match ${expectedSymbol}` };
+  }
+  if (capabilityId === "FLOW.SECTOR.CAPITAL" && parameters.sector !== undefined) {
+    const expectedSector = normalizeIdentity(parameters.sector);
+    const returnedSectors = collectValues(data, new Set(["sector", "sector_name", "industry", "industry_name", "theme", "theme_name", "concept", "concept_name", "name"]))
+      .filter((value) => typeof value === "string")
+      .map(normalizeIdentity)
+      .filter(Boolean);
+    if (returnedSectors.length > 0 && !returnedSectors.some((value) => value === expectedSector)) {
+      return { ok: false, reason_code: "semantic_entity_mismatch", reason: `returned sector does not match ${parameters.sector}` };
+    }
   }
   const expectedPeriod = context.period ?? context.expected_period ?? parameters.period;
   const periods = collectValues(data, new Set(["period", "fiscal_period", "fiscal_year", "reporting_period"]));
@@ -694,7 +717,7 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
       return { ok: false, reason_code: "semantic_future_data", reason: "returned data is later than the declared cutoff" };
     }
   }
-  const latestTradingDate = context.latest_trading_date;
+  const latestTradingDate = context.latest_trading_date ?? context.cut_off ?? context.cutoff ?? context.as_of_date;
   if ((context.require_fresh === true || capabilityId === "MKT.L1.RT") && latestTradingDate) {
     const expected = dateValue(latestTradingDate);
     const dates = collectValues(data, new Set(["date", "trade_date", "datetime", "timestamp"])).map(dateValue).filter(Number.isFinite);
@@ -704,22 +727,82 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
       return { ok: false, reason_code: "semantic_stale_data", reason: "real-time data is stale or missing a usable timestamp" };
     }
   }
+  if (["FLOW.CROSS_BORDER", "FLOW.NORTHBOUND", "FLOW.SECTOR.CAPITAL"].includes(capabilityId)) {
+    const flowValues = collectValues(data, new Set([
+      "net_flow", "net_amount", "net_inflow", "inflow", "outflow", "buy_amount", "sell_amount",
+      "northbound_net", "southbound_net", "sh_net_flow", "sz_net_flow",
+    ])).map(Number).filter(Number.isFinite);
+    if (flowValues.length >= 2 && flowValues.every((value) => value === 0)) {
+      return { ok: false, reason_code: "semantic_degenerate_flow", reason: "flow output is structurally present but all observed flow values are zero" };
+    }
+  }
+  if (capabilityId === "SENTIMENT.TEXT_SIGNALS") {
+    const signals = collectValues(data, new Set([
+      "signal", "text_cue", "sentiment", "sentiment_score", "score", "label", "sentiment_label", "direction", "magnitude",
+    ])).filter(usable);
+    if (signals.length === 0) {
+      return { ok: false, reason_code: "semantic_sentiment_signal_empty", reason: "sentiment response contains coverage but no usable sentiment signal" };
+    }
+  }
+  if (capabilityId === "FLOW.LARGE_ORDER") {
+    const dates = collectValues(data, new Set(["date", "trade_date", "datetime", "timestamp"]));
+    if (dates.length > 0 && dates.some(isWeekendDate)) {
+      return { ok: false, reason_code: "semantic_non_trading_date", reason: "daily A-share flow response contains a weekend date" };
+    }
+  }
   return { ok: true };
 }
 
 function missingRequiredOutputFields(detail, data) {
-  const keys = allKeys(data);
   return (Array.isArray(detail?.field_spec?.required) ? detail.field_spec.required : [])
     .map((field) => typeof field === "string" ? field : field?.name)
     .filter(Boolean)
-    .filter((field) => !fieldSatisfied(field, keys));
+    .filter((field) => !fieldSatisfied(field, data));
 }
 
-function fieldSatisfied(field, keys) {
+function fieldSatisfied(field, data) {
   const normalized = String(field).toLowerCase();
-  if (keys.has(normalized)) return true;
   const group = FIELD_ALIAS_GROUPS.find((values) => values.includes(normalized));
-  return Boolean(group?.some((value) => keys.has(value)));
+  const names = new Set(group ?? [normalized]);
+  return collectValues(data, names).some(usable);
+}
+
+async function hydrateFullContentResponse({ response, transport, timeoutMs }) {
+  const fullContentUrl = response?.full_content_file_url ?? response?.result?.full_content_file_url;
+  if (!fullContentUrl) return response;
+  let parsed;
+  try {
+    const url = new URL(String(fullContentUrl));
+    if (url.protocol !== "https:") throw new Error("full content URL must use HTTPS");
+    if (typeof transport?.fetchFullContent !== "function") throw new Error("transport does not implement fetchFullContent");
+    parsed = await transport.fetchFullContent({ url: url.toString(), timeoutMs });
+  } catch (error) {
+    return {
+      ...withoutFullContentUrl(response),
+      success: false,
+      result: { ...(response?.result ?? {}), data: null },
+      execution_outcome: { reason_code: "full_content_fetch_failed" },
+      error_message: `full content fetch failed: ${error?.message ?? String(error)}`,
+      full_content_audit: { present: true, fetched: false },
+    };
+  }
+  const fetchedData = responseData(parsed) ?? parsed?.data ?? parsed;
+  const fetchedResult = parsed?.result && typeof parsed.result === "object" && !Array.isArray(parsed.result)
+    ? parsed.result
+    : { data: fetchedData };
+  return {
+    ...withoutFullContentUrl(response),
+    ...(parsed && typeof parsed === "object" && !Array.isArray(parsed) ? withoutFullContentUrl(parsed) : {}),
+    execution_id: executionId(parsed) ?? executionId(response),
+    result: { ...(response?.result ?? {}), ...fetchedResult, data: fetchedData },
+    full_content_audit: { present: true, fetched: true, content_hash: sha256(sanitizeProviderRouteMetadata(parsed)) },
+  };
+}
+
+function withoutFullContentUrl(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+  const { full_content_file_url: _fullContentFileUrl, full_content_url: _fullContentUrl, signed_url: _signedUrl, ...rest } = value;
+  return rest;
 }
 
 function responseData(response) {
@@ -786,17 +869,6 @@ function usable(value) {
   return true;
 }
 
-function allKeys(value, output = new Set()) {
-  if (Array.isArray(value)) for (const child of value) allKeys(child, output);
-  else if (value && typeof value === "object") {
-    for (const [key, child] of Object.entries(value)) {
-      output.add(key.toLowerCase());
-      allKeys(child, output);
-    }
-  }
-  return output;
-}
-
 function collectValues(value, names, output = []) {
   if (Array.isArray(value)) for (const child of value) collectValues(child, names, output);
   else if (value && typeof value === "object") {
@@ -806,6 +878,17 @@ function collectValues(value, names, output = []) {
     }
   }
   return output;
+}
+
+function normalizeIdentity(value) {
+  return String(value ?? "").trim().toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g, "");
+}
+
+function isWeekendDate(value) {
+  const parsed = new Date(String(value));
+  if (!Number.isFinite(parsed.getTime())) return false;
+  const day = parsed.getUTCDay();
+  return day === 0 || day === 6;
 }
 
 function dateValue(value) {

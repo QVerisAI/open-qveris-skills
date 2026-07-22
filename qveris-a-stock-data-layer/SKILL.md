@@ -61,7 +61,7 @@ Source record:
 - Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
 - Use native `qveris_finance.*` tools only when that runtime applies the same Skill-owned adapter and returns a `qveris.finance-parameter-adaptation.v1` audit; otherwise use this Skill's CLI.
 - If native tools are unavailable and the run is in this repository root, use the repository CLI: `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
-- Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, filters and losslessly converts parameters, never copies sample values, permits at most three fully audited attempts, and rejects `success=false`, missing required fields, wrong entity/market/date/period, and stale real-time data. Use only its `qveris.finance-parameter-adaptation.v1` audit and actual attempt parameters in Trace.
+- Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, losslessly adapts parameters, hydrates signed full-content results, and applies the shared data-first semantic gates. The envelope `success` flag is diagnostic only; record `envelope_success` and `contract_clean` separately.
 - Permit only evidence-preserving repairs: an explicit option underlying may satisfy a live `symbol` field; an exact-date request may use `daily` after a missing-granularity error; an explicit Q1/Q2/Q3/Q4/FY context may map to provider-declared `0331/0630/0930/1231` codes after an invalid-period error. A corrected call must still pass every evidence gate.
 - If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
 - Use `cap-search` only when the capability ID is uncertain. Use `cap-detail` before adding any unvalidated A-share specialty, classification, research-report, corporate-event, EOD-bar, or top-mover capability to the run.
@@ -104,7 +104,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 
 ## References
 
-- Use shared finance contract version `2026-07-18.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
+- Use shared finance contract version `2026-07-22.1`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Use `references/qveris-finance-capability-fallbacks.json` for the audited cross-CAP replacement boundary.
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share data-layer report.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.

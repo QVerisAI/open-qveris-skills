@@ -51,10 +51,26 @@ export function queryCapability({ apiKey, capabilityId, parameters, strategy = "
   });
 }
 
+export async function fetchFullContent({ url, timeoutMs = 60_000 }) {
+  const target = new URL(String(url));
+  if (target.protocol !== "https:") throw new Error("QVeris full-content URL must use HTTPS");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(target, { method: "GET", signal: controller.signal });
+    if (!response.ok) throw new Error(`Full-content HTTP ${response.status}`);
+    const text = await response.text();
+    try { return text ? JSON.parse(text) : null; } catch { throw new Error("Full-content response is not valid JSON"); }
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export function financeTransport(apiKey) {
   return {
     listCapabilities: (options) => listCapabilities({ apiKey, ...options }),
     getCapability: (options) => getCapability({ apiKey, ...options }),
     queryCapability: (options) => queryCapability({ apiKey, ...options }),
+    fetchFullContent,
   };
 }

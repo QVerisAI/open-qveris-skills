@@ -60,7 +60,8 @@ Source record:
 - Standardized CAP invocation is mandatory. A missing CAP or runtime becomes `capability_unavailable` or `tool_runtime_missing`; it never authorizes a legacy raw route.
 - Use native `qveris_finance.*` tools only when that runtime applies the same Skill-owned adapter and returns a `qveris.finance-parameter-adaptation.v1` audit; otherwise use this Skill's CLI.
 - If native tools are unavailable and the run is in this repository root, use: `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
-- Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, filters and losslessly converts parameters, never copies sample values, permits at most three fully audited attempts, and rejects `success=false`, missing required fields, wrong entity/market/date/period, and stale real-time data. Use only its `qveris.finance-parameter-adaptation.v1` audit and actual attempt parameters in Trace.
+- Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, filters and losslessly converts parameters, never copies sample values, permits at most three fully audited attempts, and validates the returned data rather than trusting the envelope `success` flag alone. A `success=false` envelope is usable only when an execution ID and non-empty required fields exist and issuer, market, date, period, freshness, and capability-specific semantic gates all pass. Record `envelope_success` and `contract_clean` separately in `qveris.finance-parameter-adaptation.v1`.
+- When QVeris returns `full_content_file_url`, the adapter must fetch the HTTPS payload, validate that payload, record its content hash, and remove the signed URL. A missing or failed full-content fetch is rejected.
 - If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, local scripts, browser automation, or invented data as fallback.
 - Use `cap-search` only when the capability ID is uncertain.
 - Use `cap-detail` before adding any unvalidated valuation, A-share specialty, flow, LHB, trap-risk, sentiment, or research-report capability to the run.
@@ -98,7 +99,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 
 ## References
 
-- Use shared finance contract version `2026-07-18.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
+- Use shared finance contract version `2026-07-22.1`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

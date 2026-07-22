@@ -18,6 +18,13 @@ Read `qveris-finance-retry-policy.md` with this rubric when a CAP call fails, re
 - `limited`: runtime or payload quality was materially constrained, but some evidence may still support a narrower statement. Use this mainly as `data_quality.status`; prefer `partial`, `proxy_only`, or `insufficient` for user-facing evidence status.
 - `budget_limited`: the user or runtime call budget prevented the minimum useful evidence set. Use this as `data_quality.status` and do not infer missing facts.
 
+## Data-First Envelope Rule
+
+- The top-level QVeris `success` flag is a transport/envelope diagnostic, not evidence validity. Accept `success=false` data only when the response has a real execution ID, non-empty values for every required output field (including documented aliases), and all identity, market, date, fiscal-period, freshness, and capability-specific semantic checks pass.
+- Preserve `envelope_success` and `contract_clean` in the adaptation audit. Never rewrite a dirty envelope into an unqualified provider success claim.
+- If a response contains `full_content_file_url`, fetch the HTTPS object before shape and semantic validation, hash the fetched content, and remove the signed URL from all persisted output. A failed, non-HTTPS, missing, or malformed full-content fetch is unusable evidence.
+- Reject structurally populated but semantically empty flows when cross-border, northbound, or sector-flow observations are all zero; reject text-sentiment coverage without a signal/cue/score/label; reject daily A-share large-order rows dated on a weekend.
+
 ## Hard Rejects
 
 - Reject provider and routing leakage anywhere in the output or observed-call artifact, including prose, Evidence, Sources, URLs, params, nested response fields, and Trace. Remove provider names, provider API URLs, raw route IDs, candidates, failover state, credentials, and raw tool IDs recursively.
