@@ -361,6 +361,26 @@ test("stops immediately on wrong-market semantic data", async () => {
   assert.equal(result.adaptation.attempts[0].reason_code, "semantic_market_mismatch");
 });
 
+test("rejects entity-scoped quote data that contains no entity proof", async () => {
+  const schema = detail({
+    capability_id: "MKT.L1.RT",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "price" }, { name: "timestamp" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH" },
+    context: { cut_off: "2026-07-22T15:00:00+08:00" },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "missing-entity",
+      result: { data: [{ price: 100, timestamp: "2026-07-22T14:59:00+08:00" }] },
+    }] }),
+  });
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts[0].reason_code, "semantic_entity_missing");
+});
+
 test("accepts documented output aliases with data-first contract diagnostics", async () => {
   const schema = detail({
     capability_id: "FUNDAMENTALS.DERIVED_RATIOS",
@@ -493,6 +513,45 @@ test("rejects degenerate flow, empty sentiment semantics, and weekend daily flow
   assert.equal(weekend.adaptation.attempts[0].reason_code, "semantic_non_trading_date");
 });
 
+test("treats a naive midnight timestamp as an Asia/Shanghai calendar date", async () => {
+  const schema = detail({
+    capability_id: "FLOW.LARGE_ORDER",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "main_net" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "300750.SZ" },
+    context: { market: "CN" },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "cn-monday",
+      result: { data: [{ symbol: "300750.SZ", date: "2026-07-20 00:00:00", main_net: 10 }] },
+    }] }),
+  });
+  assert.equal(result.success, true);
+});
+
+test("rejects a weekday absent from the frozen exchange trading calendar", async () => {
+  const schema = detail({
+    capability_id: "FLOW.LARGE_ORDER",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "main_net" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "300750.SZ" },
+    context: { market: "CN", trading_dates: ["2026-09-30", "2026-10-09"] },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "cn-holiday",
+      result: { data: [{ symbol: "300750.SZ", date: "2026-10-01", main_net: 10 }] },
+    }] }),
+  });
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts[0].reason_code, "semantic_non_trading_date");
+});
+
 test("rejects stale real-time data against the declared cutoff without extra freshness context", async () => {
   const schema = detail({
     capability_id: "MKT.L1.RT",
@@ -529,6 +588,28 @@ test("validates fiscal years while treating annual and FY labels as equivalent",
     parameters: { symbol: "600519.SH", period: "annual" },
     context: { fiscal_year: 2025 },
     transport: client,
+  });
+  assert.equal(result.success, true);
+});
+
+test("accepts a matching fiscal year-end date for an annual statement request", async () => {
+  const schema = detail({
+    capability_id: "FUNDAMENTALS.IS",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "period", type: "string", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "period" }, { name: "revenue" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH", period: "annual" },
+    context: { fiscal_year: 2025 },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "annual-date",
+      result: { data: [{ symbol: "600519.SH", period: "2025-12-31", revenue: 1 }] },
+    }] }),
   });
   assert.equal(result.success, true);
 });

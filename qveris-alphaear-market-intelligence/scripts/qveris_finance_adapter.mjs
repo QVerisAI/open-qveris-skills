@@ -653,7 +653,15 @@ function rejection(reasonCode, reason) {
 function semanticAssessment({ capabilityId, parameters, context, data }) {
   const expectedSymbol = context.symbol ?? context.expected_symbol ?? parameters.symbol ?? parameters.ticker;
   const returnedSymbols = collectValues(data, new Set(["symbol", "ticker", "code", "security_code"]))
-    .filter((value) => typeof value === "string");
+    .filter((value) => typeof value === "string" || typeof value === "number")
+    .map(String);
+  const expectedNames = [context.expected_name, context.company_name, context.issuer_name]
+    .flatMap((value) => Array.isArray(value) ? value : [value])
+    .filter((value) => typeof value === "string" && value.trim())
+    .map(normalizeIdentity);
+  const returnedNames = collectValues(data, new Set(["name", "company_name", "issuer_name", "security_name"]))
+    .filter((value) => typeof value === "string" && value.trim())
+    .map(normalizeIdentity);
   const expectedMarket = String(context.market ?? context.expected_market ?? parameters.market ?? "").toUpperCase();
   if (expectedMarket) {
     const markets = collectValues(data, new Set(["market", "market_code", "country"])).map((value) => String(value).toUpperCase());
@@ -664,8 +672,13 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
       return { ok: false, reason_code: "semantic_market_mismatch", reason: "CN request returned no A-share symbols" };
     }
   }
-  if (expectedSymbol && returnedSymbols.length > 0 && !returnedSymbols.some((value) => symbolsEquivalent(value, expectedSymbol))) {
-    return { ok: false, reason_code: "semantic_entity_mismatch", reason: `returned entity does not match ${expectedSymbol}` };
+  if (expectedSymbol) {
+    if (returnedSymbols.length > 0 && !returnedSymbols.some((value) => symbolsEquivalent(value, expectedSymbol))) {
+      return { ok: false, reason_code: "semantic_entity_mismatch", reason: `returned entity does not match ${expectedSymbol}` };
+    }
+    if (returnedSymbols.length === 0 && !expectedNames.some((expected) => returnedNames.includes(expected))) {
+      return { ok: false, reason_code: "semantic_entity_missing", reason: `returned data contains no verifiable identity for ${expectedSymbol}` };
+    }
   }
   if (capabilityId === "FLOW.SECTOR.CAPITAL" && parameters.sector !== undefined) {
     const expectedSector = normalizeIdentity(parameters.sector);
@@ -746,7 +759,16 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
   }
   if (capabilityId === "FLOW.LARGE_ORDER") {
     const dates = collectValues(data, new Set(["date", "trade_date", "datetime", "timestamp"]));
-    if (dates.length > 0 && dates.some(isWeekendDate)) {
+    const exchangeTimeZone = context.exchange_timezone ?? context.time_zone ?? "Asia/Shanghai";
+    const declaredTradingDates = context.trading_dates ?? context.exchange_trading_dates;
+    if (Array.isArray(declaredTradingDates) && declaredTradingDates.length > 0) {
+      const tradingDateSet = new Set(declaredTradingDates.map((value) => exchangeCalendarDate(value, exchangeTimeZone)).filter(Boolean));
+      const returnedCalendarDates = dates.map((value) => exchangeCalendarDate(value, exchangeTimeZone));
+      if (returnedCalendarDates.some((value) => !value || !tradingDateSet.has(value))) {
+        return { ok: false, reason_code: "semantic_non_trading_date", reason: "daily A-share flow response date is absent from the frozen exchange calendar" };
+      }
+    }
+    if (dates.length > 0 && dates.some((value) => isWeekendDate(value, exchangeTimeZone))) {
       return { ok: false, reason_code: "semantic_non_trading_date", reason: "daily A-share flow response contains a weekend date" };
     }
   }
@@ -848,7 +870,11 @@ function periodEquivalent(left, right) {
   const actual = String(left ?? "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   const expected = String(right ?? "").trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
   if (actual === expected) return true;
-  if (["ANNUAL", "YEAR", "YEARLY", "FY"].includes(expected)) return /^(?:FY)?\d{4}$/.test(actual) || ["ANNUAL", "YEAR", "YEARLY", "FY"].includes(actual);
+  if (["ANNUAL", "YEAR", "YEARLY", "FY"].includes(expected)) {
+    return /^(?:FY)?\d{4}$/.test(actual)
+      || /^\d{4}1231$/.test(actual)
+      || ["ANNUAL", "YEAR", "YEARLY", "FY"].includes(actual);
+  }
   const expectedYear = expected.match(/^(?:FY)?(\d{4})$/)?.[1];
   const actualYear = actual.match(/^(?:FY)?(\d{4})$/)?.[1];
   return Boolean(expectedYear && actualYear && expectedYear === actualYear);
@@ -884,11 +910,27 @@ function normalizeIdentity(value) {
   return String(value ?? "").trim().toLowerCase().replace(/[^a-z0-9\u4e00-\u9fff]/g, "");
 }
 
-function isWeekendDate(value) {
-  const parsed = new Date(String(value));
-  if (!Number.isFinite(parsed.getTime())) return false;
-  const day = parsed.getUTCDay();
+function isWeekendDate(value, timeZone) {
+  const calendarDate = exchangeCalendarDate(value, timeZone);
+  if (!calendarDate) return false;
+  const day = new Date(`${calendarDate}T00:00:00Z`).getUTCDay();
   return day === 0 || day === 6;
+}
+
+function exchangeCalendarDate(value, timeZone = "Asia/Shanghai") {
+  const text = String(value ?? "").trim();
+  const leadingDate = text.match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
+  if (leadingDate && !/(?:Z|[+-]\d{2}:?\d{2})$/i.test(text)) return leadingDate;
+  const parsed = new Date(text);
+  if (!Number.isFinite(parsed.getTime())) return null;
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(parsed);
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.year}-${byType.month}-${byType.day}`;
 }
 
 function dateValue(value) {
