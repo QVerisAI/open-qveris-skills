@@ -42,6 +42,8 @@ Read `qveris-finance-retry-policy.md` with this rubric when a CAP call fails, re
 - Reject thin time windows. For a multi-day bars request, fewer than 2 observations cannot support return, trend, correlation, realized volatility, drawdown, liquidity, or VaR calculations.
 - Reject unaligned statements. IS, BS, CF, and segment data must share fiscal year, fiscal period, and period ending before appearing in an aligned table.
 - Reject requested-period mismatches. If the request asks for a specific annual/FY period and a statement CAP returns a latest-quarter or TTM-shaped payload instead, do not use it as evidence for the requested period.
+- Reject missing period proof. When a request specifies a fiscal year or period, require an explicit fiscal label or period/report end date in the returned data; do not infer the period from request parameters.
+- Reject missing date proof for explicit date-window requests. Require a returned trade, publication, release, event, report, period-end, or as-of date that can be checked against the requested window.
 - Treat an A-share `YYYY-12-31` report date as a valid annual/FY representation when the requested fiscal year matches. Do not treat quarter-end dates such as `YYYY-03-31` as annual.
 - Interpret naive A-share timestamps in `Asia/Shanghai`. For daily-flow semantics, validate dates against the frozen exchange-session set for the requested window; weekend-only logic is a fallback, not proof that a weekday was a trading session.
 - Reject inconsistent statement fields. If same-period CF net income materially conflicts with IS net income, exclude CF from aligned tables and mark `statement_semantic_mismatch`.

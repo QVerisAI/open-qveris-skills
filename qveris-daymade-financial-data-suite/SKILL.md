@@ -102,7 +102,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 
 ## References
 
-- Use shared finance contract version `2026-07-22.2`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
+- Use shared finance contract version `2026-07-22.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.

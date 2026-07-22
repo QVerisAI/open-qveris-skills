@@ -691,11 +691,16 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
     }
   }
   const expectedPeriod = context.period ?? context.expected_period ?? parameters.period;
-  const periods = collectValues(data, new Set(["period", "fiscal_period", "fiscal_year", "reporting_period"]));
+  const expectedFiscalYear = context.fiscal_year ?? context.expected_fiscal_year ?? parameters.fiscal_year;
+  const periods = collectValues(data, new Set([
+    "period", "fiscal_period", "fiscal_year", "reporting_period", "period_end", "report_date", "end_date", "as_of_date",
+  ]));
+  if ((expectedPeriod !== undefined || expectedFiscalYear !== undefined) && periods.length === 0) {
+    return { ok: false, reason_code: "semantic_period_missing", reason: "returned data contains no verifiable financial period" };
+  }
   if (expectedPeriod !== undefined && periods.length > 0 && periods.every((value) => !periodEquivalent(value, expectedPeriod))) {
     return { ok: false, reason_code: "semantic_period_mismatch", reason: `returned period does not match ${expectedPeriod}` };
   }
-  const expectedFiscalYear = context.fiscal_year ?? context.expected_fiscal_year ?? parameters.fiscal_year;
   if (expectedFiscalYear !== undefined && periods.length > 0 && periods.every((value) => !String(value).includes(String(expectedFiscalYear)))) {
     return { ok: false, reason_code: "semantic_period_mismatch", reason: `returned fiscal period does not contain ${expectedFiscalYear}` };
   }
@@ -711,7 +716,13 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
   if (requestedStart || requestedEnd) {
     const startTime = requestedStart ? dateValue(requestedStart) : -Infinity;
     const endTime = requestedEnd ? dateValue(requestedEnd) + 86_400_000 - 1 : Infinity;
-    const windowDates = collectValues(data, new Set(["date", "trade_date", "datetime", "timestamp"])).map(dateValue).filter(Number.isFinite);
+    const windowDates = collectValues(data, new Set([
+      "date", "trade_date", "datetime", "timestamp", "published_at", "publication_date", "publish_time", "pub_time",
+      "release_date", "event_date", "announcement_date", "report_date", "period_end", "start_date", "end_date", "as_of_date",
+    ])).map(dateValue).filter(Number.isFinite);
+    if (windowDates.length === 0) {
+      return { ok: false, reason_code: "semantic_date_missing", reason: "returned data contains no verifiable date for the requested window" };
+    }
     if (windowDates.some((value) => value < startTime || value > endTime)) {
       return { ok: false, reason_code: "semantic_date_window_mismatch", reason: "returned data falls outside the requested date window" };
     }

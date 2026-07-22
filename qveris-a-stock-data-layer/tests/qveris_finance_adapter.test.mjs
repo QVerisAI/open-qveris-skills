@@ -614,6 +614,30 @@ test("accepts a matching fiscal year-end date for an annual statement request", 
   assert.equal(result.success, true);
 });
 
+test("rejects an annual statement that contains no period proof", async () => {
+  const schema = detail({
+    capability_id: "FUNDAMENTALS.IS",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "period", type: "string", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "revenue" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH", period: "annual" },
+    context: { fiscal_year: 2025 },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "annual-missing-period",
+      result: { data: [{ symbol: "600519.SH", revenue: 1 }] },
+    }] }),
+  });
+
+  assert.equal(result.success, false);
+  assert.equal(result.reason_code, "semantic_period_missing");
+});
+
 test("accepts CN sector identifiers but rejects data outside an explicit date window", async () => {
   const schema = detail({
     params: [
@@ -645,6 +669,30 @@ test("accepts CN sector identifiers but rejects data outside an explicit date wi
   });
   assert.equal(rejected.success, false);
   assert.equal(rejected.adaptation.attempts[0].reason_code, "semantic_date_window_mismatch");
+});
+
+test("rejects a date-window response that contains no date proof", async () => {
+  const schema = detail({
+    capability_id: "NEWS.FIN.TAGGED",
+    params: [
+      { name: "symbol", type: "string", required: true },
+      { name: "start_date", type: "date", required: false },
+      { name: "end_date", type: "date", required: false },
+    ],
+    field_spec: { required: [{ name: "symbol" }, { name: "headline" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH", start_date: "2026-07-01", end_date: "2026-07-22" },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "news-missing-date",
+      result: { data: [{ symbol: "600519.SH", headline: "贵州茅台公告" }] },
+    }] }),
+  });
+
+  assert.equal(result.success, false);
+  assert.equal(result.reason_code, "semantic_date_missing");
 });
 
 test("allows disclosed future event dates only inside an explicit event-calendar horizon", async () => {
