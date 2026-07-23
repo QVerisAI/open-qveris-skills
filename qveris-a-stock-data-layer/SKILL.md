@@ -5,7 +5,7 @@ description: QVeris-native adaptation of candidate 58, A-Stock Data. Use for Chi
 
 # QVeris A-Stock Data Layer
 
-Use this skill to preserve the A-Stock Data candidate's broad A-share data-layer intent while replacing legacy endpoints, scraping, and provider-specific dependencies with QVeris finance CAP calls.
+Use this skill to preserve the A-Stock Data candidate's broad A-share data-layer intent while replacing legacy endpoints, scraping, and provider-specific dependencies with QVeris finance CAP calls plus a narrow audited Web lane for news and qualitative sentiment.
 
 Source record:
 
@@ -41,6 +41,7 @@ Source record:
 - Sanity-check entity, market, exchange, asset type, currency, date window, fiscal period, and payload shape before using data.
 - Treat a successful transport response with wrong A-share identity, wrong date window, wrong fiscal period, or too-thin bars as rejected evidence.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, and trade execution plans even if present in a QVeris payload.
+- Read and follow `references/qveris-web-news-sentiment-policy.md`. Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`; use its audited Web lane in every run mode, including benchmark and replay.
 
 ## Evidence Gate
 
@@ -51,7 +52,7 @@ Source record:
 - For A-share daily MA5, MA20, and RSI14, use `qveris_finance.mkt_bars_adjusted` as the primary evidence and calculate the indicators from a validated adjusted daily close series. Record the formulas, adjustment basis, sample count, and warm-up observations; never reinterpret a rejected daily interval as intraday minutes.
 - For financial statements, require fiscal year, fiscal period, period end, and statement basis to match. If an annual/FY request returns latest-quarter or TTM data, retry once with stricter documented fields after `cap-detail`; if still mismatched, mark the requested statement missing.
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted company names, industry labels, event titles, news snippets, or research titles in user-facing evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
-- Treat `qveris_finance.news_fin_tagged` as qualitative context only unless `qveris_finance.sentiment_text_signals` succeeds.
+- Use opened, issuer-matched, in-window Web pages for news and qualitative sentiment; keep their provenance in `web_trace`, separate from QVeris CAP calls.
 - Use analyst/research rows only after a current `cap-detail` confirms issuer, report type, and date fields for the route. Suppress recommendation and target fields.
 - Do not use unverified A-share specialty data such as industry/theme classification routes, corporate-event detail routes, top movers, capital flow, northbound flow, LHB, unlock calendars, limit-up boards, investor Q&A, ETF options, or concept heat as primary evidence unless a current `cap-detail` confirms a callable QVeris finance CAP with matching fields.
 - If the user asks for a source-repo-only layer that QVeris has not verified, answer with `capability_unavailable` or `not_called`, not with legacy source instructions.
@@ -73,7 +74,7 @@ Source record:
 1. Identity gate: resolve symbol and security master. Stop the run if canonical A-share identity cannot be validated.
 2. Requested-window bars: fetch the exact requested window next. If bars fail identity/window validation or are too thin for the requested analysis, return a latest snapshot or insufficient report and stop optional fan-out.
 3. One financial/valuation layer: call only the single statement or valuation layer most relevant to the request; validate market support and period before expanding.
-4. Event/news layer: call corporate event or tagged news only when requested or needed for the core answer.
+4. Event/news layer: call corporate-event CAPs for structured events and use the audited Web lane for news or qualitative sentiment only when requested or needed for the core answer.
 5. Optional specialty layer: spend remaining budget on at most one requested classification, flow, LHB, unlock, limit-move, investor-Q&A, or ETF-option route after `cap-detail` confirms its contract.
 6. Expand only after the preceding core gates succeed. Do not fan out across ten source layers merely because they exist in the source skill.
 
@@ -86,7 +87,7 @@ Source record:
 - If A-share specialty data is unavailable, return a partial data-layer report with missing fields rather than substituting web or legacy endpoints.
 - Do not treat a proxy fallback as equivalent primary evidence. Apply the exact `complete`, `partial`, or `proxy_only` status and forbidden-claim list from `references/qveris-finance-capability-fallbacks.json`.
 - If a successful payload contains corrupted text fields, exclude the corrupted fields from the report body and mark `encoding_artifact`; do not translate, repair, or infer the intended wording.
-- If only tagged news is available, write background context with low confidence; do not infer strong sentiment, strong catalysts, or directional risk.
+- If fewer than two qualifying Web sources are available, write supported news context only and set qualitative sentiment to `insufficient`.
 
 ## Output Requirements
 
@@ -100,7 +101,7 @@ Source record:
 
 ## Prohibited Capabilities
 
-Do not use non-QVeris finance data sources, web scraping, browser automation, cookies, login state, external provider keys, dynamic data-package installs, automated trading, buy/sell triggers, target prices, upside/downside, rebalancing instructions, or execution plans.
+Do not use non-QVeris structured-finance data sources, Web use outside the audited news/sentiment policy, browser automation, cookies, login state, external provider keys, dynamic data-package installs, automated trading, buy/sell triggers, target prices, upside/downside, rebalancing instructions, or execution plans.
 
 ## References
 
@@ -109,6 +110,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share data-layer report.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.
+- Read `references/qveris-web-news-sentiment-policy.md` before collecting news or qualitative sentiment.
 - Check `references/qveris-finance-cap-registry-snapshot-2026-07-07.md` before adding a route to the primary path.
 - Use `examples/default-markdown-report.md` as the primary user-facing example.
 - Use `fixtures/qveris/*.json` as machine-readable schema fixtures only.

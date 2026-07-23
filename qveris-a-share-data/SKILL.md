@@ -32,7 +32,8 @@ Source record:
 - Use only `qveris_finance.*` CAP tools and `QVERIS_API_KEY` for identity, quotes, bars, classifications, and events. Web Search is allowed only for issuer news and qualitative sentiment under the Web News And Sentiment Lane.
 - Execute every finance data call through this Skill's `scripts/qveris_finance_adapter.mjs`, or through a native wrapper that runs the byte-identical adapter; never call `/capabilities/query` directly from the workflow.
 - Default natural-language output to a Markdown user report, not a JSON object.
-- Accept `dry_run`, `max_calls`, `max_age`, `budget_note`, and `source_mode`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, a conservative budget note, and `source_mode=hybrid_news_web`, then echo those controls. Use `source_mode=qveris_only` for benchmark, replay, or explicitly QVeris-only runs; that mode forbids all Web Search.
+- Accept `dry_run`, `max_calls`, `max_age`, `budget_note`, and `source_mode`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, a conservative budget note, and `source_mode=hybrid_web_news_sentiment`, then echo those controls. Benchmark and replay runs use the same narrow Web lane for news and qualitative sentiment; replay reads only frozen Web evidence.
+- Read and follow `references/qveris-web-news-sentiment-policy.md`. It supersedes any older news/sentiment fallback text in this Skill.
 - Read `references/qveris-finance-data-quality-rubric.md` before using QVeris payloads as evidence.
 - Use `references/qveris-finance-retry-policy.md` for failed calls, invalid capabilities, payload truncation, and semantic mismatches.
 - Build trace, call counts, retries, and timestamps only from saved `observed_calls`. Never invent an execution ID or planned call; use `execution_id=null` when an observed call returned no ID.
@@ -50,7 +51,7 @@ Source record:
 - For events and IPO/listing timelines, require event date, event type, security identity, and window alignment. Keep out-of-window events out of the analysis section.
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted industry labels, event titles, news snippets, or research titles in user-facing evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
 - Treat sector views built from security-master metadata as market-activity context, not capital-flow evidence. Use classification, constituents, and top movers only after current `cap-detail` confirms params and fields.
-- In `source_mode=hybrid_news_web`, use the Web News And Sentiment Lane instead of `qveris_finance.news_fin_tagged` and `qveris_finance.sentiment_text_signals`. Keep both CAPs disabled until a future live semantic check confirms issuer-matched news and non-empty sentiment fields.
+- Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`. Use the audited Web lane for issuer news and qualitative sentiment.
 - Call A+H mapping, HK listing timeline, IPO timeline, corporate-event detail, sector heatmap, top-mover, or classification routes only after a current `cap-detail` confirms a QVeris finance CAP and fields. If unavailable, mark missing.
 - If the original data script supported a route but no verified QVeris finance CAP exists, report it as missing rather than returning source-specific commands.
 
@@ -66,14 +67,8 @@ Source record:
 
 ## Web News And Sentiment Lane
 
-- Enable this lane only when `source_mode=hybrid_news_web`. Do not call it in `qveris_only`, benchmark, fixture, replay, or frozen-evidence mode.
-- Resolve the issuer with QVeris first. Build Web Search queries from the validated issuer name, full ticker, requested topic, and date window; never rely on an ambiguous numeric code alone.
-- Open the final page and verify the publisher, visible publication time, issuer relevance, and requested window. Reject snippets, inaccessible bodies, undated pages, duplicate syndications, future-dated pages, and pages whose body does not support the claim.
-- Prefer exchange filings, issuer disclosures, regulators, and established financial newsrooms. Keep forums, social posts, SEO aggregators, and unattributed reposts out of evidence.
-- For news, report only claims supported by an opened page and cite its final URL next to the claim.
-- For sentiment, derive only `positive`, `negative`, `mixed`, or `insufficient` from at least two independent issuer-matched, in-window opened sources. List the exact text cues and conflicting evidence. Do not emit a numeric sentiment score, magnitude, market-wide sentiment, price direction, or trading implication.
-- If fewer than two independent sources pass, set `sentiment=insufficient`. Web Search failure never authorizes training-data recall or uncited claims.
-- Record Web operations in the Trace Appendix as `web.search` and `web.open`; use the observed tool execution ID when one exists, otherwise `execution_id=null`. Never represent a Web operation as a `qveris_finance.*` call.
+- Follow `references/qveris-web-news-sentiment-policy.md` in every run mode, including benchmark and replay.
+- Keep Web evidence in a separate `web_trace`; never put Web calls in `qveris_trace` or represent them as QVeris CAP success.
 
 ## Workflows
 
@@ -81,7 +76,7 @@ Source record:
 2. Technical context: compute requested indicators from validated bars only; if bars are insufficient, mark the indicator missing.
 3. Corporate event read: use corporate calendar and earnings calendar where relevant; reject wrong-window events.
 4. Sector heatmap read: use industry/theme classification, constituents, and top movers as available; label missing flow or heatmap CAPs.
-5. News context read: in `hybrid_news_web`, use the audited Web lane for issuer news and qualitative sentiment; in `qveris_only`, use the CAPs only if their current payload passes every semantic gate, otherwise mark both layers missing.
+5. News context read: use the audited Web lane for issuer news and qualitative sentiment; never call the two disabled CAPs.
 6. A+H or IPO timeline read: use security master and event calendar only when fields explicitly support the requested timeline.
 
 ## Fallback Policy
