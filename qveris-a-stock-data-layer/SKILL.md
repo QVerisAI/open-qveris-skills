@@ -54,7 +54,8 @@ Source record:
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted company names, industry labels, event titles, news snippets, or research titles in user-facing evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
 - Use opened, issuer-matched, in-window Web pages for news and qualitative sentiment; keep their provenance in `web_trace`, separate from QVeris CAP calls.
 - Use analyst/research rows only after a current `cap-detail` confirms issuer, report type, and date fields for the route. Suppress recommendation and target fields.
-- Do not use unverified A-share specialty data such as industry/theme classification routes, corporate-event detail routes, top movers, capital flow, northbound flow, LHB, unlock calendars, limit-up boards, investor Q&A, ETF options, or concept heat as primary evidence unless a current `cap-detail` confirms a callable QVeris finance CAP with matching fields.
+- Do not use unverified A-share specialty data such as industry/theme classification routes, corporate-event detail routes, capital flow, northbound flow, LHB, unlock calendars, limit-up boards, investor Q&A, ETF options, or concept heat as primary evidence unless a current `cap-detail` confirms a callable QVeris finance CAP with matching fields.
+- Never call `qveris_finance.mkt_top_movers`. If the user supplies a bounded ticker list, rank validated same-window bars and label it `bounded_universe_rank`; otherwise mark market-wide movers unavailable.
 - If the user asks for a source-repo-only layer that QVeris has not verified, answer with `capability_unavailable` or `not_called`, not with legacy source instructions.
 
 ## CAP Invocation
@@ -65,7 +66,7 @@ Source record:
 - Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, losslessly adapts parameters, hydrates signed full-content results, and applies the shared data-first semantic gates. The envelope `success` flag is diagnostic only; record `envelope_success` and `contract_clean` separately.
 - Permit only evidence-preserving repairs: an explicit option underlying may satisfy a live `symbol` field; an exact-date request may use `daily` after a missing-granularity error; an explicit Q1/Q2/Q3/Q4/FY context may map to provider-declared `0331/0630/0930/1231` codes after an invalid-period error. A corrected call must still pass every evidence gate.
 - If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
-- Use `cap-search` only when the capability ID is uncertain. Use `cap-detail` before adding any unvalidated A-share specialty, classification, research-report, corporate-event, EOD-bar, or top-mover capability to the run.
+- Use `cap-search` only when the capability ID is uncertain. Use `cap-detail` before adding any unvalidated A-share specialty, classification, research-report, corporate-event, or EOD-bar capability to the run.
 - Keep `cap-detail` and failed calls in the trace appendix when they influence missing fields or fallback status.
 - For a listed replacement, use `cap-query-chain --chain-json <JSON>` or make the same explicit canonical CAP calls through the native runtime. A chain may contain at most three distinct `qveris_finance.*` CAPs; record `qveris.finance-capability-fallback.v1`, and never hide the failed primary CAP.
 

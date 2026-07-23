@@ -43,8 +43,8 @@ Source record:
 
 ## Evidence Gate
 
-- Resolve the universe with `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, or an explicit user-supplied ticker list. Use `qveris_finance.index_constituents` only after current `cap-detail` confirms params and fields.
-- If the user asks for full-market screening and no validated full-universe route is available within budget, return a budget-limited report with required next calls; do not silently screen a tiny proxy universe.
+- Resolve the universe from an explicit user-supplied ticker list or an approved frozen universe file, then validate every member with `qveris_finance.ref_symbology` or `qveris_finance.ref_security_master`.
+- Never call `qveris_finance.index_constituents`. If no explicit universe is available, return `universe_unavailable`; do not silently substitute a small proxy universe.
 - For A-share requests, reject securities whose returned market, exchange, listing class, or asset type does not match the requested mainland equity universe.
 - Assign every requested security a coverage tier before showing any factor values: `complete_comparable`, `partial_not_ranked`, `proxy_only`, or `insufficient`. Show the comparable subset and per-security factor gaps explicitly.
 - Require comparable windows before ranking factors: identical validated factor set, price window, fiscal period, measurement basis, and market convention. Rank only the complete comparable subset, never the full requested universe when coverage differs.
@@ -62,7 +62,7 @@ Source record:
 - If native tools are unavailable and the run is in this repository root, use the repository CLI: `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
 - Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, losslessly adapts parameters, hydrates signed full-content results, and applies the shared data-first semantic gates. The envelope `success` flag is diagnostic only; record `envelope_success` and `contract_clean` separately.
 - If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
-- Use `cap-detail` before calling sensitive or uncertain routes such as constituents, classification, analyst reports, corporate events, EOD bars, top movers, or text sentiment.
+- Use `cap-detail` before calling sensitive or uncertain routes such as classification, analyst reports, corporate events, or EOD bars.
 - Keep failed, rejected, or not-called capabilities in `Data Quality And Missing Fields` and the trace appendix, not in the evidence table.
 
 ## Workflows

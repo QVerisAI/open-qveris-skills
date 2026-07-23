@@ -1,9 +1,9 @@
 {
-  "version": "2026-07-22.3",
+  "version": "2026-07-23.1",
   "files": {
     "references/qveris-finance-data-quality-rubric.md": "4c940c7ad9204c4c60592087b644ff2bdb5097696ac05fd6b2643238dc3035b4",
     "references/qveris-finance-retry-policy.md": "2f8bcd39137f6f1abff6893f217d9796612b23dff573c6c4b1af271a613336ab",
-    "references/qveris-finance-cap-registry-snapshot-2026-07-07.md": "87640fb241c9b36683373e276ed05c7e7b925c1f0cadb017235fae0fe09469b2",
+    "references/qveris-finance-cap-registry-snapshot-2026-07-07.md": "35544e741e92851d2872b602ccd30e14276ab734ab5f1e6c17b00183aa589fc2",
     "schemas/qveris-finance-output.schema.json": "6bd47427c2138a57f2ae5bfb276ed525d36fe4ef8c7e89459e40a2a3fab841dd"
   },
   "skill_copies": [

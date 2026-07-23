@@ -1,6 +1,6 @@
 ---
 name: qveris-a-share-data
-description: QVeris-native adaptation of candidate 57, A-Share Skill. Use for China A-share real-time quote, historical bars, technical indicator context, corporate events, sector heatmap, A+H listing, IPO timeline, and market-news reports that use qveris_finance.* for structured finance data, audited Web Search for issuer news and qualitative sentiment when enabled, honest fallback, and no investment advice.
+description: QVeris-native adaptation of candidate 57, A-Share Skill. Use for China A-share real-time quote, historical bars, technical indicator context, corporate events, sector context, A+H listing, IPO timeline, and market-news reports that use qveris_finance.* for structured finance data, audited Web Search for issuer news and qualitative sentiment when enabled, honest fallback, and no investment advice.
 ---
 
 # QVeris A-Share Data
@@ -50,9 +50,10 @@ Source record:
 - Build one canonical technical-fact record before writing prose. Store the latest close, MA20, MA60, `close_vs_ma20`, and `close_vs_ma60` once; render Summary and body from that record and stop with `semantic_mismatch` if any section would disagree.
 - For events and IPO/listing timelines, require event date, event type, security identity, and window alignment. Keep out-of-window events out of the analysis section.
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted industry labels, event titles, news snippets, or research titles in user-facing evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
-- Treat sector views built from security-master metadata as market-activity context, not capital-flow evidence. Use classification, constituents, and top movers only after current `cap-detail` confirms params and fields.
+- Treat sector views built from security-master metadata as classification context, not capital-flow, heatmap, or market-breadth evidence.
 - Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`. Use the audited Web lane for issuer news and qualitative sentiment.
-- Call A+H mapping, HK listing timeline, IPO timeline, corporate-event detail, sector heatmap, top-mover, or classification routes only after a current `cap-detail` confirms a QVeris finance CAP and fields. If unavailable, mark missing.
+- Never call `qveris_finance.mkt_top_movers`. A market-wide mover or heatmap request is unavailable unless the user supplies a bounded ticker list; for that list only, rank validated same-window bars and label the result `bounded_universe_rank`, never a full-market leaderboard.
+- Call A+H mapping, HK listing timeline, IPO timeline, corporate-event detail, or classification routes only after a current `cap-detail` confirms a QVeris finance CAP and fields. If unavailable, mark missing.
 - If the original data script supported a route but no verified QVeris finance CAP exists, report it as missing rather than returning source-specific commands.
 
 ## CAP Invocation
@@ -62,7 +63,7 @@ Source record:
 - If native tools are unavailable and the run is in this repository root, use the repository CLI: `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
 - Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, losslessly adapts parameters, hydrates signed full-content results, and applies the shared data-first semantic gates. The envelope `success` flag is diagnostic only; record `envelope_success` and `contract_clean` separately.
 - If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
-- Use `cap-detail` before calling uncertain A-share specialty, classification, corporate-event, EOD-bar, top-mover, or A+H/IPO-timeline routes.
+- Use `cap-detail` before calling uncertain A-share specialty, classification, corporate-event, EOD-bar, or A+H/IPO-timeline routes.
 - Keep failed, rejected, and not-called capabilities in `Data Quality And Missing Fields` and the trace appendix, not in the evidence table.
 
 ## Web News And Sentiment Lane
@@ -75,7 +76,7 @@ Source record:
 1. Market data read: resolve symbol, fetch quote, fetch bars, validate window, and summarize price/volume fields without trading actions.
 2. Technical context: compute requested indicators from validated bars only; if bars are insufficient, mark the indicator missing.
 3. Corporate event read: use corporate calendar and earnings calendar where relevant; reject wrong-window events.
-4. Sector heatmap read: use industry/theme classification, constituents, and top movers as available; label missing flow or heatmap CAPs.
+4. Sector context read: use validated industry/theme classification. If the user supplied a bounded ticker list, compute a same-window list ranking from validated bars and disclose its limited coverage; otherwise mark market-wide heat and movers unavailable.
 5. News context read: use the audited Web lane for issuer news and qualitative sentiment; never call the two disabled CAPs.
 6. A+H or IPO timeline read: use security master and event calendar only when fields explicitly support the requested timeline.
 

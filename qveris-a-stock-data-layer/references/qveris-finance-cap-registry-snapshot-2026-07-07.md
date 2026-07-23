@@ -6,6 +6,8 @@ This snapshot documents CAP routes used by QVeris finance skills in this reposit
 
 - Resolve every logical name from the live registry. The current canonical forward-estimates ID is `ESTIMATES.CONSENSUS` for `qveris_finance.estimates_consensus`; the retired `FUNDAMENTALS.CONSENSUS` spelling must not be hard-coded.
 - `EVENT.CALENDAR.CORP` is query-shape sensitive: a broad `600519.SH` query can return usable corporate events while an issuer-plus-window query may legitimately be empty. Do not change the issuer merely to obtain data for a benchmark assertion.
+- On 2026-07-23, `ESTIMATES.CONSENSUS` passed three independent production queries: `600519.SH` with and without `market=CN`, and `300750.SZ` with `market=CN`. Each returned three issuer-matched rows with snapshot date, forecast period, EPS estimate, and revenue estimate. Treat it as callable after issuer/date/period validation.
+- Do not call `qveris_finance.index_constituents` or `qveris_finance.mkt_top_movers` from these Skills. Universe membership must come from an explicit user-supplied list or approved frozen universe; bounded mover ranks may be calculated only from validated same-window bars and must not be labeled full-market.
 - `FLOW.DRAGON_TIGER` list semantics use a trading `date` and `granularity=daily` without a stock symbol. A symbol-scoped request asks whether that issuer appeared on the list and may be a healthy empty result.
 - `RESEARCH.ANALYST_REPORTS` may return a signed full-content object; fetch and validate it before declaring the CAP empty.
 - Current A-share hard semantic blockers remain service/data issues, not parameter problems, when reproduced: stale `MKT.L1.RT`, wrong-issuer/market `NEWS.FIN.TAGGED`, all-zero `FLOW.CROSS_BORDER` or `FLOW.NORTHBOUND`, and out-of-window `MKT.CN.LOCK_UP`. Keep those layers missing until a fresh call passes the semantic gates.
@@ -21,6 +23,7 @@ This snapshot documents CAP routes used by QVeris finance skills in this reposit
 | `qveris_finance.fundamentals_is` | income statement | primary with period checks |
 | `qveris_finance.fundamentals_bs` | balance sheet | primary with period checks |
 | `qveris_finance.fundamentals_cf` | cash flow | primary with period and semantic hard gates |
+| `qveris_finance.estimates_consensus` | forward EPS and revenue consensus | primary with issuer, snapshot-date, and forecast-period checks |
 | `qveris_finance.news_fin_tagged` | qualitative news context | primary or fallback, qualitative only |
 | `qveris_finance.mkt_bars_adjusted` | bars, liquidity, proxy ETF bars | primary only when observation count is sufficient |
 | `qveris_finance.risk_beta_vol` | beta/vol monitor | primary for beta/vol snapshot |
@@ -36,11 +39,10 @@ This snapshot documents CAP routes used by QVeris finance skills in this reposit
 | `qveris_finance.transcripts_earnings_call` | 503/provider errors in live tests | Fall back to tagged news as context only; do not invent management quotes. |
 | `qveris_finance.sentiment_text_signals` | 503/provider errors in live tests | Fall back to tagged news as qualitative context only; do not emit sentiment score. |
 | `qveris_finance.fundamentals_derived_ratios` | 503/provider errors in live tests | Use raw statements and quote as partial trailing inputs only. |
-| `qveris_finance.estimates_consensus` | 503/provider errors in live tests | Do not infer forward multiples or consensus surprise. |
 | `qveris_finance.mkt_breadth_internals` | 503/provider errors in live tests | Use VIX/rates/liquid ETF proxies only as proxy evidence. |
 | `qveris_finance.index_levels` | Can resolve `SPX` to a non-index security | Validate identity; reject wrong asset and use validated ETF proxy only if clearly labeled. |
 | `qveris_finance.rates_govt_benchmark` | Can return stale/monthly observations | Use as lagged proxy only. |
-| `qveris_finance.index_constituents` | Param sensitivity and provider failures observed | Use only after `cap-detail` confirms params; mark missing on failure. |
+| `qveris_finance.index_constituents` | Not part of the current Skill contract; no dependable A-share universe response | Do not call. Require an explicit user-supplied list or approved frozen universe. |
 
 ## A-Share Live Verification Update - 2026-07-08
 
@@ -52,7 +54,7 @@ These routes were rechecked with direct QVeris CAP HTTP calls on 2026-07-08. Tre
 | `qveris_finance.ref_classification_theme` | success | transport success but empty payload for `600519.SH` | Keep theme/concept tags missing unless payload is non-empty. |
 | `qveris_finance.mkt_bars_eod` | success | 21 bars for `600519.SH`, 1 bar for `000001.SZ` and `000858.SZ` in the smoke window | Use only after observation-count checks; reject one-bar windows for multi-day metrics. |
 | `qveris_finance.analytics_tech_indicators` | success | 503 for RSI smoke test | Prefer calculated indicators from validated bars; mark CAP-based indicator missing on failure. |
-| `qveris_finance.mkt_top_movers` | success | usable payload for CN top movers | Proxy evidence only; not a replacement for flow, heatmap, or limit-board pools. |
+| `qveris_finance.mkt_top_movers` | excluded | wrong-market behavior observed in later audit | Do not call. For a bounded user-supplied list only, calculate a same-window bar ranking and disclose limited coverage. |
 | `qveris_finance.research_analyst_reports` | success | transport success but empty payload for `600519.SH` | Do not use as evidence unless payload is non-empty and issuer/report relevance validates. |
 | `qveris_finance.event_calendar_corp` | success | usable payload for `600519.SH` | Can support event context after issuer/window validation. |
 | `qveris_finance.flow_dragon_tiger` | success | 503 for `600519.SH` smoke test | Keep LHB missing on failure. |

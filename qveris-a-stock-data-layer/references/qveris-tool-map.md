@@ -48,7 +48,7 @@ Do not call these as default primary routes unless a current `cap-detail` confir
 | Corporate event detail routes | `qveris_finance.event_calendar_corp` returned usable rows in smoke; validate event type/date/issuer. |
 | Research reports | Mark missing unless `cap-detail` confirms the report CAP and fields; suppress recommendation, rating, target-price, and source metadata fields. |
 | EOD bar route | Prefer adjusted bars; use EOD bars only after `cap-detail` confirms params and output fields. |
-| Top movers and market heat | `qveris_finance.mkt_top_movers` returned usable rows in smoke; proxy-only and not a limit-board substitute. |
+| Top movers and market heat | Never call `qveris_finance.mkt_top_movers`. If the user supplies a bounded ticker list, rank validated same-window bars and label the result `bounded_universe_rank`; otherwise mark this layer unavailable. |
 | Stock-level order-size flow | `qveris_finance.flow_large_order` returned usable rows in smoke; validate stock identity and date window. |
 | Sector flow | `qveris_finance.flow_sector_capital` returned stock-level shaped rows in smoke; hard reject for sector-flow claims unless rows identify sector/concept fields. |
 | Northbound/southbound and cross-border flow | Detail routes exist, but 2026-07-08 smoke queries returned 503; mark missing on failure. |
