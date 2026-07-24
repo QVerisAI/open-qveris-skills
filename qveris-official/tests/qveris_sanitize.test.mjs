@@ -39,6 +39,11 @@ test("detects provider and routing metadata keys recursively", () => {
     "failover_log",
     "source_tool_id",
     "cap_tool_id",
+    "private_key",
+    "seed_phrase",
+    "mnemonic",
+    "signing_key",
+    "wallet_credential",
   ]) {
     assert.equal(isSensitiveMetadataKey(key), true, key);
   }

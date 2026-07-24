@@ -7,6 +7,11 @@ const SENSITIVE_METADATA_TOKENS = new Set([
   "failover",
   "credential",
   "api_key",
+  "private_key",
+  "seed_phrase",
+  "mnemonic",
+  "signing_key",
+  "wallet_credential",
   "source_tool_id",
   "tool_id",
   "cap_tool_id",
@@ -33,7 +38,8 @@ export function isSensitiveMetadataKey(key) {
     return true;
   }
   return /(^|_)(provider|route|routing|candidate|candidates|failover|credential)($|_)/.test(normalized)
-    || /(^|_)(api_key|source_tool_id|tool_id|cap_tool_id|original_order|final_order)($|_)/.test(normalized);
+    || /(^|_)(api_key|private_key|seed_phrase|mnemonic|signing_key|wallet_credential)($|_)/.test(normalized)
+    || /(^|_)(source_tool_id|tool_id|cap_tool_id|original_order|final_order)($|_)/.test(normalized);
 }
 
 export function isLikelyLegacyFinanceRouteIdentifier(value) {

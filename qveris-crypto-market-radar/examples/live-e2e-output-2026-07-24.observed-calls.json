@@ -1,0 +1,1520 @@
+{
+  "artifact_version": "observed_calls.v1",
+  "adapter_version": "qveris_finance_adapter.v1",
+  "skill": "qveris-crypto-market-radar",
+  "case_id": "crypto-base-cap-matrix",
+  "recorded_at": "2026-07-24T05:21:55.626Z",
+  "resolution": [
+    null,
+    {
+      "requested_capability": "qveris_finance.crypto_spot_rt",
+      "tool_name": "qveris_finance.crypto_spot_rt",
+      "capability_id": "CRYPTO.SPOT.RT",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null
+    },
+    {
+      "requested_capability": "qveris_finance.crypto_bars_history",
+      "tool_name": "qveris_finance.crypto_bars_history",
+      "capability_id": "CRYPTO.BARS.HISTORY",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null
+    },
+    {
+      "requested_capability": "qveris_finance.crypto_market_rankings",
+      "tool_name": "qveris_finance.crypto_market_rankings",
+      "capability_id": "CRYPTO.MARKET_RANKINGS",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null
+    },
+    {
+      "requested_capability": "qveris_finance.crypto_fgi",
+      "tool_name": "qveris_finance.crypto_fgi",
+      "capability_id": "CRYPTO.FGI",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null
+    },
+    null
+  ],
+  "final_params": [
+    {},
+    {
+      "symbol": "BTC"
+    },
+    {
+      "symbol": "BTC",
+      "interval": "1d"
+    },
+    {},
+    {},
+    {}
+  ],
+  "parameter_audit": [
+    null,
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [
+        {
+          "name": "limit",
+          "reason": "not_in_cap_detail"
+        }
+      ],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    null
+  ],
+  "retry_events": [],
+  "observed_calls": [
+    {
+      "tool_name": "qveris_finance.crypto_spot_rt",
+      "request_kind": "capabilities/query",
+      "capability_id": "CRYPTO.SPOT.RT",
+      "params": {
+        "symbol": "BTC"
+      },
+      "status": "success",
+      "execution_id": "813fc03a-e652-45ec-aa25-fc570db9ad5e",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T05:21:44.449394+00:00",
+      "response_sha256": "e01aee3a34b891bf85c07f746b29b7860323a2dedceb038425b1158c517921a9",
+      "response": {
+        "execution_id": "813fc03a-e652-45ec-aa25-fc570db9ad5e",
+        "capability_id": "CRYPTO.SPOT.RT",
+        "parameters": {
+          "symbol": "BTC"
+        },
+        "result": {
+          "status_code": 200,
+          "data": {
+            "symbol": "BTCUSDT",
+            "price": 65361.58,
+            "open": 65668.89,
+            "high": 65821.17,
+            "low": 64650,
+            "previous_close": 65668.89,
+            "change": -307.31,
+            "change_percent": -0.00468,
+            "volume": 13413.57349,
+            "bid": 65361.57,
+            "ask": 65361.58,
+            "timestamp": "2026-07-24T05:21:44+00:00"
+          },
+          "_meta": {
+            "capability_id": "CRYPTO.SPOT.RT",
+            "elapsed_time_ms": 203,
+            "synced_at": "2026-07-21T13:50:11.138338+00:00"
+          },
+          "_defaults_applied": [
+            {
+              "field": "quote_currency",
+              "literal": "USDT",
+              "resolved": "USDT",
+              "reason": "user_omitted",
+              "rationale": "同 CRYPTO.BARS.HISTORY；crypto 70%+ 流动性在 USDT",
+              "cap_version": null
+            }
+          ]
+        },
+        "success": true,
+        "elapsed_time_ms": 303.36,
+        "created_at": "2026-07-24T05:21:44.449394+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 1,
+          "raw_result_count": 1,
+          "chargeable_quantity": 1,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 1,
+          "summary": "Charged 1 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 862795.18
+      }
+    },
+    {
+      "tool_name": "qveris_finance.crypto_bars_history",
+      "request_kind": "capabilities/query",
+      "capability_id": "CRYPTO.BARS.HISTORY",
+      "params": {
+        "symbol": "BTC",
+        "interval": "1d"
+      },
+      "status": "success",
+      "execution_id": "800264ae-84da-451b-bce7-0505b254f6c1",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T05:21:46.198511+00:00",
+      "response_sha256": "7cc1e3861164afd0353c4ae16fb0b7dfd16489b9682de26578d936aad2301fbe",
+      "response": {
+        "execution_id": "800264ae-84da-451b-bce7-0505b254f6c1",
+        "capability_id": "CRYPTO.BARS.HISTORY",
+        "parameters": {
+          "symbol": "BTC",
+          "interval": "1d"
+        },
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "date": "2026-07-23T05:21:00+00:00",
+              "open": 65671.18,
+              "high": 65821.17,
+              "low": 64650,
+              "close": 65361.57,
+              "volume": 13417.48443,
+              "symbol": "BTC/USDT"
+            }
+          ],
+          "_meta": {
+            "capability_id": "CRYPTO.BARS.HISTORY",
+            "elapsed_time_ms": 202,
+            "synced_at": "2026-07-21T13:50:11.240067+00:00"
+          },
+          "_defaults_applied": [
+            {
+              "field": "quote_currency",
+              "literal": "USDT",
+              "resolved": "USDT",
+              "reason": "user_omitted",
+              "rationale": "crypto 70%+ 流动性在 USDT；BTC-USD vs BTC-USDT 长期价差 0.1-0.5%",
+              "cap_version": null
+            }
+          ]
+        },
+        "success": true,
+        "elapsed_time_ms": 303.32,
+        "created_at": "2026-07-24T05:21:46.198511+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 1,
+          "raw_result_count": 1,
+          "chargeable_quantity": 1,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 1,
+          "summary": "Charged 1 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 862794.18
+      }
+    },
+    {
+      "tool_name": "qveris_finance.crypto_market_rankings",
+      "request_kind": "capabilities/query",
+      "capability_id": "CRYPTO.MARKET_RANKINGS",
+      "params": {},
+      "status": "success",
+      "execution_id": "2c07a2b2-915a-4faf-859b-9e9fbcfbc8e9",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T05:21:52.796156+00:00",
+      "response_sha256": "7c062fd3fa51129a7ff160555a82c6f2d1bb1c29005d59bba0fdd0452ac8a8b7",
+      "response": {
+        "execution_id": "2c07a2b2-915a-4faf-859b-9e9fbcfbc8e9",
+        "capability_id": "CRYPTO.MARKET_RANKINGS",
+        "parameters": {},
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "symbol": "BTC",
+              "price": 65362,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65302.79,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65364,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65358.4,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "XBT",
+              "price": 65294.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65363.7,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65311.21,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65354.83,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65357.02,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.42,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65365.04,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.39,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.42,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65354.9,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65305.64,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65315.4916,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "XBT",
+              "price": 57391.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.94,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65314.89,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65316,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65366.17,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57382,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65310.51,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.41,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65304.08,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.42,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.42,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57388.1,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57386.26,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.41,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306.72,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65308,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65347.37,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65359.74,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65294.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306.71,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306.14,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.4,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "XBT",
+              "price": 65316.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65310.7374,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65323.68,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65361.5,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.43,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65313.3,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65371.8775,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65373.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306.71,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57384.7,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 49069.46,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65318.4,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65361.6072189,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65356.13,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65353.54,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.41,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "ETH",
+              "price": 0.02877,
+              "market_cap": 226768257451.8667,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "XBT",
+              "price": 65364.3,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57405.7,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65311.21,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306.73,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65314.32,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57388.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306.71,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.41,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65317.635,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65313.26,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57369.63,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 512353,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65359.04,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65283.98,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65356.41,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65358.4,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65448.3,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65341.57750266092,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65363.57,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 10705188,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57394.59999782,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57419.14,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65312.8,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65316.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65321.5,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65343.7,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57402.5,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65356.1,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 57383.33,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.4,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65315.16,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "ETH",
+              "price": 0.028773,
+              "market_cap": 226768257451.8667,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.42,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "ETH",
+              "price": 0.028773,
+              "market_cap": 226768257451.8667,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65307.56,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "ETH",
+              "price": 0.02878,
+              "market_cap": 226768257451.8667,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65365.28,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65312.4,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "XBT",
+              "price": 49065.2,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65356,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65311.3,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65355.41,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            },
+            {
+              "symbol": "BTC",
+              "price": 65306.7,
+              "market_cap": 1310089469605.8533,
+              "volume": null,
+              "exchange": null,
+              "name": "Bitcoin"
+            }
+          ],
+          "_meta": {
+            "capability_id": "CRYPTO.MARKET_RANKINGS",
+            "elapsed_time_ms": 5400,
+            "synced_at": "2026-07-21T13:50:11.209284+00:00"
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 5503.11,
+        "created_at": "2026-07-24T05:21:52.796156+00:00",
+        "cost": 2,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 100,
+          "raw_result_count": 100,
+          "chargeable_quantity": 100,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2,
+          "summary": "Charged 2 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2,
+        "remaining_credits": 862792.18
+      }
+    },
+    {
+      "tool_name": "qveris_finance.crypto_fgi",
+      "request_kind": "capabilities/query",
+      "capability_id": "CRYPTO.FGI",
+      "params": {},
+      "status": "success",
+      "execution_id": "86f9590c-5e05-4e86-9d22-5b6de27f89b2",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T05:21:55.146258+00:00",
+      "response_sha256": "e7b4c179f10bac3f7392b28f17e68d16639506a10eb0027ecf09c2ce1d723d25",
+      "response": {
+        "execution_id": "86f9590c-5e05-4e86-9d22-5b6de27f89b2",
+        "capability_id": "CRYPTO.FGI",
+        "parameters": {},
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "date": "2026-07-23",
+              "value": 37,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-22",
+              "value": 40,
+              "classification": "Neutral"
+            },
+            {
+              "date": "2026-07-21",
+              "value": 40,
+              "classification": "Neutral"
+            },
+            {
+              "date": "2026-07-20",
+              "value": 37,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-19",
+              "value": 35,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-18",
+              "value": 36,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-17",
+              "value": 33,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-16",
+              "value": 33,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-15",
+              "value": 35,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-14",
+              "value": 34,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-13",
+              "value": 28,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-12",
+              "value": 31,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-11",
+              "value": 31,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-10",
+              "value": 31,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-09",
+              "value": 28,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-08",
+              "value": 26,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-07",
+              "value": 28,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-06",
+              "value": 29,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-05",
+              "value": 28,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-04",
+              "value": 26,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-03",
+              "value": 25,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-02",
+              "value": 21,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-07-01",
+              "value": 18,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-30",
+              "value": 16,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-29",
+              "value": 17,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-28",
+              "value": 16,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-27",
+              "value": 16,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-26",
+              "value": 16,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-25",
+              "value": 16,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-24",
+              "value": 18,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-23",
+              "value": 20,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-22",
+              "value": 21,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-21",
+              "value": 21,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-20",
+              "value": 22,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-19",
+              "value": 20,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-18",
+              "value": 20,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-17",
+              "value": 22,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-16",
+              "value": 24,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-15",
+              "value": 25,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-14",
+              "value": 23,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-13",
+              "value": 20,
+              "classification": "Fear"
+            },
+            {
+              "date": "2026-06-12",
+              "value": 18,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-11",
+              "value": 16,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-10",
+              "value": 14,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-09",
+              "value": 14,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-08",
+              "value": 15,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-07",
+              "value": 15,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-06",
+              "value": 13,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-05",
+              "value": 16,
+              "classification": "Extreme fear"
+            },
+            {
+              "date": "2026-06-04",
+              "value": 20,
+              "classification": "Fear"
+            }
+          ],
+          "_meta": {
+            "capability_id": "CRYPTO.FGI",
+            "elapsed_time_ms": 393,
+            "synced_at": "2026-07-21T13:50:09.401246+00:00"
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 484.05,
+        "created_at": "2026-07-24T05:21:55.146258+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 50,
+          "raw_result_count": 50,
+          "chargeable_quantity": 50,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 1,
+          "summary": "Charged 1 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 862791.18
+      }
+    }
+  ],
+  "check_results": [
+    {
+      "tool_name": "qveris_finance.crypto_ref_master",
+      "status": "rejected",
+      "resolution": null,
+      "final_params": {},
+      "observed_call_count": 0,
+      "adapter_error": {
+        "code": "adapter_preflight_failed",
+        "message": "fetch failed"
+      }
+    },
+    {
+      "tool_name": "qveris_finance.crypto_spot_rt",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.crypto_spot_rt",
+        "tool_name": "qveris_finance.crypto_spot_rt",
+        "capability_id": "CRYPTO.SPOT.RT",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null
+      },
+      "final_params": {
+        "symbol": "BTC"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.crypto_bars_history",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.crypto_bars_history",
+        "tool_name": "qveris_finance.crypto_bars_history",
+        "capability_id": "CRYPTO.BARS.HISTORY",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null
+      },
+      "final_params": {
+        "symbol": "BTC",
+        "interval": "1d"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.crypto_market_rankings",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.crypto_market_rankings",
+        "tool_name": "qveris_finance.crypto_market_rankings",
+        "capability_id": "CRYPTO.MARKET_RANKINGS",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null
+      },
+      "final_params": {},
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.crypto_fgi",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.crypto_fgi",
+        "tool_name": "qveris_finance.crypto_fgi",
+        "capability_id": "CRYPTO.FGI",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null
+      },
+      "final_params": {},
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.crypto_whale",
+      "status": "rejected",
+      "resolution": null,
+      "final_params": {},
+      "observed_call_count": 0,
+      "adapter_error": {
+        "code": "required_parameters_missing",
+        "message": "Missing required CAP parameters: address, network. Accepted live cap-detail parameters: address:string (required), network:string (required), symbol:string, date:date, start_date:date, end_date:date. Supply the missing values explicitly; the adapter will not invent them."
+      }
+    }
+  ]
+}

@@ -20,6 +20,7 @@ DEFAULT_SKILL_DIRS = (
     "qveris-alphaear-market-intelligence",
     "qveris-daymade-financial-data-suite",
     "qveris-uzi-equity-research",
+    "qveris-crypto-market-radar",
 )
 
 STRICT_TRACE_SKILLS = {
@@ -29,13 +30,23 @@ STRICT_TRACE_SKILLS = {
     "qveris-alphaear-market-intelligence",
     "qveris-daymade-financial-data-suite",
     "qveris-uzi-equity-research",
+    "qveris-crypto-market-radar",
 }
 
 SENSITIVE_PARAM_KEY_RE = re.compile(
     r"(^|_)(provider|route|routing|candidate|candidates|failover|credential|"
-    r"api_key|source_tool_id|tool_id|cap_tool_id)($|_)",
+    r"api_key|private_key|seed_phrase|mnemonic|signing_key|wallet_credential|"
+    r"source_tool_id|tool_id|cap_tool_id)($|_)",
     re.I,
 )
+
+CRYPTO_PROHIBITED_OUTPUT_KEY_RE = re.compile(
+    r"(^|_)(private_key|seed_phrase|mnemonic|signing_key|wallet_credential|"
+    r"wallet_action|swap_execution|order_execution|transaction_instruction|"
+    r"price_forecast|target_price|guaranteed_return)($|_)",
+    re.I,
+)
+CRYPTO_MAX_AGE_KEYS = {"spot", "history", "rankings", "market_mood", "whale", "news_social"}
 
 
 def normalize_param_key(key: Any) -> str:
@@ -54,6 +65,48 @@ def sensitive_param_paths(value: Any, path: str = "params") -> list[str]:
         for index, child in enumerate(value):
             paths.extend(sensitive_param_paths(child, f"{path}[{index}]"))
     return paths
+
+
+def crypto_prohibited_output_paths(value: Any, path: str = "fixture") -> list[str]:
+    paths: list[str] = []
+    if isinstance(value, dict):
+        for key, child in value.items():
+            child_path = f"{path}.{key}"
+            if CRYPTO_PROHIBITED_OUTPUT_KEY_RE.search(normalize_param_key(key)):
+                paths.append(child_path)
+            paths.extend(crypto_prohibited_output_paths(child, child_path))
+    elif isinstance(value, list):
+        for index, child in enumerate(value):
+            paths.extend(crypto_prohibited_output_paths(child, f"{path}[{index}]"))
+    return paths
+
+
+def validate_crypto_fixture_contract(fixture: dict[str, Any], label: str) -> list[str]:
+    errors: list[str] = []
+    if fixture.get("skill") != "qveris-crypto-market-radar":
+        errors.append(f"{label}: crypto fixture skill must be qveris-crypto-market-radar")
+
+    controls = fixture.get("controls")
+    if not isinstance(controls, dict):
+        errors.append(f"{label}: crypto fixture controls must be an object")
+    else:
+        if controls.get("dry_run") is not True or controls.get("max_calls") != 0:
+            errors.append(f"{label}: static crypto fixtures must use dry_run=true and max_calls=0")
+        max_age = controls.get("max_age")
+        if not isinstance(max_age, dict) or set(max_age) != CRYPTO_MAX_AGE_KEYS:
+            errors.append(
+                f"{label}: controls.max_age must contain exactly {sorted(CRYPTO_MAX_AGE_KEYS)!r}"
+            )
+
+    trace = fixture.get("qveris_trace")
+    if trace != [] or fixture.get("observed_call_count") != 0:
+        errors.append(
+            f"{label}: static crypto fixtures cannot claim observed calls; use a live report plus observed_calls.v1 sidecar"
+        )
+
+    for path in crypto_prohibited_output_paths(fixture):
+        errors.append(f"{label}:{path}: prohibited crypto output key")
+    return errors
 
 
 def json_type_name(value: Any) -> str:
@@ -282,6 +335,32 @@ def run_self_test() -> list[str]:
     leak_errors = validate_finance_trace(leaked, "self-test-leak", strict_trace=True)
     if len([error for error in leak_errors if "internal metadata key" in error]) != 3:
         errors.append("self-test-leak: expected provider/route/candidate rejection")
+
+    clean_crypto = {
+        "skill": "qveris-crypto-market-radar",
+        "controls": {
+            "dry_run": True,
+            "max_calls": 0,
+            "max_age": {key: "P1D" for key in CRYPTO_MAX_AGE_KEYS},
+        },
+        "observed_call_count": 0,
+        "qveris_trace": [],
+    }
+    if validate_crypto_fixture_contract(clean_crypto, "self-test-crypto-clean"):
+        errors.append("self-test-crypto-clean: expected pass but failed")
+
+    crypto_fake_trace = dict(clean_crypto)
+    crypto_fake_trace["controls"] = dict(clean_crypto["controls"], dry_run=False, max_calls=1)
+    crypto_fake_trace["observed_call_count"] = 1
+    crypto_fake_trace["qveris_trace"] = [base_trace]
+    if not validate_crypto_fixture_contract(crypto_fake_trace, "self-test-crypto-fake-trace"):
+        errors.append("self-test-crypto-fake-trace: expected provenance failure but passed")
+
+    crypto_secret = dict(clean_crypto)
+    crypto_secret["analysis"] = {"private_key": "placeholder", "price_forecast": "guaranteed"}
+    secret_errors = validate_crypto_fixture_contract(crypto_secret, "self-test-crypto-secret")
+    if len([error for error in secret_errors if "prohibited crypto output key" in error]) != 2:
+        errors.append("self-test-crypto-secret: expected private-key and forecast rejection")
     return errors
 
 
@@ -322,6 +401,8 @@ def main() -> int:
                         strict_trace=skill_dir.name in STRICT_TRACE_SKILLS,
                     )
                 )
+                if skill_dir.name == "qveris-crypto-market-radar":
+                    errors.extend(validate_crypto_fixture_contract(fixture, str(fixture_path)))
 
     if checked == 0:
         errors.append("no qveris finance fixtures found")

@@ -1,0 +1,53 @@
+{
+  "skill": "qveris-crypto-market-radar",
+  "source_record": {
+    "candidate_number": 23,
+    "original_repository": "GMGN Skills",
+    "github_url": "https://github.com/GMGNAI/gmgn-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-23",
+    "local_source_snapshot": "third_party/source_repos/23-gmgn-skills",
+    "snapshot_latest_commit": "7205bf2 on 2026-07-23"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": {
+      "spot": "PT15M",
+      "history": "P1D",
+      "rankings": "PT15M",
+      "market_mood": "P1D",
+      "whale": "PT1H",
+      "news_social": "P1D"
+    },
+    "budget_note": "No live QVeris calls allowed."
+  },
+  "analysis": {
+    "workflow": "market_radar",
+    "summary": "No QVeris calls were made, so current rankings, market mood, identity, spot, history, whale, news, and social conclusions are unsupported.",
+    "evidence_status": "budget_limited",
+    "as_of": null,
+    "assets": [],
+    "quote_currencies": [],
+    "window": null,
+    "planned_calls": ["qveris_finance.crypto_market_rankings", "qveris_finance.crypto_fgi"],
+    "fallback_plan": null,
+    "sections": ["rankings_and_market_mood"],
+    "interpretation_limits": ["no_current_market_claim"],
+    "rejections": [],
+    "evidence": []
+  },
+  "risk_notes": ["A dry run can describe the evidence plan but cannot report current market conditions."],
+  "missing_fields": ["market_rankings", "market_mood", "asset_identity", "spot_snapshot", "history", "whale_activity"],
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": ["not_called_due_to_max_calls"],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": ["wallet_actions", "swap_execution", "order_execution", "return_prediction"]
+  },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["wallet_actions", "swap_execution", "order_execution", "return_prediction"]
+}
