@@ -91,6 +91,21 @@ const CASES = [
     ],
   },
   {
+    skill: "qveris-macro-policy-monitor",
+    caseId: "macro-policy-cap-matrix",
+    checks: [
+      { toolName: "qveris_finance.macro_indicators", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.macro_employment", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.macro_real_estate", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.macro_commodity_benchmark", params: { commodity_name: "WTI", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.rates_policy", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.rates_govt_benchmark", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.rates_interbank_benchmark", params: { rate_type: "shibor", country: "CN", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.fx_spot", params: { base_currency: "EUR", quote_currency: "USD" } },
+      { toolName: "qveris_finance.index_levels", params: { symbol: "SPX" } },
+    ],
+  },
+  {
     skill: "qveris-crypto-market-radar",
     caseId: "crypto-base-cap-matrix",
     checks: [
@@ -231,6 +246,7 @@ async function runCase(apiKey, testCase, dateTag) {
     .map((check) => ({ ...check, params: materializeDateTokens(check.params, dateTag) }));
   const useSharedAdapter = new Set([
     "qveris-crypto-market-radar",
+    "qveris-macro-policy-monitor",
     "qveris-supply-chain-catalyst-radar",
   ]).has(testCase.skill);
   let executeFinanceCapability = executeSharedFinanceCapability;

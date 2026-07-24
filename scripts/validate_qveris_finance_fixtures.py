@@ -22,6 +22,7 @@ DEFAULT_SKILL_DIRS = (
     "qveris-uzi-equity-research",
     "qveris-crypto-market-radar",
     "qveris-supply-chain-catalyst-radar",
+    "qveris-macro-policy-monitor",
 )
 
 STRICT_TRACE_SKILLS = {
@@ -33,6 +34,7 @@ STRICT_TRACE_SKILLS = {
     "qveris-uzi-equity-research",
     "qveris-crypto-market-radar",
     "qveris-supply-chain-catalyst-radar",
+    "qveris-macro-policy-monitor",
 }
 
 SENSITIVE_PARAM_KEY_RE = re.compile(

@@ -1,0 +1,1715 @@
+{
+  "artifact_version": "observed_calls.v1",
+  "adapter_version": "qveris_finance_adapter.v1",
+  "skill": "qveris-macro-policy-monitor",
+  "case_id": "macro-policy-cap-matrix",
+  "recorded_at": "2026-07-24T09:25:34.282Z",
+  "resolution": [
+    {
+      "requested_capability": "qveris_finance.macro_indicators",
+      "tool_name": "qveris_finance.macro_indicators",
+      "capability_id": "MACRO.INDICATORS",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": [
+        {
+          "phase": "capability_catalog_page_1",
+          "reason": "transient_fetch_failure",
+          "attempt": 2
+        }
+      ]
+    },
+    {
+      "requested_capability": "qveris_finance.macro_employment",
+      "tool_name": "qveris_finance.macro_employment",
+      "capability_id": "MACRO.EMPLOYMENT",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.macro_real_estate",
+      "tool_name": "qveris_finance.macro_real_estate",
+      "capability_id": "MACRO.REAL_ESTATE",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.macro_commodity_benchmark",
+      "tool_name": "qveris_finance.macro_commodity_benchmark",
+      "capability_id": "MACRO.COMMODITY_BENCHMARK",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.rates_policy",
+      "tool_name": "qveris_finance.rates_policy",
+      "capability_id": "RATES.POLICY",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.rates_govt_benchmark",
+      "tool_name": "qveris_finance.rates_govt_benchmark",
+      "capability_id": "RATES.GOVT_BENCHMARK",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.rates_interbank_benchmark",
+      "tool_name": "qveris_finance.rates_interbank_benchmark",
+      "capability_id": "RATES.INTERBANK_BENCHMARK",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.fx_spot",
+      "tool_name": "qveris_finance.fx_spot",
+      "capability_id": "FX.SPOT",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.index_levels",
+      "tool_name": "qveris_finance.index_levels",
+      "capability_id": "INDEX.LEVELS",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    }
+  ],
+  "final_params": [
+    {
+      "country": "US",
+      "start_date": "2024-07-24",
+      "end_date": "2026-07-24"
+    },
+    {
+      "country": "US",
+      "start_date": "2024-07-24",
+      "end_date": "2026-07-24"
+    },
+    {
+      "country": "US",
+      "start_date": "2024-07-24",
+      "end_date": "2026-07-24"
+    },
+    {
+      "commodity_name": "WTI",
+      "start_date": "2024-07-24",
+      "end_date": "2026-07-24"
+    },
+    {
+      "country": "US",
+      "start_date": "2024-07-24",
+      "end_date": "2026-07-24"
+    },
+    {
+      "country": "US",
+      "start_date": "2024-07-24",
+      "end_date": "2026-07-24"
+    },
+    {
+      "rate_type": "shibor",
+      "country": "CN",
+      "start_date": "2024-07-24",
+      "end_date": "2026-07-24"
+    },
+    {
+      "base_currency": "EUR",
+      "quote_currency": "USD"
+    },
+    {
+      "symbol": "SPX"
+    }
+  ],
+  "parameter_audit": [
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    }
+  ],
+  "retry_events": [],
+  "observed_calls": [
+    {
+      "tool_name": "qveris_finance.macro_indicators",
+      "request_kind": "capabilities/query",
+      "capability_id": "MACRO.INDICATORS",
+      "params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "ef6695c8-ddb4-4e9c-a0aa-704aff1a8f7d",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:19.143859+00:00",
+      "response_sha256": "52c066bc6c03378dfdbbefa08f672b6971d701c4df6c79ff6d16b4307eba1609",
+      "response": {
+        "execution_id": "ef6695c8-ddb4-4e9c-a0aa-704aff1a8f7d",
+        "capability_id": "MACRO.INDICATORS",
+        "parameters": {
+          "country": "US",
+          "start_date": "2024-07-24",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "_meta": {
+            "capability_id": "MACRO.INDICATORS",
+            "elapsed_time_ms": 1813,
+            "synced_at": "2026-07-23T20:30:03.433880+00:00",
+            "dropped_optional_params": [
+              "start_date",
+              "end_date"
+            ]
+          },
+          "_defaults_applied": [],
+          "message": "Result content is too long (31280 bytes). You can reference the truncated content (20480 bytes) and download the full content from the url provided.",
+          "truncated_content": "[{\"date\": \"2022-02-21\", \"value\": 346665.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-02-28\", \"value\": 359459.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-03-07\", \"value\": 371219.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-03-14\", \"value\": 379366.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-03-21\", \"value\": 376922.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-03-28\", \"value\": 326218.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-04-04\", \"value\": 329369.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-04-11\", \"value\": 313858.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-04-18\", \"value\": 347656.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-04-25\", \"value\": 329186.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-05-02\", \"value\": 326426.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-05-09\", \"value\": 366176.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-05-16\", \"value\": 361975.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-05-23\", \"value\": 359558.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-05-30\", \"value\": 345068.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-06-06\", \"value\": 390562.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-06-13\", \"value\": 373442.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-06-20\", \"value\": 373420.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-06-27\", \"value\": 324434.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-07-04\", \"value\": 344548.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-07-11\", \"value\": 403845.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-07-18\", \"value\": 411055.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-07-25\", \"value\": 419888.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-08-01\", \"value\": 296681.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-08-08\", \"value\": 341359.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-08-15\", \"value\": 403092.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-08-22\", \"value\": 385107.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-08-29\", \"value\": 346429.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-09-05\", \"value\": 299724.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-09-12\", \"value\": 394367.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-09-19\", \"value\": 348956.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-09-26\", \"value\": 305537.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-10-03\", \"value\": 345964.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-10-10\", \"value\": 374231.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-10-17\", \"value\": 389700.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-10-24\", \"value\": 380221.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-10-31\", \"value\": 336703.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-11-07\", \"value\": 344374.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-11-14\", \"value\": 367578.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-11-21\", \"value\": 318148.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-11-28\", \"value\": 347884.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-12-05\", \"value\": 357282.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-12-12\", \"value\": 417293.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-12-19\", \"value\": 223599.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2022-12-26\", \"value\": 279300.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-01-02\", \"value\": 311479.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-01-09\", \"value\": 363892.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-01-16\", \"value\": 317352.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-01-23\", \"value\": 359266.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-01-30\", \"value\": 266293.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-02-06\", \"value\": 315545.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-02-13\", \"value\": 310070.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-02-20\", \"value\": 274829.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-02-27\", \"value\": 283145.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-03-06\", \"value\": 336477.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-03-13\", \"value\": 319330.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-03-20\", \"value\": 288725.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-03-27\", \"value\": 317008.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-04-03\", \"value\": 271845.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-04-10\", \"value\": 267781.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-04-17\", \"value\": 269829.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-04-24\", \"value\": 250504.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-05-01\", \"value\": 250905.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-05-08\", \"value\": 313339.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-05-15\", \"value\": 315923.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-05-22\", \"value\": 230520.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-05-29\", \"value\": 199088.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-06-05\", \"value\": 201485.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-06-12\", \"value\": 267272.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-06-19\", \"value\": 282718.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-06-26\", \"value\": 277026.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-07-03\", \"value\": 216968.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-07-10\", \"value\": 223180.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-07-17\", \"value\": 358173.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-07-24\", \"value\": 260831.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-07-31\", \"value\": 241594.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-08-07\", \"value\": 248133.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-08-14\", \"value\": 233507.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-08-21\", \"value\": 251223.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-08-28\", \"value\": 245435.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-09-04\", \"value\": 224677.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-09-11\", \"value\": 272398.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-09-18\", \"value\": 286014.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-09-25\", \"value\": 284802.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-10-02\", \"value\": 255219.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-10-09\", \"value\": 277910.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-10-16\", \"value\": 239216.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-10-23\", \"value\": 285773.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-10-30\", \"value\": 306033.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-11-06\", \"value\": 271351.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-11-13\", \"value\": 268788.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-11-20\", \"value\": 257677.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-11-27\", \"value\": 231171.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-12-04\", \"value\": 268747.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-12-11\", \"value\": 269959.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-12-18\", \"value\": 250698.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2023-12-25\", \"value\": 259662.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-01-01\", \"value\": 235961.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-01-08\", \"value\": 221664.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-01-15\", \"value\": 246401.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-01-22\", \"value\": 251392.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-01-29\", \"value\": 304921.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-02-05\", \"value\": 275339.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-02-12\", \"value\": 306117.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-02-19\", \"value\": 293033.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-02-26\", \"value\": 284161.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-03-04\", \"value\": 296556.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-03-11\", \"value\": 315402.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-03-18\", \"value\": 297670.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-03-25\", \"value\": 300935.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-04-01\", \"value\": 276071.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-04-08\", \"value\": 291232.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-04-15\", \"value\": 299478.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-04-22\", \"value\": 260260.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-04-29\", \"value\": 293482.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-05-06\", \"value\": 298570.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-05-13\", \"value\": 250535.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-05-20\", \"value\": 273586.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-05-27\", \"value\": 283865.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-06-03\", \"value\": 286505.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-06-10\", \"value\": 260555.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-06-17\", \"value\": 252067.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-06-24\", \"value\": 308691.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-07-01\", \"value\": 211363.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-07-08\", \"value\": 245071.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-07-15\", \"value\": 258785.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-07-22\", \"value\": 265596.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-07-29\", \"value\": 255460.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-08-05\", \"value\": 231712.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-08-12\", \"value\": 261285.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-08-19\", \"value\": 272792.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-08-26\", \"value\": 278450.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-09-02\", \"value\": 241082.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-09-09\", \"value\": 250724.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-09-16\", \"value\": 303572.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-09-23\", \"value\": 292106.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-09-30\", \"value\": 190052.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-10-07\", \"value\": 221728.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-10-14\", \"value\": 250592.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-10-21\", \"value\": 314853.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-10-28\", \"value\": 309768.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-11-04\", \"value\": 272758.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-11-11\", \"value\": 273744.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-11-18\", \"value\": 301775.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-11-25\", \"value\": 304666.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-12-02\", \"value\": 274265.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-12-09\", \"value\": 260862.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-12-16\", \"value\": 282915.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-12-23\", \"value\": 228874.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2024-12-30\", \"value\": 210855.0, \"country\": \"US\", \"indicator_name\": \"Exports from United States to None\", \"unit\": \"US (TEU)\"}, {\"date\": \"2025-01-06\", \"value\": 248185.0, \"country\": \"US\", \"indicator_name\": \"E",
+          "content_schema": {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "country": {
+                  "type": "string"
+                },
+                "indicator_name": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "country",
+                "date",
+                "indicator_name",
+                "unit",
+                "value"
+              ]
+            }
+          }
+        },
+        "success": true,
+        "elapsed_time_ms": 1957.18,
+        "created_at": "2026-07-24T09:25:19.143859+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 230,
+          "raw_result_count": 230,
+          "chargeable_quantity": 230,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 1,
+          "summary": "Charged 1 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 35367.68
+      }
+    },
+    {
+      "tool_name": "qveris_finance.macro_employment",
+      "request_kind": "capabilities/query",
+      "capability_id": "MACRO.EMPLOYMENT",
+      "params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "6d0b5d43-b234-460f-9b4b-7d34396bf2d1",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:20.885507+00:00",
+      "response_sha256": "3f7e00c8ed4d48adb34c14003d869a98bdc2137e2106a9a717cb75233569420c",
+      "response": {
+        "execution_id": "6d0b5d43-b234-460f-9b4b-7d34396bf2d1",
+        "capability_id": "MACRO.EMPLOYMENT",
+        "parameters": {
+          "country": "US",
+          "start_date": "2024-07-24",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "date": "2026-06-30",
+              "country": "中国",
+              "unemployment_rate": 0.05,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2026-05-31",
+              "country": "中国",
+              "unemployment_rate": 0.051,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2026-04-30",
+              "country": "中国",
+              "unemployment_rate": 0.052000000000000005,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2026-03-31",
+              "country": "中国",
+              "unemployment_rate": 0.054000000000000006,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2026-02-28",
+              "country": "中国",
+              "unemployment_rate": 0.053,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2026-01-31",
+              "country": "中国",
+              "unemployment_rate": 0.052000000000000005,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-12-31",
+              "country": "中国",
+              "unemployment_rate": 0.051,
+              "total_employment": 72504,
+              "participation_rate": 0.64551
+            },
+            {
+              "date": "2025-11-30",
+              "country": "中国",
+              "unemployment_rate": 0.051,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-10-31",
+              "country": "中国",
+              "unemployment_rate": 0.051,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-09-30",
+              "country": "中国",
+              "unemployment_rate": 0.052000000000000005,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-08-31",
+              "country": "中国",
+              "unemployment_rate": 0.053,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-07-31",
+              "country": "中国",
+              "unemployment_rate": 0.052000000000000005,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-06-30",
+              "country": "中国",
+              "unemployment_rate": 0.05,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-05-31",
+              "country": "中国",
+              "unemployment_rate": 0.05,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-04-30",
+              "country": "中国",
+              "unemployment_rate": 0.051,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-03-31",
+              "country": "中国",
+              "unemployment_rate": 0.052000000000000005,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-02-28",
+              "country": "中国",
+              "unemployment_rate": 0.054000000000000006,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2025-01-31",
+              "country": "中国",
+              "unemployment_rate": 0.052000000000000005,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2024-12-31",
+              "country": "中国",
+              "unemployment_rate": 0.051,
+              "total_employment": 73439,
+              "participation_rate": 0.6491
+            },
+            {
+              "date": "2024-11-30",
+              "country": "中国",
+              "unemployment_rate": 0.05,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2024-10-31",
+              "country": "中国",
+              "unemployment_rate": 0.05,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2024-09-30",
+              "country": "中国",
+              "unemployment_rate": 0.051,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2024-08-31",
+              "country": "中国",
+              "unemployment_rate": 0.053,
+              "total_employment": null,
+              "participation_rate": null
+            },
+            {
+              "date": "2024-07-31",
+              "country": "中国",
+              "unemployment_rate": 0.052000000000000005,
+              "total_employment": null,
+              "participation_rate": null
+            }
+          ],
+          "_meta": {
+            "capability_id": "MACRO.EMPLOYMENT",
+            "elapsed_time_ms": 221,
+            "synced_at": "2026-07-23T20:30:01.607024+00:00",
+            "dropped_optional_params": [
+              "country"
+            ]
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 251.63,
+        "created_at": "2026-07-24T09:25:20.885507+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 24,
+          "raw_result_count": 24,
+          "chargeable_quantity": 24,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 0.04,
+            "per": 1,
+            "unit": "quantity",
+            "unit_label": "quantity"
+          },
+          "quantity": 24,
+          "charge_lines": [
+            {
+              "component_key": "custom_usage",
+              "quantity": 24,
+              "unit": "quantity",
+              "unit_label": "quantity",
+              "price": {
+                "amount_credits": 0.04,
+                "per": 1
+              },
+              "amount_credits": 0.96
+            },
+            {
+              "component_key": "minimum_charge_adjustment",
+              "quantity": 1,
+              "unit": "call",
+              "unit_label": "call",
+              "amount_credits": 0.04,
+              "description": "Adjusted to the minimum charge",
+              "is_adjustment": true
+            }
+          ],
+          "minimum_charge_credits": 1,
+          "list_amount_credits": 1,
+          "summary": "Billed by quantity. This call used 24 quantitys and costs 1 credits (minimum charge applied)",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 35366.68
+      }
+    },
+    {
+      "tool_name": "qveris_finance.macro_real_estate",
+      "request_kind": "capabilities/query",
+      "capability_id": "MACRO.REAL_ESTATE",
+      "params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "fd16f42d-2401-430c-b452-a72e4641efc4",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:22.354743+00:00",
+      "response_sha256": "533eefd19f7ddab4c14708d0da3b8f81b3ef5a5f17adb608ea84e7280a6ad1a3",
+      "response": {
+        "execution_id": "fd16f42d-2401-430c-b452-a72e4641efc4",
+        "capability_id": "MACRO.REAL_ESTATE",
+        "parameters": {
+          "country": "US",
+          "start_date": "2024-07-24",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "date": "2026-06-30",
+              "country": "CN",
+              "home_price_index": 99.8457142857143,
+              "frequency": "mixed",
+              "housing_starts": 23238.94,
+              "home_sales": 40139.62,
+              "housing_inventory": 76315,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": 17.4
+            },
+            {
+              "date": "2026-05-31",
+              "country": "CN",
+              "home_price_index": 99.8028571428571,
+              "frequency": "monthly",
+              "housing_starts": 17928.6,
+              "home_sales": 31319.91,
+              "housing_inventory": 77182,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2026-04-30",
+              "country": "CN",
+              "home_price_index": 99.81285714,
+              "frequency": "monthly",
+              "housing_starts": 13900.22,
+              "home_sales": 25257.98,
+              "housing_inventory": 77801,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2026-03-31",
+              "country": "CN",
+              "home_price_index": 99.79,
+              "frequency": "monthly",
+              "housing_starts": 10372.9,
+              "home_sales": 19524.95,
+              "housing_inventory": 78601,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2026-02-28",
+              "country": "CN",
+              "home_price_index": 99.71571429,
+              "frequency": "monthly",
+              "housing_starts": 5083.9,
+              "home_sales": 9293.43,
+              "housing_inventory": 79998,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2026-01-31",
+              "country": "CN",
+              "home_price_index": 99.63428571,
+              "frequency": "monthly",
+              "housing_starts": null,
+              "home_sales": null,
+              "housing_inventory": null,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-12-31",
+              "country": "CN",
+              "home_price_index": 99.63,
+              "frequency": "mixed",
+              "housing_starts": 58769.96,
+              "home_sales": 88101.37,
+              "housing_inventory": 76632,
+              "mortgage_rate": null,
+              "real_estate_investment": 63514,
+              "price_to_income_ratio": 21.5
+            },
+            {
+              "date": "2025-11-30",
+              "country": "CN",
+              "home_price_index": 99.61285714,
+              "frequency": "monthly",
+              "housing_starts": 53456.7,
+              "home_sales": 78701.74,
+              "housing_inventory": 75306,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-10-31",
+              "country": "CN",
+              "home_price_index": 99.54857143,
+              "frequency": "monthly",
+              "housing_starts": 49061.39,
+              "home_sales": 71982,
+              "housing_inventory": 75606,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-09-30",
+              "country": "CN",
+              "home_price_index": 99.59285714,
+              "frequency": "monthly",
+              "housing_starts": 45399.32,
+              "home_sales": 65834.79,
+              "housing_inventory": 75928,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-08-31",
+              "country": "CN",
+              "home_price_index": 99.70285714,
+              "frequency": "monthly",
+              "housing_starts": 39801.01,
+              "home_sales": 57303.92,
+              "housing_inventory": 76169,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-07-31",
+              "country": "CN",
+              "home_price_index": 99.69428571,
+              "frequency": "monthly",
+              "housing_starts": 35206.14,
+              "home_sales": 51559.77,
+              "housing_inventory": 76486,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-06-30",
+              "country": "CN",
+              "home_price_index": 99.73,
+              "frequency": "mixed",
+              "housing_starts": 30364.32,
+              "home_sales": 45850.55,
+              "housing_inventory": 76948,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": 25.2
+            },
+            {
+              "date": "2025-05-31",
+              "country": "CN",
+              "home_price_index": 99.77714286,
+              "frequency": "monthly",
+              "housing_starts": 23183.61,
+              "home_sales": 35315.19,
+              "housing_inventory": 77427,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-04-30",
+              "country": "CN",
+              "home_price_index": 99.88285714,
+              "frequency": "monthly",
+              "housing_starts": 17835.84,
+              "home_sales": 28261.74,
+              "housing_inventory": 78142,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-03-31",
+              "country": "CN",
+              "home_price_index": 99.91571429,
+              "frequency": "monthly",
+              "housing_starts": 12996.46,
+              "home_sales": 21869.35,
+              "housing_inventory": 78664,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-02-28",
+              "country": "CN",
+              "home_price_index": 99.86285714,
+              "frequency": "monthly",
+              "housing_starts": 6613.94,
+              "home_sales": 10745.92,
+              "housing_inventory": 79891,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2025-01-31",
+              "country": "CN",
+              "home_price_index": 99.93285714,
+              "frequency": "monthly",
+              "housing_starts": null,
+              "home_sales": null,
+              "housing_inventory": null,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2024-12-31",
+              "country": "CN",
+              "home_price_index": 99.91571429,
+              "frequency": "mixed",
+              "housing_starts": 73892.84,
+              "home_sales": 97385.01,
+              "housing_inventory": 75327,
+              "mortgage_rate": null,
+              "real_estate_investment": 76039.94,
+              "price_to_income_ratio": 28.5
+            },
+            {
+              "date": "2024-11-30",
+              "country": "CN",
+              "home_price_index": 99.79857143,
+              "frequency": "monthly",
+              "housing_starts": 67308.44,
+              "home_sales": 86117.95,
+              "housing_inventory": 73286,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2024-10-31",
+              "country": "CN",
+              "home_price_index": 99.48571429,
+              "frequency": "monthly",
+              "housing_starts": 61226.93,
+              "home_sales": 77930.16,
+              "housing_inventory": 73057,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2024-09-30",
+              "country": "CN",
+              "home_price_index": 99.29428571,
+              "frequency": "monthly",
+              "housing_starts": 56051,
+              "home_sales": 70284,
+              "housing_inventory": 73177,
+              "mortgage_rate": null,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2024-08-31",
+              "country": "CN",
+              "home_price_index": 99.27285714,
+              "frequency": "monthly",
+              "housing_starts": 49464.89,
+              "home_sales": 60601.89,
+              "housing_inventory": 73783,
+              "mortgage_rate": 0.0325,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            },
+            {
+              "date": "2024-07-31",
+              "country": "CN",
+              "home_price_index": 99.35285714,
+              "frequency": "monthly",
+              "housing_starts": 43732.89,
+              "home_sales": 54148.94,
+              "housing_inventory": 73926,
+              "mortgage_rate": 0.0329,
+              "real_estate_investment": null,
+              "price_to_income_ratio": null
+            }
+          ],
+          "_meta": {
+            "capability_id": "MACRO.REAL_ESTATE",
+            "elapsed_time_ms": 206,
+            "synced_at": "2026-07-23T20:30:01.617438+00:00",
+            "dropped_optional_params": [
+              "country"
+            ]
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 236.99,
+        "created_at": "2026-07-24T09:25:22.354743+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 24,
+          "raw_result_count": 24,
+          "chargeable_quantity": 24,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 0.04,
+            "per": 1,
+            "unit": "quantity",
+            "unit_label": "quantity"
+          },
+          "quantity": 24,
+          "charge_lines": [
+            {
+              "component_key": "custom_usage",
+              "quantity": 24,
+              "unit": "quantity",
+              "unit_label": "quantity",
+              "price": {
+                "amount_credits": 0.04,
+                "per": 1
+              },
+              "amount_credits": 0.96
+            },
+            {
+              "component_key": "minimum_charge_adjustment",
+              "quantity": 1,
+              "unit": "call",
+              "unit_label": "call",
+              "amount_credits": 0.04,
+              "description": "Adjusted to the minimum charge",
+              "is_adjustment": true
+            }
+          ],
+          "minimum_charge_credits": 1,
+          "list_amount_credits": 1,
+          "summary": "Billed by quantity. This call used 24 quantitys and costs 1 credits (minimum charge applied)",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 35365.68
+      }
+    },
+    {
+      "tool_name": "qveris_finance.macro_commodity_benchmark",
+      "request_kind": "capabilities/query",
+      "capability_id": "MACRO.COMMODITY_BENCHMARK",
+      "params": {
+        "commodity_name": "WTI",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "31712ba2-b1fb-40ee-bf37-074b9683da1e",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:24.120197+00:00",
+      "response_sha256": "2960ce3d48d33f8576bb1a6b7c4fad98f11e3e00f99cfad96a0cc52b37cf39ff",
+      "response": {
+        "execution_id": "31712ba2-b1fb-40ee-bf37-074b9683da1e",
+        "capability_id": "MACRO.COMMODITY_BENCHMARK",
+        "parameters": {
+          "commodity_name": "WTI",
+          "start_date": "2024-07-24",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "_meta": {
+            "capability_id": "MACRO.COMMODITY_BENCHMARK",
+            "elapsed_time_ms": 354,
+            "synced_at": "2026-07-23T20:30:01.560618+00:00",
+            "dropped_optional_params": [
+              "start_date",
+              "end_date"
+            ]
+          },
+          "_defaults_applied": [],
+          "message": "Result content is too long (60731 bytes). You can reference the truncated content (20480 bytes) and download the full content from the url provided.",
+          "truncated_content": "[{\"date\": \"2026-06-01\", \"value\": 84.81, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2026-05-01\", \"value\": 102.13, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2026-04-01\", \"value\": 100.32, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2026-03-01\", \"value\": 91.38, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2026-02-01\", \"value\": 64.51, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2026-01-01\", \"value\": 60.04, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-12-01\", \"value\": 57.97, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-11-01\", \"value\": 60.06, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-10-01\", \"value\": 60.89, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-09-01\", \"value\": 63.96, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-08-01\", \"value\": 64.86, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-07-01\", \"value\": 68.39, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-06-01\", \"value\": 68.17, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-05-01\", \"value\": 62.17, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-04-01\", \"value\": 63.54, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-03-01\", \"value\": 68.24, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-02-01\", \"value\": 71.53, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2025-01-01\", \"value\": 75.74, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-12-01\", \"value\": 70.12, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-11-01\", \"value\": 69.95, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-10-01\", \"value\": 71.99, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-09-01\", \"value\": 70.24, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-08-01\", \"value\": 76.68, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-07-01\", \"value\": 81.8, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-06-01\", \"value\": 79.77, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-05-01\", \"value\": 80.02, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-04-01\", \"value\": 85.35, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-03-01\", \"value\": 81.28, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-02-01\", \"value\": 77.25, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2024-01-01\", \"value\": 74.15, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-12-01\", \"value\": 71.9, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-11-01\", \"value\": 77.69, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-10-01\", \"value\": 85.64, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-09-01\", \"value\": 89.43, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-08-01\", \"value\": 81.39, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-07-01\", \"value\": 76.07, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-06-01\", \"value\": 70.25, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-05-01\", \"value\": 71.58, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-04-01\", \"value\": 79.45, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-03-01\", \"value\": 73.28, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-02-01\", \"value\": 76.83, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2023-01-01\", \"value\": 78.12, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-12-01\", \"value\": 76.44, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-11-01\", \"value\": 84.37, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-10-01\", \"value\": 87.55, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-09-01\", \"value\": 84.26, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-08-01\", \"value\": 93.67, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-07-01\", \"value\": 101.62, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-06-01\", \"value\": 114.84, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-05-01\", \"value\": 109.55, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-04-01\", \"value\": 101.78, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-03-01\", \"value\": 108.5, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-02-01\", \"value\": 91.64, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2022-01-01\", \"value\": 83.22, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-12-01\", \"value\": 71.71, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-11-01\", \"value\": 79.15, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-10-01\", \"value\": 81.48, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-09-01\", \"value\": 71.65, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-08-01\", \"value\": 67.73, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-07-01\", \"value\": 72.49, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-06-01\", \"value\": 71.38, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-05-01\", \"value\": 65.17, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-04-01\", \"value\": 61.72, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-03-01\", \"value\": 62.33, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-02-01\", \"value\": 59.04, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2021-01-01\", \"value\": 52.0, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-12-01\", \"value\": 47.02, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-11-01\", \"value\": 40.94, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-10-01\", \"value\": 39.4, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-09-01\", \"value\": 39.63, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-08-01\", \"value\": 42.34, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-07-01\", \"value\": 40.71, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-06-01\", \"value\": 38.31, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-05-01\", \"value\": 28.56, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-04-01\", \"value\": 16.55, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-03-01\", \"value\": 29.21, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-02-01\", \"value\": 50.54, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2020-01-01\", \"value\": 57.52, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-12-01\", \"value\": 59.88, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-11-01\", \"value\": 57.03, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-10-01\", \"value\": 53.96, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-09-01\", \"value\": 56.95, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-08-01\", \"value\": 54.81, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-07-01\", \"value\": 57.35, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-06-01\", \"value\": 54.66, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-05-01\", \"value\": 60.83, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-04-01\", \"value\": 63.86, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-03-01\", \"value\": 58.15, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-02-01\", \"value\": 54.95, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2019-01-01\", \"value\": 51.38, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-12-01\", \"value\": 49.52, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-11-01\", \"value\": 56.96, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-10-01\", \"value\": 70.75, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-09-01\", \"value\": 70.23, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-08-01\", \"value\": 68.06, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-07-01\", \"value\": 70.98, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-06-01\", \"value\": 67.87, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-05-01\", \"value\": 69.98, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-04-01\", \"value\": 66.25, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-03-01\", \"value\": 62.73, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-02-01\", \"value\": 62.23, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2018-01-01\", \"value\": 63.7, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-12-01\", \"value\": 57.88, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-11-01\", \"value\": 56.64, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-10-01\", \"value\": 51.58, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-09-01\", \"value\": 49.82, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-08-01\", \"value\": 48.04, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-07-01\", \"value\": 46.63, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-06-01\", \"value\": 45.18, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-05-01\", \"value\": 48.48, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-04-01\", \"value\": 51.06, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-03-01\", \"value\": 49.33, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-02-01\", \"value\": 53.47, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2017-01-01\", \"value\": 52.5, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-12-01\", \"value\": 51.97, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-11-01\", \"value\": 45.66, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-10-01\", \"value\": 49.78, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-09-01\", \"value\": 45.18, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-08-01\", \"value\": 44.72, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-07-01\", \"value\": 44.65, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-06-01\", \"value\": 48.76, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-05-01\", \"value\": 46.71, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-04-01\", \"value\": 40.75, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-03-01\", \"value\": 37.55, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-02-01\", \"value\": 30.32, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2016-01-01\", \"value\": 31.68, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-12-01\", \"value\": 37.19, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-11-01\", \"value\": 42.44, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-10-01\", \"value\": 46.22, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-09-01\", \"value\": 45.48, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-08-01\", \"value\": 42.87, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-07-01\", \"value\": 50.9, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-06-01\", \"value\": 59.82, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-05-01\", \"value\": 59.27, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-04-01\", \"value\": 54.45, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-03-01\", \"value\": 47.82, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-02-01\", \"value\": 50.58, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2015-01-01\", \"value\": 47.22, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-12-01\", \"value\": 59.29, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-11-01\", \"value\": 75.79, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-10-01\", \"value\": 84.4, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-09-01\", \"value\": 93.21, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-08-01\", \"value\": 96.54, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-07-01\", \"value\": 103.59, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-06-01\", \"value\": 105.79, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-05-01\", \"value\": 102.18, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-04-01\", \"value\": 102.07, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-03-01\", \"value\": 100.8, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-02-01\", \"value\": 100.82, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2014-01-01\", \"value\": 94.62, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-12-01\", \"value\": 97.63, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-11-01\", \"value\": 93.86, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-10-01\", \"value\": 100.54, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-09-01\", \"value\": 106.29, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-08-01\", \"value\": 106.57, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-07-01\", \"value\": 104.67, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-06-01\", \"value\": 95.77, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-05-01\", \"value\": 94.51, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-04-01\", \"value\": 92.02, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-03-01\", \"value\": 92.94, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-02-01\", \"value\": 95.31, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2013-01-01\", \"value\": 94.76, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2012-12-01\", \"value\": 87.86, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barrel\", \"interval\": \"monthly\"}, {\"date\": \"2012-11-01\", \"value\": 86.53, \"name\": \"Crude Oil Prices WTI\", \"unit\": \"dollars per barre",
+          "content_schema": {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "interval": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "date",
+                "interval",
+                "name",
+                "unit",
+                "value"
+              ]
+            }
+          }
+        },
+        "success": true,
+        "elapsed_time_ms": 419.98,
+        "created_at": "2026-07-24T09:25:24.120197+00:00",
+        "cost": 2,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 486,
+          "raw_result_count": 486,
+          "chargeable_quantity": 486,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2,
+          "summary": "Charged 2 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2,
+        "remaining_credits": 35363.68
+      }
+    },
+    {
+      "tool_name": "qveris_finance.rates_policy",
+      "request_kind": "capabilities/query",
+      "capability_id": "RATES.POLICY",
+      "params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "6c50e87a-8453-44ec-9520-d9cc595f498c",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:26.122287+00:00",
+      "response_sha256": "233f648cd5c36675c654072bf53b4da72dd3edbd2b0f521b49e52726c8fe63f2",
+      "response": {
+        "execution_id": "6c50e87a-8453-44ec-9520-d9cc595f498c",
+        "capability_id": "RATES.POLICY",
+        "parameters": {
+          "country": "US",
+          "start_date": "2024-07-24",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "_meta": {
+            "capability_id": "RATES.POLICY",
+            "elapsed_time_ms": 784,
+            "synced_at": "2026-07-23T20:30:02.546817+00:00",
+            "dropped_optional_params": [
+              "country",
+              "start_date",
+              "end_date"
+            ]
+          },
+          "_defaults_applied": [],
+          "message": "Result content is too long (107086 bytes). You can reference the truncated content (20480 bytes) and download the full content from the url provided.",
+          "truncated_content": "[{\"date\": \"2026-06-01\", \"value\": 3.63, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2026-05-01\", \"value\": 3.63, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2026-04-01\", \"value\": 3.64, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2026-03-01\", \"value\": 3.64, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2026-02-01\", \"value\": 3.64, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2026-01-01\", \"value\": 3.64, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-12-01\", \"value\": 3.72, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-11-01\", \"value\": 3.88, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-10-01\", \"value\": 4.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-09-01\", \"value\": 4.22, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-08-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-07-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-06-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-05-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-04-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-03-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-02-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2025-01-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-12-01\", \"value\": 4.48, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-11-01\", \"value\": 4.64, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-10-01\", \"value\": 4.83, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-09-01\", \"value\": 5.13, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-08-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-07-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-06-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-05-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-04-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-03-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-02-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2024-01-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-12-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-11-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-10-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-09-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-08-01\", \"value\": 5.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-07-01\", \"value\": 5.12, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-06-01\", \"value\": 5.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-05-01\", \"value\": 5.06, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-04-01\", \"value\": 4.83, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-03-01\", \"value\": 4.65, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-02-01\", \"value\": 4.57, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2023-01-01\", \"value\": 4.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-12-01\", \"value\": 4.1, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-11-01\", \"value\": 3.78, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-10-01\", \"value\": 3.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-09-01\", \"value\": 2.56, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-08-01\", \"value\": 2.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-07-01\", \"value\": 1.68, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-06-01\", \"value\": 1.21, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-05-01\", \"value\": 0.77, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-04-01\", \"value\": 0.33, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-03-01\", \"value\": 0.2, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-02-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2022-01-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-12-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-11-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-10-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-09-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-08-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-07-01\", \"value\": 0.1, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-06-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-05-01\", \"value\": 0.06, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-04-01\", \"value\": 0.07, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-03-01\", \"value\": 0.07, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-02-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2021-01-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-12-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-11-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-10-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-09-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-08-01\", \"value\": 0.1, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-07-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-06-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-05-01\", \"value\": 0.05, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-04-01\", \"value\": 0.05, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-03-01\", \"value\": 0.65, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-02-01\", \"value\": 1.58, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2020-01-01\", \"value\": 1.55, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-12-01\", \"value\": 1.55, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-11-01\", \"value\": 1.55, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-10-01\", \"value\": 1.83, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-09-01\", \"value\": 2.04, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-08-01\", \"value\": 2.13, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-07-01\", \"value\": 2.4, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-06-01\", \"value\": 2.38, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-05-01\", \"value\": 2.39, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-04-01\", \"value\": 2.42, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-03-01\", \"value\": 2.41, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-02-01\", \"value\": 2.4, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2019-01-01\", \"value\": 2.4, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-12-01\", \"value\": 2.27, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-11-01\", \"value\": 2.2, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-10-01\", \"value\": 2.19, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-09-01\", \"value\": 1.95, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-08-01\", \"value\": 1.91, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-07-01\", \"value\": 1.91, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-06-01\", \"value\": 1.82, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-05-01\", \"value\": 1.7, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-04-01\", \"value\": 1.69, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-03-01\", \"value\": 1.51, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-02-01\", \"value\": 1.42, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2018-01-01\", \"value\": 1.41, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-12-01\", \"value\": 1.3, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-11-01\", \"value\": 1.16, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-10-01\", \"value\": 1.15, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-09-01\", \"value\": 1.15, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-08-01\", \"value\": 1.16, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-07-01\", \"value\": 1.15, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-06-01\", \"value\": 1.04, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-05-01\", \"value\": 0.91, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-04-01\", \"value\": 0.9, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-03-01\", \"value\": 0.79, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-02-01\", \"value\": 0.66, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2017-01-01\", \"value\": 0.65, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-12-01\", \"value\": 0.54, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-11-01\", \"value\": 0.41, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-10-01\", \"value\": 0.4, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-09-01\", \"value\": 0.4, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-08-01\", \"value\": 0.4, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-07-01\", \"value\": 0.39, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-06-01\", \"value\": 0.38, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-05-01\", \"value\": 0.37, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-04-01\", \"value\": 0.37, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-03-01\", \"value\": 0.36, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-02-01\", \"value\": 0.38, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2016-01-01\", \"value\": 0.34, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-12-01\", \"value\": 0.24, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-11-01\", \"value\": 0.12, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-10-01\", \"value\": 0.12, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-09-01\", \"value\": 0.14, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-08-01\", \"value\": 0.14, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-07-01\", \"value\": 0.13, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-06-01\", \"value\": 0.13, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-05-01\", \"value\": 0.12, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-04-01\", \"value\": 0.12, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-03-01\", \"value\": 0.11, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-02-01\", \"value\": 0.11, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2015-01-01\", \"value\": 0.11, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-12-01\", \"value\": 0.12, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-11-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-10-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-09-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-08-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-07-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-06-01\", \"value\": 0.1, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-05-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-04-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-03-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-02-01\", \"value\": 0.07, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2014-01-01\", \"value\": 0.07, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-12-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-11-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-10-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-09-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-08-01\", \"value\": 0.08, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-07-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-06-01\", \"value\": 0.09, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-05-01\", \"value\": 0.11, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-04-01\", \"value\": 0.15, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-03-01\", \"value\": 0.14, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-02-01\", \"value\": 0.15, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2013-01-01\", \"value\": 0.14, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2012-12-01\", \"value\": 0.16, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2012-11-01\", \"value\": 0.16, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2012-10-01\", \"value\": 0.16, \"name\": \"Federal Funds Rate\", \"unit\": \"percent\", \"source\": \"FED\", \"currency\": \"USD\"}, {\"date\": \"2012-09-01\", \"value\": 0.",
+          "content_schema": {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "currency": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "currency",
+                "date",
+                "name",
+                "source",
+                "unit",
+                "value"
+              ]
+            }
+          }
+        },
+        "success": true,
+        "elapsed_time_ms": 854.68,
+        "created_at": "2026-07-24T09:25:26.122287+00:00",
+        "cost": 2,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 864,
+          "raw_result_count": 864,
+          "chargeable_quantity": 864,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2,
+          "summary": "Charged 2 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2,
+        "remaining_credits": 35361.68
+      }
+    },
+    {
+      "tool_name": "qveris_finance.rates_govt_benchmark",
+      "request_kind": "capabilities/query",
+      "capability_id": "RATES.GOVT_BENCHMARK",
+      "params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "ec97cbcc-9274-490b-a7f2-ae1418ec6c6e",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:29.354852+00:00",
+      "response_sha256": "34d5de7605d6b7e1b6dd8fb5380be4cf270b7ff9e23b475c2e37fbff799169be",
+      "response": {
+        "execution_id": "ec97cbcc-9274-490b-a7f2-ae1418ec6c6e",
+        "capability_id": "RATES.GOVT_BENCHMARK",
+        "parameters": {
+          "country": "US",
+          "start_date": "2024-07-24",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "_meta": {
+            "capability_id": "RATES.GOVT_BENCHMARK",
+            "elapsed_time_ms": 2023,
+            "synced_at": "2026-07-23T20:30:02.350631+00:00",
+            "dropped_optional_params": [
+              "country",
+              "start_date",
+              "end_date"
+            ]
+          },
+          "_defaults_applied": [],
+          "message": "Result content is too long (117755 bytes). You can reference the truncated content (20480 bytes) and download the full content from the url provided.",
+          "truncated_content": "[{\"date\": \"2026-06-01\", \"close\": 4.47, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2026-05-01\", \"close\": 4.48, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2026-04-01\", \"close\": 4.32, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2026-03-01\", \"close\": 4.25, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2026-02-01\", \"close\": 4.13, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2026-01-01\", \"close\": 4.21, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-12-01\", \"close\": 4.14, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-11-01\", \"close\": 4.09, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-10-01\", \"close\": 4.06, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-09-01\", \"close\": 4.12, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-08-01\", \"close\": 4.26, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-07-01\", \"close\": 4.39, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-06-01\", \"close\": 4.38, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-05-01\", \"close\": 4.42, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-04-01\", \"close\": 4.28, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-03-01\", \"close\": 4.28, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-02-01\", \"close\": 4.45, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2025-01-01\", \"close\": 4.63, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-12-01\", \"close\": 4.39, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-11-01\", \"close\": 4.36, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-10-01\", \"close\": 4.1, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-09-01\", \"close\": 3.72, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-08-01\", \"close\": 3.87, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-07-01\", \"close\": 4.25, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-06-01\", \"close\": 4.31, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-05-01\", \"close\": 4.48, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-04-01\", \"close\": 4.54, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-03-01\", \"close\": 4.21, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-02-01\", \"close\": 4.21, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2024-01-01\", \"close\": 4.06, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-12-01\", \"close\": 4.02, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-11-01\", \"close\": 4.5, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-10-01\", \"close\": 4.8, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-09-01\", \"close\": 4.38, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-08-01\", \"close\": 4.17, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-07-01\", \"close\": 3.9, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-06-01\", \"close\": 3.75, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-05-01\", \"close\": 3.57, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-04-01\", \"close\": 3.46, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-03-01\", \"close\": 3.66, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-02-01\", \"close\": 3.75, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2023-01-01\", \"close\": 3.53, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-12-01\", \"close\": 3.62, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-11-01\", \"close\": 3.89, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-10-01\", \"close\": 3.98, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-09-01\", \"close\": 3.52, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-08-01\", \"close\": 2.9, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-07-01\", \"close\": 2.9, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-06-01\", \"close\": 3.14, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-05-01\", \"close\": 2.9, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-04-01\", \"close\": 2.75, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-03-01\", \"close\": 2.13, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-02-01\", \"close\": 1.93, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2022-01-01\", \"close\": 1.76, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-12-01\", \"close\": 1.47, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-11-01\", \"close\": 1.56, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-10-01\", \"close\": 1.58, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-09-01\", \"close\": 1.37, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-08-01\", \"close\": 1.28, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-07-01\", \"close\": 1.32, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-06-01\", \"close\": 1.52, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-05-01\", \"close\": 1.62, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-04-01\", \"close\": 1.64, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-03-01\", \"close\": 1.61, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-02-01\", \"close\": 1.26, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2021-01-01\", \"close\": 1.08, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-12-01\", \"close\": 0.93, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-11-01\", \"close\": 0.87, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-10-01\", \"close\": 0.79, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-09-01\", \"close\": 0.68, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-08-01\", \"close\": 0.65, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-07-01\", \"close\": 0.62, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-06-01\", \"close\": 0.73, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-05-01\", \"close\": 0.67, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-04-01\", \"close\": 0.66, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-03-01\", \"close\": 0.87, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-02-01\", \"close\": 1.5, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2020-01-01\", \"close\": 1.76, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-12-01\", \"close\": 1.86, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-11-01\", \"close\": 1.81, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-10-01\", \"close\": 1.71, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-09-01\", \"close\": 1.7, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-08-01\", \"close\": 1.63, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-07-01\", \"close\": 2.06, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-06-01\", \"close\": 2.07, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-05-01\", \"close\": 2.4, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-04-01\", \"close\": 2.53, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-03-01\", \"close\": 2.57, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-02-01\", \"close\": 2.68, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2019-01-01\", \"close\": 2.71, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-12-01\", \"close\": 2.83, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-11-01\", \"close\": 3.12, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-10-01\", \"close\": 3.15, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-09-01\", \"close\": 3.0, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-08-01\", \"close\": 2.89, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-07-01\", \"close\": 2.89, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-06-01\", \"close\": 2.91, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-05-01\", \"close\": 2.98, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-04-01\", \"close\": 2.87, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-03-01\", \"close\": 2.84, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-02-01\", \"close\": 2.86, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2018-01-01\", \"close\": 2.58, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-12-01\", \"close\": 2.4, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-11-01\", \"close\": 2.35, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-10-01\", \"close\": 2.36, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-09-01\", \"close\": 2.2, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-08-01\", \"close\": 2.21, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-07-01\", \"close\": 2.32, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-06-01\", \"close\": 2.19, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-05-01\", \"close\": 2.3, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-04-01\", \"close\": 2.3, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-03-01\", \"close\": 2.48, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-02-01\", \"close\": 2.42, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2017-01-01\", \"close\": 2.43, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-12-01\", \"close\": 2.49, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-11-01\", \"close\": 2.14, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-10-01\", \"close\": 1.76, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-09-01\", \"close\": 1.63, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-08-01\", \"close\": 1.56, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-07-01\", \"close\": 1.5, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-06-01\", \"close\": 1.64, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-05-01\", \"close\": 1.81, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-04-01\", \"close\": 1.81, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-03-01\", \"close\": 1.89, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-02-01\", \"close\": 1.78, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2016-01-01\", \"close\": 2.09, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-12-01\", \"close\": 2.24, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-11-01\", \"close\": 2.26, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-10-01\", \"close\": 2.07, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-09-01\", \"close\": 2.17, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-08-01\", \"close\": 2.17, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-07-01\", \"close\": 2.32, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-06-01\", \"close\": 2.36, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-05-01\", \"close\": 2.2, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-04-01\", \"close\": 1.94, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-03-01\", \"close\": 2.04, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-02-01\", \"close\": 1.98, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2015-01-01\", \"close\": 1.88, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-12-01\", \"close\": 2.21, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-11-01\", \"close\": 2.33, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-10-01\", \"close\": 2.3, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-09-01\", \"close\": 2.53, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-08-01\", \"close\": 2.42, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-07-01\", \"close\": 2.54, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-06-01\", \"close\": 2.6, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-05-01\", \"close\": 2.56, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-04-01\", \"close\": 2.71, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-03-01\", \"close\": 2.72, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-02-01\", \"close\": 2.71, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2014-01-01\", \"close\": 2.86, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2013-12-01\", \"close\": 2.9, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2013-11-01\", \"close\": 2.72, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"}, {\"date\": \"2013-10-01\", \"close\": 2.62, \"symbol\": \"10-Year Treasury Constant Maturity Rate\", \"interval\": \"monthly\", \"unit\": \"percent\"",
+          "content_schema": {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "close": {
+                  "type": "number"
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "interval": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "close",
+                "date",
+                "interval",
+                "symbol",
+                "unit"
+              ]
+            }
+          }
+        },
+        "success": true,
+        "elapsed_time_ms": 2093.84,
+        "created_at": "2026-07-24T09:25:29.354852+00:00",
+        "cost": 2,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 879,
+          "raw_result_count": 879,
+          "chargeable_quantity": 879,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2,
+          "summary": "Charged 2 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2,
+        "remaining_credits": 35359.68
+      }
+    },
+    {
+      "tool_name": "qveris_finance.rates_interbank_benchmark",
+      "request_kind": "capabilities/query",
+      "capability_id": "RATES.INTERBANK_BENCHMARK",
+      "params": {
+        "rate_type": "shibor",
+        "country": "CN",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "4a2d3b41-d699-4a74-bb57-9a155681df7d",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:31.110895+00:00",
+      "response_sha256": "7e03136e27ca34fc344b4549506fe0997052053c88b618803cf581b5e8574b8e",
+      "response": {
+        "execution_id": "4a2d3b41-d699-4a74-bb57-9a155681df7d",
+        "capability_id": "RATES.INTERBANK_BENCHMARK",
+        "parameters": {
+          "rate_type": "shibor",
+          "country": "CN",
+          "start_date": "2024-07-24",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "_meta": {
+            "capability_id": "RATES.INTERBANK_BENCHMARK",
+            "elapsed_time_ms": 404,
+            "synced_at": "2026-07-23T20:30:02.509049+00:00",
+            "delivery_status": "partial_data",
+            "partial_reason": "partial_data"
+          },
+          "_defaults_applied": [],
+          "message": "Result content is too long (77035 bytes). You can reference the truncated content (20480 bytes) and download the full content from the url provided.",
+          "truncated_content": "[{\"date\": \"2024-07-24\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-07-25\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-07-26\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-07-29\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-07-30\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-07-31\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-01\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-02\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-05\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-06\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-07\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-08\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-09\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-12\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-13\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-14\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-15\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-16\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-19\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-20\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-21\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-22\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-23\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-26\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-27\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-28\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-29\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-08-30\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-02\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-03\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-04\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-05\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-06\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-09\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-10\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-11\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-12\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-13\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-14\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-18\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-19\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-20\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-23\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-24\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-25\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-26\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-27\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-29\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-09-30\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-08\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-09\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-10\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-11\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-12\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-14\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-15\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-16\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-17\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-18\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-21\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-22\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-23\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-24\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-25\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-28\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-29\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-30\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-10-31\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-01\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-04\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-05\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-06\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-07\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-08\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-11\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-12\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-13\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-14\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-15\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-18\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-19\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-20\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-21\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-22\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-25\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-26\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-27\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-28\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-11-29\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-02\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-03\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-04\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-05\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-06\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-09\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-10\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-11\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-12\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-13\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-16\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-17\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-18\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-19\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-20\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-23\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-24\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-25\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-26\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-27\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-30\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2024-12-31\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-02\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-03\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-06\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-07\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-08\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-09\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-10\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-13\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-14\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-15\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-16\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-17\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-20\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-21\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-22\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-23\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-24\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-26\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-01-27\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-02-05\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-02-06\", \"value\": null, \"name\": \"SHIBOR\", \"unit\": \"percent\", \"interval\": \"O/N\", \"rate_type\": \"shibor\", \"currency\": \"CNY\", \"source\": \"NIFC\"}, {\"date\": \"2025-02-0",
+          "content_schema": {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "null"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "interval": {
+                  "type": "string"
+                },
+                "rate_type": {
+                  "type": "string"
+                },
+                "currency": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "currency",
+                "date",
+                "interval",
+                "name",
+                "rate_type",
+                "source",
+                "unit",
+                "value"
+              ]
+            }
+          }
+        },
+        "success": true,
+        "elapsed_time_ms": 466.6,
+        "created_at": "2026-07-24T09:25:31.110895+00:00",
+        "cost": 19.88,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 497,
+          "raw_result_count": 497,
+          "chargeable_quantity": 497,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 0.04,
+            "per": 1,
+            "unit": "quantity",
+            "unit_label": "quantity"
+          },
+          "quantity": 497,
+          "minimum_charge_credits": 1,
+          "list_amount_credits": 19.88,
+          "summary": "Billed by quantity. This call used 497 quantitys and costs 19.88 credits",
+          "execution_outcome": "success"
+        },
+        "credits_used": 19.88,
+        "remaining_credits": 35339.8
+      }
+    },
+    {
+      "tool_name": "qveris_finance.fx_spot",
+      "request_kind": "capabilities/query",
+      "capability_id": "FX.SPOT",
+      "params": {
+        "base_currency": "EUR",
+        "quote_currency": "USD"
+      },
+      "status": "success",
+      "execution_id": "a5a97232-5a45-4b2b-8242-8f38f52a2e2e",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:32.556537+00:00",
+      "response_sha256": "06888effe25973a43b4cbd1da8862f2f66f7bef235847f9e7e59ec7bea4d5a13",
+      "response": {
+        "execution_id": "a5a97232-5a45-4b2b-8242-8f38f52a2e2e",
+        "capability_id": "FX.SPOT",
+        "parameters": {
+          "base_currency": "EUR",
+          "quote_currency": "USD"
+        },
+        "result": {
+          "status_code": 200,
+          "data": {
+            "symbol": "EUR/USD",
+            "price": 1.1428,
+            "open": 1.1422,
+            "high": 1.1449,
+            "low": 1.1412,
+            "date": "2026-07-23",
+            "currency": "USD",
+            "previous_close": 1.1414,
+            "change": 0.0014000000000000679
+          },
+          "_meta": {
+            "capability_id": "FX.SPOT",
+            "elapsed_time_ms": 380,
+            "synced_at": "2026-07-23T20:30:01.661815+00:00"
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 412.55,
+        "created_at": "2026-07-24T09:25:32.556537+00:00",
+        "cost": 2,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 1,
+          "raw_result_count": 1,
+          "chargeable_quantity": 1,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2,
+          "summary": "Charged 2 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2,
+        "remaining_credits": 35337.8
+      }
+    },
+    {
+      "tool_name": "qveris_finance.index_levels",
+      "request_kind": "capabilities/query",
+      "capability_id": "INDEX.LEVELS",
+      "params": {
+        "symbol": "SPX"
+      },
+      "status": "success",
+      "execution_id": "10849aea-6ef2-4b55-b894-11c8e5e3e245",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T09:25:35.213298+00:00",
+      "response_sha256": "55c8620369ce43a60ea7d4c4e66d28309dc8f7abfb34aed256a309d58157eae6",
+      "response": {
+        "execution_id": "10849aea-6ef2-4b55-b894-11c8e5e3e245",
+        "capability_id": "INDEX.LEVELS",
+        "parameters": {
+          "symbol": "SPX"
+        },
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "symbol": "GSPC.INDX",
+              "price": 7408.2998,
+              "change": -90.6589,
+              "change_percent": -0.01209,
+              "previous_close": 7498.9587,
+              "open": 7418.29,
+              "high": 7450.1201,
+              "low": 7376,
+              "volume": 3325092000,
+              "timestamp": "2026-07-23T20:39:00+00:00"
+            }
+          ],
+          "_meta": {
+            "capability_id": "INDEX.LEVELS",
+            "elapsed_time_ms": 1335,
+            "synced_at": "2026-07-23T20:30:01.536836+00:00"
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 1371.61,
+        "created_at": "2026-07-24T09:25:35.213298+00:00",
+        "cost": 2.81,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 1,
+          "raw_result_count": 1,
+          "chargeable_quantity": 1,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2.81,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2.81,
+          "summary": "Charged 2.81 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2.81,
+        "remaining_credits": 35334.99
+      }
+    }
+  ],
+  "check_results": [
+    {
+      "tool_name": "qveris_finance.macro_indicators",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.macro_indicators",
+        "tool_name": "qveris_finance.macro_indicators",
+        "capability_id": "MACRO.INDICATORS",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": [
+          {
+            "phase": "capability_catalog_page_1",
+            "reason": "transient_fetch_failure",
+            "attempt": 2
+          }
+        ]
+      },
+      "final_params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.macro_employment",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.macro_employment",
+        "tool_name": "qveris_finance.macro_employment",
+        "capability_id": "MACRO.EMPLOYMENT",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.macro_real_estate",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.macro_real_estate",
+        "tool_name": "qveris_finance.macro_real_estate",
+        "capability_id": "MACRO.REAL_ESTATE",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.macro_commodity_benchmark",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.macro_commodity_benchmark",
+        "tool_name": "qveris_finance.macro_commodity_benchmark",
+        "capability_id": "MACRO.COMMODITY_BENCHMARK",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "commodity_name": "WTI",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.rates_policy",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.rates_policy",
+        "tool_name": "qveris_finance.rates_policy",
+        "capability_id": "RATES.POLICY",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.rates_govt_benchmark",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.rates_govt_benchmark",
+        "tool_name": "qveris_finance.rates_govt_benchmark",
+        "capability_id": "RATES.GOVT_BENCHMARK",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "country": "US",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.rates_interbank_benchmark",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.rates_interbank_benchmark",
+        "tool_name": "qveris_finance.rates_interbank_benchmark",
+        "capability_id": "RATES.INTERBANK_BENCHMARK",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "rate_type": "shibor",
+        "country": "CN",
+        "start_date": "2024-07-24",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.fx_spot",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.fx_spot",
+        "tool_name": "qveris_finance.fx_spot",
+        "capability_id": "FX.SPOT",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "base_currency": "EUR",
+        "quote_currency": "USD"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.index_levels",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.index_levels",
+        "tool_name": "qveris_finance.index_levels",
+        "capability_id": "INDEX.LEVELS",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "symbol": "SPX"
+      },
+      "observed_call_count": 1
+    }
+  ]
+}

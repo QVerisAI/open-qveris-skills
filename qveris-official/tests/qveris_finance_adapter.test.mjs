@@ -583,6 +583,41 @@ test("retries once when a transient failure is explicitly marked retryable", asy
   ]);
 });
 
+test("does not retry a deterministic invalid value even when the server marks it retryable", async () => {
+  let calls = 0;
+  const detail = {
+    capability_id: "RATES.INTERBANK.BENCHMARK",
+    params: [{ name: "rate_type", type: "string", required: true }],
+  };
+  const client = {
+    async listCapabilities() { return { results: [detail], total: 1 }; },
+    async getCapability() { return detail; },
+    async queryCapability({ parameters }) {
+      calls += 1;
+      return {
+        success: false,
+        execution_id: "invalid-rate-type",
+        parameters,
+        error_message: "Invalid rate_type 'sofr'. Must be one of: treasury, shibor, fx",
+        result: { status_code: 503, error_type: "all_candidates_failed" },
+        execution_outcome: { retryable: true, reason_code: "all_candidates_failed" },
+      };
+    },
+  };
+
+  const execution = await executeFinanceCapability({
+    client,
+    apiKey: "test-key",
+    requestedCapability: "qveris_finance.rates_interbank_benchmark",
+    parameters: { rate_type: "sofr" },
+    maxAttempts: 2,
+  });
+
+  assert.equal(calls, 1);
+  assert.deepEqual(execution.retry_events, []);
+  assert.equal(execution.observed_calls.length, 1);
+});
+
 test("retries once when the capability query throws fetch failed", async () => {
   let calls = 0;
   const detail = {
@@ -626,4 +661,46 @@ test("retries once when the capability query throws fetch failed", async () => {
     { status: "failed", fallback_used: false },
     { status: "success", fallback_used: true },
   ]);
+});
+
+test("retrieves approved full content with one fetch-failed retry", async () => {
+  const detail = { capability_id: "MACRO.INDICATORS", params: [{ name: "country", type: "string", required: false }] };
+  const client = {
+    async listCapabilities() { return { results: [detail], total: 1 }; },
+    async getCapability() { return detail; },
+    async queryCapability() {
+      return {
+        success: true,
+        execution_id: "large-result",
+        result: {
+          truncated_content: "[{\"date\":",
+          full_content_file_url: "https://oss.qveris.cloud/tool_result_cache/result.json?signature=secret",
+        },
+      };
+    },
+  };
+  let fetches = 0;
+  const fullContentFetch = async () => {
+    fetches += 1;
+    if (fetches === 1) throw new TypeError("fetch failed");
+    return new Response(JSON.stringify([{ date: "2026-07-01", value: 1 }]), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  };
+
+  const execution = await executeFinanceCapability({
+    client,
+    apiKey: "test-key",
+    requestedCapability: "qveris_finance.macro_indicators",
+    parameters: {},
+    retrieveFullContent: true,
+    fullContentFetch,
+  });
+
+  assert.equal(fetches, 2);
+  assert.deepEqual(execution.response.result.data, [{ date: "2026-07-01", value: 1 }]);
+  assert.equal(execution.response.result.content_retrieval.status, "success");
+  assert.equal(execution.response.result.content_retrieval.attempts, 2);
+  assert.equal(JSON.stringify(execution).includes("signature=secret"), false);
 });

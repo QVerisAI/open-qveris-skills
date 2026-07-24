@@ -118,6 +118,7 @@ STRICT_TRACE_SKILLS = {
     "qveris-uzi-equity-research",
     "qveris-crypto-market-radar",
     "qveris-supply-chain-catalyst-radar",
+    "qveris-macro-policy-monitor",
 }
 
 SENSITIVE_PARAM_KEY_RE = re.compile(

@@ -32,7 +32,7 @@ To look up facts, answers, or general information, use `web_search` instead.
 
 **Setup**: Requires `QVERIS_API_KEY` from https://qveris.ai.
 
-**Credential**: Only `QVERIS_API_KEY` is used. All requests go to `https://qveris.ai/api/v1` over HTTPS.
+**Credential**: Only `QVERIS_API_KEY` is used. Requests default to `https://qveris.ai/api/v1`; an audited test run may set `QVERIS_BASE_URL=https://api.qveris.cloud/api/v1`. The client rejects non-HTTPS and non-QVeris hosts.
 
 **Finance CAP requirement**: For `qveris_finance.*` workflows, use the standardized CAP endpoints (`/capabilities`, `/capabilities/{id}`, `/capabilities/query`). When this repository is available, use `scripts/qveris_tool.mjs cap-detail/cap-query` as the public adapter: it resolves current CAP IDs from the live catalog, validates against live cap-detail, normalizes inputs, retries one transient control-plane `fetch failed`, performs at most one budget-permitted parameter or explicitly-retryable data retry (`--max-attempts 1|2`), and records exact observed Trace. Legacy `/search` plus `/tools/execute`, generic `discover`/`call`, and raw finance tool IDs are not fallbacks. If the standardized CAP runtime is unavailable, report `tool_runtime_missing` or `capability_unavailable` instead of selecting a raw provider route.
 
@@ -178,7 +178,8 @@ Some tool calls may return `full_content_file_url` when the inline result is too
 
 - Treat `full_content_file_url` as a signal that the visible inline payload may be incomplete.
 - Conclusions drawn from `truncated_content` alone when a full-content URL is present may be incomplete.
-- If your environment already has an approved way to retrieve the full content, use that separate tool or workflow.
+- Finance workflows may opt into the shared adapter's approved retrieval path. It accepts only HTTPS from `oss.qveris.cloud`, refuses redirects, enforces a 10 MiB limit, retries one `fetch failed`, records host/attempt/size/hash metadata, and then re-applies the requested filters and semantic gates locally.
+- The full-content URL and signature are removed before output or artifact storage.
 - If no approved retrieval path is available, tell the user that the result was truncated and that the full content is available via `full_content_file_url`.
 
 ---

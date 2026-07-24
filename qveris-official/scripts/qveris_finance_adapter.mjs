@@ -733,6 +733,13 @@ function isInvalidCapabilityFailure(response) {
 }
 
 function isExplicitlyRetryableTransient(response) {
+  const text = `${responseErrorCode(response)} ${responseErrorText(response)}`;
+  const status = Number(response?.result?.status_code ?? response?.execution_outcome?.http_status_code ?? 0);
+  if ([400, 409, 422].includes(status)
+      || /invalid\s+[a-z0-9_. -]+(?:must be one of|allowed|supported)/i.test(text)
+      || /must be one of|missing_one_of|missing required|invalid value/i.test(text)) {
+    return false;
+  }
   return response?.execution_outcome?.retryable === true
     || response?.error?.retryable === true
     || response?.retryable === true;
@@ -819,6 +826,93 @@ function traceFromObservedCall(observedCall) {
   };
 }
 
+async function hydrateFullContent(response, {
+  enabled = false,
+  fetchImpl = globalThis.fetch,
+  timeoutMs = 30000,
+  maxBytes = 10 * 1024 * 1024,
+} = {}) {
+  const urlValue = response?.result?.full_content_file_url;
+  if (!enabled || response?.success !== true || typeof urlValue !== "string") return response;
+  const url = new URL(urlValue);
+  if (url.protocol !== "https:"
+      || url.hostname !== "oss.qveris.cloud"
+      || url.username
+      || url.password
+      || url.port
+      || !url.pathname.startsWith("/tool_result_cache/")) {
+    return {
+      ...response,
+      result: { ...response.result, content_retrieval: { status: "rejected", reason: "unapproved_content_host", attempts: 0 } },
+    };
+  }
+  let lastError;
+  let attempts = 0;
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    attempts = attempt;
+    try {
+      const fetched = await fetchImpl(url, { redirect: "error", signal: AbortSignal.timeout(timeoutMs) });
+      if (!fetched.ok) throw new Error(`full content HTTP ${fetched.status}`);
+      const declared = Number(fetched.headers.get("content-length") ?? 0);
+      if (declared > maxBytes) throw new Error("full content exceeds size limit");
+      const chunks = [];
+      let totalBytes = 0;
+      const reader = fetched.body?.getReader();
+      if (!reader) throw new Error("full content response body is unavailable");
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        totalBytes += value.byteLength;
+        if (totalBytes > maxBytes) {
+          await reader.cancel();
+          throw new Error("full content exceeds size limit");
+        }
+        chunks.push(value);
+      }
+      const bytes = new Uint8Array(totalBytes);
+      let offset = 0;
+      for (const chunk of chunks) {
+        bytes.set(chunk, offset);
+        offset += chunk.byteLength;
+      }
+      const parsed = JSON.parse(new TextDecoder().decode(bytes));
+      const data = parsed && typeof parsed === "object" && !Array.isArray(parsed) && Object.hasOwn(parsed, "data")
+        ? parsed.data
+        : parsed;
+      const { full_content_file_url: ignoredUrl, truncated_content: ignoredPrefix, ...rest } = response.result;
+      return {
+        ...response,
+        result: {
+          ...rest,
+          data,
+          content_retrieval: {
+            status: "success",
+            host: url.hostname,
+            attempts: attempt,
+            bytes: totalBytes,
+            sha256: createHash("sha256").update(bytes).digest("hex"),
+          },
+        },
+      };
+    } catch (error) {
+      lastError = error;
+      if (attempt === 1 && isTransientControlPlaneFetchFailure(error)) continue;
+      break;
+    }
+  }
+  return {
+    ...response,
+    result: {
+      ...response.result,
+      content_retrieval: {
+        status: "failed",
+        reason: lastError instanceof Error ? lastError.message : String(lastError),
+        attempts,
+      },
+    },
+  };
+}
+
 export async function executeFinanceCapability({
   client,
   apiKey,
@@ -828,6 +922,9 @@ export async function executeFinanceCapability({
   searchId,
   timeoutMs = 120000,
   maxAttempts = 2,
+  retrieveFullContent = false,
+  fullContentFetch = globalThis.fetch,
+  maxFullContentBytes = 10 * 1024 * 1024,
   now = () => new Date().toISOString(),
 }) {
   if (!client?.queryCapability) {
@@ -853,7 +950,7 @@ export async function executeFinanceCapability({
   const observedCalls = [];
   const retryEvents = [];
 
-  const firstResponse = await callOnce({
+  const firstResponse = await hydrateFullContent(await callOnce({
     client,
     apiKey,
     capabilityId,
@@ -861,7 +958,7 @@ export async function executeFinanceCapability({
     strategy,
     searchId,
     timeoutMs,
-  });
+  }), { enabled: retrieveFullContent, fetchImpl: fullContentFetch, timeoutMs: Math.min(timeoutMs, 30000), maxBytes: maxFullContentBytes });
   observedCalls.push(buildObservedCall({
     response: firstResponse,
     toolName,
@@ -915,7 +1012,7 @@ export async function executeFinanceCapability({
   }
 
   if (retryEvents.length > 0) {
-    const retryResponse = await callOnce({
+    const retryResponse = await hydrateFullContent(await callOnce({
       client,
       apiKey,
       capabilityId,
@@ -923,7 +1020,7 @@ export async function executeFinanceCapability({
       strategy,
       searchId,
       timeoutMs,
-    });
+    }), { enabled: retrieveFullContent, fetchImpl: fullContentFetch, timeoutMs: Math.min(timeoutMs, 30000), maxBytes: maxFullContentBytes });
     observedCalls.push(buildObservedCall({
       response: retryResponse,
       toolName,

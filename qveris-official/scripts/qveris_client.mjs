@@ -1,11 +1,42 @@
-const BASE_URL = "https://qveris.ai/api/v1";
+const DEFAULT_BASE_URL = "https://qveris.ai/api/v1";
+
+function baseUrl() {
+  const configured = String(process.env.QVERIS_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+  const parsed = new URL(configured);
+  if (parsed.protocol !== "https:") throw new Error("QVERIS_BASE_URL must use HTTPS");
+  if (!new Set(["qveris.ai", "api.qveris.cloud"]).has(parsed.hostname)
+      || parsed.pathname !== "/api/v1"
+      || parsed.username
+      || parsed.password
+      || parsed.port) {
+    throw new Error("QVERIS_BASE_URL must use an approved QVeris /api/v1 host");
+  }
+  return configured;
+}
+
+export class QVerisHttpError extends Error {
+  constructor({ status, method, path, payload, responseText }) {
+    const code = payload?.error?.code ?? payload?.code ?? null;
+    const serverMessage = payload?.error?.message ?? payload?.message ?? payload?.detail ?? null;
+    super(
+      `HTTP ${status}${code ? ` (${code})` : ""} for ${method} ${path}${serverMessage ? `: ${serverMessage}` : ""}`,
+    );
+    this.name = "QVerisHttpError";
+    this.status = status;
+    this.method = method;
+    this.path = path;
+    this.code = code ?? `http_${status}`;
+    this.payload = payload;
+    this.responseText = responseText;
+  }
+}
 
 async function requestJson(path, { method = "POST", query = {}, body, timeoutMs = 30000, apiKey }) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const url = new URL(`${BASE_URL}${path}`);
+    const url = new URL(`${baseUrl()}${path}`);
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined && value !== null) {
         url.searchParams.set(key, String(value));
@@ -24,7 +55,19 @@ async function requestJson(path, { method = "POST", query = {}, body, timeoutMs 
 
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(`HTTP ${response.status}: ${text}`);
+      let payload = null;
+      try {
+        payload = text ? JSON.parse(text) : null;
+      } catch {
+        payload = null;
+      }
+      throw new QVerisHttpError({
+        status: response.status,
+        method,
+        path,
+        payload,
+        responseText: text,
+      });
     }
 
     return await response.json();
@@ -34,7 +77,7 @@ async function requestJson(path, { method = "POST", query = {}, body, timeoutMs 
 }
 
 export function getBaseUrl() {
-  return BASE_URL;
+  return baseUrl();
 }
 
 export async function discoverTools({ apiKey, query, limit = 10, timeoutMs = 30000 }) {
