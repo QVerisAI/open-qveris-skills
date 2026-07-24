@@ -3,7 +3,7 @@
 ## Call Accounting
 
 - Count only observed `capabilities/query` transport attempts against `max_calls`; count an automatic retry as another attempt.
-- Treat catalog and cap-detail reads as control-plane metadata, not evidence calls. The public adapter already reads live cap-detail during `cap-query`; do not issue a duplicate manual detail request on that path.
+- Treat catalog and cap-detail reads as control-plane metadata, not evidence calls. The public adapter already reads live cap-detail during `cap-query`; do not issue a duplicate manual detail request on that path. Retry one transport-level `fetch failed`, connection reset, DNS retry, or timeout and record it in `control_plane_retry_events`; do not count it as a data attempt.
 - Run `scripts/crypto_workflow.mjs --dry-run` before transport. If `max_calls` is below the mandatory logical-call count, make no data calls and return `budget_limited`.
 - Execute mandatory calls before optional calls. Before each mandatory call, reserve one attempt for every mandatory call still pending.
 - Permit at most two attempts for one logical CAP request and never exceed the workflow-wide `max_calls` value.
@@ -12,7 +12,7 @@
 
 1. Resolve the logical `qveris_finance.*` alias against the live catalog.
 2. Read the live parameter allow-list.
-3. Preserve the user's ticker, pair, chain, and contract address until reference evidence resolves identity.
+3. Preserve the user's ticker, pair, chain, and contract address until reference evidence resolves identity. Translate a whale target's `contract@chain` only to the live public names `address` and `network`.
 4. Drop unsupported optional parameters.
 5. Add only documented required non-identity defaults and coerce only documented types or enums.
 6. Never fill a missing symbol, pair, chain, or contract address from an example.

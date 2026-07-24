@@ -182,7 +182,7 @@ function assessSpot(params, response, maxAge, now) {
   };
 }
 
-function assessHistory(params, response, maxAge, now, requestedParams = params) {
+function assessHistory(params, response, maxAge, now, requestedParams = params, requestedObservations = null) {
   const rows = records(payloadData(response));
   if (rows.length === 0) {
     return {
@@ -196,8 +196,10 @@ function assessHistory(params, response, maxAge, now, requestedParams = params) 
     && String(params.interval ?? "").toLowerCase() !== String(requestedParams.interval).toLowerCase()) {
     issues.push("history_interval_not_transmitted");
   }
-  if (Number.isInteger(requestedParams.limit) && Number(params.limit) !== requestedParams.limit) {
-    issues.push("history_limit_not_transmitted");
+  for (const name of ["start_date", "end_date"]) {
+    if (requestedParams[name] !== undefined && params[name] !== requestedParams[name]) {
+      issues.push(`history_${name}_not_transmitted`);
+    }
   }
   const timestampValues = rows.map((row) => stringField(row, ["timestamp", "time", "datetime", "date"]));
   const timestamps = timestampValues.map((value) => value ? Date.parse(value) : Number.NaN);
@@ -243,9 +245,20 @@ function assessHistory(params, response, maxAge, now, requestedParams = params) 
   if (quoteCurrencies.length === 0) issues.push("history_quote_currency_missing");
   if (quoteCurrencies.length > 1) issues.push("history_quote_currency_inconsistent");
   if (rows.length < 2) issues.push("history_too_thin");
-  if (Number.isInteger(requestedParams.limit) && rows.length < requestedParams.limit) issues.push("history_window_incomplete");
+  if (Number.isInteger(requestedObservations) && rows.length < requestedObservations) {
+    issues.push("history_window_incomplete");
+  }
   const finiteTimestamps = timestamps.filter(Number.isFinite);
   const latest = finiteTimestamps.length > 0 ? Math.max(...finiteTimestamps) : undefined;
+  const earliest = finiteTimestamps.length > 0 ? Math.min(...finiteTimestamps) : undefined;
+  if (earliest !== undefined && requestedParams.start_date
+    && new Date(earliest).toISOString().slice(0, 10) > requestedParams.start_date) {
+    issues.push("history_start_boundary_missing");
+  }
+  if (latest !== undefined && requestedParams.end_date
+    && new Date(latest).toISOString().slice(0, 10) < requestedParams.end_date) {
+    issues.push("history_end_boundary_missing");
+  }
   const nowMs = Date.parse(now);
   if (latest !== undefined && !Number.isNaN(nowMs)) {
     if (latest - nowMs > MAX_FUTURE_CLOCK_SKEW_MS) {
@@ -327,29 +340,37 @@ function freshnessIssue(record, maxAgeValue, now, prefix) {
   return { issue: null, timestamp };
 }
 
-function assessRankings(response, maxAge, now) {
+function assessRankings(params, response, maxAge, now) {
   const data = payloadData(response);
   const rows = records(data);
   if (rows.length === 0) return { semantic_status: "rejected", semantic_issues: ["rankings_payload_empty"] };
   const first = rows[0];
   const issues = [];
-  if (numberField(first, ["rank", "position", "ranking"]) === null) issues.push("rankings_rank_missing");
+  if (numberField(first, ["rank", "position", "ranking"]) === null && !params.mode) issues.push("rankings_rank_missing");
   const dimension = stringField(first, ["ranking_dimension", "dimension", "metric", "sort_by", "basis"])
-    ?? stringField(data, ["ranking_dimension", "dimension", "metric", "sort_by", "basis"]);
+    ?? stringField(data, ["ranking_dimension", "dimension", "metric", "sort_by", "basis"])
+    ?? params.mode;
   if (!dimension) issues.push("rankings_dimension_missing");
   const universe = stringField(first, ["universe", "scope", "market"])
-    ?? stringField(data, ["universe", "scope", "market"]);
+    ?? stringField(data, ["universe", "scope", "market"])
+    ?? params.market;
   if (!universe) issues.push("rankings_universe_missing");
   const freshness = freshnessIssue(first, maxAge.rankings, now, "rankings");
   if (freshness.issue) issues.push(freshness.issue);
   return {
     semantic_status: issues.length === 0 ? "accepted" : "rejected",
     semantic_issues: issues,
-    evidence: { accepted_observations: issues.length === 0 ? rows.length : 0, timestamp: freshness.timestamp },
+    evidence: {
+      accepted_observations: issues.length === 0 ? rows.length : 0,
+      timestamp: freshness.timestamp,
+      ranking_dimension: dimension ?? null,
+      universe: universe ?? null,
+      quote_currency: params.quote_currency ?? null,
+    },
   };
 }
 
-function assessMarketMood(response, maxAge, now) {
+function assessMarketMood(params, response, maxAge, now) {
   const record = firstRecord(payloadData(response));
   if (!record) return { semantic_status: "rejected", semantic_issues: ["market_mood_payload_empty"] };
   const issues = [];
@@ -359,13 +380,19 @@ function assessMarketMood(response, maxAge, now) {
   const scale = stringField(record, ["scale", "range", "scale_label"]);
   if (!scale) issues.push("market_mood_scale_missing");
   const sourceWindow = stringField(record, ["window", "period", "source_window", "lookback"]);
-  if (!sourceWindow) issues.push("market_mood_window_missing");
+  const requestedWindow = sourceWindow
+    ?? (params.date ? "daily" : params.start_date && params.end_date ? `${params.start_date}/${params.end_date}` : null);
+  if (!requestedWindow) issues.push("market_mood_window_missing");
   const freshness = freshnessIssue(record, maxAge.market_mood, now, "market_mood");
   if (freshness.issue) issues.push(freshness.issue);
   return {
     semantic_status: issues.length === 0 ? "accepted" : "rejected",
     semantic_issues: issues,
-    evidence: { timestamp: freshness.timestamp, accepted_observations: issues.length === 0 ? 1 : 0 },
+    evidence: {
+      timestamp: freshness.timestamp,
+      source_window: requestedWindow,
+      accepted_observations: issues.length === 0 ? 1 : 0,
+    },
   };
 }
 
@@ -462,6 +489,7 @@ export function assessCryptoExecution({
   purpose,
   params,
   requestedParams = params,
+  requestedObservations = null,
   response,
   maxAge = DEFAULT_MAX_AGE,
   now,
@@ -477,16 +505,16 @@ export function assessCryptoExecution({
     return assessSpot(params, response, maxAge, now);
   }
   if (purpose === "requested_window_history") {
-    return assessHistory(params, response, maxAge, now, requestedParams);
+    return assessHistory(params, response, maxAge, now, requestedParams, requestedObservations);
   }
   if (purpose === "descriptive_technical_context") {
     return assessAnalytics(response, maxAge, now);
   }
   if (purpose === "cross_sectional_rankings") {
-    return assessRankings(response, maxAge, now);
+    return assessRankings(params, response, maxAge, now);
   }
   if (purpose === "market_wide_mood") {
-    return assessMarketMood(response, maxAge, now);
+    return assessMarketMood(params, response, maxAge, now);
   }
   if (purpose === "whale_activity") {
     return assessWhale(response, maxAge, now);

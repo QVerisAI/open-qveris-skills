@@ -82,10 +82,18 @@ const CASES = [
     checks: [
       { toolName: "qveris_finance.crypto_ref_master", params: { symbol: "BTC" } },
       { toolName: "qveris_finance.crypto_spot_rt", params: { symbol: "BTC" } },
-      { toolName: "qveris_finance.crypto_bars_history", params: { symbol: "BTC", interval: "1d", limit: 2 } },
-      { toolName: "qveris_finance.crypto_market_rankings", params: {} },
-      { toolName: "qveris_finance.crypto_fgi", params: {} },
-      { toolName: "qveris_finance.crypto_whale", params: { symbol: "BTC", lookback_hours: 24 } },
+      { toolName: "qveris_finance.crypto_bars_history", params: { symbol: "BTC", interval: "1d", start_date: "$DATE_MINUS_1", end_date: "$DATE" } },
+      { toolName: "qveris_finance.crypto_market_rankings", params: { mode: "market_cap", limit: 20, quote_currency: "USD", market: "global" } },
+      { toolName: "qveris_finance.crypto_fgi", params: { date: "$DATE" } },
+      {
+        toolName: "qveris_finance.crypto_whale",
+        params: {
+          address: "0x52908400098527886E0F7030069857D2E4169EE7",
+          network: "ETH",
+          start_date: "$DATE_MINUS_1",
+          end_date: "$DATE",
+        },
+      },
     ],
   },
 ];
@@ -101,6 +109,25 @@ function canonicalize(value) {
         .map((key) => [key, canonicalize(value[key])]),
     );
   }
+  return value;
+}
+
+function offsetDate(dateTag, dayOffset) {
+  const timestamp = Date.parse(`${dateTag}T00:00:00Z`);
+  if (Number.isNaN(timestamp)) throw new Error(`invalid date token base: ${dateTag}`);
+  return new Date(timestamp + dayOffset * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+function materializeDateTokens(value, dateTag) {
+  if (Array.isArray(value)) return value.map((item) => materializeDateTokens(item, dateTag));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [
+      key,
+      materializeDateTokens(child, dateTag),
+    ]));
+  }
+  if (value === "$DATE") return dateTag;
+  if (value === "$DATE_MINUS_1") return offsetDate(dateTag, -1);
   return value;
 }
 
@@ -166,6 +193,7 @@ This run verifies the live trace-to-artifact contract. It does not infer missing
 - Requested logical CAPs: ${markdownJson(checks.map((check) => check.toolName))}.
 - Final transmitted params by check: ${markdownJson(checkResults.map((check) => ({ tool_name: check.tool_name, params: check.final_params })))}.
 - Resolved CAPs by check: ${markdownJson(checkResults.map((check) => ({ tool_name: check.tool_name, capability_id: check.resolution?.capability_id ?? null, detail_source: check.resolution?.detail_source ?? null })))}.
+- Control-plane retries by check: ${markdownJson(checkResults.flatMap((check) => (check.resolution?.control_plane_retry_events ?? []).map((event) => ({ tool_name: check.tool_name, ...event }))))}.
 - Preflight errors by check: ${markdownJson(checkResults.filter((check) => check.adapter_error).map((check) => ({ tool_name: check.tool_name, code: check.adapter_error.code, message: check.adapter_error.message })))}.
 - Observed-call artifact: \`${artifactName}\`.
 - Raw provider, route, candidate, failover, and credential metadata is removed recursively before the artifact is saved.
@@ -184,7 +212,8 @@ Not investment advice.
 }
 
 async function runCase(apiKey, testCase, dateTag) {
-  const checks = testCase.checks ?? [{ toolName: testCase.toolName, params: testCase.params }];
+  const checks = (testCase.checks ?? [{ toolName: testCase.toolName, params: testCase.params }])
+    .map((check) => ({ ...check, params: materializeDateTokens(check.params, dateTag) }));
   const useSharedAdapter = testCase.skill === "qveris-crypto-market-radar";
   let executeFinanceCapability = executeSharedFinanceCapability;
   let sanitizeProviderRouteMetadata = sanitizeSharedMetadata;

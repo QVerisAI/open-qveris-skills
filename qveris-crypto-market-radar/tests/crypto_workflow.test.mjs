@@ -100,6 +100,61 @@ test("builds mandatory calls before optional calls and caps comparisons at five 
   );
 });
 
+test("plans history with live-supported UTC date bounds and keeps the observation target out of transport params", () => {
+  const plan = buildWorkflowPlan({
+    workflow: "asset_trend",
+    assets: ["BTC"],
+    interval: "1d",
+    limit: 3,
+    asOf: "2026-07-24T06:00:00Z",
+  });
+  const history = plan.calls.find((item) => item.purpose === "requested_window_history");
+  assert.deepEqual(history.params, {
+    symbol: "BTC",
+    interval: "1d",
+    start_date: "2026-07-22",
+    end_date: "2026-07-24",
+  });
+  assert.equal(history.requested_observations, 3);
+});
+
+test("plans rankings with an explicit comparable universe and basis", () => {
+  const plan = buildWorkflowPlan({
+    workflow: "market_radar",
+    limit: 20,
+    rankingMode: "market_cap",
+    rankingMarket: "global",
+    quoteCurrency: "USD",
+  });
+  const rankings = plan.calls.find((item) => item.purpose === "cross_sectional_rankings");
+  assert.deepEqual(rankings.params, {
+    mode: "market_cap",
+    limit: 20,
+    quote_currency: "USD",
+    market: "global",
+  });
+});
+
+test("requires an address-qualified whale target and maps it to live CAP parameter names", () => {
+  assert.throws(
+    () => buildWorkflowPlan({ workflow: "whale_monitor", assets: ["ETH"] }),
+    /contract address.*chain/i,
+  );
+  const plan = buildWorkflowPlan({
+    workflow: "whale_monitor",
+    assets: ["0x52908400098527886E0F7030069857D2E4169EE7@ethereum"],
+    lookbackHours: 24,
+    asOf: "2026-07-24T06:00:00Z",
+  });
+  const whale = plan.calls.find((item) => item.purpose === "whale_activity");
+  assert.deepEqual(whale.params, {
+    address: "0x52908400098527886E0F7030069857D2E4169EE7",
+    network: "ETH",
+    start_date: "2026-07-23",
+    end_date: "2026-07-24",
+  });
+});
+
 test("returns budget_limited before transport when mandatory calls exceed max_calls", async () => {
   let executions = 0;
   const result = await runWorkflow({
@@ -388,14 +443,15 @@ test("rejects an incomplete requested history window and reports accepted observ
   });
   const history = result.executions.find((execution) => execution.purpose === "requested_window_history");
   assert.equal(history.semantic_status, "rejected");
-  assert.deepEqual(history.semantic_issues, ["history_window_incomplete"]);
+  assert.equal(history.semantic_issues.includes("history_window_incomplete"), true);
+  assert.equal(history.semantic_issues.includes("history_start_boundary_missing"), true);
   assert.equal(history.evidence.accepted_observations, 2);
   const output = buildStructuredOutput(result, { asOf: "2026-07-24T00:10:00Z" });
   assert.equal(output.analysis.window.accepted_observations, 2);
   assert.equal(output.missing_fields.includes("history_window_incomplete"), true);
 });
 
-test("rejects history when the adapter drops a requested window parameter", async () => {
+test("rejects history when the adapter drops requested date-window parameters", async () => {
   const result = await runWorkflow({
     workflow: "asset_trend",
     assets: ["BTC"],
@@ -421,7 +477,8 @@ test("rejects history when the adapter drops a requested window parameter", asyn
   });
   const history = result.executions.find((execution) => execution.purpose === "requested_window_history");
   assert.equal(history.semantic_status, "rejected");
-  assert.equal(history.semantic_issues.includes("history_limit_not_transmitted"), true);
+  assert.equal(history.semantic_issues.includes("history_start_date_not_transmitted"), true);
+  assert.equal(history.semantic_issues.includes("history_end_date_not_transmitted"), true);
   assert.deepEqual(history.evidence.quote_currencies, ["USDT"]);
 });
 

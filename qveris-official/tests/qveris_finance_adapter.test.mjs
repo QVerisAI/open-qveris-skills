@@ -77,6 +77,91 @@ test("reads live cap-detail and falls back only to the matching live catalog row
   assert.match(inspected.detail_warning, /404/);
 });
 
+test("retries one transient control-plane fetch failure and records the recovery", async () => {
+  let catalogCalls = 0;
+  let detailCalls = 0;
+  const client = {
+    async listCapabilities() {
+      catalogCalls += 1;
+      if (catalogCalls === 1) throw new TypeError("fetch failed");
+      return { results: [BARS_DETAIL], total: 1 };
+    },
+    async getCapability() {
+      detailCalls += 1;
+      return BARS_DETAIL;
+    },
+  };
+
+  const inspected = await inspectFinanceCapability({
+    client,
+    apiKey: "test-key",
+    requestedCapability: "qveris_finance.mkt_bars_eod",
+    controlPlaneRetryDelayMs: 0,
+  });
+
+  assert.equal(catalogCalls, 2);
+  assert.equal(detailCalls, 1);
+  assert.deepEqual(inspected.control_plane_retry_events, [{
+    phase: "capability_catalog_page_1",
+    reason: "transient_fetch_failure",
+    attempt: 2,
+  }]);
+});
+
+test("retries a transient cap-detail fetch failure without reloading the catalog", async () => {
+  let catalogCalls = 0;
+  let detailCalls = 0;
+  const client = {
+    async listCapabilities() {
+      catalogCalls += 1;
+      return { results: [BARS_DETAIL], total: 1 };
+    },
+    async getCapability() {
+      detailCalls += 1;
+      if (detailCalls === 1) throw new TypeError("fetch failed");
+      return BARS_DETAIL;
+    },
+  };
+
+  const inspected = await inspectFinanceCapability({
+    client,
+    apiKey: "test-key",
+    requestedCapability: "qveris_finance.mkt_bars_eod",
+    controlPlaneRetryDelayMs: 0,
+  });
+
+  assert.equal(catalogCalls, 1);
+  assert.equal(detailCalls, 2);
+  assert.deepEqual(inspected.control_plane_retry_events, [{
+    phase: "capability_detail",
+    reason: "transient_fetch_failure",
+    attempt: 2,
+  }]);
+});
+
+test("does not retry non-network control-plane errors", async () => {
+  let catalogCalls = 0;
+  const client = {
+    async listCapabilities() {
+      catalogCalls += 1;
+      const error = new Error("unauthorized");
+      error.status = 401;
+      throw error;
+    },
+  };
+
+  await assert.rejects(
+    () => inspectFinanceCapability({
+      client,
+      apiKey: "test-key",
+      requestedCapability: "qveris_finance.mkt_bars_eod",
+      controlPlaneRetryDelayMs: 0,
+    }),
+    /unauthorized/,
+  );
+  assert.equal(catalogCalls, 1);
+});
+
 test("normalizes Shanghai and Shenzhen symbol forms without guessing ambiguous exchanges", () => {
   assert.equal(normalizeCnSymbol("600519.SS"), "600519.SH");
   assert.equal(normalizeCnSymbol("600519.sh"), "600519.SH");
@@ -491,6 +576,51 @@ test("retries once when a transient failure is explicitly marked retryable", asy
   assert.deepEqual(execution.retry_events, [{
     reason: "explicitly_retryable_transient_failure",
     reason_code: "provider.timeout",
+  }]);
+  assert.deepEqual(execution.qveris_trace.map(({ status, fallback_used }) => ({ status, fallback_used })), [
+    { status: "failed", fallback_used: false },
+    { status: "success", fallback_used: true },
+  ]);
+});
+
+test("retries once when the capability query throws fetch failed", async () => {
+  let calls = 0;
+  const detail = {
+    capability_id: "CRYPTO.SPOT.RT",
+    params: [{ name: "symbol", type: "string", required: true }],
+  };
+  const client = {
+    async listCapabilities() {
+      return { results: [detail], total: 1 };
+    },
+    async getCapability() {
+      return detail;
+    },
+    async queryCapability({ parameters }) {
+      calls += 1;
+      if (calls === 1) throw new TypeError("fetch failed");
+      return {
+        success: true,
+        execution_id: "fetch-recovered-2",
+        parameters,
+        result: { data: { symbol: "BTC", price: 65000 } },
+      };
+    },
+  };
+
+  const execution = await executeFinanceCapability({
+    client,
+    apiKey: "test-key",
+    requestedCapability: "qveris_finance.crypto_spot_rt",
+    parameters: { symbol: "BTC" },
+    maxAttempts: 2,
+    now: () => "2026-07-24T00:00:00.000Z",
+  });
+
+  assert.equal(calls, 2);
+  assert.deepEqual(execution.retry_events, [{
+    reason: "explicitly_retryable_transient_failure",
+    reason_code: "transport_error",
   }]);
   assert.deepEqual(execution.qveris_trace.map(({ status, fallback_used }) => ({ status, fallback_used })), [
     { status: "failed", fallback_used: false },

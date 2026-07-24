@@ -80,6 +80,57 @@ function call(toolName, params, { required, purpose }) {
   };
 }
 
+function utcDate(value, label) {
+  const timestamp = Date.parse(value);
+  if (Number.isNaN(timestamp)) throw new Error(`${label} must be a valid ISO timestamp`);
+  return new Date(timestamp).toISOString().slice(0, 10);
+}
+
+function intervalMilliseconds(interval) {
+  const match = String(interval ?? "").trim().toLowerCase().match(/^(\d+)(min|minute|minutes|h|hour|hours|d|day|days|w|week|weeks)$/);
+  if (!match) throw new Error("interval must use forms such as 1min, 1hour, 1day, or 1week");
+  const amount = Number(match[1]);
+  const unit = match[2];
+  if (unit.startsWith("min")) return amount * 60 * 1000;
+  if (unit === "h" || unit.startsWith("hour")) return amount * 60 * 60 * 1000;
+  if (unit === "d" || unit.startsWith("day")) return amount * 24 * 60 * 60 * 1000;
+  return amount * 7 * 24 * 60 * 60 * 1000;
+}
+
+function dateBoundsForObservations({ asOf, interval, observations }) {
+  const endMs = Date.parse(asOf);
+  if (Number.isNaN(endMs)) throw new Error("asOf must be a valid ISO timestamp");
+  const startMs = endMs - intervalMilliseconds(interval) * Math.max(0, observations - 1);
+  return {
+    start_date: utcDate(new Date(startMs).toISOString(), "start_date"),
+    end_date: utcDate(asOf, "end_date"),
+  };
+}
+
+function dateBoundsForLookback({ asOf, lookbackHours }) {
+  const endMs = Date.parse(asOf);
+  if (Number.isNaN(endMs)) throw new Error("asOf must be a valid ISO timestamp");
+  return {
+    start_date: utcDate(new Date(endMs - lookbackHours * 60 * 60 * 1000).toISOString(), "start_date"),
+    end_date: utcDate(asOf, "end_date"),
+  };
+}
+
+function whaleNetwork(chain) {
+  const normalized = String(chain ?? "").trim().toLowerCase();
+  const aliases = {
+    ethereum: "ETH",
+    eth: "ETH",
+    polygon: "Polygon",
+    bsc: "BSC",
+    "binance-smart-chain": "BSC",
+    arbitrum: "Arbitrum",
+    optimism: "Optimism",
+    base: "Base",
+  };
+  return aliases[normalized] ?? chain;
+}
+
 function assetParams(asset) {
   if (asset.contract_address) {
     return { contract_address: asset.contract_address, chain: asset.chain };
@@ -93,6 +144,10 @@ export function buildWorkflowPlan({
   interval = "1d",
   limit = 30,
   lookbackHours = 24,
+  asOf = new Date().toISOString(),
+  rankingMode = "market_cap",
+  rankingMarket = "global",
+  quoteCurrency = "USD",
   includeAnalytics = false,
   includeNews = false,
   includeSocial = false,
@@ -102,6 +157,7 @@ export function buildWorkflowPlan({
   }
   assertPositiveInteger(Number(limit), "limit");
   assertPositiveInteger(Number(lookbackHours), "lookbackHours");
+  utcDate(asOf, "asOf");
   const normalizedAssets = assets.map(normalizeAssetSpec);
   if (normalizedAssets.length > 5) {
     throw new Error("a workflow may include at most five assets");
@@ -117,27 +173,36 @@ export function buildWorkflowPlan({
   const optional = [];
   const addAssetCore = (asset, { history = false, whale = false } = {}) => {
     const params = assetParams(asset);
-    required.push(call("qveris_finance.crypto_ref_master", params, {
+    const dependencyKey = asset.contract_address
+      ? `contract:${asset.chain}:${asset.contract_address}`
+      : `symbol:${asset.chain ?? ""}:${asset.symbol}`;
+    required.push({ ...call("qveris_finance.crypto_ref_master", params, {
       required: true,
       purpose: "asset_identity",
-    }));
+    }), asset_key: dependencyKey });
     if (history) {
-      required.push(call("qveris_finance.crypto_bars_history", {
+      required.push({ ...call("qveris_finance.crypto_bars_history", {
         ...params,
         interval,
-        limit: Number(limit),
-      }, { required: true, purpose: "requested_window_history" }));
+        ...dateBoundsForObservations({ asOf, interval, observations: Number(limit) }),
+      }, { required: true, purpose: "requested_window_history" }),
+      asset_key: dependencyKey,
+      requested_observations: Number(limit) });
     }
     if (whale) {
-      required.push(call("qveris_finance.crypto_whale", {
-        ...params,
-        lookback_hours: Number(lookbackHours),
-      }, { required: true, purpose: "whale_activity" }));
+      if (!asset.contract_address || !asset.chain) {
+        throw new Error("whale_monitor requires a contract address with an explicit chain");
+      }
+      required.push({ ...call("qveris_finance.crypto_whale", {
+        address: asset.contract_address,
+        network: whaleNetwork(asset.chain),
+        ...dateBoundsForLookback({ asOf, lookbackHours: Number(lookbackHours) }),
+      }, { required: true, purpose: "whale_activity" }), asset_key: dependencyKey });
     }
-    required.push(call("qveris_finance.crypto_spot_rt", params, {
+    required.push({ ...call("qveris_finance.crypto_spot_rt", params, {
       required: true,
       purpose: "spot_snapshot",
-    }));
+    }), asset_key: dependencyKey });
     if (includeAnalytics) {
       optional.push(call("qveris_finance.analytics_tech_indicators", {
         ...params,
@@ -160,24 +225,32 @@ export function buildWorkflowPlan({
   };
 
   if (workflow === "market_radar") {
-    required.push(call("qveris_finance.crypto_market_rankings", {}, {
+    required.push(call("qveris_finance.crypto_market_rankings", {
+      mode: rankingMode,
+      limit: Number(limit),
+      quote_currency: String(quoteCurrency).toUpperCase(),
+      market: rankingMarket,
+    }, {
       required: true,
       purpose: "cross_sectional_rankings",
     }));
-    required.push(call("qveris_finance.crypto_fgi", {}, {
+    required.push(call("qveris_finance.crypto_fgi", { date: utcDate(asOf, "asOf") }, {
       required: true,
       purpose: "market_wide_mood",
     }));
     for (const asset of normalizedAssets) {
       const params = assetParams(asset);
-      optional.push(call("qveris_finance.crypto_ref_master", params, {
+      const dependencyKey = asset.contract_address
+        ? `contract:${asset.chain}:${asset.contract_address}`
+        : `symbol:${asset.chain ?? ""}:${asset.symbol}`;
+      optional.push({ ...call("qveris_finance.crypto_ref_master", params, {
         required: false,
         purpose: "displayed_asset_identity",
-      }));
-      optional.push(call("qveris_finance.crypto_spot_rt", params, {
+      }), asset_key: dependencyKey });
+      optional.push({ ...call("qveris_finance.crypto_spot_rt", params, {
         required: false,
         purpose: "displayed_asset_spot",
-      }));
+      }), asset_key: dependencyKey });
     }
   } else {
     for (const asset of normalizedAssets) {
@@ -222,6 +295,9 @@ export async function runWorkflow({
   interval = "1d",
   limit = 30,
   lookbackHours = 24,
+  rankingMode = "market_cap",
+  rankingMarket = "global",
+  quoteCurrency = "USD",
   includeAnalytics = false,
   includeNews = false,
   includeSocial = false,
@@ -231,12 +307,17 @@ export async function runWorkflow({
 } = {}) {
   assertPositiveInteger(Number(maxCalls), "maxCalls", { allowZero: true });
   const normalizedMaxCalls = Number(maxCalls);
+  const planningAsOf = now();
   const plan = buildWorkflowPlan({
     workflow,
     assets,
     interval,
     limit,
     lookbackHours,
+    asOf: planningAsOf,
+    rankingMode,
+    rankingMarket,
+    quoteCurrency,
     includeAnalytics,
     includeNews,
     includeSocial,
@@ -280,7 +361,7 @@ export async function runWorkflow({
 
   for (let index = 0; index < plan.calls.length; index += 1) {
     const item = plan.calls[index];
-    const dependencyKey = assetDependencyKey(item.params);
+    const dependencyKey = item.asset_key ?? assetDependencyKey(item.params);
     const isIdentityCall = item.purpose === "asset_identity" || item.purpose === "displayed_asset_identity";
     if (!isIdentityCall && dependencyKey && blockedAssetKeys.has(dependencyKey)) {
       result.skipped_calls.push({ ...item, reason: "identity_not_confirmed" });
@@ -320,6 +401,7 @@ export async function runWorkflow({
         purpose: item.purpose,
         params: finalParams,
         requestedParams: item.params,
+        requestedObservations: item.requested_observations,
         response: execution.response,
         maxAge: controls.max_age,
         now: now(),
@@ -333,6 +415,7 @@ export async function runWorkflow({
         resolution: execution.resolution ?? null,
         parameter_audit: execution.parameter_audit ?? null,
         retry_events: execution.retry_events ?? [],
+        control_plane_retry_events: execution.control_plane_retry_events ?? [],
         response: execution.response ?? null,
         prompt_injection_rejections: quarantined.rejected_paths,
         ...semantic,
@@ -499,7 +582,7 @@ export function buildStructuredOutput(result, {
         end: historyExecution?.evidence?.end ?? null,
         interval: historyCall.params.interval ?? null,
         timezone: "UTC",
-        requested_observations: historyCall.params.limit ?? 0,
+        requested_observations: historyCall.requested_observations ?? 0,
         accepted_observations: historyExecution?.evidence?.accepted_observations ?? 0,
       } : null,
       planned_calls: (result.plan?.calls ?? []).map((item) => item.tool_name),
@@ -560,6 +643,9 @@ function parseCli(argv) {
     interval: "1d",
     limit: 30,
     lookbackHours: 24,
+    rankingMode: "market_cap",
+    rankingMarket: "global",
+    quoteCurrency: "USD",
   };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -569,6 +655,9 @@ function parseCli(argv) {
     else if (arg === "--interval") parsed.interval = argv[++index];
     else if (arg === "--limit") parsed.limit = Number(argv[++index]);
     else if (arg === "--lookback-hours") parsed.lookbackHours = Number(argv[++index]);
+    else if (arg === "--ranking-mode") parsed.rankingMode = argv[++index];
+    else if (arg === "--ranking-market") parsed.rankingMarket = argv[++index];
+    else if (arg === "--quote-currency") parsed.quoteCurrency = argv[++index];
     else if (arg === "--max-age") {
       const value = argv[++index];
       const separator = value?.indexOf("=") ?? -1;
@@ -602,6 +691,9 @@ Options:
   --interval VALUE       History/analytics interval (default: 1d)
   --limit N              History observation request (default: 30)
   --lookback-hours N     Whale lookback (default: 24)
+  --ranking-mode VALUE   Ranking basis for market_radar (default: market_cap)
+  --ranking-market VALUE Ranking universe for market_radar (default: global)
+  --quote-currency VALUE Explicit quote basis (default: USD)
   --max-age CLASS=VALUE  Repeatable stricter freshness override, for example spot=PT5M
   --include-analytics    Add optional descriptive technical context
   --include-news         Add optional finance-news context

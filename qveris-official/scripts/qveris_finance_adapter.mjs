@@ -212,6 +212,9 @@ export async function loadFinanceCapabilityCatalog({
   apiKey,
   timeoutMs = 30000,
   pageSize = 100,
+  controlPlaneMaxAttempts = 2,
+  controlPlaneRetryDelayMs = 250,
+  controlPlaneRetryEvents = [],
 }) {
   if (!client?.listCapabilities) {
     throw new FinanceAdapterError("adapter_client_invalid", "The adapter client must provide listCapabilities().");
@@ -220,12 +223,18 @@ export async function loadFinanceCapabilityCatalog({
   const capabilities = [];
   const seen = new Set();
   for (let page = 1; page <= MAX_CATALOG_PAGES; page += 1) {
-    const payload = await client.listCapabilities({
-      apiKey,
-      domain: "finance",
-      page,
-      pageSize,
-      timeoutMs,
+    const payload = await withControlPlaneFetchRetry({
+      phase: `capability_catalog_page_${page}`,
+      maxAttempts: controlPlaneMaxAttempts,
+      retryDelayMs: controlPlaneRetryDelayMs,
+      retryEvents: controlPlaneRetryEvents,
+      operation: () => client.listCapabilities({
+        apiKey,
+        domain: "finance",
+        page,
+        pageSize,
+        timeoutMs,
+      }),
     });
     const rows = capabilityRows(payload);
     let newRows = 0;
@@ -254,6 +263,54 @@ export async function loadFinanceCapabilityCatalog({
     );
   }
   return capabilities;
+}
+
+function isTransientControlPlaneFetchFailure(error) {
+  if (Number.isFinite(Number(error?.status))) return false;
+  const text = [
+    error?.message,
+    error?.cause?.message,
+    error?.cause?.code,
+    error?.code,
+  ].filter(Boolean).join(" ");
+  return /\bfetch failed\b|\bnetwork error\b|ECONNRESET|ETIMEDOUT|EAI_AGAIN|UND_ERR_(?:CONNECT_TIMEOUT|SOCKET)/i.test(text);
+}
+
+async function withControlPlaneFetchRetry({
+  operation,
+  phase,
+  maxAttempts,
+  retryDelayMs,
+  retryEvents,
+}) {
+  if (!Number.isInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 2) {
+    throw new FinanceAdapterError(
+      "control_plane_max_attempts_invalid",
+      "controlPlaneMaxAttempts must be the integer 1 or 2.",
+    );
+  }
+  if (!Number.isFinite(retryDelayMs) || retryDelayMs < 0) {
+    throw new FinanceAdapterError(
+      "control_plane_retry_delay_invalid",
+      "controlPlaneRetryDelayMs must be a non-negative number.",
+    );
+  }
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (attempt >= maxAttempts || !isTransientControlPlaneFetchFailure(error)) throw error;
+      retryEvents.push({
+        phase,
+        reason: "transient_fetch_failure",
+        attempt: attempt + 1,
+      });
+      if (retryDelayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+      }
+    }
+  }
+  throw new FinanceAdapterError("control_plane_retry_exhausted", `Control-plane retry exhausted for ${phase}.`);
 }
 
 function errorHttpStatus(error) {
@@ -285,8 +342,18 @@ export async function inspectFinanceCapability({
   apiKey,
   requestedCapability,
   timeoutMs = 30000,
+  controlPlaneMaxAttempts = 2,
+  controlPlaneRetryDelayMs = 250,
 }) {
-  const catalog = await loadFinanceCapabilityCatalog({ client, apiKey, timeoutMs });
+  const controlPlaneRetryEvents = [];
+  const catalog = await loadFinanceCapabilityCatalog({
+    client,
+    apiKey,
+    timeoutMs,
+    controlPlaneMaxAttempts,
+    controlPlaneRetryDelayMs,
+    controlPlaneRetryEvents,
+  });
   const resolved = resolveFinanceCapability({ requestedCapability, capabilities: catalog });
   const capabilityId = String(resolved.capability_id);
 
@@ -295,7 +362,13 @@ export async function inspectFinanceCapability({
   }
 
   try {
-    const payload = await client.getCapability({ apiKey, capabilityId, timeoutMs });
+    const payload = await withControlPlaneFetchRetry({
+      phase: "capability_detail",
+      maxAttempts: controlPlaneMaxAttempts,
+      retryDelayMs: controlPlaneRetryDelayMs,
+      retryEvents: controlPlaneRetryEvents,
+      operation: () => client.getCapability({ apiKey, capabilityId, timeoutMs }),
+    });
     const detail = unwrapCapability(payload);
     if (!detail) {
       throw new FinanceAdapterError(
@@ -313,6 +386,7 @@ export async function inspectFinanceCapability({
       ...mergeDetail(resolved, detail),
       detail_source: "live_cap_detail",
       detail_warning: null,
+      control_plane_retry_events: controlPlaneRetryEvents,
     };
   } catch (error) {
     const status = errorHttpStatus(error);
@@ -323,6 +397,7 @@ export async function inspectFinanceCapability({
       ...resolved,
       detail_source: "live_catalog_fallback",
       detail_warning: `Live cap-detail returned HTTP ${status}; the exact matching row from the same live finance catalog was used.`,
+      control_plane_retry_events: controlPlaneRetryEvents,
     };
   }
 }
@@ -665,15 +740,18 @@ function isExplicitlyRetryableTransient(response) {
 
 function thrownFailure(error, capabilityId, parameters) {
   const status = errorHttpStatus(error);
+  const retryable = isTransientControlPlaneFetchFailure(error);
   return {
     success: false,
     capability_id: capabilityId,
     parameters,
     execution_id: null,
+    retryable,
     error_message: error instanceof Error ? error.message : String(error),
     error: {
       code: error?.code ?? (status ? `http_${status}` : "transport_error"),
       http_status: status,
+      retryable,
     },
   };
 }
@@ -865,6 +943,7 @@ export async function executeFinanceCapability({
       capability_id: capabilityId,
       detail_source: detail.detail_source,
       detail_warning: detail.detail_warning,
+      control_plane_retry_events: detail.control_plane_retry_events ?? [],
     },
     requested_param_names: Object.keys(parameters ?? {}),
     parameter_audit: {
@@ -873,6 +952,7 @@ export async function executeFinanceCapability({
       normalized_params: prepared.normalized_params,
     },
     retry_events: retryEvents,
+    control_plane_retry_events: detail.control_plane_retry_events ?? [],
     final_params: finalParams,
     response: finalObservedCall.response,
     observed_calls: observedCalls,

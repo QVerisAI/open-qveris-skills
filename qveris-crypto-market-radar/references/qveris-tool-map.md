@@ -10,10 +10,10 @@ Use standardized `qveris_finance.*` CAP queries only. Prefer `scripts/crypto_wor
 |---|---|---|---|
 | `qveris_finance.crypto_ref_master` | `CRYPTO.REF_MASTER` | asset identity, supported symbol/name, asset type, chain, contract, base/quote metadata | ambiguous ticker, wrong chain, wrong contract, wrong asset type, wrong pair |
 | `qveris_finance.crypto_spot_rt` | `CRYPTO.SPOT.RT` | current price/snapshot fields and their timestamp | wrong asset/pair, missing timestamp, stale beyond `max_age`, invalid unit/currency |
-| `qveris_finance.crypto_bars_history` | `CRYPTO.BARS.HISTORY` | ordered historical bars for a requested interval and window | fewer than two bars for change metrics, wrong window/interval/pair, unordered or duplicate timestamps |
+| `qveris_finance.crypto_bars_history` | `CRYPTO.BARS.HISTORY` | ordered historical bars for a requested interval and UTC `start_date`/`end_date` window | fewer than two bars for change metrics, wrong window/interval/pair, unordered or duplicate timestamps |
 | `qveris_finance.crypto_fgi` | `CRYPTO.FGI` | market-wide fear-and-greed observation and timestamp | missing scale/label/time; asset-specific interpretation |
 | `qveris_finance.crypto_market_rankings` | `CRYPTO.MARKET_RANKINGS` | returned cross-sectional ranking universe and measures | mixed universe, missing rank basis/time, future-performance inference |
-| `qveris_finance.crypto_whale` | `CRYPTO.WHALE` | returned large-activity records and supplied direction/context | wrong asset/chain/time, missing amount/unit, inferred intent without evidence |
+| `qveris_finance.crypto_whale` | `CRYPTO.WHALE` | returned large-activity records for an explicit public address and network | ticker-only request, wrong address/network/time, missing amount/unit, inferred intent without evidence |
 
 ## Optional Descriptive Analytics
 
@@ -52,6 +52,9 @@ Use at most one combined analytics call or the smallest set of specific analytic
 - Retain only parameters accepted by live detail. Drop unsupported optional parameters before calling.
 - Add only documented required parameters and use documented types/enums.
 - Preserve explicit contract addresses and chain names. Do not rewrite them from ticker assumptions.
+- For `CRYPTO.WHALE`, require `contract@chain` input and map it to `address` plus the live `network` enum; never substitute a sample wallet.
+- For `CRYPTO.BARS.HISTORY`, derive explicit UTC `start_date` and `end_date` from the requested interval and observation target instead of sending unsupported `limit`.
+- For `CRYPTO.MARKET_RANKINGS`, send explicit `mode`, `limit`, `quote_currency`, and `market` so the comparison basis is not implicit.
 - Preserve contract-address case and require an explicit chain for an address.
 - For pairs, keep base and quote explicit when the CAP supports them. Never compare differently quoted prices without normalization evidence.
 - If a corrected minimal request remains rejected, stop retrying and record the final normalized parameters and error category.

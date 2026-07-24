@@ -26,7 +26,7 @@ Complete this gate only when every asset has a safe unresolved identifier and th
 | Spot snapshot | `spot_snapshot` | reference + spot per asset |
 | Asset trend | `asset_trend` | reference + history + spot per asset |
 | Broad market radar | `market_radar` | rankings + market mood |
-| Whale monitor | `whale_monitor` | reference + whale + spot per asset |
+| Whale monitor | `whale_monitor` | reference + whale + spot per chain-qualified address |
 | Aligned comparison | `multi_asset_comparison` | reference + history + spot per asset |
 
 Limit one workflow to five assets. Run the bundled planner before transport:
@@ -44,10 +44,10 @@ Complete this gate only when the dry-run plan fits the budget or the report is e
 Prefer the bundled runner for multi-call and live/e2e work:
 
 ```text
-node qveris-crypto-market-radar/scripts/crypto_workflow.mjs --workflow whale_monitor --asset ETH --max-calls 5 --include-news --artifact <report-basename>.observed-calls.json
+node qveris-crypto-market-radar/scripts/crypto_workflow.mjs --workflow whale_monitor --asset 0x52908400098527886E0F7030069857D2E4169EE7@ethereum --max-calls 5 --include-news --artifact <report-basename>.observed-calls.json
 ```
 
-The default stdout is Schema-valid structured output containing only accepted evidence projections. Use `--runtime-json` only for local diagnostics. The runner resolves the live CAP ID, reads cap-detail, filters and coerces parameters, reserves mandatory-call budget, limits retries, sanitizes metadata, and emits exact observed calls. Do not issue a duplicate manual `cap-detail` when using it.
+The default stdout is Schema-valid structured output containing only accepted evidence projections. Use `--runtime-json` only for local diagnostics. The runner resolves the live CAP ID, reads cap-detail, retries one transient control-plane fetch failure, filters and coerces parameters, reserves mandatory-call budget, limits data retries, sanitizes metadata, and emits exact observed calls. Historical observation targets are translated to UTC `start_date`/`end_date`; whale targets are translated from `contract@chain` to live `address`/`network` names. Do not issue a duplicate manual `cap-detail` when using it.
 
 Use only `QVERIS_API_KEY`. If native `qveris_finance.*` tools are used instead, enforce the same attempt budget and preserve exact observed-call records.
 
