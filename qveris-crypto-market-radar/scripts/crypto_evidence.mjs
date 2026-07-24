@@ -462,7 +462,9 @@ export function quarantineQualitativeExecution(execution, purpose) {
     const originalCall = execution.observed_calls?.[index];
     const call = quarantined.observed_calls[index];
     if (canonicalJson(originalCall?.response) !== canonicalJson(call.response)) {
-      call.raw_response_sha256 = originalCall?.response_sha256 ?? responseSha256(originalCall?.response);
+      call.raw_response_sha256 = originalCall?.raw_response_sha256
+        ?? originalCall?.response_sha256
+        ?? responseSha256(originalCall?.response);
       call.response_sha256 = responseSha256(call.response);
     }
   }

@@ -40,6 +40,11 @@ PROVIDER_API_URL_RE = re.compile(
     r"yahoo|yfinance|akshare|snowball|xueqiu|sina|alpaca|longbridge|finviz)[^\s|)`]*",
     re.I,
 )
+SIGNED_DOWNLOAD_URL_RE = re.compile(
+    r"https?://[^\s|)`]*(?:OSSAccessKeyId|X-Amz-(?:Credential|Signature)|"
+    r"[?&](?:Signature|access_token|token)=)[^\s|)`]*",
+    re.I,
+)
 
 MOJIBAKE_REGEXES = [
     re.compile("\ufffd"),
@@ -112,12 +117,13 @@ STRICT_TRACE_SKILLS = {
     "qveris-daymade-financial-data-suite",
     "qveris-uzi-equity-research",
     "qveris-crypto-market-radar",
+    "qveris-supply-chain-catalyst-radar",
 }
 
 SENSITIVE_PARAM_KEY_RE = re.compile(
     r"(^|_)(provider|route|routing|candidate|candidates|failover|credential|"
     r"api_key|private_key|seed_phrase|mnemonic|signing_key|wallet_credential|"
-    r"source_tool_id|tool_id|cap_tool_id)($|_)",
+    r"source_tool_id|tool_id|cap_tool_id|full_content_file_url)($|_)",
     re.I,
 )
 
@@ -223,7 +229,7 @@ def sensitive_string_paths(value: object, path: str = "value") -> list[str]:
         for index, child in enumerate(value):
             paths.extend(sensitive_string_paths(child, f"{path}[{index}]"))
     elif isinstance(value, str):
-        if legacy_finance_routes(value) or PROVIDER_API_URL_RE.search(value):
+        if legacy_finance_routes(value) or PROVIDER_API_URL_RE.search(value) or SIGNED_DOWNLOAD_URL_RE.search(value):
             paths.append(path)
     return paths
 

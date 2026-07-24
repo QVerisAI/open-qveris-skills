@@ -77,6 +77,20 @@ const CASES = [
     params: { symbol: "SPY", market: "US", start_date: "2026-06-01", end_date: "2026-06-30" },
   },
   {
+    skill: "qveris-supply-chain-catalyst-radar",
+    caseId: "supply-chain-alt-cap-matrix",
+    checks: [
+      { toolName: "qveris_finance.ref_security_master", params: { symbol: "AAPL" } },
+      { toolName: "qveris_finance.alt_supply_chain", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.alt_job_postings", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.alt_patents", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.alt_govt_contracts", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.filings_regulatory_metadata", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.news_fin_tagged", params: { symbol: "AAPL", start_date: "$DATE_MINUS_7", end_date: "$DATE", limit: 5 } },
+      { toolName: "qveris_finance.alt_shipping_ais", params: { vessel_id: "210035000", start_date: "$DATE_MINUS_1", end_date: "$DATE" } },
+    ],
+  },
+  {
     skill: "qveris-crypto-market-radar",
     caseId: "crypto-base-cap-matrix",
     checks: [
@@ -127,7 +141,8 @@ function materializeDateTokens(value, dateTag) {
     ]));
   }
   if (value === "$DATE") return dateTag;
-  if (value === "$DATE_MINUS_1") return offsetDate(dateTag, -1);
+  const offsetMatch = typeof value === "string" ? /^\$DATE_MINUS_(\d+)$/.exec(value) : null;
+  if (offsetMatch) return offsetDate(dateTag, -Number(offsetMatch[1]));
   return value;
 }
 
@@ -214,7 +229,10 @@ Not investment advice.
 async function runCase(apiKey, testCase, dateTag) {
   const checks = (testCase.checks ?? [{ toolName: testCase.toolName, params: testCase.params }])
     .map((check) => ({ ...check, params: materializeDateTokens(check.params, dateTag) }));
-  const useSharedAdapter = testCase.skill === "qveris-crypto-market-radar";
+  const useSharedAdapter = new Set([
+    "qveris-crypto-market-radar",
+    "qveris-supply-chain-catalyst-radar",
+  ]).has(testCase.skill);
   let executeFinanceCapability = executeSharedFinanceCapability;
   let sanitizeProviderRouteMetadata = sanitizeSharedMetadata;
   let financeTransport = null;

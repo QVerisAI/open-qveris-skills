@@ -83,6 +83,8 @@ validate-finance-reports: validate-finance-fixtures validate-finance-contract-se
 		qveris-crypto-market-radar/examples/default-markdown-report.md \
 		qveris-crypto-market-radar/examples/natural-language-test-output-2026-07-24.md \
 		qveris-crypto-market-radar/examples/live-e2e-output-2026-07-24.md \
+		qveris-supply-chain-catalyst-radar/examples/default-markdown-report.md \
+		qveris-supply-chain-catalyst-radar/examples/live-e2e-output-2026-07-24.md \
 		qveris-a-share-factor-screen/examples/live-e2e-output-2026-07-13.md \
 		qveris-a-stock-data-layer/examples/live-e2e-output-2026-07-13.md \
 		qveris-a-share-data/examples/live-e2e-output-2026-07-13.md \
@@ -105,6 +107,7 @@ validate-finance-business-adapters:
 
 validate-crypto-radar:
 	$(NODE) --test qveris-crypto-market-radar/tests/*.test.mjs
+	$(NODE) --test qveris-supply-chain-catalyst-radar/tests/*.test.mjs
 
 validate-finance-contract-self-tests:
 	$(PYTHON) scripts/validate_qveris_finance_fixtures.py --self-test
@@ -124,4 +127,5 @@ validate-finance-fixtures: validate-finance-shared-contract
 		qveris-alphaear-market-intelligence \
 		qveris-daymade-financial-data-suite \
 		qveris-uzi-equity-research \
-		qveris-crypto-market-radar
+		qveris-crypto-market-radar \
+		qveris-supply-chain-catalyst-radar
