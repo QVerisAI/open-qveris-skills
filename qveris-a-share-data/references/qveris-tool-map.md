@@ -16,6 +16,7 @@ Source snapshot used for this map: `third_party/source_repos/57-a-share-skill` a
 | Events | `qveris_finance.event_calendar_earnings`, `qveris_finance.event_calendar_corp`, `qveris_finance.event_calendar_ipo` | Earnings, corporate, and IPO calendar context | Reject wrong-window events; IPO calendar is not A+H mapping by itself. |
 | News | `qveris_finance.news_fin_tagged`, `qveris_finance.sentiment_text_signals` | Tagged news and sentiment when available | Tagged news alone is qualitative only. |
 | Sector context | `qveris_finance.ref_security_master`, `qveris_finance.ref_classification_industry` | Sector and industry metadata | Classification is not flow, heatmap, breadth, or market-wide mover evidence. |
+| Market-wide movers | `qveris_finance.mkt_top_movers` | Conditional mainland gainers, losers, amount, volume, or turnover ranking | Require live params with `market=CN`, mainland-only unique symbols, mode-consistent ordering, effective limit, and valid names/prices/change percentages; label `freshness_unverified` when no `timestamp` or `as_of` is returned. |
 
 ## Source Script Conversion
 
@@ -25,7 +26,7 @@ Source snapshot used for this map: `third_party/source_repos/57-a-share-skill` a
 | `fetch_history.py` and fallback routes | Use QVeris bars and fundamentals; reject thin or wrong-window payloads. |
 | `fetch_technical.py` | Calculate indicators from validated QVeris bars only; no signal advice. |
 | `fetch_stock_events.py` | Use corporate events, earnings calendar, news, and sentiment where validated. |
-| `fetch_danginvest.py` | Replace hot industry/concept reads with validated classification metadata. Use the audited Web lane for issuer news; do not claim market-wide heat or movers. |
+| `fetch_danginvest.py` | Replace hot industry/concept reads with validated classification metadata. A validated `mkt_top_movers` response may support a market-wide mover ranking only; use the audited Web lane for issuer news and do not claim capital flow or sector heat. |
 | `fetch_sector_info.py` | Use security master and classification; concept fields are not guaranteed. |
 | `fetch_ah_stocks.py` and `fetch_ah_ipo_timeline.py` | Conditional only; use verified security/event fields or mark missing. |
 | trading/MACD/paper-trading folders | Removed from this skill. |
@@ -39,7 +40,7 @@ Source snapshot used for this map: `third_party/source_repos/57-a-share-skill` a
 | Dedicated industry/theme classification | Industry route returned usable payload in 2026-07-08 smoke; theme route returned empty payload. Use only non-empty validated rows. |
 | Corporate event detail routes | Corporate-event route returned usable rows in smoke; validate event type/date/security. |
 | EOD bars | Live smoke showed usable and thin payload cases; observation count remains mandatory. |
-| Top movers / heat proxies | Never call `qveris_finance.mkt_top_movers`. Rank only a bounded user-supplied ticker list from validated same-window bars, label it `bounded_universe_rank`, and disclose that it is not the full market. |
+| Top movers / heat proxies | Conditionally call `qveris_finance.mkt_top_movers` with `market=CN` after `cap-detail`. Accept only mainland-only unique rows with valid names/prices/change percentages, effective `mode` and `limit`, and correct ordering. Label missing time metadata `freshness_unverified`. Use it only as mover context, not heat, breadth, flow, or a limit-board pool. A bounded user list remains `bounded_universe_rank`. |
 | Stock-level order-size flow | `qveris_finance.flow_large_order` returned usable rows in smoke; validate stock identity/date. |
 | Lock-up calendar | `qveris_finance.mkt_cn_lock_up` returned usable rows in smoke; validate stock identity/date. |
 | Sector heatmap with capital flow | Do not infer flow from top movers; `flow_sector_capital` smoke returned stock-level shaped rows, so reject unless sector/concept fields are present. |

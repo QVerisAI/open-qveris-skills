@@ -22,12 +22,15 @@ test("all six benchmarked Skills ship the canonical Web news and sentiment polic
   }
 });
 
-test("all six Skills ship the refreshed CAP snapshot and exclude unsupported market-wide routes", async () => {
+test("all six Skills ship the refreshed CAP snapshot and gate market-wide routes", async () => {
   const snapshotName = "qveris-finance-cap-registry-snapshot-2026-07-07.md";
   const canonical = await readFile(new URL(`references/${snapshotName}`, root));
   const canonicalText = canonical.toString("utf8");
   assert.match(canonicalText, /ESTIMATES\.CONSENSUS` passed three independent production queries/);
-  assert.match(canonicalText, /Do not call `qveris_finance\.index_constituents` or `qveris_finance\.mkt_top_movers`/);
+  assert.match(canonicalText, /Do not call `qveris_finance\.index_constituents` for universe membership/);
+  assert.match(canonicalText, /`qveris_finance\.mkt_top_movers` \| conditional/);
+  assert.match(canonicalText, /market=CN/);
+  assert.match(canonicalText, /freshness_unverified/);
 
   for (const skill of skills) {
     const snapshot = await readFile(new URL(`${skill}/references/${snapshotName}`, root));
@@ -38,6 +41,11 @@ test("all six Skills ship the refreshed CAP snapshot and exclude unsupported mar
   const aShare = await readFile(new URL("qveris-a-share-data/SKILL.md", root), "utf8");
   const dataLayer = await readFile(new URL("qveris-a-stock-data-layer/SKILL.md", root), "utf8");
   assert.match(factor, /Never call `qveris_finance\.index_constituents`/);
-  assert.match(aShare, /Never call `qveris_finance\.mkt_top_movers`/);
-  assert.match(dataLayer, /Never call `qveris_finance\.mkt_top_movers`/);
+  for (const [skill, instructions] of [["qveris-a-share-data", aShare], ["qveris-a-stock-data-layer", dataLayer]]) {
+    assert.match(instructions, /Call `qveris_finance\.mkt_top_movers`/i, `${skill} does not conditionally restore top movers`);
+    assert.match(instructions, /market=CN/, `${skill} does not force mainland routing`);
+    assert.match(instructions, /freshness_unverified/, `${skill} does not disclose missing freshness metadata`);
+    assert.match(instructions, /never as capital flow, sector heat, breadth, or a limit-up\/limit-down pool/i);
+    assert.doesNotMatch(instructions, /Never call `qveris_finance\.mkt_top_movers`/);
+  }
 });

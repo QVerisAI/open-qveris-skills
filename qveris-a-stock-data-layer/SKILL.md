@@ -55,7 +55,7 @@ Source record:
 - Use opened, issuer-matched, in-window Web pages for news and qualitative sentiment; keep their provenance in `web_trace`, separate from QVeris CAP calls.
 - Use analyst/research rows only after a current `cap-detail` confirms issuer, report type, and date fields for the route. Suppress recommendation and target fields.
 - Do not use unverified A-share specialty data such as industry/theme classification routes, corporate-event detail routes, capital flow, northbound flow, LHB, unlock calendars, limit-up boards, investor Q&A, ETF options, or concept heat as primary evidence unless a current `cap-detail` confirms a callable QVeris finance CAP with matching fields.
-- Never call `qveris_finance.mkt_top_movers`. If the user supplies a bounded ticker list, rank validated same-window bars and label it `bounded_universe_rank`; otherwise mark market-wide movers unavailable.
+- Call `qveris_finance.mkt_top_movers` for a requested mainland market-wide mover list only after current `cap-detail` confirms `market`, `mode`, and `limit`. Pass `market=CN`; require every returned symbol to identify a mainland `.SH`, `.SZ`, or `.BJ` security, require unique symbols, nonempty names/prices/change percentages, the requested row limit, and ordering consistent with `mode`. Hard reject mixed-market rows, ignored parameters, duplicates, or malformed rankings. When the payload has no `timestamp` or `as_of`, label the result `freshness_unverified`. Treat accepted rows only as mover/ranking context, never as capital flow, sector heat, breadth, or a limit-up/limit-down pool.
 - If the user asks for a source-repo-only layer that QVeris has not verified, answer with `capability_unavailable` or `not_called`, not with legacy source instructions.
 
 ## CAP Invocation

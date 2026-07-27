@@ -52,7 +52,7 @@ Source record:
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted industry labels, event titles, news snippets, or research titles in user-facing evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
 - Treat sector views built from security-master metadata as classification context, not capital-flow, heatmap, or market-breadth evidence.
 - Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`. Use the audited Web lane for issuer news and qualitative sentiment.
-- Never call `qveris_finance.mkt_top_movers`. A market-wide mover or heatmap request is unavailable unless the user supplies a bounded ticker list; for that list only, rank validated same-window bars and label the result `bounded_universe_rank`, never a full-market leaderboard.
+- Call `qveris_finance.mkt_top_movers` for a requested mainland market-wide mover list only after current `cap-detail` confirms `market`, `mode`, and `limit`. Pass `market=CN`; require every returned symbol to identify a mainland `.SH`, `.SZ`, or `.BJ` security, require unique symbols, nonempty names/prices/change percentages, the requested row limit, and ordering consistent with `mode`. Hard reject mixed-market rows, ignored parameters, duplicates, or malformed rankings. When the payload has no `timestamp` or `as_of`, label the result `freshness_unverified`. Treat accepted rows only as mover/ranking context, never as capital flow, sector heat, breadth, or a limit-up/limit-down pool.
 - Call A+H mapping, HK listing timeline, IPO timeline, corporate-event detail, or classification routes only after a current `cap-detail` confirms a QVeris finance CAP and fields. If unavailable, mark missing.
 - If the original data script supported a route but no verified QVeris finance CAP exists, report it as missing rather than returning source-specific commands.
 
@@ -76,7 +76,7 @@ Source record:
 1. Market data read: resolve symbol, fetch quote, fetch bars, validate window, and summarize price/volume fields without trading actions.
 2. Technical context: compute requested indicators from validated bars only; if bars are insufficient, mark the indicator missing.
 3. Corporate event read: use corporate calendar and earnings calendar where relevant; reject wrong-window events.
-4. Sector context read: use validated industry/theme classification. If the user supplied a bounded ticker list, compute a same-window list ranking from validated bars and disclose its limited coverage; otherwise mark market-wide heat and movers unavailable.
+4. Sector and mover context read: use validated industry/theme classification for sector metadata. For a requested full-market mover list, conditionally call `mkt_top_movers` with `market=CN` and apply the mover semantic gate; if freshness metadata is absent, label the ranking `freshness_unverified`. For a user-supplied bounded ticker list, rank validated same-window bars and label it `bounded_universe_rank`. Never label either output capital flow, sector heat, breadth, or a limit-board pool.
 5. News context read: use the audited Web lane for issuer news and qualitative sentiment; never call the two disabled CAPs.
 6. A+H or IPO timeline read: use security master and event calendar only when fields explicitly support the requested timeline.
 
