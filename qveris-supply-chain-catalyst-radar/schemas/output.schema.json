@@ -1,0 +1,151 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QVeris Supply Chain Catalyst Radar Output",
+  "$defs": {
+    "safeValue": {
+      "oneOf": [
+        { "type": ["string", "number", "boolean", "null"] },
+        { "type": "array", "items": { "$ref": "#/$defs/safeValue" } },
+        {
+          "type": "object",
+          "propertyNames": { "not": { "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])" } },
+          "additionalProperties": { "$ref": "#/$defs/safeValue" }
+        }
+      ]
+    },
+    "traceRow": {
+      "type": "object",
+      "required": ["tool_name", "params", "status", "execution_id", "fallback_used", "missing_fields"],
+      "properties": {
+        "tool_name": { "type": "string", "pattern": "^qveris_finance\\." },
+        "params": {
+          "type": "object",
+          "propertyNames": { "not": { "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])" } },
+          "additionalProperties": { "$ref": "#/$defs/safeValue" }
+        },
+        "status": { "enum": ["success", "failed", "rejected"] },
+        "execution_id": { "type": ["string", "null"] },
+        "fallback_used": { "type": "boolean" },
+        "missing_fields": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  },
+  "type": "object",
+  "required": ["skill", "source_record", "controls", "analysis", "risk_notes", "missing_fields", "data_quality", "observed_call_count", "qveris_trace", "disclaimer", "suppressed_fields"],
+  "properties": {
+    "skill": { "const": "qveris-supply-chain-catalyst-radar" },
+    "source_record": {
+      "type": "object",
+      "required": ["original_repository", "github_url", "license", "adapted_components", "upstream_commit", "evaluated_at"],
+      "properties": {
+        "original_repository": { "type": "string" },
+        "github_url": { "type": "string" },
+        "license": { "type": "string" },
+        "adapted_components": { "type": "array", "items": { "type": "string" } },
+        "upstream_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "evaluated_at": { "type": "string", "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "controls": {
+      "type": "object",
+      "required": ["dry_run", "max_calls", "max_age", "budget_note"],
+      "properties": {
+        "dry_run": { "type": "boolean" },
+        "max_calls": { "type": "integer", "minimum": 0 },
+        "max_age": {
+          "type": "object",
+          "required": ["identity", "supply_chain", "jobs", "patents", "contracts", "filings", "news", "shipping"],
+          "properties": {
+            "identity": { "type": "string", "pattern": "^P" },
+            "supply_chain": { "type": "string", "pattern": "^P" },
+            "jobs": { "type": "string", "pattern": "^P" },
+            "patents": { "type": "string", "pattern": "^P" },
+            "contracts": { "type": "string", "pattern": "^P" },
+            "filings": { "type": "string", "pattern": "^P" },
+            "news": { "type": "string", "pattern": "^P" },
+            "shipping": { "type": "string", "pattern": "^P" }
+          },
+          "additionalProperties": false
+        },
+        "budget_note": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["workflow", "summary", "evidence_status", "issuer", "change_assessment", "shipping_company_link_status", "evidence"],
+      "properties": {
+        "workflow": { "enum": ["company_radar", "hiring_innovation", "contract_watch", "shipping_watch"] },
+        "summary": { "type": "string" },
+        "evidence_status": { "enum": ["corroborated", "unconfirmed", "unsupported", "partial", "limited", "budget_limited"] },
+        "as_of": { "type": ["string", "null"] },
+        "issuer": { "type": ["string", "null"] },
+        "window": {
+          "type": ["object", "null"],
+          "properties": {
+            "start": { "type": "string" },
+            "end": { "type": "string" },
+            "timezone": { "const": "UTC" }
+          },
+          "required": ["start", "end", "timezone"],
+          "additionalProperties": false
+        },
+        "planned_calls": { "type": "array", "items": { "type": "string", "pattern": "^qveris_finance\\." } },
+        "sections": { "type": "array", "items": { "type": "string" } },
+        "change_assessment": {
+          "type": "object",
+          "required": ["status", "reason"],
+          "properties": {
+            "status": { "enum": ["changed", "unchanged", "unsupported"] },
+            "reason": { "type": "string" },
+            "baseline_as_of": { "type": "string" },
+            "baseline_value": { "$ref": "#/$defs/safeValue" },
+            "current_as_of": { "type": "string" },
+            "current_value": { "$ref": "#/$defs/safeValue" },
+            "comparison_basis": { "type": "string" }
+          },
+          "additionalProperties": false
+        },
+        "shipping_company_link_status": { "enum": ["corroborated", "unverified", "not_requested"] },
+        "interpretation_limits": { "type": "array", "items": { "type": "string" } },
+        "rejections": { "type": "array", "items": { "type": "string" } },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tool_name", "purpose", "status", "fields"],
+            "properties": {
+              "tool_name": { "type": "string", "pattern": "^qveris_finance\\." },
+              "purpose": { "type": "string" },
+              "status": { "const": "accepted" },
+              "fields": { "type": "object", "additionalProperties": { "$ref": "#/$defs/safeValue" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "risk_notes": { "type": "array", "items": { "type": "string" } },
+    "missing_fields": { "type": "array", "items": { "type": "string" } },
+    "data_quality": {
+      "type": "object",
+      "required": ["status", "warnings", "stale_fields", "out_of_window_events", "suppressed_fields"],
+      "properties": {
+        "status": { "enum": ["complete", "partial", "limited", "insufficient", "budget_limited"] },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "stale_fields": { "type": "array", "items": { "type": "string" } },
+        "out_of_window_events": { "type": "array", "items": { "type": ["string", "object"] } },
+        "suppressed_fields": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "observed_call_count": { "type": "integer", "minimum": 0 },
+    "qveris_trace": { "type": "array", "items": { "$ref": "#/$defs/traceRow" } },
+    "disclaimer": { "const": "Not investment advice." },
+    "suppressed_fields": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

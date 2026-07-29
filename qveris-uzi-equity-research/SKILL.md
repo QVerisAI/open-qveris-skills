@@ -5,7 +5,7 @@ description: QVeris-native adaptation of candidate 34, UZI-Skill. Use for A-shar
 
 # QVeris UZI Equity Research
 
-Use this skill to preserve UZI's broad equity-research, valuation, hot-money, and trap-risk review workflows while removing action-oriented conclusions and replacing scripts, web search, persona scoring, and direct data routes with QVeris finance CAP evidence.
+Use this skill to preserve UZI's broad equity-research, valuation, hot-money, and trap-risk review workflows while removing action-oriented conclusions and replacing scripts, persona scoring, and direct data routes with QVeris structured-data CAP evidence plus audited Web news/sentiment evidence.
 
 Source record:
 
@@ -39,6 +39,7 @@ Source record:
 - Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, models, personas, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Reject transport-success payloads that return the wrong entity, wrong market, wrong asset type, wrong date window, wrong fiscal period, too-thin bars, empty relevant fields, or corrupted text.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, trade triggers, automated execution plans, and "safe to trade" conclusions.
+- Read and follow `references/qveris-web-news-sentiment-policy.md`. Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`; use its audited Web lane for issuer news and qualitative sentiment in every run mode, including benchmark and replay.
 
 ## Evidence Gate
 
@@ -52,7 +53,7 @@ Source record:
 - For CN/A-share requests, read the A-share availability matrix in `references/qveris-tool-map.md` before calling financials or valuation routes. Do not assume US-style IS/CF/derived-ratio support applies to A shares; unsupported or unverified CN financial layers must become `capability_unavailable` or `market_support_unverified`.
 - Use LHB, large-order flow, lock-up, top-mover, concept, or sector specialty data only after `cap-detail` confirms the QVeris CAP and returned row semantics for the current run.
 - When LHB or flow is explicitly requested, pass the logical `qveris_finance.*` name through the Skill-owned adapter so it resolves the live canonical CAP ID. If live catalog/detail resolution is unavailable, mark the layer `capability_unavailable` or `tool_runtime_missing`; never fall back to a dated static CAP ID.
-- Treat tagged news as qualitative background only unless sentiment or cluster evidence succeeds and passes issuer relevance checks.
+- Use audited Web pages for issuer news and qualitative sentiment; keep QVeris cluster or structured-event evidence as a separate layer.
 - Do not present trap-risk flags as proven fraud or as a trading instruction; present them as monitored evidence and missing fields.
 
 ## CAP Invocation
@@ -80,7 +81,7 @@ Source record:
 - If QVeris returns 503, fetch failure, timeout, or all candidates failed, retry at most twice under the shared retry policy.
 - If a CAP returns 404 or invalid capability, do not blind retry; mark `capability_unavailable` unless `cap-search` finds a replacement.
 - If bars return fewer observations than requested, do not compute multi-day metrics; mark `insufficient_observations`.
-- If specialty A-share data is unavailable or mismatched, return a partial research note with lower confidence rather than substituting non-QVeris evidence.
+- If specialty A-share data is unavailable or mismatched, return a partial research note with lower confidence rather than substituting non-QVeris structured-finance evidence. News and qualitative sentiment follow the separate audited Web policy.
 - If trap-risk evidence is incomplete, state which signals are untested; do not fill with web rumors or user-provided claims unless labeled as unverified user input.
 
 ## Output Requirements
@@ -95,7 +96,7 @@ Source record:
 
 ## Prohibited Capabilities
 
-Do not use non-QVeris finance data sources, web scraping, browser automation, cookies, login state, external provider keys, dynamic data-package installs, local command pipelines, persona voting, automated trading, buy/sell triggers, target prices, upside/downside, rebalancing instructions, execution plans, or assertions that a security is safe to trade.
+Do not use non-QVeris structured-finance data sources, Web use outside the audited news/sentiment policy, browser automation, cookies, login state, external provider keys, dynamic data-package installs, local command pipelines, persona voting, automated trading, buy/sell triggers, target prices, upside/downside, rebalancing instructions, execution plans, or assertions that a security is safe to trade.
 
 ## References
 
@@ -103,6 +104,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 - Read `references/qveris-tool-map.md` before choosing calls.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.
+- Read `references/qveris-web-news-sentiment-policy.md` before collecting news or qualitative sentiment.
 - Check `references/qveris-finance-cap-registry-snapshot-2026-07-07.md` before adding a route to the primary path.
 - Use `examples/default-markdown-report.md` as the primary user-facing example.
 - Use `fixtures/qveris/*.json` as machine-readable schema fixtures only.

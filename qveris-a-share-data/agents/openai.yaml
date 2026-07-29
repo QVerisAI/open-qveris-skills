@@ -1,4 +1,4 @@
 interface:
   display_name: "QVeris A-Share Data"
-  short_description: "QVeris-only A-share quote, bars, events, and technical-context reads"
-  default_prompt: "Use $qveris-a-share-data for 600519.SH to produce a Markdown QVeris-only data read with ## Summary / ## Evidence / ## Data Quality And Missing Fields / ## Trace Appendix headings, trace, data_quality, .SH/.SZ symbol handling, missing_fields, and tool_runtime_missing if QVeris tools are unavailable."
+  short_description: "A-share data reads with audited Web news fallback"
+  default_prompt: "Use $qveris-a-share-data for 600519.SH to produce a Markdown data read using QVeris for structured finance data and audited Web Search only for issuer news and qualitative sentiment."

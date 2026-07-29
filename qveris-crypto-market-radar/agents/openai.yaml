@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Crypto Market Radar"
+  short_description: "Read-only crypto market, sentiment, and whale radar"
+  default_prompt: "Use $qveris-crypto-market-radar to create a trace-backed crypto market radar report without trading or wallet actions."

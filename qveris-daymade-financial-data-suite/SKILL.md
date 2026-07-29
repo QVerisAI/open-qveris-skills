@@ -39,6 +39,7 @@ Source record:
 - Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Treat transport success as insufficient until identity, window, period, shape, freshness, and relevance checks pass.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, trade triggers, automated execution plans, and delivery-channel instructions.
+- Read and follow `references/qveris-web-news-sentiment-policy.md`. Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`; use its audited Web lane for issuer news and qualitative sentiment in every run mode, including benchmark and replay.
 
 ## Evidence Gate
 
@@ -53,7 +54,7 @@ Source record:
 - Treat capex as a direct cash-investing/free-cash-flow input only. Do not say capital investment compressed net income unless an aligned depreciation, amortization, impairment, disposal, or write-down bridge supports the profit effect; otherwise describe the observations without causal wording.
 - If a requested annual/FY period returns latest-quarter or TTM-shaped data, retry once with stricter documented parameters after `cap-detail`; if still mismatched, mark the requested field missing.
 - Use analyst or research rows only after issuer, report type, and date fields pass validation. Suppress recommendation and target fields.
-- Treat tagged news as qualitative background only unless QVeris sentiment, cluster, or structured event evidence succeeds.
+- Use audited Web pages for issuer news and qualitative sentiment; QVeris structured event evidence remains a separate evidence layer.
 - Treat A-share specialty, research, pharma-sector, and industry-daily fields as conditional unless `cap-detail` confirms a callable QVeris finance CAP with matching fields.
 
 ## CAP Invocation
@@ -71,8 +72,8 @@ Source record:
 ## Workflows
 
 1. Financial data pack: resolve issuer, collect quote/bars, statements, ratios, estimates, and event context; output missing fields instead of defaults.
-2. News/research structuring: collect tagged news, research rows when validated, and event calendar context; attach `issuer_relevance`, `row_type`, and `why_included` to every row. Put weak-relevance rows in background only, never issuer catalyst evidence.
-3. A-share news read: resolve full exchange suffix, collect QVeris news/events only, and mark unsupported source-specific feeds as `capability_unavailable`.
+2. News/research structuring: collect audited Web news, research rows when validated, and event calendar context; attach `issuer_relevance`, `row_type`, and `why_included` to every row. Put weak-relevance rows in background only, never issuer catalyst evidence.
+3. A-share news read: resolve full exchange suffix with QVeris, collect news through the audited Web lane and structured events through QVeris, and mark unsupported source-specific feeds as `capability_unavailable`.
 4. Pharma or sector daily report: define the requested sector/universe, validate each symbol, collect quote/bars and news/events, and avoid unsupported heat/flow claims.
 5. Budget-limited run: prioritize identity, requested core data, and data-quality trace; skip optional research, sentiment, or sector breadth when calls are limited.
 
@@ -82,7 +83,7 @@ Source record:
 - If a CAP returns 404 or invalid capability, do not blind retry; mark `capability_unavailable` unless `cap-search` finds a replacement.
 - If a field is unavailable, return `null` or mark it in `missing_fields`; never use a default such as beta, growth, margin, or rate.
 - If a successful payload fails period, identity, source-shape, or relevance validation, exclude it from evidence and mark the reason.
-- If sector or pharma specialty data is unavailable, return a partial daily report with lower confidence rather than substituting non-QVeris data.
+- If sector or pharma specialty data is unavailable, return a partial daily report with lower confidence rather than substituting non-QVeris structured-finance data. News and qualitative sentiment follow the separate audited Web policy.
 
 ## Output Requirements
 
@@ -98,7 +99,7 @@ Source record:
 
 ## Prohibited Capabilities
 
-Do not use non-QVeris finance data sources, web scraping, browser automation, cookies, login state, external provider keys, direct SDKs, direct public quote endpoints, chat-message delivery tools, dynamic data-package installs, automated trading, buy/sell triggers, target prices, upside/downside, rebalancing instructions, or execution plans.
+Do not use non-QVeris structured-finance data sources, Web use outside the audited news/sentiment policy, browser automation, cookies, login state, external provider keys, direct SDKs, direct public quote endpoints, chat-message delivery tools, dynamic data-package installs, automated trading, buy/sell triggers, target prices, upside/downside, rebalancing instructions, or execution plans.
 
 ## References
 
@@ -106,6 +107,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 - Read `references/qveris-tool-map.md` before choosing calls.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.
+- Read `references/qveris-web-news-sentiment-policy.md` before collecting news or qualitative sentiment.
 - Check `references/qveris-finance-cap-registry-snapshot-2026-07-07.md` before adding a route to the primary path.
 - Use `examples/default-markdown-report.md` as the primary user-facing example.
 - Use `fixtures/qveris/*.json` as machine-readable schema fixtures only.

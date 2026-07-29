@@ -1,0 +1,66 @@
+{
+  "skill": "qveris-crypto-market-radar",
+  "source_record": {
+    "candidate_number": 23,
+    "original_repository": "GMGN Skills",
+    "github_url": "https://github.com/GMGNAI/gmgn-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-23",
+    "local_source_snapshot": "third_party/source_repos/23-gmgn-skills",
+    "snapshot_latest_commit": "7205bf2 on 2026-07-23"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": {
+      "spot": "PT15M",
+      "history": "P1D",
+      "rankings": "PT15M",
+      "market_mood": "P1D",
+      "whale": "PT1H",
+      "news_social": "P1D"
+    },
+    "budget_note": "Static contract fixture; no runtime observation is claimed."
+  },
+  "analysis": {
+    "workflow": "asset_trend",
+    "summary": "The fixture demonstrates a planned identity, history, and spot path without asserting observed market data.",
+    "evidence_status": "unsupported",
+    "as_of": null,
+    "assets": ["BTC"],
+    "quote_currencies": [],
+    "window": {
+      "start": null,
+      "end": null,
+      "interval": "1d",
+      "timezone": "UTC",
+      "requested_observations": 30,
+      "accepted_observations": 0
+    },
+    "planned_calls": [
+      "qveris_finance.crypto_ref_master",
+      "qveris_finance.crypto_bars_history",
+      "qveris_finance.crypto_spot_rt"
+    ],
+    "fallback_plan": "Return identity-only or snapshot-only context only after those calls are actually observed and semantically accepted.",
+    "sections": ["market_snapshot", "history_and_technical_context"],
+    "interpretation_limits": ["no_observed_calls", "no_return_prediction"],
+    "rejections": [],
+    "evidence": []
+  },
+  "risk_notes": [
+    "A static fixture cannot support current price, return, trend, volatility, or direction."
+  ],
+  "missing_fields": ["asset_identity", "spot_snapshot", "history", "technical_context"],
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": ["static_contract_fixture", "not_called_due_to_max_calls"],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": ["wallet_actions", "swap_execution", "order_execution", "target_price", "return_prediction"]
+  },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["wallet_actions", "swap_execution", "order_execution", "target_price", "return_prediction"]
+}

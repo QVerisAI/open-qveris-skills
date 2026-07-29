@@ -5,6 +5,11 @@ import { createHash } from "node:crypto";
 import { writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import * as qverisClient from "../qveris-official/scripts/qveris_client.mjs";
+import { readQverisApiKey } from "../qveris-official/scripts/qveris_env.mjs";
+import { executeFinanceCapability as executeSharedFinanceCapability } from "../qveris-official/scripts/qveris_finance_adapter.mjs";
+import { sanitizeProviderRouteMetadata as sanitizeSharedMetadata } from "../qveris-official/scripts/qveris_sanitize.mjs";
+
 const CASES = [
   {
     skill: "qveris-a-share-factor-screen",
@@ -71,6 +76,55 @@ const CASES = [
     toolName: "qveris_finance.mkt_bars_adjusted",
     params: { symbol: "SPY", market: "US", start_date: "2026-06-01", end_date: "2026-06-30" },
   },
+  {
+    skill: "qveris-supply-chain-catalyst-radar",
+    caseId: "supply-chain-alt-cap-matrix",
+    checks: [
+      { toolName: "qveris_finance.ref_security_master", params: { symbol: "AAPL" } },
+      { toolName: "qveris_finance.alt_supply_chain", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.alt_job_postings", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.alt_patents", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.alt_govt_contracts", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.filings_regulatory_metadata", params: { symbol: "AAPL", start_date: "$DATE_MINUS_90", end_date: "$DATE" } },
+      { toolName: "qveris_finance.news_fin_tagged", params: { symbol: "AAPL", start_date: "$DATE_MINUS_7", end_date: "$DATE", limit: 5 } },
+      { toolName: "qveris_finance.alt_shipping_ais", params: { vessel_id: "210035000", start_date: "$DATE_MINUS_1", end_date: "$DATE" } },
+    ],
+  },
+  {
+    skill: "qveris-macro-policy-monitor",
+    caseId: "macro-policy-cap-matrix",
+    checks: [
+      { toolName: "qveris_finance.macro_indicators", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.macro_employment", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.macro_real_estate", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.macro_commodity_benchmark", params: { commodity_name: "WTI", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.rates_policy", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.rates_govt_benchmark", params: { country: "US", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.rates_interbank_benchmark", params: { rate_type: "shibor", country: "CN", start_date: "$DATE_MINUS_730", end_date: "$DATE" } },
+      { toolName: "qveris_finance.fx_spot", params: { base_currency: "EUR", quote_currency: "USD" } },
+      { toolName: "qveris_finance.index_levels", params: { symbol: "SPX" } },
+    ],
+  },
+  {
+    skill: "qveris-crypto-market-radar",
+    caseId: "crypto-base-cap-matrix",
+    checks: [
+      { toolName: "qveris_finance.crypto_ref_master", params: { symbol: "BTC" } },
+      { toolName: "qveris_finance.crypto_spot_rt", params: { symbol: "BTC" } },
+      { toolName: "qveris_finance.crypto_bars_history", params: { symbol: "BTC", interval: "1d", start_date: "$DATE_MINUS_1", end_date: "$DATE" } },
+      { toolName: "qveris_finance.crypto_market_rankings", params: { mode: "market_cap", limit: 20, quote_currency: "USD", market: "global" } },
+      { toolName: "qveris_finance.crypto_fgi", params: { date: "$DATE" } },
+      {
+        toolName: "qveris_finance.crypto_whale",
+        params: {
+          address: "0x52908400098527886E0F7030069857D2E4169EE7",
+          network: "ETH",
+          start_date: "$DATE_MINUS_1",
+          end_date: "$DATE",
+        },
+      },
+    ],
+  },
 ];
 
 function canonicalize(value) {
@@ -84,6 +138,26 @@ function canonicalize(value) {
         .map((key) => [key, canonicalize(value[key])]),
     );
   }
+  return value;
+}
+
+function offsetDate(dateTag, dayOffset) {
+  const timestamp = Date.parse(`${dateTag}T00:00:00Z`);
+  if (Number.isNaN(timestamp)) throw new Error(`invalid date token base: ${dateTag}`);
+  return new Date(timestamp + dayOffset * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
+function materializeDateTokens(value, dateTag) {
+  if (Array.isArray(value)) return value.map((item) => materializeDateTokens(item, dateTag));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, child]) => [
+      key,
+      materializeDateTokens(child, dateTag),
+    ]));
+  }
+  if (value === "$DATE") return dateTag;
+  const offsetMatch = typeof value === "string" ? /^\$DATE_MINUS_(\d+)$/.exec(value) : null;
+  if (offsetMatch) return offsetDate(dateTag, -Number(offsetMatch[1]));
   return value;
 }
 
@@ -106,9 +180,18 @@ function renderTraceRows(trace) {
 function renderReport(testCase, artifactName, execution) {
   const trace = execution.qveris_trace ?? [];
   const finalTrace = trace.at(-1);
-  const status = finalTrace?.status ?? "rejected";
-  const missingFields = finalTrace?.missing_fields ?? [execution.reason_code ?? execution.adapter_error?.code ?? "adapter_preflight_failed"];
+  const checkResults = execution.check_results ?? [];
+  const statuses = checkResults.map((check) => check.status);
+  const status = statuses.length > 0 && statuses.every((value) => value === "success")
+    ? "success"
+    : finalTrace?.status ?? (trace.length > 0 ? "failed" : "rejected");
+  const missingFields = [...new Set([
+    ...trace.flatMap((row) => row.missing_fields ?? []),
+    ...checkResults.filter((check) => check.adapter_error).map((check) => check.adapter_error.code),
+  ])];
+  if (missingFields.length === 0 && status !== "success") missingFields.push("adapter_preflight_failed");
   const observedCount = execution.observed_calls?.length ?? 0;
+  const checks = testCase.checks ?? [{ toolName: testCase.toolName, params: testCase.params }];
   const evidence = status === "success"
     ? `${observedCount} live CAP attempt(s) were observed and the final attempt succeeded. This supports only the narrow route check, not a complete research conclusion.`
     : observedCount > 0
@@ -137,18 +220,21 @@ This run verifies the live trace-to-artifact contract. It does not infer missing
 
 - \`data_quality.status\`: \`${quality}\`.
 - \`missing_fields\`: ${markdownJson(missingFields)}.
-- Requested logical CAP: \`${testCase.toolName}\`.
-- Final transmitted params: ${markdownJson(execution.final_params ?? {})}.
-- Resolved CAP ID: \`${execution.resolution?.capability_id ?? "unresolved"}\` from \`${execution.resolution?.detail_source ?? "unavailable"}\`.
+- Requested logical CAPs: ${markdownJson(checks.map((check) => check.toolName))}.
+- Final transmitted params by check: ${markdownJson(checkResults.map((check) => ({ tool_name: check.tool_name, params: check.final_params })))}.
+- Resolved CAPs by check: ${markdownJson(checkResults.map((check) => ({ tool_name: check.tool_name, capability_id: check.resolution?.capability_id ?? null, detail_source: check.resolution?.detail_source ?? null })))}.
+- Control-plane retries by check: ${markdownJson(checkResults.flatMap((check) => (check.resolution?.control_plane_retry_events ?? []).map((event) => ({ tool_name: check.tool_name, ...event }))))}.
+- Preflight errors by check: ${markdownJson(checkResults.filter((check) => check.adapter_error).map((check) => ({ tool_name: check.tool_name, code: check.adapter_error.code, message: check.adapter_error.message })))}.
 - Observed-call artifact: \`${artifactName}\`.
 - Raw provider, route, candidate, failover, and credential metadata is removed recursively before the artifact is saved.
 
 ## Trace Appendix
 
-${preflightNote}| tool_name | params | status | execution_id | fallback_used | missing_fields |
+| tool_name | params | status | execution_id | fallback_used | missing_fields |
 |---|---|---|---|---|---|
 ${renderTraceRows(trace)}
 
+${preflightNote}
 Observed call count: \`${observedCount}\`.
 
 Not investment advice.
@@ -156,42 +242,79 @@ Not investment advice.
 }
 
 async function runCase(apiKey, testCase, dateTag) {
-  let execution;
-  const [{ executeFinanceCapability }, { financeTransport }, { sanitizeProviderRouteMetadata }] = await Promise.all([
-    import(`../${testCase.skill}/scripts/qveris_finance_adapter.mjs`),
-    import(`../${testCase.skill}/scripts/qveris_finance_client.mjs`),
-    import(`../${testCase.skill}/scripts/qveris_sanitize.mjs`),
-  ]);
-  try {
-    execution = await executeFinanceCapability({
-      capability: testCase.toolName,
-      parameters: testCase.params,
-      context: {
-        ...(testCase.params.market ? { market: testCase.params.market } : {}),
-        ...(testCase.params.period ? { period: testCase.params.period } : {}),
-        ...(testCase.params.end_date ? { cut_off: testCase.params.end_date } : {}),
-      },
-      transport: financeTransport(apiKey),
-      strategy: "best",
-      timeoutMs: 120000,
-    });
-  } catch (error) {
-    execution = {
-      adapter_version: "qveris.finance-parameter-adaptation.v1",
-      resolution: null,
-      final_params: {},
-      parameter_audit: null,
-      retry_events: [],
-      observed_calls: [],
-      qveris_trace: [],
-      adapter_error: {
-        code: error?.code ?? "adapter_preflight_failed",
-        message: error instanceof Error ? error.message : String(error),
-      },
-    };
+  const checks = (testCase.checks ?? [{ toolName: testCase.toolName, params: testCase.params }])
+    .map((check) => ({ ...check, params: materializeDateTokens(check.params, dateTag) }));
+  const useSharedAdapter = new Set([
+    "qveris-crypto-market-radar",
+    "qveris-macro-policy-monitor",
+    "qveris-supply-chain-catalyst-radar",
+  ]).has(testCase.skill);
+  let executeFinanceCapability = executeSharedFinanceCapability;
+  let sanitizeProviderRouteMetadata = sanitizeSharedMetadata;
+  let financeTransport = null;
+  if (!useSharedAdapter) {
+    const modules = await Promise.all([
+      import(`../${testCase.skill}/scripts/qveris_finance_adapter.mjs`),
+      import(`../${testCase.skill}/scripts/qveris_finance_client.mjs`),
+      import(`../${testCase.skill}/scripts/qveris_sanitize.mjs`),
+    ]);
+    executeFinanceCapability = modules[0].executeFinanceCapability;
+    financeTransport = modules[1].financeTransport;
+    sanitizeProviderRouteMetadata = modules[2].sanitizeProviderRouteMetadata;
   }
-
-  const sanitizedExecution = sanitizeProviderRouteMetadata(execution);
+  const executions = [];
+  for (const check of checks) {
+    try {
+      executions.push(await executeFinanceCapability(useSharedAdapter ? {
+          client: qverisClient, apiKey, requestedCapability: check.toolName,
+          parameters: check.params, strategy: "best", timeoutMs: 120000,
+        } : {
+          capability: check.toolName,
+          parameters: check.params,
+          context: {
+            ...(check.params.market ? { market: check.params.market } : {}),
+            ...(check.params.period ? { period: check.params.period } : {}),
+            ...(check.params.end_date ? { cut_off: check.params.end_date } : {}),
+          },
+          transport: financeTransport(apiKey), strategy: "best", timeoutMs: 120000,
+        }));
+    } catch (error) {
+      executions.push({
+        adapter_version: "qveris_finance_adapter.v1",
+        resolution: null,
+        final_params: {},
+        parameter_audit: null,
+        retry_events: [],
+        observed_calls: [],
+        qveris_trace: [],
+        adapter_error: {
+          code: error?.code ?? "adapter_preflight_failed",
+          message: error instanceof Error ? error.message : String(error),
+        },
+      });
+    }
+  }
+  const combinedExecution = {
+    adapter_version: executions.find((item) => item.adapter_version)?.adapter_version ?? "qveris_finance_adapter.v1",
+    resolution: executions.map((item) => item.resolution),
+    final_params: executions.map((item) => item.final_params),
+    parameter_audit: executions.map((item) => item.parameter_audit),
+    retry_events: executions.flatMap((item) => item.retry_events ?? []),
+    observed_calls: executions.flatMap((item) => item.observed_calls ?? []),
+    qveris_trace: executions.flatMap((item) => item.qveris_trace ?? []),
+    check_results: executions.map((item, index) => {
+      const finalTrace = item.qveris_trace?.at(-1);
+      return {
+        tool_name: checks[index].toolName,
+        status: finalTrace?.status ?? "rejected",
+        resolution: item.resolution,
+        final_params: item.final_params ?? {},
+        observed_call_count: item.observed_calls?.length ?? 0,
+        ...(item.adapter_error ? { adapter_error: item.adapter_error } : {}),
+      };
+    }),
+  };
+  const sanitizedExecution = sanitizeProviderRouteMetadata(combinedExecution);
   const observedCalls = sanitizedExecution.observed_calls ?? [];
   for (const observedCall of observedCalls) {
     if (observedCall.response_sha256 !== sha256(observedCall.response)) {
@@ -209,7 +332,7 @@ async function runCase(apiKey, testCase, dateTag) {
     parameter_audit: sanitizedExecution.parameter_audit,
     retry_events: sanitizedExecution.retry_events,
     observed_calls: observedCalls,
-    ...(sanitizedExecution.adapter_error ? { adapter_error: sanitizedExecution.adapter_error } : {}),
+    check_results: sanitizedExecution.check_results,
   };
 
   const baseName = `live-e2e-output-${dateTag}`;
@@ -221,10 +344,15 @@ async function runCase(apiKey, testCase, dateTag) {
     renderReport(testCase, artifactName, sanitizedExecution),
     "utf8",
   );
+  const statuses = sanitizedExecution.check_results.map((check) => check.status);
   const finalCall = observedCalls.at(-1);
   return {
     skill: testCase.skill,
-    status: finalCall?.status ?? "rejected",
+    status: statuses.length > 0 && statuses.every((status) => status === "success")
+      ? "success"
+      : observedCalls.length > 0
+        ? "failed"
+        : "rejected",
     executionId: finalCall?.execution_id ?? null,
     observedCallCount: observedCalls.length,
   };
@@ -236,9 +364,16 @@ async function main() {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateTag ?? "")) {
     throw new Error("--date must use YYYY-MM-DD");
   }
-  const apiKey = process.env.QVERIS_API_KEY?.trim();
-  if (!apiKey) throw new Error("QVERIS_API_KEY is not set");
-  for (const testCase of CASES) {
+  const skillIndex = process.argv.indexOf("--skill");
+  const requestedSkill = skillIndex >= 0 ? process.argv[skillIndex + 1] : null;
+  const selectedCases = requestedSkill
+    ? CASES.filter((testCase) => testCase.skill === requestedSkill)
+    : CASES;
+  if (requestedSkill && selectedCases.length === 0) {
+    throw new Error(`unknown --skill value: ${requestedSkill}`);
+  }
+  const apiKey = readQverisApiKey();
+  for (const testCase of selectedCases) {
     const result = await runCase(apiKey, testCase, dateTag);
     console.log(`${result.skill}: ${result.status} observed_calls=${result.observedCallCount} execution_id=${result.executionId ?? "null"}`);
   }

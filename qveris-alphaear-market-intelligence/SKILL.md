@@ -5,7 +5,7 @@ description: QVeris-native adaptation of candidate 42, Awesome Finance Skills / 
 
 # QVeris AlphaEar Market Intelligence
 
-Use this skill to preserve AlphaEar's stock, news, sentiment, signal-tracking, and reporting workflows while replacing direct public feeds, local databases, model downloads, and prediction tooling with QVeris finance CAP evidence.
+Use this skill to preserve AlphaEar's stock, news, sentiment, signal-tracking, and reporting workflows while replacing direct public feeds, local databases, model downloads, and prediction tooling with QVeris structured-data CAP evidence plus audited Web news/sentiment evidence.
 
 Source record:
 
@@ -24,7 +24,7 @@ Source record:
 - Preserve the original AlphaEar intent: ticker lookup, stock price context, financial fundamentals, finance news, sentiment coverage checks, signal evolution, and structured reporting.
 - Treat original scripts, local models, local databases, prediction-market feeds, and time-series forecast logic as migration context only.
 - Convert forecasts and "investment signal" wording into descriptive monitoring: evidence can show what changed, but not whether to act.
-- Use tagged news only as background unless a QVeris sentiment or cluster capability succeeds and passes issuer relevance checks.
+- Use audited opened Web pages for issuer news and qualitative sentiment; do not use the disabled tagged-news or text-sentiment CAPs.
 - Keep reports user-readable by default; put full machine-readable trace JSON only in the appendix, fixtures, or when explicitly requested.
 
 ## Runtime Contract
@@ -39,6 +39,7 @@ Source record:
 - Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, models, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Reject transport-success payloads that return the wrong entity, wrong benchmark, wrong date window, wrong fiscal period, too-thin bars, empty relevant fields, or corrupted text.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, trade triggers, automated execution plans, and prediction commitments.
+- Read and follow `references/qveris-web-news-sentiment-policy.md`. Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`; use its audited Web lane in every run mode, including benchmark and replay.
 
 ## Evidence Gate
 
@@ -47,9 +48,8 @@ Source record:
 - Require at least 2 observations before computing returns, trends, liquidity, volatility, drawdown, or correlation.
 - Require financial statements and derived ratios to match fiscal year, fiscal period, period end, and basis.
 - If an annual or FY statement request returns latest-quarter or TTM-shaped data, retry once with stricter documented period parameters after `cap-detail`; if still mismatched, mark the requested period missing.
-- Use `qveris_finance.news_fin_tagged` as qualitative background only unless `qveris_finance.sentiment_text_signals` succeeds.
-- Treat `qveris_finance.sentiment_text_signals` as usable sentiment evidence only when issuer-matched rows contain non-empty sentiment direction, score, magnitude, or text cue fields. If `signal`, `text_cue`, score, or label fields are empty, mark `sentiment_signal_empty` and report only a signal-coverage check.
-- Do not infer strong sentiment, strong catalysts, or directional risk from tagged news alone.
+- Use only issuer-matched, in-window opened Web pages for news. Qualitative sentiment is limited to `positive`, `negative`, `mixed`, or `insufficient` and requires at least two independent qualifying sources.
+- Keep Web provenance in `web_trace`; it never counts as QVeris CAP success.
 - Emit `changed` or `unchanged` only from a comparison record containing `baseline_as_of`, `baseline_value`, `current_as_of`, `current_value`, and `comparison_basis`. If any field is absent, set the comparison status to `unsupported`.
 - Treat removed or unverified routes such as news clusters, prediction-market feeds, and forecast models as `capability_unavailable` unless current `cap-detail` confirms a QVeris finance CAP.
 
@@ -67,9 +67,9 @@ Source record:
 
 ## Workflows
 
-1. Select output mode before collection. Use `full_note` only when identity, requested-window price evidence, requested fundamental/event layers, and issuer-relevant news/sentiment coverage all pass; otherwise use `coverage_monitor`.
-2. Market-intelligence note: resolve issuer, collect profile, quote/bars, fundamentals, news context, sentiment coverage if available, and monitoring read.
-3. Sentiment coverage check: use QVeris sentiment first; if it fails, is empty, or has no issuer-matched non-empty signal/text fields, say sentiment coverage is missing and use tagged news only as qualitative context with low confidence.
+1. Select output mode before collection. Use `full_note` only when identity, requested-window price evidence, requested fundamental/event layers, and audited issuer-relevant Web news/sentiment coverage all pass; otherwise use `coverage_monitor`.
+2. Market-intelligence note: resolve issuer, collect profile, quote/bars, fundamentals, audited Web news context, qualitative sentiment coverage if available, and monitoring read.
+3. Sentiment coverage check: apply the Web policy; if fewer than two independent sources qualify, set sentiment to `insufficient` while retaining individually supported news claims.
 4. Signal-monitor update: compare new validated evidence against the user's prior thesis or watch item, then label evidence as changed/unchanged/unsupported without action language.
 5. Report assembly: put only validated layers in Evidence. In `coverage_monitor`, open the Summary with the unavailable full-note layers and keep unverified layers exclusively in Data Quality And Missing Fields.
 6. Budget-limited run: call identity/profile first, then the minimum requested evidence; omit optional sentiment, news, or ratios when `max_calls` is too low.
@@ -79,7 +79,7 @@ Source record:
 - If QVeris returns 503, fetch failure, timeout, or all candidates failed, retry at most twice under the shared retry policy.
 - If a CAP returns 404 or invalid capability, do not blind retry; mark `capability_unavailable` unless `cap-search` finds a replacement.
 - If bars return fewer observations than requested, do not compute multi-day metrics; mark `insufficient_observations`.
-- If sentiment or cluster routes fail, or if sentiment succeeds but returns empty `signal`, `text_cue`, score, or label fields, use tagged news as background only and mark numeric sentiment missing.
+- If Web collection or verification fails, mark news/sentiment coverage missing; never revive the disabled CAPs or infer a numeric score.
 - If a successful payload is semantically wrong, exclude it from evidence and record `semantic_mismatch`, `period_mismatch`, `entity_mix`, `weak_relevance`, or `encoding_artifact`.
 - If `max_calls` blocks the minimum useful workflow, return a budget-limited report rather than filling gaps.
 
@@ -96,7 +96,7 @@ Source record:
 
 ## Prohibited Capabilities
 
-Do not use non-QVeris finance data sources, web scraping, browser automation, cookies, login state, external provider keys, dynamic data-package installs, local model downloads, automated trading, prediction-market execution, buy/sell triggers, target prices, upside/downside, rebalancing instructions, or execution plans.
+Do not use non-QVeris structured-finance data sources, Web use outside the audited news/sentiment policy, browser automation, cookies, login state, external provider keys, dynamic data-package installs, local model downloads, automated trading, prediction-market execution, buy/sell triggers, target prices, upside/downside, rebalancing instructions, or execution plans.
 
 ## References
 
@@ -104,6 +104,7 @@ Do not use non-QVeris finance data sources, web scraping, browser automation, co
 - Read `references/qveris-tool-map.md` before choosing calls.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.
+- Read `references/qveris-web-news-sentiment-policy.md` before collecting news or qualitative sentiment.
 - Check `references/qveris-finance-cap-registry-snapshot-2026-07-07.md` before adding a route to the primary path.
 - Use `examples/default-markdown-report.md` as the primary user-facing example.
 - Use `fixtures/qveris/*.json` as machine-readable schema fixtures only.

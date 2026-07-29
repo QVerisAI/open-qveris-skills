@@ -1,0 +1,1558 @@
+{
+  "artifact_version": "observed_calls.v1",
+  "adapter_version": "qveris_finance_adapter.v1",
+  "skill": "qveris-supply-chain-catalyst-radar",
+  "case_id": "supply-chain-alt-cap-matrix",
+  "recorded_at": "2026-07-24T08:25:41.134Z",
+  "resolution": [
+    {
+      "requested_capability": "qveris_finance.ref_security_master",
+      "tool_name": "qveris_finance.ref_security_master",
+      "capability_id": "REF.SECURITY_MASTER",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": [
+        {
+          "phase": "capability_catalog_page_1",
+          "reason": "transient_fetch_failure",
+          "attempt": 2
+        }
+      ]
+    },
+    {
+      "requested_capability": "qveris_finance.alt_supply_chain",
+      "tool_name": "qveris_finance.alt_supply_chain",
+      "capability_id": "ALT.SUPPLY_CHAIN",
+      "detail_source": "live_catalog_fallback",
+      "detail_warning": "Live cap-detail returned HTTP 404; the exact matching row from the same live finance catalog was used.",
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.alt_job_postings",
+      "tool_name": "qveris_finance.alt_job_postings",
+      "capability_id": "ALT.JOB_POSTINGS",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.alt_patents",
+      "tool_name": "qveris_finance.alt_patents",
+      "capability_id": "ALT.PATENTS",
+      "detail_source": "live_catalog_fallback",
+      "detail_warning": "Live cap-detail returned HTTP 404; the exact matching row from the same live finance catalog was used.",
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.alt_govt_contracts",
+      "tool_name": "qveris_finance.alt_govt_contracts",
+      "capability_id": "ALT.GOVT_CONTRACTS",
+      "detail_source": "live_catalog_fallback",
+      "detail_warning": "Live cap-detail returned HTTP 404; the exact matching row from the same live finance catalog was used.",
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.filings_regulatory_metadata",
+      "tool_name": "qveris_finance.filings_regulatory_metadata",
+      "capability_id": "FILINGS.REGULATORY.METADATA",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.news_fin_tagged",
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "NEWS.FIN.TAGGED",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    },
+    {
+      "requested_capability": "qveris_finance.alt_shipping_ais",
+      "tool_name": "qveris_finance.alt_shipping_ais",
+      "capability_id": "ALT.SHIPPING_AIS",
+      "detail_source": "live_cap_detail",
+      "detail_warning": null,
+      "control_plane_retry_events": []
+    }
+  ],
+  "final_params": [
+    {
+      "symbol": "AAPL"
+    },
+    {
+      "symbol": "AAPL",
+      "start_date": "2026-04-25",
+      "end_date": "2026-07-24"
+    },
+    {
+      "symbol": "AAPL",
+      "start_date": "2026-04-25",
+      "end_date": "2026-07-24"
+    },
+    {
+      "symbol": "AAPL",
+      "start_date": "2026-04-25",
+      "end_date": "2026-07-24"
+    },
+    {
+      "symbol": "AAPL",
+      "start_date": "2026-04-25",
+      "end_date": "2026-07-24"
+    },
+    {
+      "symbol": "AAPL",
+      "start_date": "2026-04-25",
+      "end_date": "2026-07-24"
+    },
+    {
+      "symbol": "AAPL",
+      "start_date": "2026-07-17",
+      "end_date": "2026-07-24"
+    },
+    {
+      "vessel_id": "210035000",
+      "start_date": "2026-07-23",
+      "end_date": "2026-07-24"
+    }
+  ],
+  "parameter_audit": [
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [
+        {
+          "name": "limit",
+          "reason": "not_in_cap_detail"
+        }
+      ],
+      "filled_params": [],
+      "normalized_params": []
+    },
+    {
+      "dropped_params": [],
+      "filled_params": [],
+      "normalized_params": []
+    }
+  ],
+  "retry_events": [],
+  "observed_calls": [
+    {
+      "tool_name": "qveris_finance.ref_security_master",
+      "request_kind": "capabilities/query",
+      "capability_id": "REF.SECURITY_MASTER",
+      "params": {
+        "symbol": "AAPL"
+      },
+      "status": "success",
+      "execution_id": "0c680234-66a2-435e-9837-18529b373843",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T08:25:18.357292+00:00",
+      "response_sha256": "2a144c5fb45403ee88dd28876684a1e1db6652acde4b6727593060d07494b688",
+      "response": {
+        "execution_id": "0c680234-66a2-435e-9837-18529b373843",
+        "capability_id": "REF.SECURITY_MASTER",
+        "parameters": {
+          "symbol": "AAPL"
+        },
+        "result": {
+          "status_code": 200,
+          "data": {
+            "symbol": "AAPL",
+            "name": "Apple Inc.",
+            "exchange": "NASDAQ",
+            "currency": "USD",
+            "country": "USA",
+            "sector": "TECHNOLOGY",
+            "industry": "CONSUMER ELECTRONICS",
+            "asset_type": "Common Stock",
+            "cik": "320193",
+            "fiscal_year_end": "September"
+          },
+          "_meta": {
+            "capability_id": "REF.SECURITY_MASTER",
+            "elapsed_time_ms": 3589,
+            "synced_at": "2026-07-21T13:50:10.842334+00:00"
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 3804.41,
+        "created_at": "2026-07-24T08:25:18.357292+00:00",
+        "cost": 2,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 1,
+          "raw_result_count": 1,
+          "chargeable_quantity": 1,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2,
+          "summary": "Charged 2 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2,
+        "remaining_credits": 862727.04
+      }
+    },
+    {
+      "tool_name": "qveris_finance.alt_supply_chain",
+      "request_kind": "capabilities/query",
+      "capability_id": "ALT.SUPPLY_CHAIN",
+      "params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "status": "failed",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "http_404"
+      ],
+      "observed_at": "2026-07-24T08:25:20.088Z",
+      "response_sha256": "31c4de4fa89e40a3ffd6dde45134bf7e110b3f674b8de8a1ba1a0dc0a25471d3",
+      "response": {
+        "success": false,
+        "capability_id": "ALT.SUPPLY_CHAIN",
+        "parameters": {
+          "symbol": "AAPL",
+          "start_date": "2026-04-25",
+          "end_date": "2026-07-24"
+        },
+        "execution_id": null,
+        "retryable": false,
+        "error_message": "HTTP 404 for POST /capabilities/query: invalid_capability: ALT.SUPPLY_CHAIN",
+        "error": {
+          "code": "http_404",
+          "http_status": 404,
+          "retryable": false
+        }
+      }
+    },
+    {
+      "tool_name": "qveris_finance.alt_job_postings",
+      "request_kind": "capabilities/query",
+      "capability_id": "ALT.JOB_POSTINGS",
+      "params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "ae3bff3b-4b15-406e-8e31-59765bbf3d36",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T08:25:25.048349+00:00",
+      "response_sha256": "8fa5f0fba3093fcdb80a1e9d0a9dab51bd70b83af3f78fc5ccd73f4a1605a0e2",
+      "response": {
+        "execution_id": "ae3bff3b-4b15-406e-8e31-59765bbf3d36",
+        "capability_id": "ALT.JOB_POSTINGS",
+        "parameters": {
+          "symbol": "AAPL",
+          "start_date": "2026-04-25",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "_meta": {
+            "capability_id": "ALT.JOB_POSTINGS",
+            "elapsed_time_ms": 552,
+            "synced_at": "2026-07-21T13:50:09.678968+00:00"
+          },
+          "_defaults_applied": [],
+          "message": "Result content is too long (135691 bytes). You can reference the truncated content (20480 bytes) and download the full content from the url provided.",
+          "truncated_content": "[{\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"Software Development Engineer - Test\", \"location\": \"Cupertino\", \"salary_range_min\": 185224.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1253.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"FE Engineering\", \"location\": \"Santa Clara\", \"salary_range_min\": 171138.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"Design Verification\", \"location\": \"Santa Clara\", \"salary_range_min\": 160553.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"Digital Circuit Design Engineer\", \"location\": \"Santa Clara\", \"salary_range_min\": 171138.0, \"salary_range_max\": 213700.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"FE Engineering\", \"location\": \"Santa Clara\", \"salary_range_min\": 205072.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"17-2061.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"Design Verification\", \"location\": \"Sunnyvale\", \"salary_range_min\": 171138.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"Software Engineering Systems\", \"location\": \"Sunnyvale\", \"salary_range_min\": 181532.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"System EPM\", \"location\": \"Cupertino\", \"salary_range_min\": 147308.0, \"salary_range_max\": 213700.0, \"status\": \"Certified\", \"job_function\": \"15-1299.09\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-23\", \"job_title\": \"Software Engineering Applications\", \"location\": \"Sunnyvale\", \"salary_range_min\": 181532.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Power Engineering\", \"location\": \"Santa Clara\", \"salary_range_min\": 160553.0, \"salary_range_max\": 184100.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"VLSI CAD Engineering\", \"location\": \"Cupertino\", \"salary_range_min\": 183975.0, \"salary_range_max\": 226400.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Software Development Engineer - Data\", \"location\": \"Cupertino\", \"salary_range_min\": 181100.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-2051.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Software Development Engineering\", \"location\": \"Cupertino\", \"salary_range_min\": 211107.0, \"salary_range_max\": 342800.0, \"status\": \"Certified\", \"job_function\": \"11-3021.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Software Development Engineering\", \"location\": \"Cupertino\", \"salary_range_min\": 207392.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Software Development Engineering\", \"location\": \"Seattle\", \"salary_range_min\": 171600.0, \"salary_range_max\": 215100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Machine Learning\", \"location\": \"Santa Clara\", \"salary_range_min\": 207392.0, \"salary_range_max\": 226400.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Physical Design Engineer\", \"location\": \"Cupertino\", \"salary_range_min\": 160553.0, \"salary_range_max\": 184100.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-20\", \"job_title\": \"Machine Learning\", \"location\": \"Sunnyvale\", \"salary_range_min\": 147400.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Layout/Mask Design\", \"location\": \"Sunnyvale\", \"salary_range_min\": 198563.0, \"salary_range_max\": 215400.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Software Integrity Engineer\", \"location\": \"Cupertino\", \"salary_range_min\": 181532.0, \"salary_range_max\": 195700.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Module Design Engineer\", \"location\": \"Cupertino\", \"salary_range_min\": 185869.0, \"salary_range_max\": 226400.0, \"status\": \"Certified\", \"job_function\": \"17-2141.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Marcom Bus Affairs\", \"location\": \"Sunnyvale\", \"salary_range_min\": 180507.0, \"salary_range_max\": 184000.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Software Development Engineering\", \"location\": \"Seattle\", \"salary_range_min\": 171600.0, \"salary_range_max\": 215100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Software QE Engineering\", \"location\": \"Cupertino\", \"salary_range_min\": 243100.0, \"salary_range_max\": 365400.0, \"status\": \"Certified\", \"job_function\": \"11-3021.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Software Engineering Applications\", \"location\": \"Sunnyvale\", \"salary_range_min\": 205482.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Instrumentation Calibration Dev I&S\", \"location\": \"Cupertino\", \"salary_range_min\": 158621.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2199.07\", \"employment_type\": \"Y\", \"seniority_level\": \"III\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-19\", \"job_title\": \"Machine Learning\", \"location\": \"Seattle\", \"salary_range_min\": 212202.0, \"salary_range_max\": 302200.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Design Verification\", \"location\": \"Sunnyvale\", \"salary_range_min\": 147400.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"FE Engineering\", \"location\": \"Santa Clara\", \"salary_range_min\": 160553.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"R&D Project/Program Manager\", \"location\": \"Cupertino\", \"salary_range_min\": 209438.0, \"salary_range_max\": 291400.0, \"status\": \"Certified\", \"job_function\": \"15-1299.09\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Development Engineering\", \"location\": \"Cupertino\", \"salary_range_min\": 158995.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2141.00\", \"employment_type\": \"Y\", \"seniority_level\": \"III\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Technical Program Management\", \"location\": \"Cupertino\", \"salary_range_min\": 143768.0, \"salary_range_max\": 193800.0, \"status\": \"Certified\", \"job_function\": \"17-2112.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Engineering Applications\", \"location\": \"Cupertino\", \"salary_range_min\": 227639.0, \"salary_range_max\": 318400.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Engineering Applications\", \"location\": \"Cupertino\", \"salary_range_min\": 205302.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-2051.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Development Engineer - Server\", \"location\": \"Cupertino\", \"salary_range_min\": 207392.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"CPU Implementation Engineering\", \"location\": \"Austin\", \"salary_range_min\": 162500.0, \"salary_range_max\": 244600.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Engineering Systems Manager\", \"location\": \"Cupertino\", \"salary_range_min\": 248643.0, \"salary_range_max\": 342800.0, \"status\": \"Certified\", \"job_function\": \"11-3021.00\", \"employment_type\": \"Y\", \"seniority_level\": \"II\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Development Engineer - Firmware\", \"location\": \"Sunnyvale\", \"salary_range_min\": 198384.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Algorithm Engineering\", \"location\": \"Cupertino\", \"salary_range_min\": 147400.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Development Engineering\", \"location\": \"Santa Clara \", \"salary_range_min\": 219536.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Software Engineering Applications\", \"location\": \"Cupertino\", \"salary_range_min\": 205482.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"Implementation Engineering\", \"location\": \"Austin\", \"salary_range_min\": 190700.0, \"salary_range_max\": 286400.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-18\", \"job_title\": \"System Product Design Engineer\", \"location\": \"San Diego\", \"salary_range_min\": 181100.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"17-2131.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-17\", \"job_title\": \"Silicon Product Engineer\", \"location\": \"Cupertino\", \"salary_range_min\": 146701.0, \"salary_range_max\": 213700.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-17\", \"job_title\": \"Silicon Test Engineer\", \"location\": \"Cupertino\", \"salary_range_min\": 217630.0, \"salary_range_max\": 305600.0, \"status\": \"Certified\", \"job_function\": \"17-2071.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-17\", \"job_title\": \"Software Engineering Systems\", \"location\": \"San Diego\", \"salary_range_min\": 171600.0, \"salary_range_max\": 258100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-17\", \"job_title\": \"Machine Learning\", \"location\": \"Cupertino\", \"salary_range_min\": 228786.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-17\", \"job_title\": \"Software Development Engineer - Firmware\", \"location\": \"Sunnyvale\", \"salary_range_min\": 198384.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-17\", \"job_title\": \"Software Engineering Applications\", \"location\": \"Sunnyvale\", \"salary_range_min\": 227639.0, \"salary_range_max\": 318400.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Machine Learning Research\", \"location\": \"Cupertino\", \"salary_range_min\": 212000.0, \"salary_range_max\": 318400.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Market Research\", \"location\": \"Cupertino\", \"salary_range_min\": 161189.0, \"salary_range_max\": 221200.0, \"status\": \"Certified\", \"job_function\": \"13-1161.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Machine Learning\", \"location\": \"Cupertino\", \"salary_range_min\": 184639.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Data Engineer\", \"location\": \"Cupertino\", \"salary_range_min\": 175958.0, \"salary_range_max\": 244100.0, \"status\": \"Certified\", \"job_function\": \"15-2051.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Data Scientist\", \"location\": \"Cupertino\", \"salary_range_min\": 175958.0, \"salary_range_max\": 258600.0, \"status\": \"Certified\", \"job_function\": \"15-2051.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Software Development Engineer - Firmware\", \"location\": \"Cupertino\", \"salary_range_min\": 184639.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"FE Engineering\", \"location\": \"Sunnyvale\", \"salary_range_min\": 147400.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Software Development Engineer - Test\", \"location\": \"Cupertino\", \"salary_range_min\": 185224.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Software Development Engineering\", \"location\": \"Sunnyvale\", \"salary_range_min\": 147400.0, \"salary_range_max\": 220900.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"FE Engineering\", \"location\": \"Austin\", \"salary_range_min\": 162500.0, \"salary_range_max\": 244600.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Design Verification\", \"location\": \"Cupertino\", \"salary_range_min\": 216091.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Software Development Engineering\", \"location\": \"San Diego\", \"salary_range_min\": 157581.0, \"salary_range_max\": 210100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"III\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Software Development Engineering\", \"location\": \"Austin\", \"salary_range_min\": 139152.0, \"salary_range_max\": 199000.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"III\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-16\", \"job_title\": \"Silicon Validation Engineering\", \"location\": \"Austin\", \"salary_range_min\": 162500.0, \"salary_range_max\": 244600.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-14\", \"job_title\": \"Physical Design Engineer\", \"location\": \"San Jose\", \"salary_range_min\": 199500.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-14\", \"job_title\": \"Wireless Systems Validation Engineering\", \"location\": \"Cupertino\", \"salary_range_min\": 216091.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-14\", \"job_title\": \"FE Engineering\", \"location\": \"Austin\", \"salary_range_min\": 190700.0, \"salary_range_max\": 286400.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-14\", \"job_title\": \"Software Development Engineering\", \"location\": \"Santa Clara\", \"salary_range_min\": 219536.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-14\", \"job_title\": \"Software Development Engineering\", \"location\": \"Seattle\", \"salary_range_min\": 154877.0, \"salary_range_max\": 210100.0, \"status\": \"Certified\", \"job_function\": \"15-1243.00\", \"employment_type\": \"Y\", \"seniority_level\": \"III\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-13\", \"job_title\": \"Software Engineering Applications Manager\", \"location\": \"Cupertino\", \"salary_range_min\": 248643.0, \"salary_range_max\": 342800.0, \"status\": \"Certified\", \"job_function\": \"11-3021.00\", \"employment_type\": \"Y\", \"seniority_level\": \"II\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-13\", \"job_title\": \"Software Development Engineering\", \"location\": \"SUNNYVALE\", \"salary_range_min\": 219536.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-13\", \"job_title\": \"Software Engineering Applications\", \"location\": \"Sunnyvale\", \"salary_range_min\": 205482.0, \"salary_range_max\": 272100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-13\", \"job_title\": \"FE Engineering\", \"location\": \"SUNNYVALE\", \"salary_range_min\": 216091.0, \"salary_range_max\": 318400.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-13\", \"job_title\": \"CPU Implementation Engineering\", \"location\": \"Austin\", \"salary_range_min\": 190700.0, \"salary_range_max\": 286400.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-13\", \"job_title\": \"Machine Learning\", \"location\": \"Seattle\", \"salary_range_min\": 171600.0, \"salary_range_max\": 215100.0, \"status\": \"Certified\", \"job_function\": \"15-1252.00\", \"employment_type\": \"Y\", \"seniority_level\": \"\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-12\", \"job_title\": \"FE Engineering\", \"location\": \"Austin\", \"salary_range_min\": 162500.0, \"salary_range_max\": 244600.0, \"status\": \"Certified\", \"job_function\": \"17-2072.00\", \"employment_type\": \"Y\", \"seniority_level\": \"IV\"}, {\"symbol\": \"AAPL\", \"date\": \"2026-06-12\", \"job_title\": \"Software Development Engineer - Firmware\", \"location\": \"San Diego\", \"salary_range_min\": 157581.0, \"salary_range_max\": 210100.0, \"status\": \"Certified\", \"j",
+          "content_schema": {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "symbol": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string"
+                },
+                "job_title": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "salary_range_min": {
+                  "type": "number"
+                },
+                "salary_range_max": {
+                  "type": "number"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "job_function": {
+                  "type": "string"
+                },
+                "employment_type": {
+                  "type": "string"
+                },
+                "seniority_level": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "date",
+                "employment_type",
+                "job_function",
+                "job_title",
+                "location",
+                "salary_range_max",
+                "salary_range_min",
+                "seniority_level",
+                "status",
+                "symbol"
+              ]
+            }
+          }
+        },
+        "success": true,
+        "elapsed_time_ms": 851.08,
+        "created_at": "2026-07-24T08:25:25.048349+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 500,
+          "raw_result_count": 500,
+          "chargeable_quantity": 500,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 1,
+          "summary": "Charged 1 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 862726.04
+      }
+    },
+    {
+      "tool_name": "qveris_finance.alt_patents",
+      "request_kind": "capabilities/query",
+      "capability_id": "ALT.PATENTS",
+      "params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "status": "failed",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "http_404"
+      ],
+      "observed_at": "2026-07-24T08:25:26.237Z",
+      "response_sha256": "065fca2598723a253d4dd3b59e649e0f40e1872ed9470471f775efe1a9e12558",
+      "response": {
+        "success": false,
+        "capability_id": "ALT.PATENTS",
+        "parameters": {
+          "symbol": "AAPL",
+          "start_date": "2026-04-25",
+          "end_date": "2026-07-24"
+        },
+        "execution_id": null,
+        "retryable": false,
+        "error_message": "HTTP 404 for POST /capabilities/query: invalid_capability: ALT.PATENTS",
+        "error": {
+          "code": "http_404",
+          "http_status": 404,
+          "retryable": false
+        }
+      }
+    },
+    {
+      "tool_name": "qveris_finance.alt_govt_contracts",
+      "request_kind": "capabilities/query",
+      "capability_id": "ALT.GOVT_CONTRACTS",
+      "params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "status": "failed",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "http_404"
+      ],
+      "observed_at": "2026-07-24T08:25:31.543Z",
+      "response_sha256": "a045dfa91f5ae27730c0521cf929c8388a182d954b5931e042693e9e7b87fd39",
+      "response": {
+        "success": false,
+        "capability_id": "ALT.GOVT_CONTRACTS",
+        "parameters": {
+          "symbol": "AAPL",
+          "start_date": "2026-04-25",
+          "end_date": "2026-07-24"
+        },
+        "execution_id": null,
+        "retryable": false,
+        "error_message": "HTTP 404 for POST /capabilities/query: invalid_capability: ALT.GOVT_CONTRACTS",
+        "error": {
+          "code": "http_404",
+          "http_status": 404,
+          "retryable": false
+        }
+      }
+    },
+    {
+      "tool_name": "qveris_finance.filings_regulatory_metadata",
+      "request_kind": "capabilities/query",
+      "capability_id": "FILINGS.REGULATORY.METADATA",
+      "params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "6708a3e2-3fae-4b27-94e1-0ad150f0cc4e",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T08:25:36.108938+00:00",
+      "response_sha256": "85759f1ccb393f0428ff522a1131fd0fdc0f722f707312b32fc0b412e7a9cab4",
+      "response": {
+        "execution_id": "6708a3e2-3fae-4b27-94e1-0ad150f0cc4e",
+        "capability_id": "FILINGS.REGULATORY.METADATA",
+        "parameters": {
+          "symbol": "AAPL",
+          "start_date": "2026-04-25",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-06-17",
+              "form_type": "4",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001140361-26-025620-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-06-17",
+              "form_type": "4",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001140361-26-025622-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-29",
+              "form_type": "4",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001140361-26-023363-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-28",
+              "form_type": "SD",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001140361-26-023149-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-27",
+              "form_type": "144",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001921094-26-000555-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-12",
+              "form_type": "4",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001140361-26-020871-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-08",
+              "form_type": "4",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001140361-26-020298-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-06",
+              "form_type": "144",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001921094-26-000446-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-05",
+              "form_type": "144",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0001950047-26-004044-index.htm",
+              "cik": 320193
+            },
+            {
+              "symbol": "AAPL",
+              "filed_date": "2026-05-01",
+              "form_type": "10-Q",
+              "url": "https://www.sec.gov/Archives/edgar/data/320193/0000320193-26-000013-index.htm",
+              "cik": 320193
+            }
+          ],
+          "_meta": {
+            "capability_id": "FILINGS.REGULATORY.METADATA",
+            "elapsed_time_ms": 815,
+            "synced_at": "2026-07-21T13:50:10.896254+00:00",
+            "dropped_optional_params": [
+              "start_date",
+              "end_date"
+            ]
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 970.32,
+        "created_at": "2026-07-24T08:25:36.108938+00:00",
+        "cost": 2.37,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 10,
+          "raw_result_count": 10,
+          "chargeable_quantity": 10,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 2.37,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 2.37,
+          "summary": "Charged 2.37 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 2.37,
+        "remaining_credits": 862723.67
+      }
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "request_kind": "capabilities/query",
+      "capability_id": "NEWS.FIN.TAGGED",
+      "params": {
+        "symbol": "AAPL",
+        "start_date": "2026-07-17",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "2a10bd6c-c6b2-454a-b8d6-484920afbea3",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T08:25:39.023444+00:00",
+      "response_sha256": "219c0745b495e40e9771242233c8cdbd0b6588bcc4786fb57d47a27a34cc3a5a",
+      "response": {
+        "execution_id": "2a10bd6c-c6b2-454a-b8d6-484920afbea3",
+        "capability_id": "NEWS.FIN.TAGGED",
+        "parameters": {
+          "symbol": "AAPL",
+          "start_date": "2026-07-17",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "_meta": {
+            "capability_id": "NEWS.FIN.TAGGED",
+            "elapsed_time_ms": 636,
+            "synced_at": "2026-07-21T13:50:10.116781+00:00"
+          },
+          "_defaults_applied": [],
+          "message": "Result content is too long (126918 bytes). You can reference the truncated content (20480 bytes) and download the full content from the url provided.",
+          "truncated_content": "[{\"title\": \"Ford set to challenge Tesla after big new deal with tech giant\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-24T02:47:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Doug Field spent years at Apple working on a car the company never built. When Apple shut down Project Titan in early 2024, Field moved to Ford. He's been leading the automaker's technology strategy since. On July 23, you could see exactly what he's been building toward. Ford announced it had ...\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"47 Analysts Cover Apple. Their Average Price Target Is Now Below the Stock Price, One Week Before Earnings.\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-24T01:32:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Wall Street still rates the iPhone maker a buy. Its own numbers say the stock has already arrived.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Alphabet And Tesla's Blowout Capex Plans Are Shifting Investor Perceptions And Valuation Metrics\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-24T00:40:02+00:00\", \"source\": \"Yahoo\", \"summary\": \"A regime shift driven by higher interest rates and an elevated cost of capital is creating valuation and profitability challenges for tech giants as investors pay keen attention to profitability metrics.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Dell's Big Day Was All About Another Company\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-24T00:08:40+00:00\", \"source\": \"Yahoo\", \"summary\": \"You might think a stock jumps on its own news, but Wednesday's surge was a lesson in how the AI hardware frenzy is lifting all boats.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"VeriSign Q2 Earnings Call Highlights\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T22:06:22+00:00\", \"source\": \"Yahoo\", \"summary\": \"VeriSign (NASDAQ:VRSN) reported stronger second-quarter 2026 results, citing record domain name registrations, continued solid renewal rates and a rising contribution from artificial intelligence-related tools that management said are making it easier for users to get online. Executive Chairman, Pr\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Apple (AAPL) Declines More Than Market: Some Information for Investors\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T21:45:02+00:00\", \"source\": \"Yahoo\", \"summary\": \"In the most recent trading session, Apple (AAPL) closed at $321.66, indicating a -1.3% shift from the previous trading day.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"How AI-Powered Earnings Powered Intel Stock Higher\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T21:26:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Intel reported second-quarter adjusted earnings of 42 cents per share, compared to analyst estimates for earnings of 22 cents per share.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"When AI CapEx Eats Cash: Is Alphabet’s Huge Bet Building a Moat or Sinking Margins?\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T20:40:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Alphabet  reported blowout earnings results late Wednesday, but the stock is dropping after the search giant again raised its forecast for capital expenditures.  The Google-parent reported second-quarter adjusted earnings of $9.11 per share, well ahead of Wall Street’s consensus estimate for earnings of $2.88 per share, according to FactSet.  Alphabet said the results included $6.26 a share in gains on the fair value of its equity securities.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Intel Stock Jumps as Earnings Nearly Double Analyst Estimates\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T20:30:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Intel reported second-quarter adjusted earnings of 42 cents per share, compared to analyst estimates for earnings of 22 cents per share.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"MoonPay Now Accepts Discover Cards For Crypto Purchases\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T20:22:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Privately held MoonPay has adopted the Discover Network, allowing its customers to buy and sell cryptocurrencies th...\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"'Magnificent 7' stocks erase $797 billion in market value in worst day since April 2025\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T20:19:30+00:00\", \"source\": \"Yahoo\", \"summary\": \"The \\\"Magnificent Seven\\\" group of stocks suffered its steepest one-day decline since the tariff-driven market sell-off in April 2025.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Microsoft Earnings Preview: Get Ready for Soaring AI Spending to Sink MSFT Stock\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T19:26:33+00:00\", \"source\": \"Yahoo\", \"summary\": \"Although Microsoft stock looks historically cheap, concerns about massive AI spending could overshadow strong earnings and send shares lower.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Forget Nvidia. Apple May Be the AI Stock Wall Street Is Quietly Betting On.\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T18:37:06+00:00\", \"source\": \"Yahoo\", \"summary\": \"Apple briefly overtook Nvidia as the world's most valuable company as investors embraced its AI strategy ahead of earnings.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Qualcomm deepens ties with major Apple rival\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T18:03:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Qualcomm and Samsung expanded their chip partnership this week, putting Snapdragon silicon inside nearly every new device in the Galaxy lineup. For over a decade, Samsung ran a split system, selling some flagship phones with its own Exynos processor and others with a Snapdragon chip depending on ...\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"TSLA, GOOGL Stocks Lead 'Magnificent Seven' Rout – MAGS ETF On Track For Biggest Single-Day Loss This Year\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T17:43:49+00:00\", \"source\": \"Yahoo\", \"summary\": \"The broader technology sector weakened after renewed geopolitical tensions in the Middle East weighed on investor sentiment.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Best Monthly Dividend ETFs for Consistent Income\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T17:31:53+00:00\", \"source\": \"Yahoo\", \"summary\": \"If you're looking for more frequent payouts, you can still enjoy the benefits of low fees and broad diversification, thanks to these top monthly dividend ETFs.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Apple Tests Smarter Shopping Experience\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T17:06:06+00:00\", \"source\": \"Yahoo\", \"summary\": \"New chatbot could help customers choose devices and complete purchases\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Magnificent 7 Loses $767 Billion as AI Skeptics Dump Tech Stocks\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T16:53:22+00:00\", \"source\": \"Yahoo\", \"summary\": \"(Bloomberg) -- The Magnificent Seven group of megacap technology stocks is on track for its biggest one-day drop since the tariff tantrum in April 2025 as results from Alphabet Inc. and Tesla Inc. are casting doubt on the durability of the artificial intelligence trade that has powered the stock market for more than three years.Most Read from BloombergRetina Chip Designed to Restore Sight to Go on Sale in EuropeHegseth Turns to UNC, Virginia Tech After Dropping Ivy LeagueApple Plans Overhaul of\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"3 Things Investors Can Expect When Tim Cook Steps Down as CEO in September After 15 Years and Hands the Reins to John Ternus\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T16:35:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"The CEO transition is unlikely to change the company's direction overnight, but Ternus' success will ultimately be judged on whether he can deliver AI-powered innovation without sacrificing Apple's financial strengths.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"As Wall Street Cuts Tesla, Morgan Stanley Raises Its Apple Target\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T16:30:30+00:00\", \"source\": \"Yahoo\", \"summary\": \"Tesla just delivered one of its ugliest earnings prints in years while Apple quietly shattered revenue records, and the gap between these two titans is widening fast enough to reshape how analysts are pricing both stocks right now.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"IBM Is The World’s Worst Big Tech Company\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T16:22:18+00:00\", \"source\": \"Yahoo\", \"summary\": \"Once ranked among America's corporate giants, IBM has missed nearly every major tech revolution of the past four decades. Now a stunning earnings report reveals just how far and how fast the company continues to fall.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"What Does SPY's Price Tag Buy You Today?\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T16:09:25+00:00\", \"source\": \"Yahoo\", \"summary\": \"The biggest US stock fund is asking a premium price, but the powerful earnings growth of its top holdings makes a strong case for it.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Blackstone CEO Stephen Schwarzman says firm is 'mindful' of 'excessive exuberance' in AI\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T15:34:38+00:00\", \"source\": \"Yahoo\", \"summary\": \"Blackstone CEO Stephen Schwarzman said Thursday that his firm has been selective in its investments in the AI infrastructure boom as the company delivered a jump in profits for the second quarter.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"NVIDIA's Next Breakout? Market Veteran Sees Plenty of Fuel Left in the AI Leader\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T15:13:27+00:00\", \"source\": \"Benzinga\", \"summary\": \"Market experts highlight fresh buying in NVIDIA (NVDA) as technical breakout patterns align with strong AI GPU dominance.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Forget the Other Five: These 2 Mag7 Stocks Deserve Your Attention\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T15:00:25+00:00\", \"source\": \"Yahoo\", \"summary\": \"Most of the Magnificent Seven stocks carry narratives that have quietly stopped holding up, but two names in the group still pass every test our model throws at them. Find out which two made the cut and why the gap between them matters more than most investors realize.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"OpenSearchCon North America 2026 to Showcase Five Years of Innovation Powering Enterprise Search, Observability and Analytics\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T15:00:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"The OpenSearch Software Foundation, the neutral home for the OpenSearch Project, today announced the schedule for OpenSearchCon North America (NA) 2026, which takes place in San Jose, California from September 22-24. The event will bring together developers, architects, and enterprise leaders to explore how OpenSearch is powering the next generation of AI, search, observability and analytics at enterprise scale.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Why Is Walt Disney Stock Falling Thursday?\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T14:53:57+00:00\", \"source\": \"Benzinga\", \"summary\": \"The Walt Disney Co. (DIS) stock drops near 52-week low amid EU patent injunctions &amp; break-up calls. Is a Q2 earnings rebound ahead?\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Apple (AAPL) Earnings Expected to Grow: Should You Buy?\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T14:00:23+00:00\", \"source\": \"Yahoo\", \"summary\": \"Apple (AAPL) possesses the right combination of the two key ingredients for a likely earnings beat in its upcoming report. Get prepared with the key expectations.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Goldman Sachs Trust’s $2.4 Billion Portfolio: What 724 Positions Tell Us About Where Wall Street Is Betting\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T13:55:35+00:00\", \"source\": \"Yahoo\", \"summary\": \"Goldman Sachs Trust holds 724 positions worth $2.4 billion, and its mega-cap tech bets are sitting on analyst price targets that tower above where those stocks trade today. The question is whether retail investors are reading the same signal Wall Street is.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"10 Information Technology Stocks With Whale Alerts In Today’s Session\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T13:35:35+00:00\", \"source\": \"Benzinga\", \"summary\": \"This whale alert can help traders discover the next big trading opportunities.\\nWhales are entities with large sums of money and we track their transactions here at Benzinga on our options activity scanner.\\nTraders will\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"The Big Question Hanging Over Netflix Stock\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T13:23:21+00:00\", \"source\": \"Yahoo\", \"summary\": \"With the stock already under pressure, the biggest risk for investors is a fundamental shift in how the company measures success, just as its growth is visibly slowing.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"STMicroelectronics Stock Sinks 18%: Weak Sales Outlook Drowns Out AI Growth Story\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T13:02:57+00:00\", \"source\": \"Benzinga\", \"summary\": \"STMicroelectronics shares plunge 18% as a soft Q3 forecast overshadows Q2 earnings beats and expanding AI data center targets.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Europe just fined Google $1 billion, the day before Trump is expected to announce tariffs\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T12:51:28+00:00\", \"source\": \"Yahoo\", \"summary\": \"The European Commission fined Google the equivalent of about $1 billion Thursday for manipulating its search results to hurt competitors and blocking app developers from directing customers to cheaper deals outside its Play store.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Apple: The Smart Money Is Buying Ahead Of Earnings\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T12:25:48+00:00\", \"source\": \"SeekingAlpha\", \"summary\": \"Apple is a Strong Buy as smart money accumulates shares, driven by capital-efficient strategies and robust margin expansion. Read more on AAPL stock here.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Tech Stocks Forecasts – AAPL, MSFT, and AMZN Face Pre-Market Pullbacks\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T12:13:42+00:00\", \"source\": \"Yahoo\", \"summary\": \"Major tech looks a little soft in pre-market trading on Thursday.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Verizon Was Booted From the Dow – 5 Dividend Giants Got the Same Treatment and Eventually Soared\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T12:13:31+00:00\", \"source\": \"Yahoo\", \"summary\": \"Getting kicked off the Dow Jones Industrial Average sounds like a death sentence for a stock, but a handful of booted dividend giants went on to reward patient shareholders with stunning gains and steady income streams that index investors missed out on entirely.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"What Could Keep Apple Stock Climbing?\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T12:13:13+00:00\", \"source\": \"Yahoo\", \"summary\": \"After a large run, the next leg up may depend on a simple, powerful force that’s already in motion.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Market Selling As Houthis Open A New Front; Google AI Cash Burn; Tesla Humanoid Spending\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T12:12:01+00:00\", \"source\": \"Benzinga\", \"summary\": \"\\n\\n\\n\\nHouthi Attacks\\n\\n\\n\\nPlease click here for an enlarged chart of Alphabet Inc Class C (NASDAQ:GOOG).\\n\\n\\n\\nNote the following:\\n\\n\\n\\n\\nThis article is about the big picture, not an individual stock.  The chart of GOOG stock is\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Apple is 'standing out' from the pack: Does it represent the anti-AI trade?\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T12:00:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Simplify Asset Management managing director and head of multi-asset solutions, Paisley Nardini, and Goldman Sachs Asset Management chief investment strategist, Tim Urbanowicz, share their thoughts on Apple (AAPL) and how it stands apart from the rest of the \\\"Magnificent Seven\\\" stocks.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Is Apple Stock a Buy Right Now?\", \"url\": \"[redacted_provider_url] \"published_at\": \"2026-07-23T11:50:00+00:00\", \"source\": \"Yahoo\", \"summary\": \"Shares in the dominant consumer tech enterprise have soared 22% so far in 2026.\", \"category\": \"company\", \"symbols\": \"AAPL\"}, {\"title\": \"Taiwan Semiconductor Manufacturing Company Limited (TSM) Is Raising Prices Up to 10%. Can Customers Push Back?\", \"url\": \"[redacted_provider_url]",
+          "content_schema": {
+            "$schema": "http://json-schema.org/schema#",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "published_at": {
+                  "type": "string"
+                },
+                "source": {
+                  "type": "string"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "symbols": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "category",
+                "published_at",
+                "source",
+                "summary",
+                "symbols",
+                "title",
+                "url"
+              ]
+            }
+          }
+        },
+        "success": true,
+        "elapsed_time_ms": 849.13,
+        "created_at": "2026-07-24T08:25:39.023444+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 245,
+          "raw_result_count": 245,
+          "chargeable_quantity": 245,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 1,
+          "summary": "Charged 1 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 862722.67
+      }
+    },
+    {
+      "tool_name": "qveris_finance.alt_shipping_ais",
+      "request_kind": "capabilities/query",
+      "capability_id": "ALT.SHIPPING_AIS",
+      "params": {
+        "vessel_id": "210035000",
+        "start_date": "2026-07-23",
+        "end_date": "2026-07-24"
+      },
+      "status": "success",
+      "execution_id": "4b91b991-aca2-441d-bb9d-fb36dee3fb70",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-24T08:25:41.454516+00:00",
+      "response_sha256": "19228d6ed145cd5550a49aca54a66b8b0083e117f48fdaf810cfcf746955f0a0",
+      "response": {
+        "execution_id": "4b91b991-aca2-441d-bb9d-fb36dee3fb70",
+        "capability_id": "ALT.SHIPPING_AIS",
+        "parameters": {
+          "vessel_id": "210035000",
+          "start_date": "2026-07-23",
+          "end_date": "2026-07-24"
+        },
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T09:00:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45102,
+              "speed": 102.3,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T08:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T08:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T07:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45101,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T07:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45101,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T06:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45101,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T06:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T05:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T05:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T04:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T04:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T03:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T03:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45101,
+              "speed": 0.1,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T02:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.451,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T02:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.451,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T01:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T01:00:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45103,
+              "speed": 0.1,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T00:30:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-04T00:00:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T23:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T23:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T22:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T22:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45105,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T21:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T21:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0.1,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T20:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T20:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T19:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.451,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T19:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45101,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T18:30:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T18:00:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T17:30:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T17:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T16:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T16:00:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45068,
+              "speed": 0,
+              "heading": 511,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T15:30:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45068,
+              "speed": 0,
+              "heading": 511,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T15:00:00Z",
+              "latitude": 51.8918,
+              "longitude": 4.45068,
+              "speed": 0,
+              "heading": 511,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T14:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T14:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45102,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T13:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T10:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T09:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T09:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T08:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T08:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T07:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T07:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 285,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T06:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45104,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T06:00:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            },
+            {
+              "vessel_id": "210035000",
+              "timestamp": "2022-05-03T05:30:00Z",
+              "latitude": 51.8917,
+              "longitude": 4.45103,
+              "speed": 0,
+              "heading": 286,
+              "destination": "NLRTM",
+              "port_name": "NL RTM",
+              "draught": 5.2,
+              "status": 5
+            }
+          ],
+          "_meta": {
+            "capability_id": "ALT.SHIPPING_AIS",
+            "elapsed_time_ms": 531,
+            "synced_at": "2026-07-21T13:50:11.158123+00:00",
+            "dropped_optional_params": [
+              "start_date",
+              "end_date"
+            ]
+          },
+          "_defaults_applied": []
+        },
+        "success": true,
+        "elapsed_time_ms": 678.88,
+        "created_at": "2026-07-24T08:25:41.454516+00:00",
+        "cost": 1,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": true,
+          "transport_success": true,
+          "result_valid": true,
+          "billable_success": true,
+          "outcome": "success",
+          "status": "charged",
+          "reason_code": "result.valid",
+          "message": "Provider returned a valid result.",
+          "http_status_code": 200,
+          "valid_result_count": 50,
+          "raw_result_count": 50,
+          "chargeable_quantity": 50,
+          "raw_success_rate_excluded": false,
+          "retryable": false,
+          "display_severity": "success"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "quantity": 1,
+          "list_amount_credits": 1,
+          "summary": "Charged 1 credits for this call",
+          "execution_outcome": "success"
+        },
+        "credits_used": 1,
+        "remaining_credits": 862721.67
+      }
+    }
+  ],
+  "check_results": [
+    {
+      "tool_name": "qveris_finance.ref_security_master",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.ref_security_master",
+        "tool_name": "qveris_finance.ref_security_master",
+        "capability_id": "REF.SECURITY_MASTER",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": [
+          {
+            "phase": "capability_catalog_page_1",
+            "reason": "transient_fetch_failure",
+            "attempt": 2
+          }
+        ]
+      },
+      "final_params": {
+        "symbol": "AAPL"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.alt_supply_chain",
+      "status": "failed",
+      "resolution": {
+        "requested_capability": "qveris_finance.alt_supply_chain",
+        "tool_name": "qveris_finance.alt_supply_chain",
+        "capability_id": "ALT.SUPPLY_CHAIN",
+        "detail_source": "live_catalog_fallback",
+        "detail_warning": "Live cap-detail returned HTTP 404; the exact matching row from the same live finance catalog was used.",
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.alt_job_postings",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.alt_job_postings",
+        "tool_name": "qveris_finance.alt_job_postings",
+        "capability_id": "ALT.JOB_POSTINGS",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.alt_patents",
+      "status": "failed",
+      "resolution": {
+        "requested_capability": "qveris_finance.alt_patents",
+        "tool_name": "qveris_finance.alt_patents",
+        "capability_id": "ALT.PATENTS",
+        "detail_source": "live_catalog_fallback",
+        "detail_warning": "Live cap-detail returned HTTP 404; the exact matching row from the same live finance catalog was used.",
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.alt_govt_contracts",
+      "status": "failed",
+      "resolution": {
+        "requested_capability": "qveris_finance.alt_govt_contracts",
+        "tool_name": "qveris_finance.alt_govt_contracts",
+        "capability_id": "ALT.GOVT_CONTRACTS",
+        "detail_source": "live_catalog_fallback",
+        "detail_warning": "Live cap-detail returned HTTP 404; the exact matching row from the same live finance catalog was used.",
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.filings_regulatory_metadata",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.filings_regulatory_metadata",
+        "tool_name": "qveris_finance.filings_regulatory_metadata",
+        "capability_id": "FILINGS.REGULATORY.METADATA",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "symbol": "AAPL",
+        "start_date": "2026-04-25",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.news_fin_tagged",
+        "tool_name": "qveris_finance.news_fin_tagged",
+        "capability_id": "NEWS.FIN.TAGGED",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "symbol": "AAPL",
+        "start_date": "2026-07-17",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    },
+    {
+      "tool_name": "qveris_finance.alt_shipping_ais",
+      "status": "success",
+      "resolution": {
+        "requested_capability": "qveris_finance.alt_shipping_ais",
+        "tool_name": "qveris_finance.alt_shipping_ais",
+        "capability_id": "ALT.SHIPPING_AIS",
+        "detail_source": "live_cap_detail",
+        "detail_warning": null,
+        "control_plane_retry_events": []
+      },
+      "final_params": {
+        "vessel_id": "210035000",
+        "start_date": "2026-07-23",
+        "end_date": "2026-07-24"
+      },
+      "observed_call_count": 1
+    }
+  ]
+}

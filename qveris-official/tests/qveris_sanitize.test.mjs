@@ -6,6 +6,16 @@ import {
   isSensitiveMetadataKey,
   sanitizeProviderRouteMetadata,
 } from "../scripts/qveris_sanitize.mjs";
+import { createHash } from "node:crypto";
+
+function hash(value) {
+  const canonicalize = (item) => Array.isArray(item)
+    ? item.map(canonicalize)
+    : item && typeof item === "object"
+      ? Object.fromEntries(Object.keys(item).sort().map((key) => [key, canonicalize(item[key])]))
+      : item;
+  return createHash("sha256").update(JSON.stringify(canonicalize(value)), "utf8").digest("hex");
+}
 
 test("recognizes legacy finance routes without blocking generic tool routes", () => {
   for (const route of [
@@ -39,6 +49,12 @@ test("detects provider and routing metadata keys recursively", () => {
     "failover_log",
     "source_tool_id",
     "cap_tool_id",
+    "private_key",
+    "seed_phrase",
+    "mnemonic",
+    "signing_key",
+    "wallet_credential",
+    "full_content_file_url",
   ]) {
     assert.equal(isSensitiveMetadataKey(key), true, key);
   }
@@ -81,4 +97,32 @@ test("redacts raw finance routes and provider API URLs in string values", () => 
     endpoint: "failed route [redacted_internal_route] during retry",
     links: ["[redacted_provider_url]", "https://example.com/issuer-news"],
   });
+});
+
+test("removes cached result URLs and redacts signed download URLs in strings", () => {
+  const sanitized = sanitizeProviderRouteMetadata({
+    full_content_file_url: "https://cache.example/result.json?OSSAccessKeyId=id&Signature=secret",
+    message: "download https://cache.example/result.json?X-Amz-Credential=id&X-Amz-Signature=secret",
+    public_url: "https://example.com/public-report",
+  });
+
+  assert.deepEqual(sanitized, {
+    message: "download [redacted_signed_download_url]",
+    public_url: "https://example.com/public-report",
+  });
+});
+
+test("rehashes sanitized observed responses while preserving the raw response hash", () => {
+  const response = {
+    result: {
+      data: [{ symbol: "AAPL" }],
+      full_content_file_url: "https://cache.example/result.json?OSSAccessKeyId=id&Signature=secret",
+    },
+  };
+  const originalHash = hash(response);
+  const sanitized = sanitizeProviderRouteMetadata({ response, response_sha256: originalHash });
+
+  assert.equal(sanitized.raw_response_sha256, originalHash);
+  assert.equal(sanitized.response_sha256, hash(sanitized.response));
+  assert.equal(Object.hasOwn(sanitized.response.result, "full_content_file_url"), false);
 });

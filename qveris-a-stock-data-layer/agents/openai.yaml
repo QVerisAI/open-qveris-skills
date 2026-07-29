@@ -1,4 +1,4 @@
 interface:
   display_name: "QVeris A-Stock Data Layer"
-  short_description: "QVeris-only A-share data-layer reports with honest fallback"
-  default_prompt: "Use $qveris-a-stock-data-layer for 600519.SH to produce a Markdown QVeris-only data-layer report with ## Summary / ## Evidence / ## Data Quality And Missing Fields / ## Trace Appendix headings, conditional A-share CAPs, trace appendix, data_quality, missing_fields, and no investment advice."
+  short_description: "Audited A-share data-layer reports with Web news"
+  default_prompt: "Use $qveris-a-stock-data-layer for 600519.SH to produce a Markdown data-layer report using QVeris for structured data and audited Web Search for issuer news and qualitative sentiment, with separate traces and no investment advice."

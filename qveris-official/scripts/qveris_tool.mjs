@@ -417,6 +417,7 @@ Options:
   --params JSON      Tool parameters as JSON string (default: "{}")
   --param KEY=VALUE  Repeatable shell-friendly parameter override; values are JSON-parsed when possible
   --strategy NAME    Capability routing strategy: best, cheapest, or balanced (default: best)
+  --max-attempts N   Maximum cap-query transport attempts: 1 or 2 (default: 2)
   --max-size N       Max response size in bytes (default: 20480)
   --timeout N        Request timeout in seconds (default: 30 for discover/inspect, 60 for call)
   --json             Output raw JSON instead of formatted display
@@ -521,6 +522,7 @@ function parseArgs(argv) {
     parsed.strategy = "best";
     parsed.searchId = null;
     parsed.timeout = 60;
+    parsed.maxAttempts = 2;
 
     for (let i = 2; i < args.length; i++) {
       if (args[i] === "--params" && i + 1 < args.length) {
@@ -535,6 +537,8 @@ function parseArgs(argv) {
         parsed.searchId = args[++i];
       } else if (args[i] === "--timeout" && i + 1 < args.length) {
         parsed.timeout = parseInt(args[++i], 10);
+      } else if (args[i] === "--max-attempts" && i + 1 < args.length) {
+        parsed.maxAttempts = parseInt(args[++i], 10);
       } else if (args[i] === "--json") {
         parsed.json = true;
       } else if (args[i] === "--safe-json") {
@@ -694,6 +698,7 @@ async function main() {
         strategy: args.strategy,
         searchId: args.searchId,
         timeoutMs: args.timeout * 1000,
+        maxAttempts: args.maxAttempts,
       });
       if (args.safeJson) {
         console.log(JSON.stringify(sanitizeProviderRouteMetadata(result), null, 2));

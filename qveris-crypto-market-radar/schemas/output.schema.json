@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QVeris Crypto Market Radar Output",
+  "$defs": {
+    "sanitizedParamValue": {
+      "oneOf": [
+        { "type": ["string", "number", "boolean", "null"] },
+        { "type": "array", "items": { "$ref": "#/$defs/sanitizedParamValue" } },
+        {
+          "type": "object",
+          "propertyNames": {
+            "not": {
+              "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|private[-_]?key|seed[-_]?phrase|mnemonic|signing[-_]?key|wallet[-_]?credential|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])"
+            }
+          },
+          "additionalProperties": { "$ref": "#/$defs/sanitizedParamValue" }
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "required": [
+    "skill",
+    "source_record",
+    "controls",
+    "analysis",
+    "risk_notes",
+    "missing_fields",
+    "data_quality",
+    "observed_call_count",
+    "qveris_trace",
+    "disclaimer",
+    "suppressed_fields"
+  ],
+  "properties": {
+    "skill": { "type": "string", "const": "qveris-crypto-market-radar" },
+    "source_record": {
+      "type": "object",
+      "required": [
+        "candidate_number",
+        "original_repository",
+        "github_url",
+        "license",
+        "evaluation_recent_activity",
+        "local_source_snapshot",
+        "snapshot_latest_commit"
+      ],
+      "properties": {
+        "candidate_number": { "type": "integer" },
+        "original_repository": { "type": "string" },
+        "github_url": { "type": "string" },
+        "license": { "type": "string" },
+        "evaluation_recent_activity": { "type": "string" },
+        "local_source_snapshot": { "type": "string" },
+        "snapshot_latest_commit": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "controls": {
+      "type": "object",
+      "required": ["dry_run", "max_calls", "max_age", "budget_note"],
+      "properties": {
+        "dry_run": { "type": "boolean" },
+        "max_calls": { "type": "integer", "minimum": 0 },
+        "max_age": {
+          "type": "object",
+          "required": ["spot", "history", "rankings", "market_mood", "whale", "news_social"],
+          "properties": {
+            "spot": { "type": "string", "pattern": "^P" },
+            "history": { "type": "string", "pattern": "^P" },
+            "rankings": { "type": "string", "pattern": "^P" },
+            "market_mood": { "type": "string", "pattern": "^P" },
+            "whale": { "type": "string", "pattern": "^P" },
+            "news_social": { "type": "string", "pattern": "^P" }
+          },
+          "additionalProperties": false
+        },
+        "budget_note": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["workflow", "summary", "evidence_status", "evidence"],
+      "properties": {
+        "workflow": {
+          "type": "string",
+          "enum": ["spot_snapshot", "asset_trend", "market_radar", "whale_monitor", "multi_asset_comparison"]
+        },
+        "summary": { "type": "string" },
+        "evidence_status": {
+          "type": "string",
+          "enum": ["confirmed", "corroborated", "unconfirmed", "unsupported", "partial", "limited", "budget_limited"]
+        },
+        "as_of": { "type": ["string", "null"] },
+        "assets": { "type": "array", "items": { "type": "string" } },
+        "quote_currencies": { "type": "array", "items": { "type": "string" } },
+        "window": {
+          "type": ["object", "null"],
+          "properties": {
+            "start": { "type": ["string", "null"] },
+            "end": { "type": ["string", "null"] },
+            "interval": { "type": ["string", "null"] },
+            "timezone": { "type": "string", "const": "UTC" },
+            "requested_observations": { "type": "integer", "minimum": 0 },
+            "accepted_observations": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "planned_calls": { "type": "array", "items": { "type": "string", "pattern": "^qveris_finance\\." } },
+        "fallback_plan": { "type": ["string", "null"] },
+        "sections": { "type": "array", "items": { "type": "string" } },
+        "interpretation_limits": { "type": "array", "items": { "type": "string" } },
+        "rejections": { "type": "array", "items": { "type": "string" } },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tool_name", "purpose", "status", "fields"],
+            "properties": {
+              "tool_name": { "type": "string", "pattern": "^qveris_finance\\." },
+              "purpose": { "type": "string" },
+              "status": { "type": "string", "const": "accepted" },
+              "fields": {
+                "type": "object",
+                "additionalProperties": { "$ref": "#/$defs/sanitizedParamValue" }
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "risk_notes": { "type": "array", "items": { "type": "string" } },
+    "missing_fields": { "type": "array", "items": { "type": "string" } },
+    "observed_call_count": { "type": "integer", "minimum": 0 },
+    "qveris_trace": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tool_name", "params", "status", "execution_id", "fallback_used", "missing_fields"],
+        "properties": {
+          "tool_name": { "type": "string", "pattern": "^qveris_finance\\." },
+          "params": {
+            "type": "object",
+            "propertyNames": {
+              "not": {
+                "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|private[-_]?key|seed[-_]?phrase|mnemonic|signing[-_]?key|wallet[-_]?credential|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])"
+              }
+            },
+            "additionalProperties": { "$ref": "#/$defs/sanitizedParamValue" }
+          },
+          "status": { "type": "string", "enum": ["success", "failed", "rejected"] },
+          "execution_id": { "type": ["string", "null"] },
+          "fallback_used": { "type": "boolean" },
+          "missing_fields": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      }
+    },
+    "disclaimer": { "type": "string", "const": "Not investment advice." },
+    "data_quality": {
+      "type": "object",
+      "required": ["status", "warnings", "stale_fields", "out_of_window_events", "suppressed_fields"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["ok", "limited", "insufficient", "complete", "partial", "proxy_only", "budget_limited"]
+        },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "stale_fields": { "type": "array", "items": { "type": "string" } },
+        "out_of_window_events": { "type": "array", "items": { "type": ["string", "object"] } },
+        "suppressed_fields": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "suppressed_fields": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

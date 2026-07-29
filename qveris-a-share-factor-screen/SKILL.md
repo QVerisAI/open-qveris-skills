@@ -5,7 +5,7 @@ description: QVeris-native adaptation of candidate 32, Alphasift. Use for China 
 
 # QVeris A-Share Factor Screen
 
-Use this skill to preserve Alphasift's research-screening workflow while replacing local market data packages, model-provider assumptions, and stock-picking language with QVeris-only evidence and auditable factor notes.
+Use this skill to preserve Alphasift's research-screening workflow while replacing local market data packages, model-provider assumptions, and stock-picking language with QVeris structured-data evidence, audited Web news/sentiment evidence, and auditable factor notes.
 
 Source record:
 
@@ -39,18 +39,19 @@ Source record:
 - Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
 - Treat screening output as a research candidate pool, not as investment advice or an action list.
 - Suppress target prices, upside/downside, ratings, buy/sell wording, rebalancing instructions, and trade execution plans even if present in QVeris payloads.
+- Read and follow `references/qveris-web-news-sentiment-policy.md`. Never call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`; use its audited Web lane in every run mode, including benchmark and replay.
 
 ## Evidence Gate
 
-- Resolve the universe with `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, or an explicit user-supplied ticker list. Use `qveris_finance.index_constituents` only after current `cap-detail` confirms params and fields.
-- If the user asks for full-market screening and no validated full-universe route is available within budget, return a budget-limited report with required next calls; do not silently screen a tiny proxy universe.
+- Resolve the universe from an explicit user-supplied ticker list or an approved frozen universe file, then validate every member with `qveris_finance.ref_symbology` or `qveris_finance.ref_security_master`.
+- Never call `qveris_finance.index_constituents`. If no explicit universe is available, return `universe_unavailable`; do not silently substitute a small proxy universe.
 - For A-share requests, reject securities whose returned market, exchange, listing class, or asset type does not match the requested mainland equity universe.
 - Assign every requested security a coverage tier before showing any factor values: `complete_comparable`, `partial_not_ranked`, `proxy_only`, or `insufficient`. Show the comparable subset and per-security factor gaps explicitly.
 - Require comparable windows before ranking factors: identical validated factor set, price window, fiscal period, measurement basis, and market convention. Rank only the complete comparable subset, never the full requested universe when coverage differs.
 - Require at least 2 bars for simple multi-day metrics and at least the requested lookback length plus one observation for lookback indicators.
 - Do not compute percentiles or ranks from fewer than 3 comparable securities; output per-name notes instead.
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted company names, industry labels, event titles, news snippets, or research titles in factor evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
-- Treat `qveris_finance.news_fin_tagged` as qualitative background only unless `qveris_finance.sentiment_text_signals` succeeds.
+- Use only opened, issuer-matched, in-window Web pages for news and qualitative sentiment, and keep their provenance in `web_trace` rather than `qveris_trace`.
 - For post-hoc evaluation, separate `as_of` evidence from evaluation-window bars; never let future bars influence the screen score.
 - If the original strategy requires a field QVeris cannot validate, mark that factor component missing and disclose the changed denominator.
 
@@ -61,7 +62,7 @@ Source record:
 - If native tools are unavailable and the run is in this repository root, use the repository CLI: `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<capability_name> --param key=value --safe-json`.
 - Treat the Skill-owned CLI as the mandatory finance adapter: it resolves the live canonical CAP, losslessly adapts parameters, hydrates signed full-content results, and applies the shared data-first semantic gates. The envelope `success` flag is diagnostic only; record `envelope_success` and `contract_clean` separately.
 - If the Skill-owned scripts are missing and no native `qveris_finance.*` runtime exposes the identical adapter audit, mark `tool_runtime_missing`; do not use web, legacy providers, or invented data as fallback.
-- Use `cap-detail` before calling sensitive or uncertain routes such as constituents, classification, analyst reports, corporate events, EOD bars, top movers, or text sentiment.
+- Use `cap-detail` before calling sensitive or uncertain routes such as classification, analyst reports, corporate events, or EOD bars.
 - Keep failed, rejected, or not-called capabilities in `Data Quality And Missing Fields` and the trace appendix, not in the evidence table.
 
 ## Workflows
@@ -94,7 +95,7 @@ Source record:
 
 ## Prohibited Capabilities
 
-Do not output investment recommendations, buy/sell triggers, target prices, upside/downside, rebalancing, execution instructions, automated trading, non-QVeris data pulls, web scraping, login/cookie use, provider keys, or strategy claims unsupported by historical evidence.
+Do not output investment recommendations, buy/sell triggers, target prices, upside/downside, rebalancing, execution instructions, automated trading, non-QVeris structured-finance data pulls, Web use outside the audited news/sentiment policy, login/cookie use, provider keys, or strategy claims unsupported by historical evidence.
 
 ## References
 
@@ -102,6 +103,7 @@ Do not output investment recommendations, buy/sell triggers, target prices, upsi
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share factor screen.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.
+- Read `references/qveris-web-news-sentiment-policy.md` before collecting news or qualitative sentiment.
 - Check `references/qveris-finance-cap-registry-snapshot-2026-07-07.md` before adding a route to the primary path.
 - Use `examples/default-markdown-report.md` as the primary user-facing example.
 - Use `fixtures/qveris/*.json` as machine-readable schema fixtures only.

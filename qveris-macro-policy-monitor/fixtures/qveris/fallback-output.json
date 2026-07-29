@@ -1,0 +1,38 @@
+{
+  "skill": "qveris-macro-policy-monitor",
+  "source_record": {
+    "original_repository": "LLMQuant Skills",
+    "github_url": "https://github.com/LLMQuant/skills",
+    "license": "MIT",
+    "adapted_components": ["llmquant-macro", "global-macro-dashboard", "fed-policy-preview"],
+    "upstream_commit": "1918237467c2dff4cc97a18ebc0892dfd46e8129",
+    "evaluated_at": "2026-07-24"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 4,
+    "max_age": { "macro": "P400D", "rates": "P120D", "market": "P7D" },
+    "budget_note": "max_calls counts observed capabilities/query attempts, including retries."
+  },
+  "analysis": {
+    "workflow": "macro_policy",
+    "summary": "Static macro-only fallback example; no observation is claimed.",
+    "evidence_status": "macro_only",
+    "as_of": "2026-07-24",
+    "geography": "US",
+    "window": { "start": "2024-07-24", "end": "2026-07-24", "timezone": "UTC" },
+    "fallback_mode": "macro_only",
+    "comparison_status": "snapshot_only",
+    "policy_transmission": { "status": "unsupported", "reason": "Rates evidence is unavailable." },
+    "curve_proxy": { "status": "unsupported", "reason": "Rates evidence is unavailable." },
+    "regime_label": { "status": "unsupported", "reason": "Heterogeneous macro directions are not mapped to a regime label." },
+    "evidence": []
+  },
+  "risk_notes": ["Macro-only mode cannot support policy-transmission conclusions."],
+  "missing_fields": ["rates_layers"],
+  "data_quality": { "status": "partial", "warnings": ["rates_layers_unavailable"], "stale_fields": [], "suppressed_fields": ["forecast", "causal_policy_transmission"] },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["provider", "route", "candidate", "failover", "credential"]
+}

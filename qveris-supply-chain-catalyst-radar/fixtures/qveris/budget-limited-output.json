@@ -1,0 +1,57 @@
+{
+  "skill": "qveris-supply-chain-catalyst-radar",
+  "source_record": {
+    "original_repository": "MarketBot",
+    "github_url": "https://github.com/EthanAlgoX/MarketBot",
+    "license": "MIT",
+    "adapted_components": ["catalyst-tracker", "logic-chain-visualizer", "thesis-tracker"],
+    "upstream_commit": "4faa7fd7406a40ce8081b6a49de5cad08a545c64",
+    "evaluated_at": "2026-07-24"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 1,
+    "max_age": {
+      "identity": "P30D",
+      "supply_chain": "P365D",
+      "jobs": "P120D",
+      "patents": "P365D",
+      "contracts": "P365D",
+      "filings": "P180D",
+      "news": "P7D",
+      "shipping": "PT6H"
+    },
+    "budget_note": "The two-call mandatory company-radar plan exceeds max_calls=1; no data call was made."
+  },
+  "analysis": {
+    "workflow": "company_radar",
+    "summary": "The workflow was blocked before transport because the mandatory call set did not fit the budget.",
+    "evidence_status": "budget_limited",
+    "as_of": null,
+    "issuer": "AAPL",
+    "window": { "start": "2026-04-25", "end": "2026-07-24", "timezone": "UTC" },
+    "planned_calls": ["qveris_finance.ref_security_master", "qveris_finance.alt_supply_chain"],
+    "sections": ["issuer_identity", "supply_chain_relationships"],
+    "change_assessment": {
+      "status": "unsupported",
+      "reason": "No independently aligned baseline/current comparison was observed."
+    },
+    "shipping_company_link_status": "not_requested",
+    "interpretation_limits": ["alternative_data_is_observational_not_causal"],
+    "rejections": [],
+    "evidence": []
+  },
+  "risk_notes": ["No evidence was observed because the mandatory plan exceeded the call budget."],
+  "missing_fields": ["issuer_identity", "supply_chain_relationships"],
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": ["mandatory_plan_exceeds_max_calls"],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": ["target_price", "investment_recommendation", "directional_forecast", "causal_claim_without_corroboration", "unverified_company_vessel_link"]
+  },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["target_price", "investment_recommendation", "directional_forecast", "causal_claim_without_corroboration", "unverified_company_vessel_link"]
+}
