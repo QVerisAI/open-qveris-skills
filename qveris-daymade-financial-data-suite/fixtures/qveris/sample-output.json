@@ -1,0 +1,95 @@
+{
+  "skill": "qveris-daymade-financial-data-suite",
+  "source_record": {
+    "candidate_number": 37,
+    "original_repository": "Daymade Financial Suite",
+    "github_url": "https://github.com/daymade/claude-code-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-06",
+    "local_source_snapshot": "third_party/source_repos/37-daymade-claude-code-skills",
+    "snapshot_latest_commit": "d2d566f on 2026-07-06"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 10,
+    "max_age": "P1D",
+    "budget_note": "Collect identity, market data, statements, and news before optional research rows."
+  },
+  "analysis": {
+    "workflow": "financial_data_pack",
+    "entity": "NVDA",
+    "evidence_status": "partial",
+    "summary": "Identity and one income-statement call are represented. No aligned three-statement table or cash-flow quality ratio is produced because BS and CF calls are missing.",
+    "defaults_allowed": false,
+    "aligned_statement_table": [],
+    "cash_flow_reconciliation": {
+      "status": "not_run_missing_bs_cf",
+      "quality_ratios_allowed": false
+    }
+  },
+  "risk_notes": [
+    "Financial packs must not substitute default beta, growth, rate, or margin values.",
+    "Research rows require issuer and report-type validation before use.",
+    "Valuation aliases such as pe_ttm must be normalized to canonical pe_ratio before missing-field checks.",
+    "Same-period CF net income must reconcile with IS net income before CF appears in aligned tables."
+  ],
+  "missing_fields": [
+    "risk_free_rate",
+    "validated_research_reports",
+    "sector_flow",
+    "pharma_daily_specialty_fields",
+    "aligned_balance_sheet",
+    "aligned_cash_flow",
+    "cash_flow_reconciliation"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_security_master",
+      "params": {
+        "symbol": "NVDA",
+        "market": "US"
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "tool_name": "qveris_finance.fundamentals_is",
+      "params": {
+        "symbol": "NVDA",
+        "period_type": "annual",
+        "limit": 3
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "cash_flow_alignment"
+      ]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "partial",
+    "warnings": [
+      "Data pack remains partial until all requested statement periods align.",
+      "No default values were substituted for missing financial fields."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ],
+  "observed_call_count": 2
+}

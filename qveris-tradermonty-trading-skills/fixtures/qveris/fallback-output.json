@@ -23,7 +23,7 @@
       "failed_primary_tools": [
         "qveris_finance.index_levels",
         "qveris_finance.mkt_breadth_internals",
-        "qveris_finance.macro_actual_vs_forecast",
+        "qveris_finance.event_calendar_macro",
         "qveris_finance.rates_govt_benchmark"
       ],
       "proxy_tools": [
@@ -42,7 +42,7 @@
     "primary_tool_unavailable",
     "primary_index_levels",
     "market_breadth",
-    "macro_actual_vs_forecast",
+    "macro_actual_vs_forecast_unavailable",
     "rates_govt_benchmark",
     "full_correlation_confirmation"
   ],
@@ -67,7 +67,7 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.index_vix",
-      "capability_id": "INDEX.VIX",
+      "capability_id": "qveris_finance.index_vix",
       "entity": "VIX",
       "market": "US",
       "params": {
@@ -80,15 +80,14 @@
       "missing_fields": [
         "primary_index_levels",
         "market_breadth",
-        "macro_actual_vs_forecast",
+        "macro_actual_vs_forecast_unavailable",
         "rates_govt_benchmark"
       ],
-      "source_provider": "internal_failover",
       "quality_note": "VIX proxy only; not complete market regime evidence."
     },
     {
       "tool_name": "qveris_finance.mkt_bars_adjusted",
-      "capability_id": "MKT.BARS.ADJUSTED",
+      "capability_id": "qveris_finance.mkt_bars_adjusted",
       "entity": "SPY",
       "market": "US",
       "params": {
@@ -102,11 +101,10 @@
         "primary_index_levels",
         "market_breadth"
       ],
-      "source_provider": "qveris_internal",
       "quality_note": "Liquid ETF proxy must be labeled separately from primary index evidence."
     }
   ],
-  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice.",
+  "disclaimer": "Not investment advice.",
   "suppressed_fields": [
     "analyst_target_price",
     "target_price",

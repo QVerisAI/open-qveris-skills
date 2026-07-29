@@ -1,19 +1,37 @@
 {
-  "report_type": "budget_limited_user_report",
   "skill": "qveris-finance-skills",
+  "source_record": {
+    "candidate_number": 4,
+    "original_repository": "Finance Skills",
+    "github_url": "https://github.com/himself65/finance-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-14",
+    "local_source_snapshot": "third_party/source_repos/04-finance-skills",
+    "snapshot_latest_commit": "87f688e 2026-06-07"
+  },
   "controls": {
     "dry_run": false,
     "max_calls": 2,
     "max_age": "P1D",
     "budget_note": "Budget-limited run: only entity resolution and one factor evidence call were allowed."
   },
-  "markdown_sections": {
+  "analysis": {
+    "report_type": "budget_limited_user_report",
+    "workflow": "sentiment_valuation_factor_note",
+    "evidence_status": "insufficient",
     "summary": "The factor report is incomplete because the call budget was exhausted before the full sentiment, valuation, earnings, liquidity, or correlation workflow could run.",
-    "factor_table": "Emit only factors backed by attempted QVeris calls. Mark all other factors as not called rather than unavailable from evidence.",
-    "data_quality_and_missing_fields": "Separate not-called fields from failed fields. Do not convert partial factor inputs into return forecasts.",
-    "what_this_can_support": "A partial evidence inventory and next QVeris calls.",
-    "what_this_cannot_support": "No numeric sentiment score, valuation signal, earnings surprise, correlation estimate, buy/sell trigger, target price, or return forecast."
+    "markdown_sections": {
+      "summary": "The factor report is incomplete because the call budget ended before primary evidence could be collected.",
+      "factor_table": "Emit only factors backed by attempted QVeris calls. Mark all other factors as not called rather than unavailable from evidence.",
+      "data_quality_and_missing_fields": "Separate not-called fields from failed fields. Do not convert partial factor inputs into return forecasts.",
+      "what_this_can_support": "A partial evidence inventory and next QVeris calls.",
+      "what_this_cannot_support": "No numeric sentiment score, valuation signal, earnings surprise, correlation estimate, buy/sell trigger, target price, or return forecast."
+    }
   },
+  "risk_notes": [
+    "Budget exhaustion is not QVeris evidence failure.",
+    "Do not emit numeric factor values unless the corresponding QVeris capability was called successfully."
+  ],
   "missing_fields": [
     "qveris_finance.news_fin_tagged:not_called_budget_limited",
     "qveris_finance.sentiment_text_signals:not_called_budget_limited",
@@ -26,11 +44,12 @@
   ],
   "data_quality": {
     "status": "budget_limited",
-    "fallback_used": false,
     "warnings": [
       "Budget exhaustion is not the same as QVeris evidence failure.",
       "Do not emit numeric factor values unless the corresponding QVeris capability was called successfully."
     ],
+    "stale_fields": [],
+    "out_of_window_events": [],
     "suppressed_fields": [
       "numeric_sentiment_score_without_primary_signal",
       "target_price",
@@ -41,18 +60,24 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_company_profile",
-      "capability_id": "REF.COMPANY_PROFILE",
+      "capability_id": "qveris_finance.ref_company_profile",
       "entity": "EXAMPLE",
       "market": "US",
       "params": {
         "symbol": "EXAMPLE",
         "market": "US"
       },
-      "as_of": null,
+      "as_of": "example",
       "retrieved_at": "example",
       "fallback_used": false,
       "missing_fields": []
     }
   ],
-  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice."
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "numeric_sentiment_score_without_primary_signal",
+    "target_price",
+    "directional_return_forecast",
+    "buy_sell"
+  ]
 }

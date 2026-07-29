@@ -1,5 +1,15 @@
 # Natural Language Examples
 
+## Minimal Prompts
+
+```text
+用 qveris-tradermonty-trading-skills 看当前美国市场 regime。
+```
+
+```text
+用 qveris-tradermonty-trading-skills 审查这个只读组合的风险：AAPL 40%、NVDA 35%、MSFT 25%。
+```
+
 ## US Market Regime Monitor
 
 ```text
@@ -9,5 +19,5 @@ Use $qveris-tradermonty-trading-skills as a Markdown risk/regime monitor to revi
 ## Read-Only Portfolio Risk Monitor
 
 ```text
-Use $qveris-tradermonty-trading-skills as a Markdown risk/regime monitor to review this read-only portfolio: AAPL 40%, NVDA 35%, MSFT 25%. Use QVeris for regime, beta/vol, classification, institutional/news, and sector exposure evidence where available. Put qveris_trace in an appendix, include missing_fields and data_quality, and do not recommend trades, rebalancing, buy/sell actions, or target prices.
+Use $qveris-tradermonty-trading-skills as a Markdown risk/regime monitor to review this read-only portfolio: AAPL 40%, NVDA 35%, MSFT 25%. Compute top1, top2, HHI, and effective holdings before CAP calls; use QVeris for beta/vol, classification, institutional/news, and sector exposure evidence where available. Put qveris_trace in an appendix, include missing_fields and data_quality, and do not recommend trades, rebalancing, buy/sell actions, or target prices.
 ```

@@ -1,0 +1,71 @@
+{
+  "skill": "qveris-a-share-factor-screen",
+  "source_record": {
+    "candidate_number": 32,
+    "original_repository": "Alphasift",
+    "github_url": "https://github.com/ZhuLinsen/alphasift",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-07-03",
+    "local_source_snapshot": "third_party/source_repos/32-alphasift",
+    "snapshot_latest_commit": "9f52274 on 2026-07-03"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 8,
+    "max_age": "P1D",
+    "budget_note": "factor fallback after sentiment route unavailable"
+  },
+  "analysis": {
+    "summary": "The screen remains usable as per-security notes, but cross-sectional ranking is withheld because comparable factor coverage is insufficient.",
+    "fallback": "news_fin_tagged used as qualitative context only"
+  },
+  "risk_notes": [
+    "Do not rank fewer than three comparable securities.",
+    "Do not use tagged news as a numeric sentiment factor."
+  ],
+  "missing_fields": [
+    "cross_sectional_rank insufficient_comparable_securities",
+    "sentiment_score primary_tool_unavailable",
+    "theme_heat capability_unavailable"
+  ],
+  "data_quality": {
+    "status": "insufficient",
+    "warnings": [
+      "insufficient_comparable_securities",
+      "primary_sentiment_unavailable"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "operation_advice",
+      "buy_sell",
+      "rebalance"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "params": {
+        "symbols": [
+          "600519",
+          "300750"
+        ],
+        "lookback_days": 7
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": true,
+      "missing_fields": [
+        "sentiment_score",
+        "news_cluster"
+      ]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "operation_advice",
+    "buy_sell",
+    "rebalance"
+  ],
+  "observed_call_count": 1
+}

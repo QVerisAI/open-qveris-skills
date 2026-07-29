@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris UZI Equity Research"
+  short_description: "QVeris-only equity research and risk review"
+  default_prompt: "Use $qveris-uzi-equity-research for 600519.SH to produce a QVeris-only equity research note with evidence, valuation-method audit, data_quality, missing_fields, trace appendix, and no investment advice."

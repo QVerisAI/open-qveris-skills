@@ -1,0 +1,61 @@
+{
+  "skill": "qveris-uzi-equity-research",
+  "source_record": {
+    "candidate_number": 34,
+    "original_repository": "UZI-Skill",
+    "github_url": "https://github.com/wbh604/UZI-Skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-07",
+    "local_source_snapshot": "third_party/source_repos/34-uzi-skill",
+    "snapshot_latest_commit": "fce996c on 2026-07-07"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": "P1D",
+    "budget_note": "No live QVeris calls allowed."
+  },
+  "analysis": {
+    "workflow": "budget_limited_equity_research",
+    "summary": "No QVeris calls were made because max_calls=0; no equity research or trap-risk conclusion is supported.",
+    "next_calls": [
+      "qveris_finance.ref_symbology",
+      "qveris_finance.ref_security_master",
+      "qveris_finance.mkt_bars_adjusted"
+    ]
+  },
+  "risk_notes": [
+    "Budget-limited output cannot validate issuer identity, valuation inputs, bars, or specialty risk layers."
+  ],
+  "missing_fields": [
+    "issuer_identity",
+    "market_data",
+    "valuation_inputs",
+    "news_context",
+    "lhb_flow_context",
+    "trap_risk_evidence"
+  ],
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": [
+      "not_called_due_to_max_calls"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "target_price",
+      "upside",
+      "buy_sell",
+      "safe_to_trade"
+    ]
+  },
+  "suppressed_fields": [
+    "target_price",
+    "upside",
+    "buy_sell",
+    "safe_to_trade"
+  ],
+  "observed_call_count": 0
+}

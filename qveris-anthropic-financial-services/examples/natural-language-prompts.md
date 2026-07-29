@@ -1,5 +1,15 @@
 # Natural Language Examples
 
+## Minimal Prompts
+
+```text
+用 qveris-anthropic-financial-services 看 NVDA 最新财报 context memo。
+```
+
+```text
+用 qveris-anthropic-financial-services 做 MSFT 模型输入审计。
+```
+
 ## Earnings Context Memo
 
 ```text

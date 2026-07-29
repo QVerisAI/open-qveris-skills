@@ -13,7 +13,7 @@
  *
  * Usage:
  *   node scripts/qveris_tool.mjs discover "weather forecast"
- *   node scripts/qveris_tool.mjs call <tool_id> --discovery-id <id> --params '{"city": "London"}'
+ *   node scripts/qveris_tool.mjs call <tool_id> --discovery-id <id> --param city=London
  *   node scripts/qveris_tool.mjs inspect <tool_id1> [tool_id2 ...]
  */
 
@@ -28,6 +28,10 @@ import {
   queryCapability,
   searchCapabilities,
 } from "./qveris_client.mjs";
+import {
+  isLikelyLegacyFinanceRouteIdentifier,
+  sanitizeProviderRouteMetadata,
+} from "./qveris_sanitize.mjs";
 
 const FINANCE_CAPABILITY_ALIASES = {
   "qveris_finance.ref_classification_industry": "REF.CLASSIFICATION.INDUSTRY",
@@ -38,7 +42,6 @@ const FINANCE_CAPABILITY_ALIASES = {
   "qveris_finance.event_calendar_corp": "EVENT.CALENDAR.CORP",
   "qveris_finance.event_calendar_earnings": "EVENT.CALENDAR.EARNINGS",
   "qveris_finance.event_calendar_macro": "EVENT.CALENDAR.MACRO",
-  "qveris_finance.news_dedup_cluster": "NEWS.DEDUP_CLUSTER",
   "qveris_finance.news_fin_tagged": "NEWS.FIN.TAGGED",
   "qveris_finance.earnings_actual_surprise": "EARNINGS.ACTUAL_SURPRISE",
   "qveris_finance.estimates_consensus": "ESTIMATES.CONSENSUS",
@@ -52,7 +55,6 @@ const FINANCE_CAPABILITY_ALIASES = {
   "qveris_finance.index_constituents": "INDEX.CONSTITUENTS",
   "qveris_finance.index_levels": "INDEX.LEVELS",
   "qveris_finance.index_vix": "INDEX.VIX",
-  "qveris_finance.macro_actual_vs_forecast": "MACRO.ACTUAL_VS_FORECAST",
   "qveris_finance.mkt_bars_adjusted": "MKT.BARS.ADJUSTED",
   "qveris_finance.mkt_bars_eod": "MKT.BARS.EOD",
   "qveris_finance.mkt_bars_intraday": "MKT.BARS.INTRADAY",
@@ -74,6 +76,66 @@ function normalizeCapabilityId(value) {
     return raw;
   }
   return FINANCE_CAPABILITY_ALIASES[raw.toLowerCase()] ?? raw;
+}
+
+function parseParamValue(rawValue) {
+  const value = String(rawValue ?? "");
+  if (value === "") {
+    return "";
+  }
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function parseParamOverride(rawAssignment) {
+  const assignment = String(rawAssignment ?? "");
+  const separatorIndex = assignment.indexOf("=");
+  if (separatorIndex <= 0) {
+    throw new Error(`Invalid --param '${assignment}'. Use KEY=VALUE, for example --param symbol=AAPL.`);
+  }
+  const key = assignment.slice(0, separatorIndex).trim();
+  if (!key) {
+    throw new Error(`Invalid --param '${assignment}'. Parameter key must not be empty.`);
+  }
+  return [key, parseParamValue(assignment.slice(separatorIndex + 1))];
+}
+
+function parseCommandParams(paramsJson, paramOverrides) {
+  let params;
+  try {
+    params = JSON.parse(paramsJson);
+  } catch (e) {
+    throw new Error(`Invalid JSON in --params: ${e.message}`);
+  }
+
+  if (!params || typeof params !== "object" || Array.isArray(params)) {
+    throw new Error("--params must decode to a JSON object.");
+  }
+
+  for (const override of paramOverrides ?? []) {
+    const [key, value] = parseParamOverride(override);
+    params[key] = value;
+  }
+  return params;
+}
+
+function readParamArg(args, index) {
+  if (index + 1 >= args.length) {
+    console.error("Error: --param requires KEY=VALUE or KEY VALUE");
+    process.exit(1);
+  }
+  const first = args[index + 1];
+  if (first.includes("=")) {
+    return { assignment: first, nextIndex: index + 1 };
+  }
+  if (index + 2 >= args.length || args[index + 2].startsWith("--")) {
+    console.error("Error: --param KEY requires a VALUE");
+    process.exit(1);
+  }
+  return { assignment: `${first}=${args[index + 2]}`, nextIndex: index + 2 };
 }
 
 function normalizeLegacyArgs(rawArgs) {
@@ -287,35 +349,6 @@ function displayCapabilityDetail(result) {
   }
 }
 
-function omitProviderRouteMeta(meta) {
-  if (!meta || typeof meta !== "object" || Array.isArray(meta)) {
-    return meta;
-  }
-  const { source_provider, source_tool_id, failover_log, ...safeMeta } = meta;
-  return safeMeta;
-}
-
-function sanitizeProviderRouteMetadata(value) {
-  if (Array.isArray(value)) {
-    return value.map((item) => sanitizeProviderRouteMetadata(item));
-  }
-  if (!value || typeof value !== "object") {
-    return value;
-  }
-
-  const sanitized = {};
-  for (const [key, child] of Object.entries(value)) {
-    if (key === "_meta") {
-      sanitized[key] = sanitizeProviderRouteMetadata(omitProviderRouteMeta(child));
-    } else if (key === "source_provider" || key === "source_tool_id" || key === "failover_log") {
-      continue;
-    } else {
-      sanitized[key] = sanitizeProviderRouteMetadata(child);
-    }
-  }
-  return sanitized;
-}
-
 function displayCapabilityQueryResult(result) {
   const success = result.success ?? false;
   const execTime = result.elapsed_time_ms ?? "N/A";
@@ -341,7 +374,7 @@ function displayCapabilityQueryResult(result) {
 
   if (result._meta) {
     console.log("\nMetadata (provider route fields omitted; use --json for raw metadata):");
-    console.log(JSON.stringify(omitProviderRouteMeta(result._meta), null, 2));
+    console.log(JSON.stringify(sanitizeProviderRouteMetadata(result._meta), null, 2));
   }
 }
 
@@ -353,7 +386,7 @@ Usage:
   node scripts/qveris_tool.mjs cap-list [options]
   node scripts/qveris_tool.mjs cap-search <query> [options]
   node scripts/qveris_tool.mjs cap-detail <capability_id|qveris_finance.name> [options]
-  node scripts/qveris_tool.mjs cap-query <capability_id|qveris_finance.name> --params '{"symbol": "AAPL"}' [options]
+  node scripts/qveris_tool.mjs cap-query <capability_id|qveris_finance.name> --param symbol=AAPL [options]
   node scripts/qveris_tool.mjs discover <query> [options]
   node scripts/qveris_tool.mjs call <tool_id> --discovery-id <id> [options]
   node scripts/qveris_tool.mjs inspect <tool_id> [tool_id2 ...] [options]
@@ -382,6 +415,7 @@ Options:
   --discovery-id ID  Discovery ID from previous discover (required for call, optional for inspect)
   --search-id ID     Search ID from cap-search for cap-query traceability
   --params JSON      Tool parameters as JSON string (default: "{}")
+  --param KEY=VALUE  Repeatable shell-friendly parameter override; values are JSON-parsed when possible
   --strategy NAME    Capability routing strategy: best, cheapest, or balanced (default: best)
   --max-size N       Max response size in bytes (default: 20480)
   --timeout N        Request timeout in seconds (default: 30 for discover/inspect, 60 for call)
@@ -392,10 +426,10 @@ Options:
 Examples:
   node scripts/qveris_tool.mjs cap-search "end of day bars" --domain finance
   node scripts/qveris_tool.mjs cap-detail qveris_finance.mkt_bars_eod
-  node scripts/qveris_tool.mjs cap-query qveris_finance.mkt_l1_rt --params '{"symbol": "AAPL"}' --safe-json
-  node scripts/qveris_tool.mjs cap-query MKT.BARS.EOD --params '{"symbol": "AAPL", "start_date": "2026-01-01", "end_date": "2026-01-03"}'
+  node scripts/qveris_tool.mjs cap-query qveris_finance.mkt_l1_rt --param symbol=AAPL --safe-json
+  node scripts/qveris_tool.mjs cap-query MKT.BARS.EOD --param symbol=AAPL --param start_date=2026-01-01 --param end_date=2026-01-03
   node scripts/qveris_tool.mjs discover "weather forecast API"
-  node scripts/qveris_tool.mjs call openweathermap.weather.execute.v1 --discovery-id abc123 --params '{"city": "London"}'
+  node scripts/qveris_tool.mjs call openweathermap.weather.execute.v1 --discovery-id abc123 --param city=London
   node scripts/qveris_tool.mjs inspect openweathermap.weather.execute.v1`);
 }
 
@@ -483,6 +517,7 @@ function parseArgs(argv) {
     }
     parsed.capabilityId = normalizeCapabilityId(args[1]);
     parsed.params = "{}";
+    parsed.paramOverrides = [];
     parsed.strategy = "best";
     parsed.searchId = null;
     parsed.timeout = 60;
@@ -490,6 +525,10 @@ function parseArgs(argv) {
     for (let i = 2; i < args.length; i++) {
       if (args[i] === "--params" && i + 1 < args.length) {
         parsed.params = args[++i];
+      } else if (args[i] === "--param") {
+        const param = readParamArg(args, i);
+        parsed.paramOverrides.push(param.assignment);
+        i = param.nextIndex;
       } else if (args[i] === "--strategy" && i + 1 < args.length) {
         parsed.strategy = args[++i];
       } else if (args[i] === "--search-id" && i + 1 < args.length) {
@@ -528,6 +567,7 @@ function parseArgs(argv) {
     parsed.toolId = args[1];
     parsed.discoveryId = null;
     parsed.params = "{}";
+    parsed.paramOverrides = [];
     parsed.maxSize = 20480;
     parsed.timeout = 60;
 
@@ -536,6 +576,10 @@ function parseArgs(argv) {
         parsed.discoveryId = args[++i];
       } else if (args[i] === "--params" && i + 1 < args.length) {
         parsed.params = args[++i];
+      } else if (args[i] === "--param") {
+        const param = readParamArg(args, i);
+        parsed.paramOverrides.push(param.assignment);
+        i = param.nextIndex;
       } else if (args[i] === "--max-size" && i + 1 < args.length) {
         parsed.maxSize = parseInt(args[++i], 10);
       } else if (args[i] === "--timeout" && i + 1 < args.length) {
@@ -586,6 +630,15 @@ function parseArgs(argv) {
 
 async function main() {
   const args = parseArgs(process.argv);
+  if (
+    args.command === "call"
+    && isLikelyLegacyFinanceRouteIdentifier(args.toolId)
+  ) {
+    console.error(
+      "Error: legacy raw finance routes are disabled. Use cap-query with a qveris_finance.* alias or canonical CAP ID; if the CAP is unavailable, report capability_unavailable.",
+    );
+    process.exit(2);
+  }
   const apiKey = readQverisApiKey();
 
   try {
@@ -629,9 +682,9 @@ async function main() {
     } else if (args.command === "cap-query") {
       let params;
       try {
-        params = JSON.parse(args.params);
+        params = parseCommandParams(args.params, args.paramOverrides);
       } catch (e) {
-        console.error(`Invalid JSON in --params: ${e.message}`);
+        console.error(e.message);
         process.exit(1);
       }
       const result = await queryCapability({
@@ -664,9 +717,9 @@ async function main() {
     } else if (args.command === "call") {
       let params;
       try {
-        params = JSON.parse(args.params);
+        params = parseCommandParams(args.params, args.paramOverrides);
       } catch (e) {
-        console.error(`Invalid JSON in --params: ${e.message}`);
+        console.error(e.message);
         process.exit(1);
       }
       const result = await callTool({

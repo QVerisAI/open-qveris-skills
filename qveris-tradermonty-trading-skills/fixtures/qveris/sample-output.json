@@ -23,7 +23,7 @@
       "primary_tools": [
         "qveris_finance.index_levels",
         "qveris_finance.mkt_breadth_internals",
-        "qveris_finance.macro_actual_vs_forecast"
+        "qveris_finance.event_calendar_macro"
       ],
       "proxy_tools": [
         "qveris_finance.index_vix",
@@ -46,7 +46,7 @@
     "primary_tool_unavailable",
     "qveris_finance.index_levels: provider_error",
     "qveris_finance.mkt_breadth_internals: provider_error",
-    "qveris_finance.macro_actual_vs_forecast: not_found",
+    "macro_actual_vs_forecast: unavailable_registry_confirmed",
     "primary_index_levels",
     "market_breadth",
     "macro_actual_vs_forecast"
@@ -54,7 +54,7 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.index_vix",
-      "capability_id": "INDEX.VIX",
+      "capability_id": "qveris_finance.index_vix",
       "entity": "VIX",
       "market": "US",
       "params": {
@@ -71,11 +71,10 @@
         "market_breadth",
         "macro_actual_vs_forecast"
       ],
-      "source_provider": "internal_failover",
       "quality_note": "Proxy-only regime evidence; do not present as complete primary breadth or macro confirmation."
     }
   ],
-  "disclaimer": "不构成投资建议 / Not investment advice.",
+  "disclaimer": "Not investment advice.",
   "data_quality": {
     "status": "limited",
     "warnings": [

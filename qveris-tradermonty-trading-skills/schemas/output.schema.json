@@ -116,7 +116,8 @@
             "pattern": "^qveris_finance\\."
           },
           "capability_id": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^qveris_finance\\."
           },
           "entity": {
             "type": "string"
@@ -142,19 +143,6 @@
               "type": "string"
             }
           },
-          "source_provider": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "enum": [
-              "qveris_internal",
-              "internal_failover",
-              "unknown",
-              null
-            ],
-            "description": "Abstract QVeris provenance label only; never expose raw vendor/provider IDs."
-          },
           "quality_note": {
             "type": "string"
           }
@@ -164,7 +152,7 @@
     },
     "disclaimer": {
       "type": "string",
-      "const": "不构成投资建议 / Not investment advice."
+      "const": "Not investment advice."
     },
     "data_quality": {
       "type": "object",
@@ -181,7 +169,11 @@
           "enum": [
             "ok",
             "limited",
-            "insufficient"
+            "insufficient",
+            "complete",
+            "partial",
+            "proxy_only",
+            "budget_limited"
           ]
         },
         "warnings": {

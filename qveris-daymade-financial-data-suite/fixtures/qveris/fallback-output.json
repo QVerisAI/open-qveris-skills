@@ -1,0 +1,92 @@
+{
+  "skill": "qveris-daymade-financial-data-suite",
+  "source_record": {
+    "candidate_number": 37,
+    "original_repository": "Daymade Financial Suite",
+    "github_url": "https://github.com/daymade/claude-code-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-06",
+    "local_source_snapshot": "third_party/source_repos/37-daymade-claude-code-skills",
+    "snapshot_latest_commit": "d2d566f on 2026-07-06"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 8,
+    "max_age": "P1D",
+    "budget_note": "Retry period-mismatched statements once with stricter documented fields."
+  },
+  "analysis": {
+    "workflow": "statement_collection_fallback",
+    "entity": "META",
+    "evidence_status": "partial",
+    "summary": "Requested annual cash flow was missing because returned period did not match the request after stricter retry.",
+    "defaults_allowed": false
+  },
+  "risk_notes": [
+    "Annual cash flow cannot be used when QVeris returns a latest-quarter shaped payload.",
+    "Downstream valuation inputs must exclude the mismatched field."
+  ],
+  "missing_fields": [
+    "FY2025 cash flow missing due to period mismatch",
+    "free_cash_flow",
+    "capex_basis",
+    "cash_flow_statement_alignment"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.fundamentals_cf",
+      "params": {
+        "symbol": "META",
+        "period": "annual",
+        "fiscal_year": 2025,
+        "limit": 1
+      },
+      "status": "rejected",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "period_mismatch"
+      ]
+    },
+    {
+      "tool_name": "qveris_finance.fundamentals_cf",
+      "params": {
+        "symbol": "META",
+        "period_type": "annual",
+        "fiscal_year": 2025,
+        "fiscal_period": "FY",
+        "limit": 1
+      },
+      "status": "rejected",
+      "execution_id": null,
+      "fallback_used": true,
+      "missing_fields": [
+        "period_mismatch",
+        "annual_cash_flow"
+      ]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Mismatched cash flow is rejected rather than used as fallback evidence.",
+      "No default or inferred cash-flow value is substituted."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ],
+  "observed_call_count": 2
+}

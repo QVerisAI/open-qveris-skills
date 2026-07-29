@@ -1,0 +1,58 @@
+{
+  "skill": "qveris-a-share-factor-screen",
+  "source_record": {
+    "candidate_number": 32,
+    "original_repository": "Alphasift",
+    "github_url": "https://github.com/ZhuLinsen/alphasift",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-07-03",
+    "local_source_snapshot": "third_party/source_repos/32-alphasift",
+    "snapshot_latest_commit": "9f52274 on 2026-07-03"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": "P1D",
+    "budget_note": "no live QVeris calls allowed"
+  },
+  "analysis": {
+    "summary": "No QVeris calls were made, so no factor screen or ranking is supported.",
+    "next_calls": [
+      "qveris_finance.ref_symbology",
+      "qveris_finance.mkt_bars_adjusted",
+      "qveris_finance.fundamentals_derived_ratios"
+    ]
+  },
+  "risk_notes": [
+    "Budget-limited output cannot validate universe membership or factor inputs."
+  ],
+  "missing_fields": [
+    "universe_identity",
+    "bars",
+    "valuation",
+    "liquidity",
+    "momentum",
+    "news_context"
+  ],
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": [
+      "not_called_due_to_max_calls"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "operation_advice",
+      "buy_sell",
+      "rebalance"
+    ]
+  },
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "operation_advice",
+    "buy_sell",
+    "rebalance"
+  ],
+  "observed_call_count": 0
+}

@@ -1,19 +1,37 @@
 {
-  "report_type": "budget_limited_user_report",
   "skill": "qveris-anthropic-financial-services",
+  "source_record": {
+    "candidate_number": 1,
+    "original_repository": "Anthropic Financial Services",
+    "github_url": "https://github.com/anthropics/financial-services",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-06-26",
+    "local_source_snapshot": "third_party/source_repos/01-anthropic-financial-services",
+    "snapshot_latest_commit": "4aa51ed 2026-06-26"
+  },
   "controls": {
     "dry_run": false,
     "max_calls": 2,
     "max_age": "P1D",
     "budget_note": "Budget-limited run: only entity resolution and one market/evidence call were allowed."
   },
-  "markdown_sections": {
+  "analysis": {
+    "report_type": "budget_limited_user_report",
+    "workflow": "earnings_context",
+    "evidence_status": "insufficient",
     "summary": "Only entity anchoring and one QVeris evidence call were attempted. The report cannot support an earnings beat/miss, DCF update, peer comparison, or market-research conclusion.",
-    "evidence_used": "QVeris evidence is limited to entity resolution and the first allowed workflow call.",
-    "data_quality_and_missing_fields": "Primary earnings, consensus, statements, transcript, market, and peer inputs were not called because of the call budget.",
-    "what_this_can_support": "Entity identification and a list of next verification calls.",
-    "what_this_cannot_support": "No beat/miss conclusion, no management quotes, no target price, no recommendation, and no model update."
+    "markdown_sections": {
+      "summary": "Only entity anchoring and one QVeris evidence call were attempted.",
+      "evidence_used": "QVeris evidence is limited to entity resolution and the first allowed workflow call.",
+      "data_quality_and_missing_fields": "Primary earnings, consensus, statements, transcript, market, and peer inputs were not called because of the call budget.",
+      "what_this_can_support": "Entity identification and a list of next verification calls.",
+      "what_this_cannot_support": "No beat/miss conclusion, no management quotes, no target price, no recommendation, and no model update."
+    }
   },
+  "risk_notes": [
+    "Budget exhaustion is not QVeris evidence failure.",
+    "Do not infer missing financial facts from memory or non-QVeris sources."
+  ],
   "missing_fields": [
     "qveris_finance.earnings_actual_surprise:not_called_budget_limited",
     "qveris_finance.estimates_consensus:not_called_budget_limited",
@@ -25,11 +43,12 @@
   ],
   "data_quality": {
     "status": "budget_limited",
-    "fallback_used": false,
     "warnings": [
       "Do not infer missing financial facts from prior knowledge.",
       "State the required next QVeris calls before any investment-research conclusion."
     ],
+    "stale_fields": [],
+    "out_of_window_events": [],
     "suppressed_fields": [
       "target_price",
       "upside",
@@ -40,18 +59,24 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.ref_company_profile",
-      "capability_id": "REF.COMPANY_PROFILE",
+      "capability_id": "qveris_finance.ref_company_profile",
       "entity": "EXAMPLE",
       "market": "US",
       "params": {
         "symbol": "EXAMPLE",
         "market": "US"
       },
-      "as_of": null,
+      "as_of": "example",
       "retrieved_at": "example",
       "fallback_used": false,
       "missing_fields": []
     }
   ],
-  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice."
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ]
 }

@@ -1,0 +1,84 @@
+{
+  "skill": "qveris-a-share-data",
+  "source_record": {
+    "candidate_number": 57,
+    "original_repository": "A-Share Skill",
+    "github_url": "https://github.com/shouldnotappearcalm/a-share-skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-24",
+    "local_source_snapshot": "third_party/source_repos/57-a-share-skill",
+    "snapshot_latest_commit": "8494623 on 2026-06-24"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 7,
+    "max_age": "P1D",
+    "budget_note": "single-security A-share data read"
+  },
+  "analysis": {
+    "summary": "Symbol, quote, and bars are QVeris-validated; technical context is calculated from validated bars only.",
+    "technical_context": {
+      "status": "complete",
+      "calculated_from": "qveris_finance.mkt_bars_adjusted"
+    }
+  },
+  "risk_notes": [
+    "Technical indicators are descriptive and not trade triggers.",
+    "Trading and paper-trading modules from the source repo are removed."
+  ],
+  "missing_fields": [
+    "sector_heatmap",
+    "a_h_mapping",
+    "hk_ipo_timeline",
+    "strong_sentiment_score"
+  ],
+  "data_quality": {
+    "status": "partial",
+    "warnings": [
+      "specialty_routes_require_current_cap_detail"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "paper_trading",
+      "entry_exit_trigger",
+      "position_size",
+      "stop_loss",
+      "buy_sell"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "params": {
+        "symbol": "300750",
+        "market": "CN"
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "tool_name": "qveris_finance.mkt_bars_adjusted",
+      "params": {
+        "symbol": "300750",
+        "frequency": "1d",
+        "count": 120
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "paper_trading",
+    "entry_exit_trigger",
+    "position_size",
+    "stop_loss",
+    "buy_sell"
+  ],
+  "observed_call_count": 2
+}

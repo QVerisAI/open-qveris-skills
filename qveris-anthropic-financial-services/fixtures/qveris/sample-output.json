@@ -48,7 +48,7 @@
   "qveris_trace": [
     {
       "tool_name": "qveris_finance.estimates_consensus",
-      "capability_id": "ESTIMATES.CONSENSUS",
+      "capability_id": "qveris_finance.estimates_consensus",
       "entity": "NVDA",
       "market": "US",
       "params": {
@@ -65,11 +65,10 @@
         "earnings_surprise",
         "beat_miss"
       ],
-      "source_provider": "internal_failover",
       "quality_note": "Consensus fallback only; do not convert this into actual-surprise evidence."
     }
   ],
-  "disclaimer": "不构成投资建议 / Not investment advice.",
+  "disclaimer": "Not investment advice.",
   "data_quality": {
     "status": "limited",
     "warnings": [
