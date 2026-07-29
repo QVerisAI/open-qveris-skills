@@ -4,7 +4,7 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 
 ## Runtime Policy
 
-- Runtime data source: `qveris_finance.*` CAP tools only.
+- Runtime data source: `qveris_finance.*` CAP tools for structured finance data plus the audited Web lane for issuer news and qualitative sentiment only.
 - Credential: `QVERIS_API_KEY` only.
 - Required trace fields: `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, `missing_fields`.
 - Build rows only from saved `observed_calls`; use normalized `qveris_finance.*` tool names and `execution_id=null` when the call returned none.
@@ -21,8 +21,8 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 | Price context | `qveris_finance.mkt_l1_rt`, `qveris_finance.mkt_bars_adjusted` | Require quote timestamp and at least 2 bars for multi-day metrics. |
 | Fundamentals | `qveris_finance.fundamentals_is`, `qveris_finance.fundamentals_bs`, `qveris_finance.fundamentals_cf`, `qveris_finance.fundamentals_derived_ratios` | Require fiscal-period and basis alignment. |
 | Forward inputs | `qveris_finance.estimates_consensus` | Use only matching forward-period fields; otherwise mark missing. |
-| News context | `qveris_finance.news_fin_tagged` | Qualitative background only unless stronger evidence succeeds. |
-| Sentiment coverage | `qveris_finance.sentiment_text_signals` | Numeric or directional sentiment is allowed only when this CAP succeeds, rows match the issuer, and non-empty signal/text cue/score/label fields are present. Empty sentiment payloads are coverage gaps, not weak signals. |
+| News context | Audited Web lane | Open and hash issuer-matched, in-window pages; snippets are discovery only. Do not call `qveris_finance.news_fin_tagged`. |
+| Sentiment coverage | Audited Web lane | Use at least two independent publisher owners and scope the qualitative label to that qualifying source sample. Do not call `qveris_finance.sentiment_text_signals` or emit a numeric score. |
 | Earnings/event context | `qveris_finance.event_calendar_earnings`, `qveris_finance.event_calendar_corp` | Reject out-of-window events. |
 
 ## Conditional CAPs
@@ -37,8 +37,8 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 |---|---|
 | Stock search and prices | Resolve identity, quote, and bars through QVeris. |
 | Fundamentals | Use QVeris statement, ratio, and consensus CAPs with fiscal-period gates. |
-| Finance news | Use tagged news as background and events as dated evidence. |
-| Sentiment model | Use QVeris text sentiment only when non-empty issuer-matched sentiment fields are present; otherwise output a sentiment coverage check plus qualitative context. |
+| Finance news | Use audited opened Web pages as issuer news evidence and QVeris events as structured dated evidence. |
+| Sentiment model | Aggregate only audited Web text cues from at least two independent source owners; otherwise output `insufficient`. |
 | Signal tracker | Describe evidence changes without action language. |
 | Reporter | Produce Markdown report plus trace appendix. |
 | Forecast or prediction tools | Mark unsupported unless a current QVeris CAP is verified; never emit forecasts as advice. |
@@ -48,15 +48,15 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 - Wrong issuer, wrong market, wrong asset type, wrong benchmark, or wrong currency.
 - Fewer than 2 bars for multi-day return, trend, volatility, liquidity, drawdown, or correlation.
 - Statement period mismatch, including annual/FY requests returning latest-quarter or TTM-shaped payloads.
-- Tagged-news-only output used as numeric sentiment, strong catalyst, or directional risk.
-- Empty sentiment `signal`, `text_cue`, score, or label fields used as weak sentiment instead of `sentiment_signal_empty`.
+- Any call to the temporarily disabled `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals` routes.
+- Web sentiment generalized beyond the qualifying source sample, or derived from fewer than two independent publisher owners.
 - Raw internal QVeris provider, route, failover, or model metadata in user-facing report or trace.
 
 ## Budget Order
 
 1. `qveris_finance.ref_symbology`
 2. `qveris_finance.ref_security_master`
-3. Requested core evidence, such as bars, fundamentals, news, or sentiment
+3. Requested core structured evidence, such as bars or fundamentals
 4. Optional ratios, consensus, events, or extra news rows
 5. Conditional CAP discovery only when the user asked for that feature
 

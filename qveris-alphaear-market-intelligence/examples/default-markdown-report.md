@@ -4,6 +4,8 @@
 
 Evidence status: `partial`.
 
+`effective_cutoff`: not bound in this static example. `workflow_guard_status`: `not_run_static_example`.
+
 This static default example defines the report contract. It does not claim any live QVeris payload, numeric sentiment, forecast, or trade trigger.
 
 ## Evidence
@@ -18,9 +20,9 @@ AlphaEar-style signal tracking is translated into monitoring language. A valid n
 
 - `missing_fields`: `validated_numeric_sentiment`, `validated_sentiment_signal_fields`, `validated_news_cluster`, `forecast_output`.
 - `data_quality.status`: `partial`.
-- Required next calls before a real report can cite evidence: `qveris_finance.ref_symbology`, `qveris_finance.news_fin_tagged`, and `qveris_finance.sentiment_text_signals` if numeric sentiment is requested.
-- If sentiment rows have empty `signal`, `text_cue`, score, or label fields, mark `sentiment_signal_empty` and present only a signal-coverage check.
-- Tagged news is qualitative only; it cannot support strong sentiment, strong catalyst, or directional risk by itself.
+- Required next collection before a real report can cite evidence: QVeris issuer resolution plus opened, body-hashed Web pages for issuer news and qualitative sentiment.
+- Do not call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals` while the temporary Web override is active.
+- Fewer than two independent publisher owners means `sentiment=insufficient`; any supported label remains scoped to the qualifying source sample.
 - Suppressed fields: `forecast`, `target_price`, `upside`, `recommendation`, `buy_sell`.
 
 ## Trace Appendix
