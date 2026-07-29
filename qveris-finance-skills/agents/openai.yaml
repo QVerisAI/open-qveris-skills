@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Factor Finance"
+  short_description: "QVeris-only factor notes with qualitative fallback guards"
+  default_prompt: "Use $qveris-finance-skills to produce a Markdown user report for QVeris-backed sentiment, valuation, earnings, liquidity, or correlation factors. Prefer direct qveris_finance.* CAP query/cap-query evidence, put trace details in an appendix, include data_quality/missing_fields, suppress target/upside/recommendation fields, and keep sentiment qualitative when sentiment_text_signals is unavailable."

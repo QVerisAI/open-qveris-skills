@@ -1,0 +1,118 @@
+{
+  "skill": "qveris-finance-skills",
+  "source_record": {
+    "candidate_number": 4,
+    "original_repository": "Finance Skills",
+    "github_url": "https://github.com/himself65/finance-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-14",
+    "local_source_snapshot": "third_party/source_repos/04-finance-skills",
+    "snapshot_latest_commit": "87f688e 2026-06-07"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 12,
+    "max_age": "P1D",
+    "budget_note": "Fallback example: sentiment_text_signals and derived ratios fail, so output qualitative news context and partial valuation inputs only."
+  },
+  "analysis": {
+    "workflow": "sentiment_and_valuation_factors",
+    "entity": "TSLA",
+    "summary": "Qualitative sentiment and partial valuation note. Numeric sentiment, derived ratios, target price, upside, and return forecasts are suppressed.",
+    "fallback_context": {
+      "failed_primary_tools": [
+        "qveris_finance.sentiment_text_signals",
+        "qveris_finance.fundamentals_derived_ratios",
+        "qveris_finance.estimates_consensus"
+      ],
+      "fallback_tools": [
+        "qveris_finance.news_fin_tagged",
+        "qveris_finance.mkt_l1_rt",
+        "qveris_finance.fundamentals_is"
+      ],
+      "numeric_sentiment_allowed": false,
+      "directional_return_forecast_allowed": false
+    }
+  },
+  "risk_notes": [
+    "Tagged news can support qualitative context only when sentiment_text_signals is unavailable.",
+    "Partial valuation inputs must not be converted into a buy/sell, target price, or directional return forecast."
+  ],
+  "missing_fields": [
+    "primary_tool_unavailable",
+    "numeric_sentiment_score",
+    "sentiment_signal_confidence",
+    "derived_valuation_ratios",
+    "forward_consensus",
+    "target_price",
+    "upside",
+    "directional_return_forecast"
+  ],
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Sentiment primary route failed; keep sentiment qualitative.",
+      "Derived ratios and consensus failed; valuation is partial and should show missing fields."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "numeric_sentiment_score",
+      "analyst_target_price",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell",
+      "directional_return_forecast"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "NEWS.FIN.TAGGED",
+      "entity": "TSLA",
+      "market": "US",
+      "params": {
+        "symbol": "TSLA",
+        "window": "P7D"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T05:45:00Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "numeric_sentiment_score",
+        "sentiment_signal_confidence"
+      ],
+      "source_provider": "qveris_internal",
+      "quality_note": "Fallback news context only; do not emit a numeric sentiment score."
+    },
+    {
+      "tool_name": "qveris_finance.mkt_l1_rt",
+      "capability_id": "MKT.L1.RT",
+      "entity": "TSLA",
+      "market": "US",
+      "params": {
+        "symbol": "TSLA"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T05:45:00Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "derived_valuation_ratios",
+        "forward_consensus"
+      ],
+      "source_provider": "internal_failover",
+      "quality_note": "Market price may support partial valuation inputs but not target price or return claims."
+    }
+  ],
+  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice.",
+  "suppressed_fields": [
+    "numeric_sentiment_score",
+    "analyst_target_price",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell",
+    "directional_return_forecast"
+  ]
+}

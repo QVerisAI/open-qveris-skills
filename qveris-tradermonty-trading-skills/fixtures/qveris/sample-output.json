@@ -1,0 +1,102 @@
+{
+  "skill": "qveris-tradermonty-trading-skills",
+  "source_record": {
+    "candidate_number": 10,
+    "original_repository": "Tradermonty Trading Skills",
+    "github_url": "https://github.com/tradermonty/claude-trading-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-06",
+    "local_source_snapshot": "third_party/source_repos/10-tradermonty-trading-skills",
+    "snapshot_latest_commit": "4d63990 2026-07-05"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 12,
+    "max_age": "P1D",
+    "budget_note": "Prioritize primary regime and breadth calls; label proxy-only evidence when primaries fail."
+  },
+  "analysis": {
+    "workflow": "market_regime",
+    "entity": "US market",
+    "summary": "Limited regime review based on VIX proxy evidence because primary index, breadth, or macro routes are unavailable.",
+    "fallback_context": {
+      "primary_tools": [
+        "qveris_finance.index_levels",
+        "qveris_finance.mkt_breadth_internals",
+        "qveris_finance.macro_actual_vs_forecast"
+      ],
+      "proxy_tools": [
+        "qveris_finance.index_vix",
+        "qveris_finance.rates_govt_benchmark"
+      ],
+      "trading_actions_allowed": false
+    },
+    "sections": [
+      "market_regime_proxy",
+      "missing_primary_evidence",
+      "sector_rotation_limits",
+      "data_quality"
+    ]
+  },
+  "risk_notes": [
+    "Proxy evidence is weaker than primary index, breadth, and macro evidence.",
+    "Monitoring output only; no trade prep or portfolio action instruction."
+  ],
+  "missing_fields": [
+    "primary_tool_unavailable",
+    "qveris_finance.index_levels: provider_error",
+    "qveris_finance.mkt_breadth_internals: provider_error",
+    "qveris_finance.macro_actual_vs_forecast: not_found",
+    "primary_index_levels",
+    "market_breadth",
+    "macro_actual_vs_forecast"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.index_vix",
+      "capability_id": "INDEX.VIX",
+      "entity": "VIX",
+      "market": "US",
+      "params": {
+        "symbol": "VIX",
+        "region": "US",
+        "date": "2026-07-07"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T02:45:26Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "primary_tool_unavailable",
+        "primary_index_levels",
+        "market_breadth",
+        "macro_actual_vs_forecast"
+      ],
+      "source_provider": "internal_failover",
+      "quality_note": "Proxy-only regime evidence; do not present as complete primary breadth or macro confirmation."
+    }
+  ],
+  "disclaimer": "不构成投资建议 / Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "VIX/rates proxy evidence must be separated from primary index, breadth, and macro evidence.",
+      "Any missing primary route should lower confidence and remain visible in missing_fields."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "analyst_target_price",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "analyst_target_price",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ]
+}

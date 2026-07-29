@@ -1,0 +1,119 @@
+{
+  "skill": "qveris-anthropic-financial-services",
+  "source_record": {
+    "candidate_number": 1,
+    "original_repository": "Anthropic Financial Services",
+    "github_url": "https://github.com/anthropics/financial-services",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-06-26",
+    "local_source_snapshot": "third_party/source_repos/01-anthropic-financial-services",
+    "snapshot_latest_commit": "4aa51ed 2026-06-26"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 12,
+    "max_age": "P1D",
+    "budget_note": "Fallback example: stop after consensus, calendar, and news context when actual-surprise or transcript routes fail."
+  },
+  "analysis": {
+    "workflow": "earnings_analysis",
+    "entity": "NVDA",
+    "summary": "Fallback earnings context only. Primary actual-surprise and latest transcript evidence are unavailable, so beat/miss and management quotes remain suppressed.",
+    "fallback_context": {
+      "failed_primary_tools": [
+        "qveris_finance.earnings_actual_surprise",
+        "qveris_finance.transcripts_earnings_call"
+      ],
+      "fallback_tools": [
+        "qveris_finance.estimates_consensus",
+        "qveris_finance.event_calendar_earnings",
+        "qveris_finance.news_fin_tagged"
+      ],
+      "beat_miss_allowed": false,
+      "management_quotes_allowed": false
+    }
+  },
+  "risk_notes": [
+    "Do not state beat/miss without actual and consensus values from a QVeris CAP payload.",
+    "News context is not a substitute for management quotes."
+  ],
+  "missing_fields": [
+    "primary_tool_unavailable",
+    "actual_eps",
+    "actual_revenue",
+    "earnings_surprise",
+    "beat_miss",
+    "latest_transcript",
+    "management_quotes"
+  ],
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Primary earnings surprise route failed; output must remain a fallback context note.",
+      "Transcript route failed; do not quote or paraphrase management as if from the latest call."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "analyst_target_price",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell",
+      "beat_miss",
+      "management_quotes"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.estimates_consensus",
+      "capability_id": "ESTIMATES.CONSENSUS",
+      "entity": "NVDA",
+      "market": "US",
+      "params": {
+        "symbol": "NVDA",
+        "period": "latest_quarter"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T05:45:00Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "actual_eps",
+        "actual_revenue",
+        "earnings_surprise",
+        "beat_miss"
+      ],
+      "source_provider": "internal_failover",
+      "quality_note": "Consensus fallback only; not evidence of actual surprise."
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "capability_id": "NEWS.FIN.TAGGED",
+      "entity": "NVDA",
+      "market": "US",
+      "params": {
+        "symbol": "NVDA",
+        "window": "P7D"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T05:45:00Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "latest_transcript",
+        "management_quotes"
+      ],
+      "source_provider": "qveris_internal",
+      "quality_note": "News context may describe catalysts but cannot be used as management-call evidence."
+    }
+  ],
+  "disclaimer": "\u4e0d\u6784\u6210\u6295\u8d44\u5efa\u8bae / Not investment advice.",
+  "suppressed_fields": [
+    "analyst_target_price",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell",
+    "beat_miss",
+    "management_quotes"
+  ]
+}

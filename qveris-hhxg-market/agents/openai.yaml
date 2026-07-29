@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris A Share Snapshot"
+  short_description: "A-share snapshot and flow monitor"
+  default_prompt: "Use $qveris-hhxg-market to create a QVeris-backed A-share market snapshot."

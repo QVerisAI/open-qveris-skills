@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Tech Earnings"
+  short_description: "Evidence-first tech earnings memo"
+  default_prompt: "Use $qveris-tech-earnings-deepdive to produce a QVeris-backed technology earnings deep dive."
