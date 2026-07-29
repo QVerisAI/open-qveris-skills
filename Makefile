@@ -96,7 +96,9 @@ validate-qveris-sanitizer:
 validate-finance-business-adapters:
 	$(NODE) --test \
 		qveris-a-stock-data-layer/tests/qveris_finance_adapter.test.mjs \
-		qveris-a-stock-data-layer/tests/business_adapter_copies.test.mjs
+		qveris-a-stock-data-layer/tests/business_adapter_copies.test.mjs \
+		qveris-a-share-data/tests/web_news_fallback_contract.test.mjs \
+		qveris-a-share-data/tests/web_news_policy_copies.test.mjs
 
 validate-finance-contract-self-tests:
 	$(PYTHON) scripts/validate_qveris_finance_fixtures.py --self-test

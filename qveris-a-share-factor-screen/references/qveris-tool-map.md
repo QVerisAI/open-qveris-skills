@@ -26,7 +26,7 @@ Source snapshot used for this map: `third_party/source_repos/32-alphasift` at `9
 | score/rank | Compute from validated components only; ranking requires comparable evidence and at least 3 securities. |
 | saved runs | Represent in report metadata unless the runtime supplies explicit persistence. |
 | `evaluate` / `evaluate-batch` / performance | Historical post-hoc evaluation only, using bars after `as_of`; no forecast claim. |
-| hotspot/industry cache | Use classification/top-mover proxies unless verified sector heat CAPs exist. |
+| hotspot/industry cache | Use validated classification context only. Do not infer market heat or breadth. |
 | LLM or DSA post-analysis | Remove as runtime dependency; do not use operation-advice fields. |
 
 ## Scoring Rules
@@ -41,11 +41,11 @@ Source snapshot used for this map: `third_party/source_repos/32-alphasift` at `9
 
 | Alphasift-like feature | Default handling |
 |---|---|
-| Full-market A-share universe | Use only when `index_constituents` or a validated universe route supports it within budget and current `cap-detail` succeeds; otherwise budget-limited. |
+| Full-market A-share universe | Require an explicit user-supplied ticker list or approved frozen universe file. Never call `qveris_finance.index_constituents`; without a supplied universe, return `universe_unavailable`. |
 | Dedicated industry/theme classification | Industry route returned usable payload in 2026-07-08 smoke; theme route returned empty payload. Use only non-empty validated rows. |
 | EOD bars | Live smoke returned 21 bars for one symbol and one bar for two others; keep observation-count gates before scoring. |
 | Corporate event detail routes | Use earnings calendar by default; call corporate-event detail only after current `cap-detail` confirms fields. |
-| Top movers / heat proxies | Live smoke returned usable CN top-mover payload; label proxy-only and do not use as factor rank by itself. |
+| Top movers / heat proxies | Do not call `qveris_finance.mkt_top_movers`. A bounded user-supplied list may be ranked from validated same-window bars, labeled `bounded_universe_rank`; it is not a full-market leaderboard. |
 | Strategy registry or custom filters | Translate to factor definitions and data needs; unsupported factors become missing fields. |
 | Natural-language stock picking | Convert to a research screen with no advice language. |
 | Saved runs | Represent as report metadata only unless the environment supplies persistent storage. |
