@@ -1,0 +1,1494 @@
+{
+  "skill_id": "qveris-portfolio-risk-monitor",
+  "mode": "live",
+  "generated_at": "2026-07-03T05:59:10.838Z",
+  "usage": {
+    "paid_calls": 3,
+    "estimated_credits": 49.4
+  },
+  "preflight": {
+    "quote_history": {
+      "key": "quote_history",
+      "query": "portfolio risk stock quote historical OHLCV volatility liquidity API",
+      "search_id": "d0eb56f9-b76a-4b0c-a177-7e3b4fd3eed4",
+      "discovered": [
+        {
+          "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+          "name": "Full Chart",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0.684,
+          "avg_execution_time_ms": 1404.33,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "date",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "date",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.historical_price_eod.full.retrieve.v1.f9aefe40",
+          "name": "Retrieve Full Historical End-of-Day Price Data",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0.846,
+          "avg_execution_time_ms": 1380.51,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "date",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "date",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub_io_api.stock.quote",
+          "name": "Quote",
+          "provider": "finnhub_io_api",
+          "expected_cost": "1",
+          "success_rate": 0.927,
+          "avg_execution_time_ms": 1207.9,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 1 credits per call; Free allowance: 60 callss/minute"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "deribit.historical_volatility.retrieve.v2.319cc480",
+          "name": "Get Historical Volatility",
+          "provider": "deribit",
+          "expected_cost": "1",
+          "success_rate": 1,
+          "avg_execution_time_ms": 238.92,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "currency",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "BTC",
+                "ETH",
+                "USDC",
+                "USDT",
+                "EURR"
+              ]
+            }
+          ]
+        },
+        {
+          "tool_id": "cn_financial_pro.beta_volatility.v1",
+          "name": "Beta/波动率 (Beta & Volatility)",
+          "provider": "cn_financial_pro",
+          "expected_cost": "1 credits/result",
+          "success_rate": 1,
+          "avg_execution_time_ms": 424.74,
+          "billing_rule": {
+            "metering_mode": "custom_usage",
+            "billing_unit": "quantity",
+            "billing_unit_label": "quantity",
+            "price": {
+              "amount_credits": 0.04,
+              "per": 1
+            },
+            "minimum_charge_credits": 1,
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Billed by quantity; 0.04 credits/quantity; minimum charge 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "codes",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "sdate",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "edate",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "freq",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "return_type",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "benchmark",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      ],
+      "inspected": [
+        {
+          "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+          "name": "Full Chart",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0.684,
+          "avg_execution_time_ms": 1404.33,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "date",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "date",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.historical_price_eod.full.retrieve.v1.f9aefe40",
+          "name": "Retrieve Full Historical End-of-Day Price Data",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0.846,
+          "avg_execution_time_ms": 1380.51,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "date",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "date",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub_io_api.stock.quote",
+          "name": "Quote",
+          "provider": "finnhub_io_api",
+          "expected_cost": "1",
+          "success_rate": 0.927,
+          "avg_execution_time_ms": 1207.9,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 1 credits per call; Free allowance: 60 callss/minute"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "deribit.historical_volatility.retrieve.v2.319cc480",
+          "name": "Get Historical Volatility",
+          "provider": "deribit",
+          "expected_cost": "1",
+          "success_rate": 1,
+          "avg_execution_time_ms": 238.92,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "currency",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "BTC",
+                "ETH",
+                "USDC",
+                "USDT",
+                "EURR"
+              ]
+            }
+          ]
+        },
+        {
+          "tool_id": "cn_financial_pro.beta_volatility.v1",
+          "name": "Beta/波动率 (Beta & Volatility)",
+          "provider": "cn_financial_pro",
+          "expected_cost": "1 credits/result",
+          "success_rate": 1,
+          "avg_execution_time_ms": 424.74,
+          "billing_rule": {
+            "metering_mode": "custom_usage",
+            "billing_unit": "quantity",
+            "billing_unit_label": "quantity",
+            "price": {
+              "amount_credits": 0.04,
+              "per": 1
+            },
+            "minimum_charge_credits": 1,
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Billed by quantity; 0.04 credits/quantity; minimum charge 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "codes",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "sdate",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "edate",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "freq",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "return_type",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "benchmark",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    "profile_sector": {
+      "key": "profile_sector",
+      "query": "company fundamentals sector industry profile market data API",
+      "search_id": "9a587abc-635f-4da9-9723-9be364aeb364",
+      "discovered": [
+        {
+          "tool_id": "twelvedata.profile.retrieve.v1.c9f510fb",
+          "name": "Profile",
+          "provider": "twelvedata",
+          "expected_cost": "2.37",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.37,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.37 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "figi",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "isin",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cusip",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "exchange",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "mic_code",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "country",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+          "name": "Company Profile Data",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1642.02,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.secprofile.retrieve.v1.53af4af6",
+          "name": "SEC Company Full Profile",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1191.26,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "cik-A",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.profilecik.retrieve.v1.2df866c3",
+          "name": "Company Profile by CIK",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9",
+          "name": "Available Sectors",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1066.02,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": []
+        }
+      ],
+      "inspected": [
+        {
+          "tool_id": "twelvedata.profile.retrieve.v1.c9f510fb",
+          "name": "Profile",
+          "provider": "twelvedata",
+          "expected_cost": "2.37",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.37,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.37 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "figi",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "isin",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cusip",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "exchange",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "mic_code",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "country",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+          "name": "Company Profile Data",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1642.02,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.secprofile.retrieve.v1.53af4af6",
+          "name": "SEC Company Full Profile",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1191.26,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "cik-A",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.profilecik.retrieve.v1.2df866c3",
+          "name": "Company Profile by CIK",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9",
+          "name": "Available Sectors",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1066.02,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": []
+        }
+      ]
+    },
+    "news_calendar": {
+      "key": "news_calendar",
+      "query": "stock market news sentiment API by ticker",
+      "search_id": "2c41522b-6933-4458-b0e0-ab23a1068a0b",
+      "discovered": [
+        {
+          "tool_id": "eodhd.news.retrieve.v1.fe8bf94c",
+          "name": "Retrieve Financial News",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 0.857,
+          "avg_execution_time_ms": 1891.4,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "s",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "t",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "limit",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "offset",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "fmt",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "eodhd.news-word-weights.retrieve.v1.7f8db48e",
+          "name": "News Word Weights API",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1015.55,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "s",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "filter[date_from]",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "filter[date_to]",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "page[limit]",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "fmt",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "json"
+              ]
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.insidersentiment.retrieve.v1.dff02940",
+          "name": "Insider Sentiment",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0.548,
+          "avg_execution_time_ms": 363.12,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "massive_stocks.stocks.short_interest.list.v1.7214116c",
+          "name": "List Short Interest Data",
+          "provider": "massive_stocks",
+          "expected_cost": "1",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "ticker",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.gt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.gte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.lt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.lte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "days_to_cover",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.gt",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.gte",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.lt",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.lte",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "settlement_date",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.gt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.gte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.lt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.lte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.gt",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.gte",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.lt",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.lte",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "limit",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "sort",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "apiKey",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.insidersentiment.retrieve.v1.73d5f376",
+          "name": "Insider Sentiment",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 1,
+          "avg_execution_time_ms": 363.11,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ],
+      "inspected": [
+        {
+          "tool_id": "eodhd.news.retrieve.v1.fe8bf94c",
+          "name": "Retrieve Financial News",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 0.857,
+          "avg_execution_time_ms": 1891.4,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "s",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "t",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "limit",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "offset",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "fmt",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "eodhd.news-word-weights.retrieve.v1.7f8db48e",
+          "name": "News Word Weights API",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1015.55,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "s",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "filter[date_from]",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "filter[date_to]",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "page[limit]",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "fmt",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "json"
+              ]
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.insidersentiment.retrieve.v1.dff02940",
+          "name": "Insider Sentiment",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0.548,
+          "avg_execution_time_ms": 363.12,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "massive_stocks.stocks.short_interest.list.v1.7214116c",
+          "name": "List Short Interest Data",
+          "provider": "massive_stocks",
+          "expected_cost": "1",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "ticker",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.gt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.gte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.lt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "ticker.lte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "days_to_cover",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.gt",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.gte",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.lt",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "days_to_cover.lte",
+              "type": "number",
+              "required": false
+            },
+            {
+              "name": "settlement_date",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.gt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.gte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.lt",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "settlement_date.lte",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.any_of",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.gt",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.gte",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.lt",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "avg_daily_volume.lte",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "limit",
+              "type": "integer",
+              "required": false
+            },
+            {
+              "name": "sort",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "apiKey",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "calls": [
+    {
+      "role": "quote_snapshot",
+      "category": "quote_history",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "provider": "finnhub_io_api",
+      "parameters": {
+        "symbol": "NVDA"
+      },
+      "expected_cost": 1,
+      "cost": 1,
+      "ok": false,
+      "execution_id": "a324ebaf-7795-48d5-b589-8589be38bc13"
+    },
+    {
+      "role": "historical_prices",
+      "category": "quote_history",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "provider": "financialmodelingprep",
+      "parameters": {
+        "symbol": "NVDA",
+        "from": "2026-06-03",
+        "to": "2026-07-03"
+      },
+      "expected_cost": 24.2,
+      "cost": 24.2,
+      "ok": true,
+      "execution_id": "b7617582-2c26-49a5-bc8d-75b9dce485d3"
+    },
+    {
+      "role": "profile_sector",
+      "category": "profile_sector",
+      "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+      "provider": "financialmodelingprep",
+      "parameters": {
+        "symbol": "NVDA"
+      },
+      "expected_cost": 24.2,
+      "cost": 24.2,
+      "ok": true,
+      "execution_id": "3dba199a-e0c2-49a1-9d36-2e8f31677586"
+    }
+  ],
+  "trace": [
+    {
+      "type": "preflight",
+      "category": "quote_history",
+      "query": "portfolio risk stock quote historical OHLCV volatility liquidity API",
+      "search_id": "d0eb56f9-b76a-4b0c-a177-7e3b4fd3eed4",
+      "started_at": "2026-07-03T05:59:10.838Z",
+      "finished_at": "2026-07-03T05:59:12.510Z",
+      "inspected_tool_ids": [
+        "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+        "financialmodelingprep.historical_price_eod.full.retrieve.v1.f9aefe40",
+        "finnhub_io_api.stock.quote",
+        "deribit.historical_volatility.retrieve.v2.319cc480",
+        "cn_financial_pro.beta_volatility.v1"
+      ]
+    },
+    {
+      "type": "preflight",
+      "category": "profile_sector",
+      "query": "company fundamentals sector industry profile market data API",
+      "search_id": "9a587abc-635f-4da9-9723-9be364aeb364",
+      "started_at": "2026-07-03T05:59:12.510Z",
+      "finished_at": "2026-07-03T05:59:13.926Z",
+      "inspected_tool_ids": [
+        "twelvedata.profile.retrieve.v1.c9f510fb",
+        "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+        "financialmodelingprep.stable.secprofile.retrieve.v1.53af4af6",
+        "financialmodelingprep.stable.profilecik.retrieve.v1.2df866c3",
+        "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9"
+      ]
+    },
+    {
+      "type": "preflight",
+      "category": "news_calendar",
+      "query": "stock market news sentiment API by ticker",
+      "search_id": "2c41522b-6933-4458-b0e0-ab23a1068a0b",
+      "started_at": "2026-07-03T05:59:13.926Z",
+      "finished_at": "2026-07-03T05:59:15.817Z",
+      "inspected_tool_ids": [
+        "eodhd.news.retrieve.v1.fe8bf94c",
+        "eodhd.news-word-weights.retrieve.v1.7f8db48e",
+        "finnhub.stock.insidersentiment.retrieve.v1.dff02940",
+        "massive_stocks.stocks.short_interest.list.v1.7214116c"
+      ]
+    },
+    {
+      "type": "call",
+      "started_at": "2026-07-03T05:59:15.818Z",
+      "finished_at": "2026-07-03T05:59:16.650Z",
+      "role": "quote_snapshot",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": false,
+      "cost": 1,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "type": "call",
+      "started_at": "2026-07-03T05:59:16.651Z",
+      "finished_at": "2026-07-03T05:59:18.052Z",
+      "role": "historical_prices",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 21,
+      "error": null
+    },
+    {
+      "type": "call",
+      "started_at": "2026-07-03T05:59:18.052Z",
+      "finished_at": "2026-07-03T05:59:19.453Z",
+      "role": "profile_sector",
+      "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "type": "call_skipped",
+      "role": "news_catalyst",
+      "reason": "no inspected tool candidate"
+    }
+  ]
+}

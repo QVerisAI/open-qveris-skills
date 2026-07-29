@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/QVerisAI/open-qveris-skills/qveris-sector-rotation-map/schemas/output.schema.json",
+  "title": "Sector Rotation Map Business Output",
+  "type": "object",
+  "required": ["schema_version", "skill_id", "generated_at", "mode", "scope", "findings", "evidence", "risks", "usage", "result"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "skill_id": { "type": "string", "enum": ["qveris-sector-rotation-map"] },
+    "generated_at": { "type": "string" },
+    "mode": { "type": "string", "enum": ["dry-run", "fixture", "live"] },
+    "scope": {
+      "type": "object",
+      "required": ["sector_proxies", "benchmark", "market", "window_days", "from", "to"],
+      "properties": {
+        "sector_proxies": { "type": "array", "items": { "type": "string" } },
+        "benchmark": { "type": "string" },
+        "requested_tickers": { "type": "array", "items": { "type": "string" } },
+        "market": { "type": "string" },
+        "window_days": { "type": "number" },
+        "from": { "type": "string" },
+        "to": { "type": "string" }
+      }
+    },
+    "findings": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "usage": {
+      "type": "object",
+      "required": ["paid_calls", "estimated_credits"],
+      "properties": {
+        "paid_calls": { "type": "number" },
+        "estimated_credits": { "type": "number" }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": ["sector_proxies", "benchmark", "total_records", "signal_framework", "phase_labels_ready", "evidence_roles", "missing_outputs", "missing_data"],
+      "properties": {
+        "sector_proxies": { "type": "array", "items": { "type": "string" } },
+        "benchmark": { "type": "string" },
+        "total_records": { "type": "number" },
+        "signal_framework": { "type": "array", "items": { "type": "string" } },
+        "phase_labels_ready": { "type": "boolean" },
+        "rotation_quadrants": { "type": "array", "items": { "type": "object" } },
+        "momentum_scores": { "type": "array", "items": { "type": "object" } },
+        "relative_strength_scores": { "type": "array", "items": { "type": "object" } },
+        "benchmark_relative_history": { "type": "array", "items": { "type": "object" } },
+        "evidence_roles": { "type": "array", "items": { "type": "string" } },
+        "missing_outputs": { "type": "array", "items": { "type": "string" } },
+        "missing_data": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

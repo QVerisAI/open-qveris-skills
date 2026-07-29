@@ -1,0 +1,277 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-quant-factor-screen",
+  "generated_at": "2026-07-03T08:07:23.165Z",
+  "mode": "fixture",
+  "scope": {
+    "universe": [
+      "AAPL",
+      "MSFT"
+    ],
+    "market": "US",
+    "window_days": 90,
+    "factor_set": [
+      "valuation",
+      "quality",
+      "liquidity",
+      "momentum",
+      "news_risk"
+    ]
+  },
+  "findings": [
+    "Screen universe contains 2 tickers: AAPL, MSFT.",
+    "Factor coverage attempted: valuation_ratios, liquidity_float, quality_overview, momentum_or_volatility, price_momentum, quote_snapshot, news_risk.",
+    "Generated a 2-row ranking table with 2 scored ticker(s).",
+    "Ranking exposes raw fields, normalized scores, missing-field flags, factor weights, and tie-break rules."
+  ],
+  "evidence": [
+    {
+      "role": "valuation_ratios",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "valuation_ratios",
+      "target": "MSFT",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "liquidity_float",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "liquidity_float",
+      "target": "MSFT",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "quality_overview",
+      "target": "AAPL",
+      "tool_id": "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a",
+      "ok": true,
+      "cost": 2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "quality_overview",
+      "target": "MSFT",
+      "tool_id": "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a",
+      "ok": true,
+      "cost": 2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "momentum_or_volatility",
+      "target": "AAPL",
+      "tool_id": "alphavantage.rocr.list.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "momentum_or_volatility",
+      "target": "MSFT",
+      "tool_id": "alphavantage.rocr.list.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "price_momentum",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 5,
+      "error": null
+    },
+    {
+      "role": "price_momentum",
+      "target": "MSFT",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 5,
+      "error": null
+    },
+    {
+      "role": "quote_snapshot",
+      "target": "AAPL",
+      "tool_id": "eodhd.live_v2.us_quote_delayed.retrieve.v1.f0e13d45",
+      "ok": true,
+      "cost": 2.81,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "quote_snapshot",
+      "target": "MSFT",
+      "tool_id": "eodhd.live_v2.us_quote_delayed.retrieve.v1.f0e13d45",
+      "ok": true,
+      "cost": 2.81,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "news_risk",
+      "target": "AAPL",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": null,
+      "record_count": 2,
+      "error": null
+    },
+    {
+      "role": "news_risk",
+      "target": "MSFT",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": null,
+      "record_count": 2,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Do not rank missing fundamentals as neutral without flagging the gap.",
+    "Provider coverage can vary by market and ticker.",
+    "This is a research screen, not a buy/sell recommendation."
+  ],
+  "usage": {
+    "paid_calls": 14,
+    "estimated_credits": 162.82
+  },
+  "result": {
+    "universe": [
+      "AAPL",
+      "MSFT"
+    ],
+    "factor_set": [
+      "valuation",
+      "quality",
+      "liquidity",
+      "momentum",
+      "news_risk"
+    ],
+    "coverage_roles": [
+      "valuation_ratios",
+      "liquidity_float",
+      "quality_overview",
+      "momentum_or_volatility",
+      "price_momentum",
+      "quote_snapshot",
+      "news_risk"
+    ],
+    "scoring_version": "deterministic-preview-2026-07-03",
+    "ranking_ready": true,
+    "coverage_level": "complete",
+    "ranking_table": [
+      {
+        "rank": 1,
+        "symbol": "AAPL",
+        "score": 0.76,
+        "data_status": "complete",
+        "raw_fields": {
+          "pe": 31.2,
+          "roe": 1.42,
+          "profit_margin": 0.24,
+          "float_shares": 15340000000,
+          "volume": 58100000,
+          "quote_change_pct": 1.1,
+          "technical": 1.08,
+          "price_momentum_return_pct": 6,
+          "news_sentiment": {
+            "positive": 2,
+            "negative": 1
+          }
+        },
+        "normalized_scores": {
+          "valuation": 0.48,
+          "quality": 1,
+          "liquidity": 1,
+          "momentum": 0.7,
+          "news_risk": 0.667
+        },
+        "missing_factors": []
+      },
+      {
+        "rank": 2,
+        "symbol": "MSFT",
+        "score": 0.591,
+        "data_status": "complete",
+        "raw_fields": {
+          "pe": 28.4,
+          "roe": 0.38,
+          "profit_margin": 0.36,
+          "float_shares": 7420000000,
+          "volume": 24100000,
+          "quote_change_pct": 0.4,
+          "technical": 1.04,
+          "price_momentum_return_pct": 2.449,
+          "news_sentiment": {
+            "positive": 2,
+            "negative": 1
+          }
+        },
+        "normalized_scores": {
+          "valuation": 0.5266666666666666,
+          "quality": 0.38,
+          "liquidity": 0.9870403905279026,
+          "momentum": 0.582,
+          "news_risk": 0.667
+        },
+        "missing_factors": []
+      }
+    ],
+    "factor_weights": {
+      "valuation": 0.25,
+      "quality": 0.25,
+      "liquidity": 0.15,
+      "momentum": 0.2,
+      "news_risk": 0.15
+    },
+    "tie_break_rules": [
+      "Prefer higher total score.",
+      "If scores tie, prefer more non-missing factors.",
+      "If still tied, prefer higher liquidity score.",
+      "If still tied, prefer lower news-risk burden.",
+      "Do not promote a ticker with missing fundamentals above a fully covered ticker on model judgement alone."
+    ],
+    "missing_outputs": [],
+    "missing_data": []
+  }
+}

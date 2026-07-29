@@ -1,0 +1,99 @@
+================================================================================
+ OPENCLAW NATURAL E2E - Portfolio Risk Monitor
+ Skill: qveris-portfolio-risk-monitor
+ Date: 2026-07-03T09:12:48.513Z
+ Mode: live
+================================================================================
+
+SCHEMA VALIDATION RESULT
+-------------------------
+Result: PASS
+Schema file: qveris-portfolio-risk-monitor/schemas/output.schema.json
+Output file: openclaw-natural-e2e-20260703-output.json
+Errors: 0
+
+All required top-level fields present:
+  - schema_version, skill_id, generated_at, mode, scope, findings,
+    evidence, risks, usage, result
+All required result fields present:
+  - top_holding, concentration_hhi, concentration_level, evidence_roles,
+    measurable_risks, missing_metrics, missing_data
+All nested risk_metrics properties validated:
+  - observation_count, latest_close, daily_volatility, annualized_volatility,
+    max_drawdown, historical_var_95, correlation_to_benchmark,
+    benchmark_observation_count
+
+PAID CALLS: 5
+ESTIMATED CREDITS: 78.22
+
+EXECUTION IDS
+---------------
+1. a53bee6d-08ec-405f-9e91-a2c17c5e263c  - quote_snapshot (AAPL via EODHD)
+2. 62a14c89-78f8-43d6-b140-f17ce08bc0eb  - historical_prices (AAPL via FMP)
+3. 5e095d59-55f1-48d7-b569-8a88fc75cd59  - historical_prices (SPY via FMP)
+4. 1f28d12f-ba0b-4383-9240-71fe9308658c  - profile_sector (AAPL via FMP)
+5. a4f51144-eb12-4990-bf4a-b2d79dfea5f7  - news_catalyst (AAPL via EODHD)
+
+Call breakdown by role:
+  - quote_snapshot: EODHD live data, 1 record, 2.81 credits
+  - historical_prices (top holding): FMP, 21 records, 24.20 credits
+  - historical_prices (benchmark): FMP, 21 records, 24.20 credits
+  - profile_sector: FMP, 1 record, 24.20 credits
+  - news_catalyst: EODHD news, 5 records, 2.81 credits
+
+RISK METRICS
+--------------
+Top holding: AAPL (25%)
+Portfolio concentration HHI: 0.210 (medium)
+Concentration level: medium
+
+AAPL 30-day risk:
+  - Observation count: 21
+  - Latest close: $308.63
+  - Daily volatility: 0.0242
+  - Annualized volatility: 0.3844 (38.44%)
+  - Max drawdown: -0.1159 (-11.59%)
+  - 95% historical VaR: -0.0612 (-6.12%)
+  - Correlation to SPY: 0.1513
+  - SPY observation count: 21
+
+Measurable risks identified: concentration, top_holding_exposure,
+  provider_coverage, top_holding_volatility, top_holding_drawdown,
+  top_holding_historical_var, benchmark_correlation
+
+MISSING METRICS: none
+  - All risk metrics computed successfully (volatility, drawdown,
+    correlation, VaR all present)
+
+MISSING DATA: none
+  - quote_snapshot: OK (1 record)
+  - historical_prices: OK (21 records AAPL, 21 records SPY)
+  - profile_sector: OK (1 record)
+  - news_catalyst: OK (5 records)
+
+CONCLUSION
+-----------
+This live QVeris portfolio risk analysis ran successfully against the
+QVeris API in mode=live, consuming 5 paid calls and 78.22 estimated credits.
+
+Portfolio: 5 holdings (AAPL 25%, NVDA 25%, MSFT 20%, TSLA 15%, CASH 15%)
+Benchmark: SPY
+Window: 30 days (2026-06-03 to 2026-07-03)
+
+Key findings:
+  - HHI = 0.210 (medium concentration; below the 0.25 high threshold)
+  - AAPL is the top non-cash holding at 25%
+  - 30-day annualized volatility for AAPL: 38.44% (elevated)
+  - Max drawdown: -11.59%
+  - 95% VaR: -6.12% (1-in-20 daily loss scenario)
+  - Correlation to SPY: 0.15 (low; AAPL has been moving somewhat
+    independently of the broad market over this window)
+  - No missing data or metrics — all four data roles returned usable records
+
+Schema validation: PASS (0 errors)
+Trace: openclaw-natural-e2e-20260703-trace.json
+Output: openclaw-natural-e2e-20260703-output.json
+Report: openclaw-natural-e2e-20260703.md
+
+Not investment advice.
+================================================================================

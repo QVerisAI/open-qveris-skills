@@ -1,0 +1,139 @@
+================================================================================
+QVeris Sector Rotation Map — Natural-Language E2E Validation Report
+================================================================================
+Job:               US sector rotation mapping for XLK and XLE vs SPY
+Window:            30 days (2026-06-03 to 2026-07-03)
+Mode:              live
+Skill:             qveris-sector-rotation-map
+Runner:            scripts/run.mjs (deterministic runner per SKILL.md)
+Generated at:      2026-07-03T09:22:49.078Z
+
+================================================================================
+SCHEMA RESULT
+================================================================================
+✓ PASSED — output.json conforms to output.schema.json
+  Validator: qveris-finance-common/schema-validator.mjs
+  All required top-level fields present: schema_version, skill_id, generated_at,
+  mode, scope, findings, evidence, risks, usage, result
+  All required result sub-fields present: sector_proxies, benchmark,
+  total_records, signal_framework, phase_labels_ready, evidence_roles,
+  missing_outputs, missing_data
+
+================================================================================
+PAID CALLS & CREDITS
+================================================================================
+Paid calls:       7
+Estimated credits: 147.2
+Budget:           15 max paid calls / 360 max credits
+Budget used:      46.7% of paid calls / 40.9% of credits
+
+Call breakdown:
+  sector_performance_snapshot      : 24.2 credits (FMP)
+  available_sectors                 : 24.2 credits (FMP)
+  proxy_price_history (XLK)        : 24.2 credits (FMP)
+  proxy_price_history (XLE)        : 24.2 credits (FMP)
+  benchmark_price_history (SPY)    : 24.2 credits (FMP)
+  flow_or_revision_confirmation    :  2.0 credits (AlphaVantage)
+  etf_symbol_search                 : 24.2 credits (FMP)
+
+================================================================================
+EXECUTION IDS
+================================================================================
+sector_performance_snapshot  : 73cc4411-5bd9-44ee-b33e-3c2ca2c5ad5e
+available_sectors            : 72896600-8809-40df-926b-6e798f85b840
+proxy_price_history (XLK)    : 36c16653-0521-4997-a4cc-09ed4450e55a
+proxy_price_history (XLE)    : 190c5953-b058-48f8-bb06-89ab1de2e285
+benchmark_price_history (SPY): 14d80866-ea03-4572-bbd0-caf26a7152db
+flow_or_revision_confirmation: 61c8695b-551f-4a12-8e2c-d9980e1f8423
+etf_symbol_search            : 433fc475-504c-4583-bb94-a05c75f74cce
+
+Preflight search IDs:
+  sector_performance (ETF/price/volume) : 872f76e0-567f-4a8c-99bc-f061fa992d6c
+  sector_price_history (EOD/history)    : b4c35cfa-517f-4eb0-aaa0-696b94760ba5
+  sector_snapshot (performance/sectors)  : 29d5e534-020c-46ae-be18-b42f89e48b2c
+  sector_flows (flows/revisions)        : b4fa216b-3b3b-4f45-8bb7-f6473914597a
+  sector_confirmation (news/sentiment)  : f6c9bec3-cb8c-48d8-8049-09497e57786c
+
+================================================================================
+PHASE LABELS READY
+================================================================================
+phase_labels_ready: true
+  Rotation quadrants were computed via benchmark_relative_scored data path
+  (historical close returns with SPY benchmark comparison).
+
+The FMP sector performance snapshot returned 11 sector records, but the sector
+names from the snapshot did not match the SECTOR_PROXY_MAP aliases (Technology,
+Energy, etc.), so snapshot-scored rotation was 0. The runner fell through to
+history-based scoring using proxy_price_history + benchmark_price_history.
+
+================================================================================
+ROTATION QUADRANTS SUMMARY
+================================================================================
+Proxy  | Sector      | Quadrant   | Momentum | Rel.Strength | Benchmark
+-------|-------------|------------|----------|--------------|---------
+XLK    | Technology  | lagging    | -7.97%   | -6.72 pp     | -1.25% (SPY)
+XLE    | Energy      | lagging    | -9.35%   | -8.10 pp     | -1.25% (SPY)
+
+Both sectors are in the "lagging" quadrant (negative relative strength AND
+negative momentum). These are data-driven labels based on benchmark-relative
+total return over the 30-day window.
+
+================================================================================
+MOMENTUM / RELATIVE STRENGTH SUMMARY
+================================================================================
+- SPY (S&P 500 benchmark over 30 days): -1.25% total return
+- XLK (Technology) total return:         -7.97% → underperformed SPY by -6.72pp
+- XLE (Energy) total return:             -9.35% → underperformed SPY by -8.10pp
+
+XLK had stronger absolute return than XLE (-7.97% vs -9.35%), but both
+significantly underperformed the benchmark. No sector is leading or improving
+in this window; both are lagging.
+
+================================================================================
+MISSING OUTPUTS
+================================================================================
+missing_outputs: [] (empty — all expected outputs generated)
+  - rotation_quadrants: ✓ present (2 entries, benchmark_relative_scored)
+  - momentum_scores: ✓ present (2 entries)
+  - relative_strength_scores: ✓ present (2 entries)
+  - benchmark_relative_history: ✓ present (2 entries, all benchmark_relative_scored)
+  - etf_price_history: ✓ present (21 records each for XLK, XLE)
+  - flow_or_revision_confirmation: ✓ present (1 record from AlphaVantage sentiment)
+
+================================================================================
+MISSING DATA
+================================================================================
+missing_data: [] (empty — no roles returned unsuccessful status)
+  - sector_performance_snapshot: ✓ 11 records from FMP
+  - available_sectors: ✓ 11 sectors from FMP
+  - proxy_price_history (XLK): ✓ 21 records
+  - proxy_price_history (XLE): ✓ 21 records
+  - benchmark_price_history (SPY): ✓ 21 records
+  - flow_or_revision_confirmation: ✓ 1 news/sentiment record from AlphaVantage
+  - etf_symbol_search: ✓ 4 records from FMP
+
+Note: The sector performance snapshot returned 11 sector records but the
+sector names (e.g. "Technology") did not match the runner's SECTOR_PROXY_MAP
+lookup keys during the live run. The data was present but the alias matching
+did not trigger, causing the fallback to history-based scoring. All data
+routes were successful (OK=true for all 7 calls).
+
+================================================================================
+CONCLUSION
+================================================================================
+The QVeris sector rotation map skill ran successfully in live mode for XLK and
+XLE vs SPY over a 30-day window. All 7 paid QVeris calls completed with OK
+status. Schema validation PASSED. The output contains:
+
+- 7 execution IDs (all returned data)
+- 90 total raw data records across sector snapshots, price histories, and news
+- Rotation quadrants: both XLK (Technology) and XLE (Energy) are in the
+  "lagging" quadrant — negative momentum and negative relative strength vs SPY
+- Phase labels are ready (history-based scoring was used for all proxies)
+- No missing outputs or missing data
+- Total cost: 7 paid calls / 147.2 credits within budget constraints
+
+⚠️ Not investment advice. These are research labels based on 30-day historical
+price and sector snapshot data. Sector ETF proxies may not perfectly track
+GICS sector indices.
+================================================================================
