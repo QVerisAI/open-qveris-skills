@@ -34,6 +34,7 @@ Source record:
 - Default natural-language output to a Markdown user report, not a JSON object.
 - Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; if omitted, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note, then echo those controls.
 - Read `references/qveris-finance-data-quality-rubric.md` before using QVeris payloads as factor evidence.
+- Read `references/factor-screen-validity-contract.md`, build its compact contract from validated observations, and run `node {baseDir}/scripts/factor_screen_validity.mjs --json '<contract-json>'` before publishing any factor rank, historical evaluation, or sentiment conclusion.
 - Use `references/qveris-finance-retry-policy.md` for failed calls, invalid capabilities, payload truncation, and semantic mismatches.
 - Build trace, call counts, retries, and timestamps only from saved `observed_calls`. Never invent an execution ID, retry, timestamp, per-security call, or result from the intended workflow; use `execution_id=null` when an observed call returned no ID.
 - Sanitize every output surface, including Evidence, Sources, prose, params, responses, and Trace. Strip provider names, provider API URLs, raw route/tool IDs, candidates, failover, credentials, and routing metadata recursively; the Trace row remains exactly `tool_name`, `params`, `status`, `execution_id`, `fallback_used`, and `missing_fields`.
@@ -46,13 +47,17 @@ Source record:
 - Resolve the universe from an explicit user-supplied ticker list or an approved frozen universe file, then validate every member with `qveris_finance.ref_symbology` or `qveris_finance.ref_security_master`.
 - Never call `qveris_finance.index_constituents`. If no explicit universe is available, return `universe_unavailable`; do not silently substitute a small proxy universe.
 - For A-share requests, reject securities whose returned market, exchange, listing class, or asset type does not match the requested mainland equity universe.
+- For entity-scoped evidence, require a returned matching symbol/code or an explicitly matched issuer name. Do not infer identity from request parameters alone. Do not mechanically require a symbol on market-wide or list-shaped responses, but never attach an aggregate row to one security without issuer proof.
 - Assign every requested security a coverage tier before showing any factor values: `complete_comparable`, `partial_not_ranked`, `proxy_only`, or `insufficient`. Show the comparable subset and per-security factor gaps explicitly.
 - Require comparable windows before ranking factors: identical validated factor set, price window, fiscal period, measurement basis, and market convention. Rank only the complete comparable subset, never the full requested universe when coverage differs.
-- Require at least 2 bars for simple multi-day metrics and at least the requested lookback length plus one observation for lookback indicators.
+- For `N` ordered prices, allow exactly `N-1` adjacent return intervals. Require at least 2 prices for a simple return and at least the requested return lookback plus one price observation for lookback indicators; never describe 20 prices as 20 returns.
 - Do not compute percentiles or ranks from fewer than 3 comparable securities; output per-name notes instead.
 - For Chinese text fields, hard reject mojibake or replacement-character artifacts. Do not quote corrupted company names, industry labels, event titles, news snippets, or research titles in factor evidence; keep valid numeric/date fields only if identity and window checks pass, and mark the text fields `encoding_artifact`.
 - Use only opened, issuer-matched, in-window Web pages for news and qualitative sentiment, and keep their provenance in `web_trace` rather than `qveris_trace`.
-- For post-hoc evaluation, separate `as_of` evidence from evaluation-window bars; never let future bars influence the screen score.
+- For screen construction, record the date of every accepted quote, bar, classification, statement, event, and Web page in the validity contract; reject missing date proof and every observation later than `as_of` or `CUT_OFF`. For post-hoc evaluation, label later observations `phase=post_hoc`, keep them separate from screen evidence, and never let them influence the screen score.
+- Treat a matching annual `YYYY-12-31` period end as valid FY proof. It is not proof of an FQ. When the requested FQ is missing, keep the FY evidence only as `partial_not_ranked`, state that quarterly comparability is unavailable, and never claim a complete period match.
+- Apply the validator's `security_decisions` to the factor table; a rejected or degraded security-level factor cannot remain `complete_comparable`. Before publishing a rank, require `ranking_allowed=true`. A validator rejection cannot be overridden by prose or confidence language, but an unrelated rejected news claim does not invalidate an otherwise valid factor rank after that news claim is removed.
+- For issuer-news sentiment, require at least two independent, opened, issuer-matched, in-window Web sources for `positive`, `negative`, or `mixed`; otherwise use `insufficient`. Describe issuer samples as samples and never generalize them into market-wide or universe-wide sentiment.
 - If the original strategy requires a field QVeris cannot validate, mark that factor component missing and disclose the changed denominator.
 
 ## CAP Invocation
@@ -70,10 +75,11 @@ Source record:
 1. Scope the screen: identify universe, as-of date, factor set, maximum calls, and whether post-hoc evaluation is requested.
 2. Resolve the universe: validate each identifier and keep unresolved or non-A-share instruments out of the scored set.
 3. Collect factor inputs: use bars for momentum/liquidity/volatility, statements and derived ratios for valuation/quality, classification for sector context, and sentiment/news only within their evidence limits.
-4. Partition coverage: produce the coverage tier, comparable subset, and per-security missing-factor matrix before scoring.
-5. Score transparently: calculate scores only inside a subset with the identical complete factor denominator. Do not renormalize different denominators into a cross-security rank.
-6. Report the screen: show coverage tiers and gaps first; add rank only for the complete comparable subset when every comparability gate and the three-security minimum pass.
-7. Evaluate post-hoc only when requested: fetch evaluation-window bars after the `as_of` date, label the result as historical evaluation, and avoid return forecasts.
+4. Partition coverage: produce the coverage tier, comparable subset, per-security missing-factor matrix, price-observation count, return-interval count, and period proof before scoring.
+5. Validate the proposed screen: build the compact contract from `references/factor-screen-validity-contract.md` and run the deterministic validator. Preserve its status and violation codes in working notes.
+6. Score transparently: calculate scores only inside a subset with the identical complete factor denominator. Do not renormalize different denominators into a cross-security rank.
+7. Report the screen: show coverage tiers and gaps first; add rank only when the validator returns `ranking_allowed=true`, every comparability gate passes, and at least three securities remain.
+8. Evaluate post-hoc only when requested: fetch evaluation-window bars after the `as_of` date, label them `phase=post_hoc`, and avoid return forecasts.
 
 ## Fallback Policy
 
@@ -82,12 +88,14 @@ Source record:
 - If cross-sectional comparability fails, avoid ranking and provide per-security evidence notes.
 - If `max_calls` prevents universe coverage, return a budget-limited report with the exact QVeris calls still needed.
 - If a successful payload contains the wrong security, wrong window, wrong fiscal period, or truncated content, hard reject it and mark the reason.
+- If a payload is partially valid, retain only the proven scope: FY without FQ becomes FY-only evidence, a short bar window becomes a latest-point note, and a one-source news sample becomes `sentiment=insufficient`. Do not turn degradation into a complete rank.
 - If a successful payload contains corrupted text fields, exclude the corrupted fields from the report body and mark `encoding_artifact`; do not translate, repair, or infer the intended wording.
 
 ## Output Requirements
 
 - Use level-2 Markdown headings exactly for this user-report structure: `## Summary`, `## Screen Results`, `## Evidence`, `## Analysis`, `## Data Quality And Missing Fields`, and `## Trace Appendix`. Do not replace these headings with bold text.
 - Include a factor table with security, validated factor values, component coverage, evidence status, and missing fields. Use rank columns only when comparability gates pass; otherwise use coverage tier or per-name notes.
+- State the factor-screen validity status (`accepted`, `degraded`, or `rejected`) and list any validator violation codes. If bars support a return-based factor, show both price-observation and return-interval counts.
 - Render the Trace Appendix with the exact parseable header `| tool_name | params | status | execution_id | fallback_used | missing_fields |`; use compact JSON for `params` and `missing_fields`, one row per observed attempt, and no rows for planned or budget-blocked calls.
 - For live, fresh, or E2E output, save and validate an `observed_calls.v1` sidecar whose calls record `request_kind=capabilities/query` and canonical `capability_id`; without a verified sidecar, place the unverified note before `## Trace Appendix` and emit only the exact header plus separator with no rows.
 - Put full `qveris_trace` JSON only in the appendix, schema fixture, or when the user asks for machine-readable output.
@@ -102,6 +110,7 @@ Do not output investment recommendations, buy/sell triggers, target prices, upsi
 - Use shared finance contract version `2026-07-29.1`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share factor screen.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
+- Read `references/factor-screen-validity-contract.md` before calculating factors, ranking securities, evaluating historical results, or summarizing sentiment.
 - Read `references/qveris-finance-retry-policy.md` when a CAP fails, returns the wrong shape, or needs fallback.
 - Read `references/qveris-web-news-sentiment-policy.md` before collecting news or qualitative sentiment.
 - Check `references/qveris-finance-cap-registry-snapshot-2026-07-07.md` before adding a route to the primary path.

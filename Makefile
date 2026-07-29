@@ -97,6 +97,7 @@ validate-finance-business-adapters:
 	$(NODE) --test \
 		qveris-a-stock-data-layer/tests/qveris_finance_adapter.test.mjs \
 		qveris-a-stock-data-layer/tests/business_adapter_copies.test.mjs \
+		qveris-a-share-factor-screen/tests/factor_screen_validity.test.mjs \
 		qveris-a-share-data/tests/web_news_fallback_contract.test.mjs \
 		qveris-a-share-data/tests/web_news_policy_copies.test.mjs \
 		qveris-a-share-data/tests/workflow_semantic_guards.test.mjs
