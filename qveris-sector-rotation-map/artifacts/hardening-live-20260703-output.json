@@ -1,0 +1,248 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-sector-rotation-map",
+  "generated_at": "2026-07-03T07:08:35.127Z",
+  "mode": "live",
+  "scope": {
+    "sector_proxies": [
+      "XLK",
+      "XLF",
+      "XLV",
+      "XLE",
+      "XLI",
+      "XLY",
+      "XLP",
+      "XLU"
+    ],
+    "benchmark": "SPY",
+    "market": "US",
+    "window_days": 30,
+    "from": "2026-06-03",
+    "to": "2026-07-03"
+  },
+  "findings": [
+    "Rotation proxy set contains 8 sectors or ETFs.",
+    "Collected 27 raw records or nested payload rows across selected sector/market sources.",
+    "Generated snapshot rotation quadrants for 8 sector proxies.",
+    "Initial deterministic signals are relative strength, momentum, volatility, drawdown, liquidity, and catalyst context.",
+    "Phase labels should be treated as research labels until verified against benchmark-relative history."
+  ],
+  "evidence": [
+    {
+      "role": "sector_performance_snapshot",
+      "tool_id": "financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "5557d60b-9208-4806-9e39-c50ab5b3c49e",
+      "record_count": 11,
+      "error": null
+    },
+    {
+      "role": "available_sectors",
+      "tool_id": "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "c526e7e5-71df-4da2-8005-f470b0184711",
+      "record_count": 11,
+      "error": null
+    },
+    {
+      "role": "etf_performance",
+      "tool_id": "twelvedata.etfs.world.performance.retrieve.v1.792b716e",
+      "ok": false,
+      "cost": 2.37,
+      "execution_id": "ff55839d-3f73-44ff-841b-e21c8b8d64b8",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "etf_symbol_search",
+      "tool_id": "financialmodelingprep.stable.etflist.retrieve.v1.85cd2c31",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "f492783d-0a61-4cca-b9a3-707b863af1a8",
+      "record_count": 4,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Sector ETF proxies may not match local-market sector indices.",
+    "Flow, earnings-revision, and valuation coverage can be provider-dependent.",
+    "Rotation labels are not trading instructions."
+  ],
+  "usage": {
+    "paid_calls": 4,
+    "estimated_credits": 74.97
+  },
+  "result": {
+    "sector_proxies": [
+      "XLK",
+      "XLF",
+      "XLV",
+      "XLE",
+      "XLI",
+      "XLY",
+      "XLP",
+      "XLU"
+    ],
+    "benchmark": "SPY",
+    "total_records": 27,
+    "signal_framework": [
+      "relative_strength",
+      "momentum",
+      "volatility",
+      "drawdown",
+      "liquidity",
+      "catalyst_context"
+    ],
+    "phase_labels_ready": true,
+    "rotation_quadrants": [
+      {
+        "proxy": "XLK",
+        "sector": "Technology",
+        "quadrant": "lagging",
+        "data_status": "snapshot_scored"
+      },
+      {
+        "proxy": "XLF",
+        "sector": "Financial Services",
+        "quadrant": "weakening",
+        "data_status": "snapshot_scored"
+      },
+      {
+        "proxy": "XLV",
+        "sector": "Healthcare",
+        "quadrant": "leading",
+        "data_status": "snapshot_scored"
+      },
+      {
+        "proxy": "XLE",
+        "sector": "Energy",
+        "quadrant": "lagging",
+        "data_status": "snapshot_scored"
+      },
+      {
+        "proxy": "XLI",
+        "sector": "Industrials",
+        "quadrant": "leading",
+        "data_status": "snapshot_scored"
+      },
+      {
+        "proxy": "XLY",
+        "sector": "Consumer Cyclical",
+        "quadrant": "lagging",
+        "data_status": "snapshot_scored"
+      },
+      {
+        "proxy": "XLP",
+        "sector": "Consumer Defensive",
+        "quadrant": "leading",
+        "data_status": "snapshot_scored"
+      },
+      {
+        "proxy": "XLU",
+        "sector": "Utilities",
+        "quadrant": "leading",
+        "data_status": "snapshot_scored"
+      }
+    ],
+    "momentum_scores": [
+      {
+        "proxy": "XLK",
+        "sector": "Technology",
+        "score": -2.9442
+      },
+      {
+        "proxy": "XLF",
+        "sector": "Financial Services",
+        "score": -0.6248
+      },
+      {
+        "proxy": "XLV",
+        "sector": "Healthcare",
+        "score": 2.6158
+      },
+      {
+        "proxy": "XLE",
+        "sector": "Energy",
+        "score": -1.4882
+      },
+      {
+        "proxy": "XLI",
+        "sector": "Industrials",
+        "score": 0.1589
+      },
+      {
+        "proxy": "XLY",
+        "sector": "Consumer Cyclical",
+        "score": -2.9036
+      },
+      {
+        "proxy": "XLP",
+        "sector": "Consumer Defensive",
+        "score": 2.3408
+      },
+      {
+        "proxy": "XLU",
+        "sector": "Utilities",
+        "score": 0.9712
+      }
+    ],
+    "relative_strength_scores": [
+      {
+        "proxy": "XLK",
+        "sector": "Technology",
+        "score": -2.3195
+      },
+      {
+        "proxy": "XLF",
+        "sector": "Financial Services",
+        "score": 0
+      },
+      {
+        "proxy": "XLV",
+        "sector": "Healthcare",
+        "score": 3.2406
+      },
+      {
+        "proxy": "XLE",
+        "sector": "Energy",
+        "score": -0.8634
+      },
+      {
+        "proxy": "XLI",
+        "sector": "Industrials",
+        "score": 0.7837
+      },
+      {
+        "proxy": "XLY",
+        "sector": "Consumer Cyclical",
+        "score": -2.2789
+      },
+      {
+        "proxy": "XLP",
+        "sector": "Consumer Defensive",
+        "score": 2.9656
+      },
+      {
+        "proxy": "XLU",
+        "sector": "Utilities",
+        "score": 1.596
+      }
+    ],
+    "evidence_roles": [
+      "sector_performance_snapshot",
+      "available_sectors",
+      "etf_performance",
+      "etf_symbol_search"
+    ],
+    "missing_outputs": [
+      "etf_price_history",
+      "benchmark_relative_history",
+      "flow_or_revision_confirmation"
+    ],
+    "missing_data": [
+      "etf_performance: provider returned unsuccessful status"
+    ]
+  }
+}

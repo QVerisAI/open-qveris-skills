@@ -1,0 +1,39 @@
+Completed the live QVeris factor screen and saved all requested artifacts:
+
+- [Markdown report](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-quant-factor-screen/artifacts/codex-cli-natural-e2e-20260703.md)
+- [JSON output](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-quant-factor-screen/artifacts/codex-cli-natural-e2e-20260703-output.json)
+- [Trace JSON](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-quant-factor-screen/artifacts/codex-cli-natural-e2e-20260703-trace.json)
+
+Validation result: `VALID` against `qveris-quant-factor-screen/schemas/output.schema.json`.
+
+QVeris usage: `10` paid calls, `153.2` estimated credits, within the `12` call and `220` credit budget.
+
+Execution IDs:
+
+```text
+03f39f8a-9fd5-48a4-9df5-cf07d9f537a9
+4ba5ae6d-8871-41fa-bacf-fc9e371289a8
+ca2ed60d-a513-4ad1-a819-d2d0fc21ee1c
+73476508-c584-4982-80d9-e362f30e3b92
+b0aa6b19-da8b-4d43-be5e-48e8cff23312
+955a545a-44aa-4cdf-abd7-ed37dd5fdd2b
+6c997a3c-d64c-4ccf-b34b-b70c3569efce
+1ef61662-601b-4a93-9d11-b09e39420d67
+f8a6c4f0-8205-4443-9260-8bf8301dc67a
+4878f166-f434-4480-ab3e-408d522b3c99
+```
+
+`ranking_ready`: `true`
+`coverage_level`: `complete`
+
+Ranking summary:
+
+| Rank | Symbol | Score | Status |
+| ---: | --- | ---: | --- |
+| 1 | AAPL | 0.840 | complete |
+| 2 | MSFT | 0.594 | complete |
+
+Remaining `missing_data`: none.
+Remaining `missing_outputs`: none.
+
+Not investment advice.

@@ -1,0 +1,25 @@
+Completed the live QVeris run and saved the artifacts:
+
+- [Markdown report](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-news-sentiment-radar/artifacts/codex-cli-natural-e2e-20260703.md)
+- [JSON output](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-news-sentiment-radar/artifacts/codex-cli-natural-e2e-20260703-output.json)
+- [Trace JSON](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-news-sentiment-radar/artifacts/codex-cli-natural-e2e-20260703-trace.json)
+
+Validation: passed against `qveris-news-sentiment-radar/schemas/output.schema.json`.
+
+Run summary:
+- Paid calls: `6`
+- Estimated credits: `33.82` of `45`
+- Catalyst status: `needs_confirmation`
+- Confirmation roles: none, `[]`
+- Corroborating roles: `market_news_sentiment`, `aggregate_sentiment`, `price_reaction`
+- Remaining `missing_data`: `filings_or_issuer_confirmation: no filings, issuer-news, or press-release confirmation records returned`
+
+Execution IDs:
+- `market_news_sentiment`: `2ce523a2-aa64-4214-a548-8efe281b8db2`
+- `aggregate_sentiment`: `c07fd605-9eee-4224-a1e6-0467448ba99a`
+- `filings_check`: `f55969a6-a93a-4304-b771-17cc643a6018`
+- `filings_check` fallback: `7fbac52e-ad23-42e8-9a79-885922ab16ce`
+- `price_reaction`: `9df97fae-f798-4d69-87f1-92507c617e27`
+- `issuer_confirmation`: `26c3c253-875d-4838-bba3-3bb39f5a1bec`
+
+Not investment advice.

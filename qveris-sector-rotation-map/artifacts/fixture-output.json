@@ -1,0 +1,189 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-sector-rotation-map",
+  "generated_at": "2026-07-03T08:07:23.348Z",
+  "mode": "fixture",
+  "scope": {
+    "sector_proxies": [
+      "XLK",
+      "XLE"
+    ],
+    "benchmark": "SPY",
+    "market": "US",
+    "window_days": 30,
+    "from": "2026-06-02",
+    "to": "2026-07-02"
+  },
+  "findings": [
+    "Rotation proxy set contains 2 sectors or ETFs.",
+    "Collected 25 raw records or nested payload rows across selected sector/market sources.",
+    "Generated snapshot rotation quadrants for 0 sector proxies.",
+    "Initial deterministic signals are relative strength, momentum, volatility, drawdown, liquidity, and catalyst context.",
+    "Phase labels should be treated as research labels until verified against benchmark-relative history."
+  ],
+  "evidence": [
+    {
+      "role": "sector_performance_snapshot",
+      "target": null,
+      "tool_id": "financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 2,
+      "error": null
+    },
+    {
+      "role": "available_sectors",
+      "target": null,
+      "tool_id": "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 4,
+      "error": null
+    },
+    {
+      "role": "proxy_price_history",
+      "target": "XLK",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 5,
+      "error": null
+    },
+    {
+      "role": "proxy_price_history",
+      "target": "XLE",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 5,
+      "error": null
+    },
+    {
+      "role": "benchmark_price_history",
+      "target": "SPY",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 5,
+      "error": null
+    },
+    {
+      "role": "flow_or_revision_confirmation",
+      "target": null,
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "etf_symbol_search",
+      "target": null,
+      "tool_id": "financialmodelingprep.stable.etflist.retrieve.v1.85cd2c31",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 3,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Sector ETF proxies may not match local-market sector indices.",
+    "Flow, earnings-revision, and valuation coverage can be provider-dependent.",
+    "Rotation labels are not trading instructions."
+  ],
+  "usage": {
+    "paid_calls": 7,
+    "estimated_credits": 147.2
+  },
+  "result": {
+    "sector_proxies": [
+      "XLK",
+      "XLE"
+    ],
+    "benchmark": "SPY",
+    "total_records": 25,
+    "signal_framework": [
+      "relative_strength",
+      "momentum",
+      "volatility",
+      "drawdown",
+      "liquidity",
+      "catalyst_context"
+    ],
+    "phase_labels_ready": true,
+    "rotation_quadrants": [
+      {
+        "proxy": "XLK",
+        "sector": "Technology",
+        "quadrant": "leading",
+        "data_status": "benchmark_relative_scored"
+      },
+      {
+        "proxy": "XLE",
+        "sector": "Energy",
+        "quadrant": "lagging",
+        "data_status": "benchmark_relative_scored"
+      }
+    ],
+    "momentum_scores": [
+      {
+        "proxy": "XLK",
+        "sector": "Technology",
+        "score": 4.8
+      },
+      {
+        "proxy": "XLE",
+        "sector": "Energy",
+        "score": -0.9474
+      }
+    ],
+    "relative_strength_scores": [
+      {
+        "proxy": "XLK",
+        "sector": "Technology",
+        "score": 3.3738
+      },
+      {
+        "proxy": "XLE",
+        "sector": "Energy",
+        "score": -2.3736
+      }
+    ],
+    "benchmark_relative_history": [
+      {
+        "proxy": "XLK",
+        "sector": "Technology",
+        "proxy_return_pct": 4.8,
+        "benchmark_return_pct": 1.4262,
+        "relative_return_pct": 3.3738,
+        "data_status": "benchmark_relative_scored"
+      },
+      {
+        "proxy": "XLE",
+        "sector": "Energy",
+        "proxy_return_pct": -0.9474,
+        "benchmark_return_pct": 1.4262,
+        "relative_return_pct": -2.3736,
+        "data_status": "benchmark_relative_scored"
+      }
+    ],
+    "evidence_roles": [
+      "sector_performance_snapshot",
+      "available_sectors",
+      "proxy_price_history",
+      "proxy_price_history",
+      "benchmark_price_history",
+      "flow_or_revision_confirmation",
+      "etf_symbol_search"
+    ],
+    "missing_outputs": [],
+    "missing_data": []
+  }
+}

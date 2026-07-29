@@ -1,0 +1,68 @@
+{
+  "inputs": {
+    "ticker": "NVDA",
+    "market": "US",
+    "windowDays": 7,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "market_news_sentiment",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "raw_result": {
+        "result": {
+          "feed": [
+            {
+              "title": "NVDA supplier update supports AI infrastructure demand",
+              "overall_sentiment_label": "Bullish"
+            },
+            {
+              "title": "Analyst warns valuation expectations remain elevated",
+              "overall_sentiment_label": "Neutral"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "role": "aggregate_sentiment",
+      "tool_id": "eodhd.sentiments.list.v1.9ba159a0",
+      "ok": true,
+      "cost": 2.81,
+      "raw_result": {
+        "result": [
+          { "date": "2026-07-01", "count": 4, "normalized": 0.42, "sentiment": "positive" }
+        ]
+      }
+    },
+    {
+      "role": "price_reaction",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": true,
+      "cost": 1,
+      "raw_result": {
+        "result": {
+          "c": 150.25,
+          "dp": 1.4
+        }
+      }
+    },
+    {
+      "role": "issuer_confirmation",
+      "tool_id": "eodhd.news.retrieve.v1.fe8bf94c",
+      "ok": true,
+      "cost": 2.81,
+      "raw_result": {
+        "result": [
+          { "title": "NVDA official partner update confirms demand signal", "sentiment": "positive" }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "paid_calls": 4,
+    "estimated_credits": 8.62
+  }
+}

@@ -1,0 +1,235 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-quant-factor-screen",
+  "generated_at": "2026-07-03T09:16:46.933Z",
+  "mode": "live",
+  "scope": {
+    "universe": [
+      "AAPL",
+      "MSFT"
+    ],
+    "market": "US",
+    "window_days": 90,
+    "factor_set": [
+      "valuation",
+      "quality",
+      "liquidity",
+      "momentum",
+      "news_risk"
+    ]
+  },
+  "findings": [
+    "Screen universe contains 2 tickers: AAPL, MSFT.",
+    "Factor coverage attempted: valuation_ratios, quality_overview, liquidity_float, price_momentum, news_risk.",
+    "Generated a 2-row ranking table with 2 scored ticker(s).",
+    "Ranking exposes raw fields, normalized scores, missing-field flags, factor weights, and tie-break rules."
+  ],
+  "evidence": [
+    {
+      "role": "valuation_ratios",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "9b00db7d-eab6-4faa-8177-12d552c4dc95",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "valuation_ratios",
+      "target": "MSFT",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "2c872255-c011-4db9-9d14-1fa8adbf7204",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "quality_overview",
+      "target": "AAPL",
+      "tool_id": "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a",
+      "ok": true,
+      "cost": 2,
+      "execution_id": "d083a4d2-b044-4598-97fd-63d54d221dbb",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "quality_overview",
+      "target": "MSFT",
+      "tool_id": "alphavantage.fundamentals.income_statement.retrieve.v1.7aca3c4a",
+      "ok": true,
+      "cost": 2,
+      "execution_id": "72762cde-d52f-49d0-9ef0-118092e73a57",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "liquidity_float",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "f6bd8573-5655-412c-b6cc-3ff48066dcb5",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "liquidity_float",
+      "target": "MSFT",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "7fd25b1b-b488-49e7-a4ea-dc5c563ca9a1",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "price_momentum",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "56c0168b-0648-40de-b9ae-896716f135c5",
+      "record_count": 62,
+      "error": null
+    },
+    {
+      "role": "price_momentum",
+      "target": "MSFT",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "3b9f0b3f-de6f-4417-a139-2cb2d1cf0c52",
+      "record_count": 62,
+      "error": null
+    },
+    {
+      "role": "news_risk",
+      "target": "AAPL",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": "1292bf6c-5566-484a-bb24-ad8f80fed7f7",
+      "record_count": 8,
+      "error": null
+    },
+    {
+      "role": "news_risk",
+      "target": "MSFT",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": "82c1a388-f9e5-4346-874e-6303c8f3d258",
+      "record_count": 8,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Do not rank missing fundamentals as neutral without flagging the gap.",
+    "Provider coverage can vary by market and ticker.",
+    "This is a research screen, not a buy/sell recommendation."
+  ],
+  "usage": {
+    "paid_calls": 10,
+    "estimated_credits": 153.2
+  },
+  "result": {
+    "universe": [
+      "AAPL",
+      "MSFT"
+    ],
+    "factor_set": [
+      "valuation",
+      "quality",
+      "liquidity",
+      "momentum",
+      "news_risk"
+    ],
+    "coverage_roles": [
+      "valuation_ratios",
+      "quality_overview",
+      "liquidity_float",
+      "price_momentum",
+      "news_risk"
+    ],
+    "scoring_version": "deterministic-preview-2026-07-03",
+    "ranking_ready": true,
+    "coverage_level": "complete",
+    "ranking_table": [
+      {
+        "rank": 1,
+        "symbol": "AAPL",
+        "score": 0.771,
+        "data_status": "complete",
+        "raw_fields": {
+          "pe": 34.1068090787717,
+          "roe": 1.415,
+          "profit_margin": 0.272,
+          "float_shares": 14662534368,
+          "volume": null,
+          "quote_change_pct": null,
+          "technical": null,
+          "price_momentum_return_pct": 19.2266,
+          "news_sentiment": {
+            "positive": 28,
+            "negative": 39
+          }
+        },
+        "normalized_scores": {
+          "valuation": 0.43155318202047177,
+          "quality": 1,
+          "liquidity": 1,
+          "momentum": 1,
+          "news_risk": 0.418
+        },
+        "missing_factors": []
+      },
+      {
+        "rank": 2,
+        "symbol": "MSFT",
+        "score": 0.562,
+        "data_status": "complete",
+        "raw_fields": {
+          "pe": 36.307299270072996,
+          "roe": 0.34,
+          "profit_margin": 0.393,
+          "float_shares": 7417514905,
+          "volume": null,
+          "quote_change_pct": null,
+          "technical": null,
+          "price_momentum_return_pct": 4.7227,
+          "news_sentiment": {
+            "positive": 43,
+            "negative": 22
+          }
+        },
+        "normalized_scores": {
+          "valuation": 0.3948783454987834,
+          "quality": 0.34,
+          "liquidity": 0.9870258427675465,
+          "momentum": 0.657,
+          "news_risk": 0.662
+        },
+        "missing_factors": []
+      }
+    ],
+    "factor_weights": {
+      "valuation": 0.25,
+      "quality": 0.25,
+      "liquidity": 0.15,
+      "momentum": 0.2,
+      "news_risk": 0.15
+    },
+    "tie_break_rules": [
+      "Prefer higher total score.",
+      "If scores tie, prefer more non-missing factors.",
+      "If still tied, prefer higher liquidity score.",
+      "If still tied, prefer lower news-risk burden.",
+      "Do not promote a ticker with missing fundamentals above a fully covered ticker on model judgement alone."
+    ],
+    "missing_outputs": [],
+    "missing_data": []
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "inputs": {
+    "holdings": [
+      { "symbol": "AAPL", "weight": 25 },
+      { "symbol": "NVDA", "weight": 25 },
+      { "symbol": "MSFT", "weight": 20 },
+      { "symbol": "TSLA", "weight": 15 },
+      { "symbol": "CASH", "weight": 15 }
+    ],
+    "market": "US",
+    "benchmark": "SPY",
+    "windowDays": 30,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "quote_snapshot",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": true,
+      "cost": 1,
+      "raw_result": {
+        "result": { "c": 180.2, "dp": -0.8 }
+      }
+    },
+    {
+      "role": "profile_sector",
+      "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [{ "symbol": "AAPL", "sector": "Technology", "industry": "Consumer Electronics" }]
+      }
+    },
+    {
+      "role": "historical_prices",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "date": "2026-06-26", "close": 170.0 },
+          { "date": "2026-06-29", "close": 173.2 },
+          { "date": "2026-06-30", "close": 171.5 },
+          { "date": "2026-07-01", "close": 176.3 },
+          { "date": "2026-07-02", "close": 180.2 }
+        ]
+      }
+    },
+    {
+      "role": "historical_prices",
+      "target": "SPY",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "date": "2026-06-26", "close": 610.0 },
+          { "date": "2026-06-29", "close": 612.4 },
+          { "date": "2026-06-30", "close": 611.1 },
+          { "date": "2026-07-01", "close": 615.2 },
+          { "date": "2026-07-02", "close": 618.7 }
+        ]
+      }
+    }
+  ],
+  "usage": {
+    "paid_calls": 4,
+    "estimated_credits": 73.6
+  }
+}

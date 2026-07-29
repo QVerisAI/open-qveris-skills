@@ -1,0 +1,50 @@
+{
+  "inputs": {
+    "universe": ["AAPL", "MSFT", "NVDA"],
+    "market": "US",
+    "windowDays": 90,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "valuation_ratios",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": false,
+      "cost": 24.2,
+      "error": "provider returned empty ratios payload",
+      "raw_result": null
+    },
+    {
+      "role": "momentum_or_volatility",
+      "tool_id": "alphavantage.rocr.list.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "raw_result": {
+        "result": { "Technical Analysis: ROCR": {} }
+      }
+    }
+  ],
+  "trace": [
+    {
+      "type": "call_error",
+      "role": "valuation_ratios",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": false,
+      "cost": 24.2,
+      "record_count": 0,
+      "error": "provider returned empty ratios payload"
+    },
+    {
+      "type": "call",
+      "role": "momentum_or_volatility",
+      "tool_id": "alphavantage.rocr.list.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "record_count": 1
+    }
+  ],
+  "usage": {
+    "paid_calls": 2,
+    "estimated_credits": 26.2
+  }
+}
