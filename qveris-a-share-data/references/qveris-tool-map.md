@@ -14,7 +14,7 @@ Source snapshot used for this map: `third_party/source_repos/57-a-share-skill` a
 | Historical bars | `qveris_finance.mkt_bars_adjusted`, `qveris_finance.mkt_bars_eod` | Price/volume history and calculated indicators | Require requested window and enough observations. |
 | Technical context | Calculated from validated bars | Moving averages, range, volatility-like context | Label as calculated; no trading signal. |
 | Events | `qveris_finance.event_calendar_earnings`, `qveris_finance.event_calendar_corp`, `qveris_finance.event_calendar_ipo` | Earnings, corporate, and IPO calendar context | Reject wrong-window events; IPO calendar is not A+H mapping by itself. |
-| News | `qveris_finance.news_fin_tagged`, `qveris_finance.sentiment_text_signals` | Tagged news and sentiment when available | Tagged news alone is qualitative only. |
+| News and sentiment | Audited Web lane | Opened issuer news and qualitative text cues | Do not call `qveris_finance.news_fin_tagged` or `qveris_finance.sentiment_text_signals`; require body hashes and at least two independent publisher owners, then scope the label to the qualifying source sample. |
 | Sector context | `qveris_finance.ref_security_master`, `qveris_finance.ref_classification_industry` | Sector and industry metadata | Classification is not flow, heatmap, breadth, or market-wide mover evidence. |
 | Market-wide movers | `qveris_finance.mkt_top_movers` | Conditional mainland gainers, losers, amount, volume, or turnover ranking | Require live params with `market=CN`, mainland-only unique symbols, mode-consistent ordering, effective limit, and valid names/prices/change percentages; label `freshness_unverified` when no `timestamp` or `as_of` is returned. |
 
@@ -44,7 +44,7 @@ Source snapshot used for this map: `third_party/source_repos/57-a-share-skill` a
 | Stock-level order-size flow | `qveris_finance.flow_large_order` returned usable rows in smoke; validate stock identity/date. |
 | Lock-up calendar | `qveris_finance.mkt_cn_lock_up` returned usable rows in smoke; validate stock identity/date. |
 | Sector heatmap with capital flow | Do not infer flow from top movers; `flow_sector_capital` smoke returned stock-level shaped rows, so reject unless sector/concept fields are present. |
-| 24/7 market news | Use finance tagged news; do not treat it as a strong sentiment signal by itself. |
+| 24/7 market news | Use the audited Web lane; snippets are not evidence and a small issuer-news sample is not overall market sentiment. |
 | Paper trading or short-term trade planning | Removed from the QVeris skill. |
 
 ## Removed Source Dependencies

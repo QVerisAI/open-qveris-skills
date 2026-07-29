@@ -727,21 +727,40 @@ function semanticAssessment({ capabilityId, parameters, context, data }) {
       return { ok: false, reason_code: "semantic_date_window_mismatch", reason: "returned data falls outside the requested date window" };
     }
   }
-  const cutoff = context.cut_off ?? context.cutoff ?? context.as_of_date;
+  const cutoff = effectiveCutoff(context);
   if (cutoff) {
-    const cutoffTime = dateValue(cutoff);
+    const cutoffTime = cutoff.time;
     const futureEventEnd = (/^EVENT\.CALENDAR\./.test(capabilityId) || capabilityId === "MKT.CN.LOCK_UP")
-      ? dateValue(context.future_event_end_date)
+      ? inclusiveDateValue(context.future_event_end_date)
       : NaN;
     const allowedEnd = Number.isFinite(futureEventEnd)
-      ? Math.max(cutoffTime, futureEventEnd) + 24 * 60 * 60 * 1000 - 1
-      : cutoffTime + 24 * 60 * 60 * 1000 - 1;
-    const dates = collectValues(data, new Set(["date", "trade_date", "datetime", "timestamp"])).map(dateValue).filter(Number.isFinite);
+      ? Math.max(cutoffTime, futureEventEnd)
+      : cutoffTime;
+    const dates = collectValues(data, new Set([
+      "date", "trade_date", "datetime", "timestamp", "as_of", "as_of_date", "quote_time", "updated_at",
+      "published_at", "publication_date", "publish_time", "pub_time", "release_date", "event_date",
+      "announcement_date", "report_date", "period_end",
+    ])).map(dateValue).filter(Number.isFinite);
     if (Number.isFinite(cutoffTime) && dates.some((value) => value > allowedEnd)) {
       return { ok: false, reason_code: "semantic_future_data", reason: "returned data is later than the declared cutoff" };
     }
+    if (capabilityId === "MKT.L1.RT" && cutoff.hasIntradayPrecision) {
+      const exactTimestamps = collectValues(data, new Set([
+        "datetime", "timestamp", "as_of", "quote_time", "updated_at", "publish_time", "pub_time",
+      ])).filter(hasIntradayPrecision);
+      if (exactTimestamps.length === 0) {
+        return {
+          ok: false,
+          reason_code: "semantic_timestamp_missing",
+          reason: "real-time data has no timestamp precise enough to enforce the intraday cutoff",
+        };
+      }
+    }
   }
-  const latestTradingDate = context.latest_trading_date ?? context.cut_off ?? context.cutoff ?? context.as_of_date;
+  const latestTradingDate = context.latest_trading_date
+    ?? context.t0 ?? context.T0
+    ?? context.cut_off ?? context.cutoff ?? context.CUT_OFF
+    ?? context.as_of_date ?? context.AS_OF;
   if ((context.require_fresh === true || capabilityId === "MKT.L1.RT") && latestTradingDate) {
     const expected = dateValue(latestTradingDate);
     const dates = collectValues(data, new Set(["date", "trade_date", "datetime", "timestamp"])).map(dateValue).filter(Number.isFinite);
@@ -945,8 +964,56 @@ function exchangeCalendarDate(value, timeZone = "Asia/Shanghai") {
 }
 
 function dateValue(value) {
+  if (typeof value === "number" && Number.isFinite(value) && value >= 1_000_000_000) {
+    return value < 10_000_000_000 ? value * 1000 : value;
+  }
+  if (/^\d{10}(?:\d{3})?$/.test(String(value).trim())) {
+    const numeric = Number(value);
+    return String(value).trim().length === 10 ? numeric * 1000 : numeric;
+  }
   const parsed = Date.parse(String(value));
   return Number.isFinite(parsed) ? parsed : NaN;
+}
+
+function effectiveCutoff(context) {
+  const primary = [context.t0 ?? context.T0, context.cut_off ?? context.cutoff ?? context.CUT_OFF]
+    .filter((value) => value !== undefined && value !== null && String(value).trim() !== "")
+    .map((value) => ({
+      value,
+      time: inclusiveDateValue(value),
+      hasIntradayPrecision: hasIntradayPrecision(value),
+    }))
+    .filter((record) => Number.isFinite(record.time));
+  const candidates = primary.length > 0
+    ? primary
+    : [context.as_of_date ?? context.AS_OF]
+      .filter((value) => value !== undefined && value !== null && String(value).trim() !== "")
+      .map((value) => ({
+        value,
+        time: inclusiveDateValue(value),
+        hasIntradayPrecision: hasIntradayPrecision(value),
+      }))
+      .filter((record) => Number.isFinite(record.time));
+  if (candidates.length === 0) return null;
+  const earliestTime = Math.min(...candidates.map((record) => record.time));
+  const earliest = candidates.filter((record) => record.time === earliestTime);
+  return {
+    time: earliestTime,
+    hasIntradayPrecision: earliest.some((record) => record.hasIntradayPrecision),
+  };
+}
+
+function inclusiveDateValue(value) {
+  const parsed = dateValue(value);
+  if (!Number.isFinite(parsed)) return NaN;
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value).trim())
+    ? parsed + 24 * 60 * 60 * 1000 - 1
+    : parsed;
+}
+
+function hasIntradayPrecision(value) {
+  return /^\d{10}(?:\d{3})?$/.test(String(value ?? "").trim())
+    || /^\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}/.test(String(value ?? "").trim());
 }
 
 function stableCapabilityDetail(detail) {

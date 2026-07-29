@@ -18,6 +18,9 @@ test("limits Web Search to audited issuer news and qualitative sentiment", async
   assert.match(skill, /Search-result snippets alone are not evidence/);
   assert.match(skill, /body-content SHA-256/);
   assert.match(policy, /at least two independent/);
+  assert.match(policy, /publisher owner and original body/);
+  assert.match(policy, /qualifying source sample/);
+  assert.match(policy, /Never describe that small sample as overall market sentiment/);
   assert.match(policy, /Do not emit a numeric sentiment score/);
   assert.match(policy, /Keep QVeris mandatory for identity, quotes, bars, financials, classifications, events, flows/);
 });

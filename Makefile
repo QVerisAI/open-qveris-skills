@@ -105,7 +105,8 @@ validate-finance-business-adapters:
 		qveris-a-stock-data-layer/tests/qveris_finance_adapter.test.mjs \
 		qveris-a-stock-data-layer/tests/business_adapter_copies.test.mjs \
 		qveris-a-share-data/tests/web_news_fallback_contract.test.mjs \
-		qveris-a-share-data/tests/web_news_policy_copies.test.mjs
+		qveris-a-share-data/tests/web_news_policy_copies.test.mjs \
+		qveris-a-share-data/tests/workflow_semantic_guards.test.mjs
 
 validate-crypto-radar:
 	$(NODE) --test qveris-crypto-market-radar/tests/*.test.mjs

@@ -570,6 +570,68 @@ test("rejects stale real-time data against the declared cutoff without extra fre
   assert.equal(result.adaptation.attempts[0].reason_code, "semantic_stale_data");
 });
 
+test("uses the earlier of T0 and CUT_OFF without same-day grace", async () => {
+  const schema = detail({
+    capability_id: "MKT.L1.RT",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "timestamp" }, { name: "price" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH" },
+    context: {
+      T0: "2026-07-28T14:11:00+08:00",
+      CUT_OFF: "2026-07-28T23:59:59+08:00",
+    },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "post-t0-quote",
+      result: { data: [{ symbol: "600519.SH", timestamp: "2026-07-28T15:10:00+08:00", price: 1400 }] },
+    }] }),
+  });
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts[0].reason_code, "semantic_future_data");
+});
+
+test("requires an exact timestamp for real-time data under an intraday cutoff", async () => {
+  const schema = detail({
+    capability_id: "MKT.L1.RT",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "price" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH" },
+    context: { cut_off: "2026-07-28T14:11:00+08:00" },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "date-only-quote",
+      result: { data: [{ symbol: "600519.SH", date: "2026-07-28", price: 1400 }] },
+    }] }),
+  });
+  assert.equal(result.success, false);
+  assert.equal(result.adaptation.attempts[0].reason_code, "semantic_timestamp_missing");
+});
+
+test("keeps a date-only cutoff inclusive for daily observations", async () => {
+  const schema = detail({
+    capability_id: "MKT.BARS.EOD",
+    params: [{ name: "symbol", type: "string", required: true }],
+    field_spec: { required: [{ name: "symbol" }, { name: "date" }, { name: "close" }] },
+  });
+  const result = await executeFinanceCapability({
+    capability: schema.capability_id,
+    parameters: { symbol: "600519.SH" },
+    context: { cut_off: "2026-07-28" },
+    transport: transport({ capabilityDetail: schema, responses: [{
+      success: true,
+      execution_id: "same-day-bar",
+      result: { data: [{ symbol: "600519.SH", date: "2026-07-28", close: 1400 }] },
+    }] }),
+  });
+  assert.equal(result.success, true);
+});
+
 test("validates fiscal years while treating annual and FY labels as equivalent", async () => {
   const schema = detail({
     capability_id: "FUNDAMENTALS.IS",

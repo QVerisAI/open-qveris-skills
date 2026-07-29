@@ -2,16 +2,18 @@
 
 ## Summary
 
-Evidence status: `proxy_only`.
+Evidence status: `insufficient`.
 
-The natural-language test output degrades correctly when primary sentiment evidence is unavailable or returns empty signal fields. It can provide qualitative news context and a list of missing fields, but it cannot provide a numeric sentiment score or signal-strength conclusion.
+`source_mode=hybrid_web_news_sentiment`; `effective_cutoff` and `workflow_guard_status` must be bound in a live run.
+
+The natural-language test output degrades correctly when fewer than two independent, issuer-matched, in-window opened Web sources validate. It can provide individually supported news context and a list of missing fields, but it cannot provide a numeric sentiment score or signal-strength conclusion.
 
 ## Evidence
 
-| Claim | qveris_finance capability | Parameters | Status | Fallback |
+| Claim | Source Type | Parameters / Query | Status | Fallback |
 |---|---|---|---|---|
-| Primary sentiment is needed for a numeric score. | `qveris_finance.sentiment_text_signals` | `symbol=NVDA`, `market=US`, `window=P7D` | failed or empty in fallback scenario | tagged news |
-| Tagged news is background context only. | `qveris_finance.news_fin_tagged` | `symbol=NVDA`, `market=US`, `limit=5` | fallback context | primary sentiment failed |
+| Issuer identity must resolve before news collection. | `qveris_finance.ref_symbology` | `symbol=NVDA`, `market=US` | required | no |
+| Qualitative sentiment needs two independent opened pages. | `web` | validated issuer name, ticker, and `window=P7D` | insufficient in this scenario | temporary Web override |
 
 ## Analysis
 
@@ -20,9 +22,10 @@ The report should say that the sentiment layer is incomplete. The monitoring rea
 ## Data Quality And Missing Fields
 
 - `missing_fields`: `issuer_identity`, `numeric_sentiment_score`, `sentiment_magnitude`, `validated_sentiment_signal_fields`, `validated_news_cluster`.
-- `data_quality.status`: `proxy_only`.
-- `fallback_used`: true for the tagged-news context.
-- Empty `signal`, `text_cue`, score, or label fields are `sentiment_signal_empty`, not weak sentiment.
+- `data_quality.status`: `insufficient`.
+- `fallback_used`: true for the temporary audited Web lane; Web never counts as CAP success.
+- Fewer than two independent publisher owners stays `sentiment=insufficient`. Two or more sources still describe only the qualifying source sample.
+- The disabled `qveris_finance.news_fin_tagged` and `qveris_finance.sentiment_text_signals` CAPs are not called.
 - Suppressed fields: `forecast`, `target_price`, `upside`, `recommendation`, `buy_sell`.
 
 ## Trace Appendix

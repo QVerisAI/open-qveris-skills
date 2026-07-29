@@ -21,7 +21,9 @@ Use this policy whenever a workflow needs issuer news or text sentiment.
 ## Sentiment Boundary
 
 - Emit only `positive`, `negative`, `mixed`, or `insufficient` from at least two independent, issuer-matched, in-window opened sources.
+- Determine independence by publisher owner and original body, not by URL count. Syndicated copies, mirrors, and substantially identical bodies count as one source.
 - List the exact supporting and conflicting text cues. Do not emit a numeric sentiment score, magnitude, market-wide sentiment, price direction, target, or trading implication.
+- Scope every non-`insufficient` label to the qualifying source sample and state its independent-source count. Never describe that small sample as overall market sentiment, investor consensus, or representative coverage.
 - If fewer than two independent sources pass, set `sentiment=insufficient`. Never fill the gap from training data or an uncited summary.
 
 ## Audit And Replay

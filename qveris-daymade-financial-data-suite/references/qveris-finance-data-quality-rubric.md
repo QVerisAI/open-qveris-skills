@@ -66,7 +66,7 @@ When a field is cumulative in one payload and point-in-time in another, do not n
 ## Fallback Boundaries
 
 - Treat transport success as insufficient by itself. A successful payload that fails this rubric is unusable evidence, not a fallback success.
-- Use `news_fin_tagged` as qualitative context only when sentiment, cluster, or transcript routes fail. Do not derive numeric sentiment, strong catalysts, or directional risk conclusions from tagged news alone.
+- While `temporary_web_override.v1` is active for the six benchmarked Skills, do not call `news_fin_tagged` or `sentiment_text_signals`; use the audited Web lane for issuer news and qualitative sentiment. Scope any supported sentiment label to the qualifying source sample and never count Web evidence as CAP success.
 - Require issuer relevance for every news, research, or analyst-report row before summarizing it. Match returned symbol, company name, exchange, market, ISIN, or another explicit issuer identity; otherwise mark `entity_mix`, `overbroad_news`, or `weak_relevance`.
 - Use `event_calendar_macro` as macro-event context only. Do not present it as actual-vs-forecast macro surprise unless a callable actual-vs-forecast CAP succeeds.
 - Use VIX, rates, or liquid ETF bars as market-regime proxies only when primary index or breadth evidence fails and the proxy passes identity/window checks.

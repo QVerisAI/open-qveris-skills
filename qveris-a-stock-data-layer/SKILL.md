@@ -106,7 +106,7 @@ Do not use non-QVeris structured-finance data sources, Web use outside the audit
 
 ## References
 
-- Use shared finance contract version `2026-07-22.3`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
+- Use shared finance contract version `2026-07-29.1`; repository CI verifies the local rubric, retry policy, CAP registry, and output schema against `references/qveris-finance-shared-manifest.json` hashes.
 - Use `references/qveris-finance-capability-fallbacks.json` for the audited cross-CAP replacement boundary.
 - Read `references/qveris-tool-map.md` before choosing calls for an A-share data-layer report.
 - Read `references/qveris-finance-data-quality-rubric.md` before treating any payload as evidence.
