@@ -21,8 +21,8 @@ Source record:
 
 ## Direct Workflow
 
-1. Freeze the request before any network call. Record the issuer, market, requested fields, time window, fiscal period, `effective_cutoff`, `dry_run`, `max_calls`, `max_age`, and `budget_note`. Default to `dry_run=false`, `max_calls=8`, `max_age=P1D`, and a conservative budget note.
-2. Read `references/qveris-direct-tool-map.md` before choosing tool-type queries. Read `references/qveris-direct-data-quality-rubric.md` before accepting evidence. Read `references/qveris-direct-retry-policy.md` after any failed, rejected, thin, or truncated result.
+1. Freeze the request before any network call. Record the issuer, market, requested fields, time window, fiscal period, `effective_cutoff`, `dry_run`, `max_calls`, `max_credits`, `max_rows`, `max_billable_quantity`, `max_age`, and `budget_note`. Default to `dry_run=false`, `max_calls=8`, `max_credits=20`, `max_rows=250`, `max_billable_quantity=500`, `max_age=P1D`, and a conservative budget note.
+2. Read `references/qveris-direct-runtime-contract.md` before any live call and use its audited runtime when available. Read `references/qveris-direct-tool-map.md` before choosing tool-type queries. Read `references/qveris-direct-data-quality-rubric.md` before accepting evidence. Read `references/qveris-direct-retry-policy.md` after any failed, rejected, thin, or truncated result.
 3. Discover the minimum tool set. Write each query in English as an API tool-type description, never as an entity question or data request. Keep issuer names, symbols, dates, and requested values out of discovery queries.
 4. Select one result using documented market coverage, required parameters, output shape, success rate, and latency. Preserve the returned `search_id` or native `discovery_id` with the selected `tool_id`; never invent or mix the pair.
 5. Validate every required parameter against the selected tool metadata, then execute with exact structured values from the request. Do not copy sample identity values into a real call.
@@ -34,16 +34,19 @@ Source record:
 
 Use the first available direct tier:
 
-1. Native: call `qveris_discover`, then `qveris_call` with the exact returned discovery identifier and selected tool identifier.
-2. HTTP: use `http_request` with `QVERIS_API_KEY` against `https://qveris.ai/api/v1`:
-   - Allow HTTPS requests only to `qveris.ai`; reject redirects or any non-QVeris host.
+1. Bundled audited HTTP runtime: use `node scripts/qveris_direct_runtime.mjs` when `exec` and Node.js are available.
+2. Native: call `qveris_discover`, then `qveris_call` with the exact returned discovery identifier and selected tool identifier.
+3. HTTP: use `http_request` with `QVERIS_API_KEY` against the configured `QVERIS_BASE_URL`:
+   - Allow only approved HTTPS QVeris `/api/v1` hosts; reject redirects and host substitution.
    - Send `Authorization: Bearer ${QVERIS_API_KEY}` and `Content-Type: application/json` headers, but never place either header or its value in trace.
    - `POST /search` with `{"query":"stock quote and historical price API","limit":10}`.
    - `POST /tools/execute?tool_id=<selected>` with `{"search_id":"<returned>","parameters":{...},"max_response_size":20480}`.
    - `POST /tools/by-ids` with `{"tool_ids":["<cached>"],"search_id":"<optional-same-session-id>"}`; omit `search_id` only when the endpoint accepts it as optional.
-3. If neither tier is available, set `tool_runtime_missing` and return a coverage monitor without substituting another data source.
+4. If no tier is available, set `tool_runtime_missing` and return a coverage monitor without substituting another data source.
 
 Every observed `search`, `tools/execute`, and `tools/by-ids` attempt consumes one unit of `max_calls`, including retries and rejected results. Never start an attempt when no budget remains.
+
+Before execution, estimate credits, rows, and billable quantity from selected-tool metadata. Stop on an unknown bounded estimate or any exceeded `max_credits`, `max_rows`, or `max_billable_quantity` limit.
 
 Use a cached tool only within the current session. Before reuse, inspect it through `/tools/by-ids` when the HTTP tier is available and count that inspection. If inspection is unavailable or fails, rediscover. Never persist a tool identifier as a cross-session default.
 
@@ -55,6 +58,7 @@ Never expose `QVERIS_API_KEY`, authorization headers, cookies, signed download U
 - Validate every entity-scoped row. Reject mixed rows or rows that do not prove the requested issuer.
 - Require returned timestamps and period ends to fit the frozen window and `effective_cutoff`. Label stale but otherwise valid points as stale; never present them as current.
 - Sort and deduplicate dated prices. Require at least two observations before computing returns, trend, liquidity, volatility, drawdown, or correlation; state both observation and return counts.
+- Use explicit adjusted-close semantics for adjusted history. Reject raw close plus an undocumented factor. For “last N” requests, use exactly N observations or mark the layer missing.
 - Align income statement, balance sheet, cash flow, and ratios by fiscal year, fiscal period, period end, currency, and measurement basis.
 - If an annual request returns quarter or trailing-period data, retry once only when the selected tool documents a stricter period parameter. Otherwise mark the annual layer missing.
 - Treat empty sentiment fields as `sentiment_signal_empty`, not neutral or weak sentiment. A numeric sentiment claim requires a documented scale plus non-empty issuer-matched values.
@@ -106,9 +110,11 @@ Render this exact trace header:
 
 Use one row for every observed `search`, `tools/execute`, or `tools/by-ids` attempt, including retries. Use JSON `null` for non-applicable cells, compact JSON for `params` and `missing_fields`, and only `success`, `failed`, or `rejected` for status. For a successful discovery row, record the chosen tool identifier; if no result was chosen, use `null`. Normalize a native discovery identifier into `search_id` without changing its value.
 
-Build trace and call counts only from saved `observed_calls`. Do not add planned, skipped, or budget-blocked rows. For output labeled live, fresh, or E2E, save a sanitized `observed_calls.v1` sidecar with each direct request, timestamp, response hash, and derived trace row. Without a verified sidecar, state that the trace is unverified and render only the header and separator.
+Build trace and call counts only from saved `observed_calls`. Do not add planned, skipped, or budget-blocked rows. For output labeled live, fresh, or E2E, use the audited runtime to save a sanitized `observed_calls.v1` sidecar with each direct request, timestamp, response hash, timeout layer, billing facts, and derived trace row. Require exact row-for-row equality. Without a verified sidecar, state that the trace is unverified and render only the header and separator.
 
 Include `missing_fields`, `data_quality.status`, rejection reasons, stale fields, and suppressed fields. Put full machine-readable trace JSON only in Trace Appendix, schema fixtures, or when requested.
+
+Echo call, credit, row, and billable-quantity controls and their observed or estimated usage.
 
 End every user-facing report with a final non-empty line exactly:
 
@@ -120,6 +126,7 @@ Do not use non-QVeris finance sources, browser automation, external provider key
 
 ## References
 
+- Read `references/qveris-direct-runtime-contract.md` before any live direct request.
 - Read `references/qveris-direct-tool-map.md` before discovery and tool selection.
 - Read `references/qveris-direct-data-quality-rubric.md` before accepting any result as evidence.
 - Read `references/qveris-direct-retry-policy.md` when a request fails or a result is rejected.

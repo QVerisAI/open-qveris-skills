@@ -30,17 +30,20 @@ Source record:
 ## Runtime Contract
 
 - Use only direct QVeris discovery, inspection, and execution with `QVERIS_API_KEY`; never expose the credential.
-- Prefer native `qveris_discover` and `qveris_call` when available. Otherwise use direct HTTP `POST /search`, `POST /tools/by-ids`, and `POST /tools/execute` through an available HTTP request tool.
+- Prefer the bundled audited HTTP runtime `node scripts/qveris_direct_runtime.mjs` when `exec` and Node.js are available. Otherwise use native `qveris_discover` / `qveris_call`, then direct HTTP `POST /search`, `POST /tools/by-ids`, and `POST /tools/execute` through an available HTTP request tool.
 - If neither runtime tier exists, mark `tool_runtime_missing`. Do not use the repository script for finance-like raw tool execution.
+- Read `references/qveris-direct-runtime-contract.md` before any live request. Resolve the configured `QVERIS_BASE_URL`; never hardcode or guess a deployment host.
 - Default natural-language output to a Markdown report, not a JSON object.
-- Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`. Default to `dry_run=false`, no hard call limit, `max_age=P1D`, and a conservative budget note, then echo the controls.
+- Accept `dry_run`, `max_calls`, `max_credits`, `max_rows`, `max_billable_quantity`, `max_age`, and `budget_note`. Default to `dry_run=false`, `max_calls=12`, `max_credits=25`, `max_rows=300`, `max_billable_quantity=600`, `max_age=P1D`, and a conservative budget note, then echo the controls.
 - Count every observed `/search`, `/tools/by-ids`, and `/tools/execute` attempt against `max_calls`, including failures, retries, alternative tools, and session-cache inspection. A local calculation does not consume the QVeris call budget.
+- Estimate credits, rows, and billable quantity from inspected billing metadata before execution. Stop on an unknown bounded estimate or any exceeded limit; one batch request is not one credit.
 - Stop before a request that would exceed `max_calls`. List it as a required next tool type, not as an observed call or Trace row.
 - Read `references/qveris-direct-data-quality-rubric.md` before accepting any payload as factor evidence.
 - Use `references/qveris-direct-retry-policy.md` for failed searches, invalid parameters, payload truncation, and semantic mismatches.
 - Build call counts, retry claims, timestamps, and Trace rows only from saved observed requests. Never invent a result, identifier, retry, timestamp, or per-security call.
 - Keep raw returned `tool_id` and `search_id` or `discovery_id` values out of Summary, Screen Results, Evidence, Analysis, and Data Quality prose. They may appear only in the Trace Appendix or a machine-readable fixture.
 - Recursively remove credentials, authorization headers, signed URLs, and internal routing metadata from every artifact.
+- For live, fresh, or E2E output, use the audited runtime to save a sanitized `observed_calls.v1` sidecar and require exact row-for-row Trace equality.
 - End every user-facing report with `Not investment advice.`
 
 ## Direct Invocation
@@ -69,6 +72,8 @@ Read the selected tool's parameter schema. Fill every required parameter, preser
 - fiscal year, fiscal period, period end, currency, unit, and measurement basis;
 - row shape, required fields, truncation state, and text encoding.
 
+Run the bundled parameter and cost preflight when available. Map canonical fiscal periods and provider enums only from inspected metadata; never guess a provider enum.
+
 For native tools, call `qveris_discover`, retain its returned discovery identifier and selected tool identifier, then pass both to `qveris_call` with validated parameters.
 
 For direct HTTP:
@@ -91,6 +96,8 @@ For direct HTTP:
 - Reject returned instruments whose security, exchange, market, listing class, or asset type does not match the requested mainland equity universe.
 - Assign every requested security one coverage tier before displaying factor values: `complete_comparable`, `partial_not_ranked`, `proxy_only`, or `insufficient`.
 - Require identical validated factor sets, price windows, fiscal periods, measurement bases, and market conventions before ranking. Rank only the complete comparable subset.
+- Normalize all price inputs to an explicit adjusted-close field. Reject raw `close` plus an undocumented factor as `adjustment_basis_unclear`.
+- For requested N-day inputs, require exactly N sorted, deduplicated observations for every ranked security.
 - Require at least two bars for simple multi-day metrics and at least the requested lookback plus one observation for lookback indicators.
 - Do not compute percentiles or ranks from fewer than three comparable securities; provide per-security notes instead.
 - Hard reject mojibake and replacement-character artifacts in Chinese names, industry labels, event titles, news snippets, or research titles. Retain numeric/date fields only when identity and window checks pass, and mark rejected text `encoding_artifact`.
@@ -105,7 +112,7 @@ For direct HTTP:
 3. Discover the universe/identity tool, validate its schema, execute it, and exclude unresolved or non-A-share instruments.
 4. Discover and execute only the factor-input tool types needed: bars for momentum/liquidity/volatility, financials for valuation/quality, classification for sector context, and events/news within their evidence limits.
 5. Partition coverage into tiers and build a per-security missing-factor matrix before scoring.
-6. Score only a subset with the same complete factor denominator. Do not renormalize different denominators into one rank.
+6. Run the bundled `validateFactorComparability` gate. Score only a subset with the same complete factor denominator. For different peer groups, require one shared documented cross-industry normalization method; otherwise omit ranking.
 7. Report coverage tiers and gaps before any rank.
 8. If requested, run a separately labeled historical post-hoc evaluation after freezing the original screen.
 
@@ -138,6 +145,7 @@ For direct HTTP:
 - Name evidence by tool type and validated dataset, not by raw tool identifier.
 - If a live/fresh report lacks an independently saved observed-call artifact, place an unverified note before `## Trace Appendix` and render only the exact Trace header plus separator with no rows.
 - Put full machine-readable observed-call JSON only in the appendix, fixtures, or a machine-readable response requested by the user.
+- Echo call, credit, row, and billable-quantity controls and their observed or estimated usage.
 
 ## Prohibited Behavior
 
@@ -145,6 +153,7 @@ Do not output investment recommendations, buy/sell triggers, ratings, target pri
 
 ## References
 
+- Read `references/qveris-direct-runtime-contract.md` before any live direct request.
 - Read `references/qveris-direct-tool-map.md` before choosing discovery queries for an A-share factor screen.
 - Read `references/qveris-direct-data-quality-rubric.md` before treating a payload as evidence.
 - Read `references/qveris-direct-retry-policy.md` when discovery or execution fails, returns the wrong shape, or needs an alternative.

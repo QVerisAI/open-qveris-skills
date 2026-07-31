@@ -2,7 +2,7 @@
 
 This static contract example shows the direct-QVeris A-share factor-screen layout. It does not claim live requests. A real run must show coverage tiers and the comparable subset before any rank.
 
-Controls: `dry_run=false`, `max_calls=12`, `max_age=P1D`, `budget_note=small universe direct factor screen`.
+Controls: `dry_run=false`, `max_calls=12`, `max_credits=25`, `max_rows=300`, `max_billable_quantity=600`, `max_age=P1D`, `budget_note=small universe direct factor screen`.
 
 ## Screen Results
 

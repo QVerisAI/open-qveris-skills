@@ -16,6 +16,7 @@ Read this rubric before turning any directly executed QVeris payload into A-shar
 - Preserve each selected `tool_id` with the `search_id` or `discovery_id` returned by the same search.
 - Validate the discovered parameter descriptions before execution. Do not guess required names, types, enums, date formats, or identifier formats.
 - Count every observed discovery, inspection, and execution attempt, including failures and retries.
+- Require a passing call, credit, row, and billable-quantity preflight before execution.
 - Never let transport success alone qualify a payload as evidence.
 
 ## Hard Rejects
@@ -28,6 +29,7 @@ Reject or isolate all of the following:
 - a full-universe claim without verified coverage and completed pagination;
 - fewer than two bars for a multi-day metric, or fewer than lookback plus one observations for a lookback indicator;
 - a price window outside the request or crossing the `as_of` boundary of the original screen;
+- adjusted-price evidence that exposes only raw close plus an undocumented factor;
 - mismatched fiscal year, fiscal period, period end, currency, unit, or measurement basis in aligned financials;
 - unsupported derived metrics without formula, numerator, denominator, unit, currency, period end, source fields, and observed Trace row references;
 - general news used as numeric sentiment without a documented score;
@@ -48,6 +50,10 @@ Assign each requested security one tier:
 - `insufficient`: no usable factor evidence remains.
 
 Rank only `complete_comparable` securities when all share the same factor set, price window, fiscal period, measurement basis, and market convention. Require at least three securities. Do not renormalize different denominators into one rank.
+
+For an N-day factor, require exactly N sorted and deduplicated adjusted observations for every ranked security. A different row count is `partial_not_ranked`.
+
+Run the bundled `validateFactorComparability` gate before rendering rank. Different peer groups require the same documented cross-industry normalization method on every row; warnings in prose do not override a failed gate.
 
 ## Financial Alignment
 
@@ -90,6 +96,8 @@ Rules:
 - remove credentials, authorization headers, and signed URLs from `params` and saved responses.
 
 For any report labeled live, fresh, or E2E, save an independent observed-calls artifact with sanitized response material, response hash, observed timestamp when returned, request kind, exact sent parameters, identifiers, and derived Trace row. Validate the report Trace row-for-row against that artifact. If no verified artifact exists, state that the trace is unverified and render an empty Trace table.
+
+Use the audited runtime sidecar as that artifact and as the source of sanitized response hashes, billing facts, and timeout-layer diagnostics.
 
 Trace proves the request happened. Evidence proves the payload survived validation.
 

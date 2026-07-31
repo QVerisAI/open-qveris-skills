@@ -8,6 +8,7 @@ Use this rubric before turning any direct QVeris result into evidence. Read `qve
 - Preserve one returned `search_id` or native `discovery_id` with the chosen `tool_id`. Reject mixed or invented pairs.
 - Validate required parameters from discovery or inspection metadata before execution.
 - Count `search`, `tools/execute`, and `tools/by-ids` attempts equally against `max_calls`.
+- Require a passing call, credit, row, and billable-quantity preflight before execution.
 - A saved observed-call record must describe the exact transmitted query or parameters and the actual result status.
 - Runtime success alone does not establish evidence acceptance.
 
@@ -63,6 +64,7 @@ Do not normalize cumulative and point-in-time values by guesswork. Mark `measure
 4. Produce exactly `N-1` adjacent returns from `N` accepted prices.
 5. Record formula, inputs, units, window, and accepted evidence references for every displayed derived value.
 6. Suppress the calculation if any required input is missing, non-finite, zero where used as a denominator, stale beyond the request, or semantically wrong.
+7. For adjusted history, require explicit adjusted close or a documented and regression-tested factor formula. For “last N,” require exactly N accepted observations.
 
 ## News And Sentiment Rules
 
@@ -95,6 +97,7 @@ Do not normalize cumulative and point-in-time values by guesswork. Mark `measure
 - A successful search row records the chosen tool identifier. A search with no chosen result records `tool_id=null`.
 - Normalize a native discovery identifier into `search_id` without changing its value.
 - For live, fresh, or E2E output, save `observed_calls.v1` with each sanitized direct response, response SHA-256, observed time, and derived trace row. Validate the report trace against it row-for-row.
+- Use the audited runtime sidecar as the source of timeout layer, billing facts, sanitized response hash, and Trace projection.
 - If no independent observed-call artifact exists, label the trace unverified and leave it empty.
 - Raw `tool_id` and `search_id` values are permitted only in Trace Appendix and machine-readable observed-call fixtures.
 - Never persist credentials, authorization headers, cookies, signed URLs, provider routes, or discarded search results.

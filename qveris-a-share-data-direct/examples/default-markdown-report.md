@@ -2,7 +2,7 @@
 
 This static shape example makes no live-data claim. A real run with unavailable bars, events, or sector context must switch to `Latest Snapshot And Coverage Notes` and list unavailable deliverables in the first sentence.
 
-Controls: `dry_run=false`, `max_calls=8`, `max_age=P1D`, `budget_note=single-security direct A-share read`.
+Controls: `dry_run=false`, `max_calls=8`, `max_credits=20`, `max_rows=250`, `max_billable_quantity=500`, `max_age=P1D`, `budget_note=single-security direct A-share read`.
 
 ## Evidence
 

@@ -30,7 +30,8 @@ When execution returns a parameter-class error:
 2. Inspect with `/tools/by-ids` using the selected tool and its session identifier.
 3. Compare the current schema with the exact sent parameters.
 4. Remove unsupported optional fields and correct documented types or formats.
-5. Retry once with the corrected parameters.
+5. Use the bundled deterministic adapter for symbol and fiscal-period normalization; supply enum mappings only from observed metadata.
+6. Retry once with the corrected parameters.
 
 Never fill a missing security identity with a sample value. Never change the requested market, period, or window merely to make a call succeed.
 
@@ -48,6 +49,7 @@ Reuse a tool only in the session where it was discovered. Inspect before reuse a
 
 - Count `search`, `tools/by-ids`, and `tools/execute` separately.
 - Count failed and rejected requests.
+- Re-run credit, row, and billable-quantity preflight before every retry.
 - Do not start inspection unless enough budget remains for the intended corrected execution.
 - Stop before exceeding `max_calls`.
 - List budget-blocked work as required next tool types, not Trace rows.

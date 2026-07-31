@@ -30,34 +30,41 @@ Source record:
 
 - Use only direct QVeris discovery and execution with `QVERIS_API_KEY`.
 - Use the first available tier:
-  1. Native `qveris_discover` and `qveris_call`.
-  2. Direct HTTP through `http_request`: `POST /api/v1/search`, `POST /api/v1/tools/execute?tool_id=...`, and `POST /api/v1/tools/by-ids` for same-session inspection.
+  1. Bundled audited HTTP runtime: `node scripts/qveris_direct_runtime.mjs` when `exec` and Node.js are available.
+  2. Native `qveris_discover` and `qveris_call` when the bundled runtime cannot run.
+  3. Direct HTTP through `http_request`: `POST /api/v1/search`, `POST /api/v1/tools/execute?tool_id=...`, and `POST /api/v1/tools/by-ids` for same-session inspection.
 - If neither tier exists, return `tool_runtime_missing`. Do not use web pages, original vendor endpoints, local finance packages, or invented values as structured-data substitutes.
+- Read `references/qveris-direct-runtime-contract.md` before any live request. Resolve the configured `QVERIS_BASE_URL`; never hardcode or guess a deployment host.
 - Write every discovery query in English as a tool-type description. Never send an issuer name, ticker, or factual question as the discovery query.
 - Preserve the returned `search_id`, or normalize a native `discovery_id` to `search_id` in Trace, and pair it with the selected `tool_id` for execution.
-- Accept `dry_run`, `max_calls`, `max_age`, and `budget_note`. Default to `dry_run=false`, no hard call limit, `max_age=P1D`, and a conservative budget note.
+- Accept `dry_run`, `max_calls`, `max_credits`, `max_rows`, `max_billable_quantity`, `max_age`, and `budget_note`. Default to `dry_run=false`, `max_calls=8`, `max_credits=20`, `max_rows=250`, `max_billable_quantity=500`, `max_age=P1D`, and a conservative budget note.
 - Count every observed discovery, inspection, execution, and retry against `max_calls`. Never hide discovery overhead.
+- Estimate credits, rows, and billable quantity from inspected billing metadata before execution. Stop on an unknown bounded estimate or any exceeded limit.
 - Read `references/qveris-direct-data-quality-rubric.md` before accepting payloads. Read `references/qveris-direct-retry-policy.md` after any failed, rejected, thin, or truncated response.
 - Build trace rows and call counts only from observed requests. Never add planned, skipped, or budget-blocked requests to Trace.
 - Never expose credentials, authorization headers, cookies, secrets, or raw responses that contain them.
 - Raw `tool_id` and `search_id` values may appear only in `## Trace Appendix` or machine-readable fixtures. Do not repeat them in Summary, Evidence, prose, filenames, or user-facing source lists.
+- For live, fresh, or E2E output, use the audited runtime to save a sanitized `observed_calls.v1` sidecar. Trace must equal its `qveris_trace` projection row-for-row.
 - Suppress target prices, ratings, buy or sell wording, position guidance, rebalancing instructions, and execution plans.
 
 ## Direct Invocation
 
-1. Define the minimum evidence set and reserve calls for discovery plus execution before starting. If the budget cannot cover the minimum useful pair, return a budget-limited report without external claims.
+1. Read `references/qveris-direct-runtime-contract.md`, define the minimum evidence set, and reserve calls and credits for discovery plus execution. If the budget cannot cover the minimum useful pair, return a budget-limited report without external claims.
 2. Read `references/qveris-direct-tool-map.md`. Discover one English tool type at a time. Prefer a result with clear parameters, strong observed reliability, suitable China-market coverage, and the required output shape.
 3. Save the returned search token and chosen tool identifier together. Validate required parameter names, types, formats, date rules, market coverage, and examples before execution.
 4. Execute with structured values extracted from the request. For native tools, pass the selected identifier and its matching discovery token to `qveris_call`. For HTTP, send the same pair to `/tools/execute`.
 5. Cache a successful tool only in the current session. Before reuse, inspect it through `/tools/by-ids` when that route is available and budgeted; reuse only if the schema and market coverage still match. If inspection is unavailable, rediscover instead of trusting a stale cache.
 6. Validate the returned issuer, listing, market, exchange, asset type, window, timestamp, row count, units, and text encoding. Mark a transport-success payload `rejected` when it fails semantic validation.
 7. Record one Trace row for every observed `search`, `tools/by-ids`, and `tools/execute` attempt. Normalize native discovery and call operations to those request kinds.
+8. When the audited runtime is available, annotate semantic rejection in the saved sidecar instead of editing report Trace by hand.
 
 ## Evidence Gate
 
 - Resolve each symbol with a directly discovered China A-share security-master or symbology tool before using quote, bar, event, sector, or news data.
 - Require mainland listing evidence to match the requested security. Reject funds, indexes, unrelated listings, and cross-market substitutions.
 - Normalize unambiguous six-digit symbols to `.SH` or `.SZ` only when exchange rules support the inference. Reject ambiguous codes and user-supplied market conflicts.
+- Normalize bars through the bundled runtime. Use an explicit adjusted-close field or a documented and tested factor formula; otherwise reject with `adjustment_basis_unclear`.
+- For “last N trading days,” use exactly N sorted, deduplicated rows. Reject thin windows instead of labeling a different count as N.
 - Compute technical indicators only from validated bars and only with enough observations for every lookback. Label each result as calculated from QVeris-supplied bars.
 - Build one canonical technical-fact record containing latest close, MA20, MA60, `close_vs_ma20`, and `close_vs_ma60`. Render every section from that record; reject contradictory relations.
 - For events and IPO or listing timelines, require event date, event type, issuer identity, and requested-window alignment.
@@ -97,6 +104,7 @@ Source record:
 - For a successful discovery row, record the English query, returned search token, and chosen tool identifier. If no relevant tool was chosen, use `tool_id=null` and add a reason to `missing_fields`.
 - For an execution row, use `query=null` and preserve the exact tool and search pair used. For an inspection row, use `query=null` and the inspected tool identifier.
 - Report `missing_fields`, `data_quality.status`, stale fields, rejected-payload reasons, and suppressed fields.
+- Echo all call, credit, row, and billable-quantity controls and their observed or estimated usage.
 - Keep full machine-readable trace JSON in fixtures, the appendix, or a user-requested machine output only.
 - End every user-facing report with exactly `Not investment advice.`
 
@@ -106,6 +114,7 @@ Do not use non-QVeris finance sources, web scraping, browser automation, cookies
 
 ## References
 
+- Read `references/qveris-direct-runtime-contract.md` before any live direct request.
 - Read `references/qveris-direct-tool-map.md` before discovery.
 - Read `references/qveris-direct-data-quality-rubric.md` before treating a payload as evidence.
 - Read `references/qveris-direct-retry-policy.md` after a failed, rejected, thin, or truncated call.

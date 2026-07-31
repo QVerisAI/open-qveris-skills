@@ -2,7 +2,7 @@ COMPOSE := docker compose -f dev-infra/stock-copilot-pro/docker-compose.yml
 PYTHON ?= python3
 NODE ?= node
 
-.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e validate-qveris-sanitizer validate-finance-business-adapters validate-crypto-radar validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
+.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e validate-qveris-sanitizer validate-finance-business-adapters validate-finance-direct-contracts validate-crypto-radar validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
 
 up:
 	$(COMPOSE) up -d skill-dev
@@ -48,7 +48,7 @@ test-openclaw:  ## OpenClaw 端到端测试（8 个 case，需要 openclaw 容�
 	$(COMPOSE) --profile openclaw exec openclaw \
 		node /workspace/dev-infra/stock-copilot-pro/openclaw-e2e.mjs
 
-validate-finance-reports: validate-finance-fixtures validate-finance-contract-self-tests validate-qveris-sanitizer validate-finance-business-adapters validate-crypto-radar
+validate-finance-reports: validate-finance-fixtures validate-finance-contract-self-tests validate-qveris-sanitizer validate-finance-business-adapters validate-finance-direct-contracts validate-crypto-radar
 	$(PYTHON) scripts/validate_qveris_finance_report.py \
 		qveris-anthropic-financial-services/examples/default-markdown-report.md \
 		qveris-anthropic-financial-services/examples/natural-language-test-output-2026-07-07.md \
@@ -107,6 +107,12 @@ validate-finance-business-adapters:
 		qveris-a-share-data/tests/web_news_fallback_contract.test.mjs \
 		qveris-a-share-data/tests/web_news_policy_copies.test.mjs \
 		qveris-a-share-data/tests/workflow_semantic_guards.test.mjs
+
+validate-finance-direct-contracts:
+	$(NODE) --test \
+		qveris-a-share-data-direct/tests/*.test.mjs \
+		qveris-a-share-factor-screen-direct/tests/*.test.mjs \
+		qveris-alphaear-market-intelligence-direct/tests/*.test.mjs
 
 validate-crypto-radar:
 	$(NODE) --test qveris-crypto-market-radar/tests/*.test.mjs

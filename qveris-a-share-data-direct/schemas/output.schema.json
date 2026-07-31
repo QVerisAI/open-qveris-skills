@@ -120,6 +120,9 @@
       "required": [
         "dry_run",
         "max_calls",
+        "max_credits",
+        "max_rows",
+        "max_billable_quantity",
         "max_age",
         "budget_note"
       ],
@@ -132,6 +135,18 @@
             "integer",
             "null"
           ],
+          "minimum": 0
+        },
+        "max_credits": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "max_rows": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "max_billable_quantity": {
+          "type": ["number", "null"],
           "minimum": 0
         },
         "max_age": {

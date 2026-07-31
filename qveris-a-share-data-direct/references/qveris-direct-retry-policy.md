@@ -8,6 +8,7 @@ Use this policy for direct QVeris discovery, inspection, and execution. Every ob
 2. Count `search`, `tools/by-ids`, and `tools/execute` attempts equally.
 3. Before any retry, verify that it leaves enough budget for a useful final execution.
 4. If no useful path remains, stop and return `budget_limited`; do not omit observed calls.
+5. Re-run credit, row, and billable-quantity preflight before every retry; never assume a retry is free.
 
 ## Failure Classes
 
@@ -29,9 +30,10 @@ When an execution reports a parameter error:
 1. Inspect the same-session tool through `/tools/by-ids` if HTTP inspection is available and budgeted.
 2. Compare the observed schema with the exact transmitted parameters.
 3. Remove only optional inputs named by the error or correct values using documented types and examples.
-4. Never replace a missing issuer with a sample ticker.
-5. Retry once with the same selected tool and matching search token.
-6. If inspection is unavailable, rediscover rather than guessing.
+4. Use the bundled deterministic adapter for symbol and fiscal-period normalization; supply enum mappings only from observed metadata.
+5. Never replace a missing issuer with a sample ticker.
+6. Retry once with the same selected tool and matching search token.
+7. If inspection is unavailable, rediscover rather than guessing.
 
 Record the inspection and corrected execution as separate observed rows.
 

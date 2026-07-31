@@ -1,6 +1,7 @@
 function typeMatches(expectedType, value) {
   if (expectedType === "null") return value === null;
   if (expectedType === "array") return Array.isArray(value);
+  if (expectedType === "integer") return Number.isInteger(value);
   if (expectedType === "number") return typeof value === "number" && Number.isFinite(value);
   if (expectedType === "object") return value !== null && typeof value === "object" && !Array.isArray(value);
   return typeof value === expectedType;

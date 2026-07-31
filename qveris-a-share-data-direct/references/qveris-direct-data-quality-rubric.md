@@ -19,6 +19,7 @@ Apply this rubric to every direct QVeris response before turning it into A-share
 - Execute only with the selected pair from the same discovery or a validated same-session cache.
 - Validate required parameter names, types, formats, enums, and market coverage before execution.
 - Count every discovery, inspection, execution, and retry against `max_calls`.
+- Require a passing `max_credits`, `max_rows`, and `max_billable_quantity` preflight. One HTTP request is not evidence of a one-credit cost.
 - Reject a request record that lacks enough observed detail to reconstruct its request kind, query when relevant, selected pair, parameters, and status.
 
 ## Hard Rejects
@@ -42,6 +43,7 @@ Apply this rubric to every direct QVeris response before turning it into A-share
 - Compare each returned observation time with the requested as-of time and `max_age`.
 - Keep stale values out of same-day claims. They may appear only as clearly dated lagged context.
 - Require daily bars to cover the requested start and end bounds as far as the relevant exchange calendar permits.
+- For “last N trading days,” require exactly N sorted and deduplicated accepted rows.
 - Keep out-of-window events in data-quality notes, not Evidence.
 - Do not infer the current state from an undated or timezone-ambiguous response.
 
@@ -49,6 +51,7 @@ Apply this rubric to every direct QVeris response before turning it into A-share
 
 - Calculate indicators locally only from accepted QVeris-supplied bars.
 - State the lookback and adjustment basis.
+- Prefer an explicit adjusted-close field. When only raw close plus a factor is returned, require a documented and regression-tested formula; otherwise reject with `adjustment_basis_unclear`.
 - Require at least 20 accepted closes for MA20, 60 for MA60, and the full conventional input length for any RSI, MACD, or BOLL calculation used.
 - Keep indicator wording descriptive and historical. Do not emit trade actions, ratings, or directional promises.
 
@@ -88,6 +91,7 @@ Rules:
 - Set `status=rejected` for a transport-success execution that fails semantic validation.
 - Set `fallback_used=true` only when the row calls a secondary candidate or proxy used in the final answer.
 - Derive `observed_call_count` from the number of Trace rows.
+- Require Trace to equal the audited runtime sidecar projection row-for-row for live, fresh, or E2E output.
 - Do not add planned, skipped, cached-without-inspection, or budget-blocked requests to Trace.
 
 ## Evidence Placement

@@ -13,6 +13,7 @@ Before the first execution:
 5. Normalize unambiguous user input only when the selected metadata documents the accepted form; otherwise keep the field missing.
 6. Reserve enough budget for the execution and any required identity validation. Do not spend the last call on optional discovery.
 7. Save the exact query or transmitted parameters before rendering trace.
+8. Run call, credit, row, and billable-quantity preflight before execution and every retry.
 
 ## Retry Classes
 
@@ -26,6 +27,8 @@ Before the first execution:
 | Semantic mismatch | Wrong issuer, market, benchmark, fiscal period, or output meaning | Do not retry unchanged. Reject the result; switch only to a separately discovered result when budget remains. | Mark the precise reason such as `semantic_mismatch` or `period_mismatch`. |
 | Thin result | Too few bars, empty sentiment, weak relevance | Retry only when a documented window, limit, or pagination parameter can address the gap. | Otherwise narrow the report and mark the field missing. |
 | Truncated result | Inline body is incomplete | Use only an approved complete-payload path that preserves credential and host safety. | Otherwise mark `payload_truncated` and do not infer omitted content. |
+
+For every timeout, preserve the audited runtime's measured layer (`client`, `qveris_execution`, or `upstream`), elapsed time, and configured limit. Do not substitute a provider's timeout string for the client-observed duration.
 
 ## Search Recovery
 

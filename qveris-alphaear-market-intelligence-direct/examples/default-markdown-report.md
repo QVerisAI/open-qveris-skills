@@ -6,6 +6,8 @@
 
 Evidence status: `insufficient`.
 
+Controls: `dry_run=true`, `max_calls=8`, `max_credits=20`, `max_rows=250`, `max_billable_quantity=500`, `max_age=P1D`.
+
 This static format example claims no live QVeris result. Identity, price, fundamentals, news, and sentiment remain unverified.
 
 ## Evidence

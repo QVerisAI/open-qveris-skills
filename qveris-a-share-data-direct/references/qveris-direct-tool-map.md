@@ -16,7 +16,7 @@ The discovery result supplies the search token and candidate identifiers. Preser
 
 ## Direct HTTP Contract
 
-Use base URL `https://qveris.ai/api/v1`. Allow HTTPS requests to the `qveris.ai` host only; reject redirects or any host substitution.
+Use the bundled audited runtime and the configured `QVERIS_BASE_URL` contract from `qveris-direct-runtime-contract.md`. Its default is `https://qveris.ai/api/v1`; approved deployments may configure `qveris.cn` or `api.qveris.cloud`. Require HTTPS with the exact `/api/v1` path and reject redirects or host substitution.
 
 Send these headers on every request:
 
@@ -78,8 +78,10 @@ Reject a result when the parameter schema is absent, market coverage is unclear,
 - Preserve explicit `.SH` and `.SZ` suffixes. Infer a suffix only for an unambiguous six-digit code.
 - Use ISO dates unless the chosen tool documents another format.
 - Respect documented enums and types. Never invent an optional filter.
+- Run the deterministic parameter adapter against the observed schema. Map fiscal periods and provider enums only when metadata documents the mapping.
 - Do not fill a missing issuer identity with a sample symbol from tool metadata.
 - Save the exact transmitted parameters for the execution Trace row.
+- Run credit, row, and billable-quantity preflight before every execution.
 
 ## Same-Session Cache
 

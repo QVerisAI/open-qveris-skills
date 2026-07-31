@@ -12,6 +12,9 @@
   "controls": {
     "dry_run": true,
     "max_calls": 0,
+    "max_credits": 25,
+    "max_rows": 300,
+    "max_billable_quantity": 600,
     "max_age": "P1D",
     "budget_note": "no external QVeris requests allowed"
   },

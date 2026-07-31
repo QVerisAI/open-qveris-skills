@@ -4,11 +4,13 @@ Source: Awesome Finance Skills / AlphaEar, https://github.com/RKiding/Awesome-fi
 
 ## Runtime Policy
 
-- Use native `qveris_discover` plus `qveris_call` first.
-- Otherwise use `http_request` against QVeris `POST /search`, `POST /tools/execute`, and same-session `POST /tools/by-ids`.
+- Use the bundled audited runtime first when `exec` and Node.js are available.
+- Otherwise use native `qveris_discover` plus `qveris_call`, then `http_request` against the configured QVeris `POST /search`, `POST /tools/execute`, and same-session `POST /tools/by-ids` routes.
+- Resolve the host from `QVERIS_BASE_URL` under `qveris-direct-runtime-contract.md`; never hardcode the active deployment.
 - Use `QVERIS_API_KEY` only through the configured credential transport. Never print or persist it.
 - If neither runtime exists, return `tool_runtime_missing`; do not switch to another finance source.
 - Count every search, execution, inspection, retry, and rejected result against `max_calls`.
+- Estimate credits, rows, and billable quantity before execution; block unknown bounded estimates and exceeded limits.
 - Keep actual `tool_id` and `search_id` values only in Trace Appendix or machine-readable observed-call fixtures.
 - Apply `qveris-direct-data-quality-rubric.md` and `qveris-direct-retry-policy.md` before accepting a result.
 

@@ -73,7 +73,7 @@ cp -a qveris-a-share-factor-screen-direct ~/.codex/skills/
 cp -a qveris-alphaear-market-intelligence-direct ~/.codex/skills/
 ```
 
-The direct variants require `QVERIS_API_KEY` plus native `qveris_discover` / `qveris_call` tools or an `http_request` runtime that can call QVeris `/search`, `/tools/execute`, and `/tools/by-ids` endpoints. They intentionally do not use `qveris_finance.*`, capability IDs, or `/capabilities/query`.
+The direct variants require `QVERIS_API_KEY`. Set `QVERIS_BASE_URL` when the active deployment does not use the default `https://qveris.ai/api/v1`. Each direct skill ships the same audited Node.js runtime for host validation, schema-aware parameter adaptation, cost/row preflight, adjusted-bar normalization, recursive sanitization, timeout attribution, and `observed_calls.v1` sidecars. Native `qveris_discover` / `qveris_call` or `http_request` remain degraded fallback tiers when that runtime cannot run. The direct variants intentionally do not use `qveris_finance.*`, capability IDs, or `/capabilities/query`.
 
 Standalone installs should either run in a Codex runtime that exposes native `qveris_finance.*` tools or include `qveris-official`. The repository CLI fallback (`qveris-official/scripts/qveris_tool.mjs`) is a repo-root development path; a copied QVeris finance skill folder alone is not enough for that fallback.
 

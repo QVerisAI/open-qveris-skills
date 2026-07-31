@@ -29,7 +29,7 @@ Use `qveris_discover` and `qveris_call` when they are available. Retain the disc
 
 ### Direct HTTP
 
-Use only HTTPS requests to the QVeris host with base URL `https://qveris.ai/api/v1`. Reject redirects or configuration that changes the request to another host.
+Use the bundled audited runtime and the configured `QVERIS_BASE_URL` contract from `qveris-direct-runtime-contract.md`. Its default is `https://qveris.ai/api/v1`; approved deployments may configure `qveris.cn` or `api.qveris.cloud`. Require HTTPS with the exact `/api/v1` path and reject redirects or host substitution.
 
 Send these headers on every request:
 
@@ -67,6 +67,7 @@ Send that body to `POST /tools/by-ids`. The `search_id` is optional only when th
 If neither native nor direct HTTP access exists, return `tool_runtime_missing`. Do not invoke a finance-like raw tool through the repository script.
 
 Every search, inspection, and execution request consumes one call from `max_calls`.
+Every execution also requires a credit, row, and billable-quantity estimate. Block an unknown bounded estimate or any exceeded limit before the request.
 
 ## Source Workflow Conversion
 
@@ -89,6 +90,7 @@ Every search, inspection, and execution request consumes one call from `max_call
 - Require at least three securities with the same factor set, window, period, basis, and market convention.
 - Never treat rank as a recommendation, expected return, or trade instruction.
 - Freeze original evidence before fetching post-hoc evaluation bars.
+- Normalize bars to explicit adjusted close through the audited runtime. Do not rank on raw close plus an undocumented factor.
 
 ## Tool Selection
 
