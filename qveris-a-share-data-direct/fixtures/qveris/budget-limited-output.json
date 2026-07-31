@@ -1,0 +1,58 @@
+{
+  "skill": "qveris-a-share-data-direct",
+  "source_record": {
+    "candidate_number": 57,
+    "original_repository": "A-Share Skill",
+    "github_url": "https://github.com/shouldnotappearcalm/a-share-skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-24",
+    "local_source_snapshot": "third_party/source_repos/57-a-share-skill",
+    "snapshot_latest_commit": "8494623 on 2026-06-24"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": "P1D",
+    "budget_note": "no direct QVeris requests allowed"
+  },
+  "analysis": {
+    "summary": "No QVeris requests were made, so no identity, quote, bar, event, sector, or news conclusion is supported.",
+    "next_discovery_queries": [
+      "China A-share security master symbol lookup API",
+      "China A-share real-time stock quote API",
+      "China A-share historical daily price bars API"
+    ]
+  },
+  "risk_notes": [
+    "A budget-limited output cannot validate symbol identity or calculate indicators."
+  ],
+  "missing_fields": [
+    "issuer_identity",
+    "quote",
+    "bars",
+    "technical_context",
+    "events",
+    "news"
+  ],
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": [
+      "not_called_due_to_max_calls"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "paper_trading",
+      "entry_exit_trigger",
+      "buy_sell"
+    ]
+  },
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "paper_trading",
+    "entry_exit_trigger",
+    "buy_sell"
+  ],
+  "observed_call_count": 0
+}

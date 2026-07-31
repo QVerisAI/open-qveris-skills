@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QVeris AlphaEar Direct Output",
+  "$defs": {
+    "sanitizedValue": {
+      "oneOf": [
+        {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sanitizedValue"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "not": {
+              "pattern": "(^|[-_])(authorization|credential|cookie|secret|api[-_]?key|provider|route|routing|signed[-_]?url|tool[-_]?id|search[-_]?id|discovery[-_]?id)($|[-_])"
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/sanitizedValue"
+          }
+        }
+      ]
+    },
+    "traceRow": {
+      "type": "object",
+      "required": [
+        "request_kind",
+        "query",
+        "tool_id",
+        "params",
+        "status",
+        "search_id",
+        "fallback_used",
+        "missing_fields"
+      ],
+      "properties": {
+        "request_kind": {
+          "type": "string",
+          "enum": [
+            "search",
+            "tools/execute",
+            "tools/by-ids"
+          ]
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tool_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "params": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "propertyNames": {
+                "not": {
+                  "pattern": "(^|[-_])(authorization|credential|cookie|secret|api[-_]?key|provider|route|routing|signed[-_]?url|tool[-_]?id|search[-_]?id|discovery[-_]?id)($|[-_])"
+                }
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/sanitizedValue"
+              }
+            }
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "failed",
+            "rejected"
+          ]
+        },
+        "search_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fallback_used": {
+          "type": "boolean"
+        },
+        "missing_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "request_kind": {
+                "const": "search"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "query": {
+                "type": "string",
+                "minLength": 1
+              },
+              "params": {
+                "type": "null"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "request_kind": {
+                "const": "tools/execute"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "query": {
+                "type": "null"
+              },
+              "tool_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "params": {
+                "type": "object"
+              },
+              "search_id": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "request_kind": {
+                "const": "tools/by-ids"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "query": {
+                "type": "null"
+              },
+              "tool_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "params": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "required": [
+    "skill",
+    "source_record",
+    "controls",
+    "analysis",
+    "risk_notes",
+    "missing_fields",
+    "data_quality",
+    "observed_call_count",
+    "qveris_trace",
+    "disclaimer",
+    "suppressed_fields"
+  ],
+  "properties": {
+    "skill": {
+      "type": "string",
+      "const": "qveris-alphaear-market-intelligence-direct"
+    },
+    "source_record": {
+      "type": "object",
+      "required": [
+        "candidate_number",
+        "original_repository",
+        "github_url",
+        "license",
+        "evaluation_recent_activity",
+        "local_source_snapshot",
+        "snapshot_latest_commit"
+      ],
+      "properties": {
+        "candidate_number": {
+          "type": "integer",
+          "const": 42
+        },
+        "original_repository": {
+          "type": "string"
+        },
+        "github_url": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "evaluation_recent_activity": {
+          "type": "string"
+        },
+        "local_source_snapshot": {
+          "type": "string"
+        },
+        "snapshot_latest_commit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "controls": {
+      "type": "object",
+      "required": [
+        "dry_run",
+        "max_calls",
+        "max_age",
+        "budget_note"
+      ],
+      "properties": {
+        "dry_run": {
+          "type": "boolean"
+        },
+        "max_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_age": {
+          "type": "string",
+          "minLength": 1
+        },
+        "budget_note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object"
+    },
+    "risk_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "data_quality": {
+      "type": "object",
+      "required": [
+        "status",
+        "warnings",
+        "stale_fields",
+        "out_of_window_events",
+        "suppressed_fields"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "limited",
+            "insufficient",
+            "complete",
+            "partial",
+            "proxy_only",
+            "budget_limited"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stale_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "out_of_window_events": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "object"
+            ]
+          }
+        },
+        "suppressed_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "observed_call_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "qveris_trace": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/traceRow"
+      }
+    },
+    "disclaimer": {
+      "type": "string",
+      "const": "Not investment advice."
+    },
+    "suppressed_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

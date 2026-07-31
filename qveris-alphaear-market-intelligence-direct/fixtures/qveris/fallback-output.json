@@ -1,0 +1,66 @@
+{
+  "skill": "qveris-alphaear-market-intelligence-direct",
+  "source_record": {
+    "candidate_number": 42,
+    "original_repository": "Awesome Finance Skills / AlphaEar",
+    "github_url": "https://github.com/RKiding/Awesome-finance-skills",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-03-29",
+    "local_source_snapshot": "third_party/source_repos/42-awesome-finance-skills",
+    "snapshot_latest_commit": "853f09b on 2026-03-29"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 6,
+    "max_age": "P1D",
+    "budget_note": "Reserve discovery and execution for identity before optional sentiment."
+  },
+  "analysis": {
+    "fixture_scope": "static_schema_example",
+    "workflow": "sentiment_coverage_fallback",
+    "report_mode": "coverage_monitor",
+    "entity": "NVDA",
+    "evidence_status": "insufficient",
+    "summary": "This fixture models honest degradation when a sentiment result fails or returns empty fields; it makes no observed-call claim.",
+    "numeric_sentiment_allowed": false,
+    "next_queries": [
+      "listed security identity and company profile lookup API",
+      "company news text sentiment analysis API",
+      "company financial news API with publication timestamp"
+    ]
+  },
+  "risk_notes": [
+    "Empty sentiment fields cannot support neutral or weak sentiment.",
+    "News context alone cannot support a directional signal."
+  ],
+  "missing_fields": [
+    "issuer_identity",
+    "numeric_sentiment_score",
+    "sentiment_scale",
+    "independent_source_sample"
+  ],
+  "data_quality": {
+    "status": "insufficient",
+    "warnings": [
+      "illustrative_fallback_only",
+      "static_fixture_not_observed"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "numeric_sentiment_score",
+      "forecast",
+      "target_price",
+      "buy_sell"
+    ]
+  },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "numeric_sentiment_score",
+    "forecast",
+    "target_price",
+    "buy_sell"
+  ]
+}

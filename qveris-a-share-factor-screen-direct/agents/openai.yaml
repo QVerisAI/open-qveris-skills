@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris A-Share Factor Screen Direct"
+  short_description: "Direct QVeris A-share factor screens without advice"
+  default_prompt: "Use $qveris-a-share-factor-screen-direct to screen 600519.SH, 300750.SZ, and 002594.SZ with direct QVeris discovery and execution, showing coverage gaps and withholding ranks unless comparability gates pass."

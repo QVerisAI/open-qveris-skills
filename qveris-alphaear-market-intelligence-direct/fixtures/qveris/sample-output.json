@@ -1,0 +1,72 @@
+{
+  "skill": "qveris-alphaear-market-intelligence-direct",
+  "source_record": {
+    "candidate_number": 42,
+    "original_repository": "Awesome Finance Skills / AlphaEar",
+    "github_url": "https://github.com/RKiding/Awesome-finance-skills",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-03-29",
+    "local_source_snapshot": "third_party/source_repos/42-awesome-finance-skills",
+    "snapshot_latest_commit": "853f09b on 2026-03-29"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 8,
+    "max_age": "P1D",
+    "budget_note": "Prioritize identity and the requested market-intelligence layer."
+  },
+  "analysis": {
+    "fixture_scope": "static_schema_example",
+    "workflow": "market_intelligence_note",
+    "report_mode": "coverage_monitor",
+    "entity": "TSLA",
+    "evidence_status": "insufficient",
+    "summary": "This static fixture defines output shape only and claims no direct QVeris result.",
+    "signal_monitoring": {
+      "action_language_allowed": false,
+      "forecast_allowed": false,
+      "read": "Monitoring note only."
+    },
+    "next_queries": [
+      "listed security identity and company profile lookup API",
+      "real-time stock quote and historical price bars API",
+      "company financial news API with publication timestamp"
+    ]
+  },
+  "risk_notes": [
+    "A static fixture is not live evidence.",
+    "Signal-monitor wording cannot become a trade trigger."
+  ],
+  "missing_fields": [
+    "issuer_identity",
+    "requested_market_data",
+    "fundamentals",
+    "news_context",
+    "sentiment"
+  ],
+  "data_quality": {
+    "status": "insufficient",
+    "warnings": [
+      "static_fixture_not_observed"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "forecast",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "forecast",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ]
+}

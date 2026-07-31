@@ -1,0 +1,81 @@
+{
+  "skill": "qveris-a-share-factor-screen-direct",
+  "source_record": {
+    "candidate_number": 32,
+    "original_repository": "Alphasift",
+    "github_url": "https://github.com/ZhuLinsen/alphasift",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-07-03",
+    "local_source_snapshot": "third_party/source_repos/32-alphasift",
+    "snapshot_latest_commit": "9f52274 on 2026-07-03"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 4,
+    "max_age": "P1D",
+    "budget_note": "illustrative direct alternative-tool fixture"
+  },
+  "analysis": {
+    "summary": "Illustrative contract fixture: a numeric text-signal execution failed and an alternative news tool supplied qualitative context only; ranking remains withheld.",
+    "fallback": "qualitative news context from an alternative result in the same discovery"
+  },
+  "risk_notes": [
+    "Do not convert general news into a numeric text signal.",
+    "Fixture identifiers are illustrative and do not assert a live run."
+  ],
+  "missing_fields": [
+    "text_signal",
+    "complete_factor_set",
+    "cross_sectional_rank"
+  ],
+  "data_quality": {
+    "status": "proxy_only",
+    "warnings": ["illustrative_fixture_not_live", "primary_text_signal_failed"],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": ["operation_advice", "buy_sell", "rebalance"]
+  },
+  "qveris_trace": [
+    {
+      "request_kind": "search",
+      "query": "China listed company news sentiment scoring API",
+      "tool_id": null,
+      "params": {"limit": 10},
+      "status": "success",
+      "search_id": "search_fixture_text_001",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "qv.fixture.cn_text_signal.v1",
+      "params": {
+        "symbols": ["600519.SH", "300750.SZ"],
+        "start_date": "2026-06-01",
+        "end_date": "2026-06-30"
+      },
+      "status": "failed",
+      "search_id": "search_fixture_text_001",
+      "fallback_used": false,
+      "missing_fields": ["text_signal"]
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "qv.fixture.cn_financial_news.v3",
+      "params": {
+        "symbols": ["600519.SH", "300750.SZ"],
+        "start_date": "2026-06-01",
+        "end_date": "2026-06-30"
+      },
+      "status": "success",
+      "search_id": "search_fixture_text_001",
+      "fallback_used": true,
+      "missing_fields": ["text_signal"]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["operation_advice", "buy_sell", "rebalance"],
+  "observed_call_count": 3
+}

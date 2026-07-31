@@ -19,6 +19,10 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
   - `qveris-daymade-financial-data-suite/`: QVeris-only adaptation of #37 Daymade Financial Suite for financial data packs, news/research/event structuring, A-share news reads, and sector or pharma daily monitors.
   - `qveris-uzi-equity-research/`: QVeris-only adaptation of #34 UZI-Skill for equity research method audits, valuation-input coverage, LHB/flow context, and trap-risk monitoring without investment advice.
   - `qveris-crypto-market-radar/`: Read-only adaptation of #23 GMGN Skills for crypto identity, spot, history, descriptive technical context, rankings, market mood, and whale monitoring. Wallet, swap, order, and signing features are removed.
+- **Direct QVeris variants (no finance CAP layer)**:
+  - `qveris-a-share-data-direct/`: Direct QVeris discovery/execution variant of the A-share data skill.
+  - `qveris-a-share-factor-screen-direct/`: Direct QVeris discovery/execution variant of the A-share factor-screen skill.
+  - `qveris-alphaear-market-intelligence-direct/`: Direct QVeris discovery/execution variant of the AlphaEar market-intelligence skill.
 - `stock-copilot-pro/`: A **standalone global stock analysis skill** for ClawHub/OpenClaw style agents.
   - Includes multi-source routing (quote, fundamentals, technicals, sentiment), quality checks, and structured reports.
 - `third_party/`: Evaluation area for third-party skills being adapted into QVeris Featured Skills.
@@ -61,6 +65,16 @@ cp -a qveris-uzi-equity-research ~/.codex/skills/
 cp -a qveris-crypto-market-radar ~/.codex/skills/
 ```
 
+To use direct QVeris tool discovery and execution instead of the finance CAP layer, install the corresponding `-direct` skill instead of its CAP-based counterpart:
+
+```bash
+cp -a qveris-a-share-data-direct ~/.codex/skills/
+cp -a qveris-a-share-factor-screen-direct ~/.codex/skills/
+cp -a qveris-alphaear-market-intelligence-direct ~/.codex/skills/
+```
+
+The direct variants require `QVERIS_API_KEY` plus native `qveris_discover` / `qveris_call` tools or an `http_request` runtime that can call QVeris `/search`, `/tools/execute`, and `/tools/by-ids` endpoints. They intentionally do not use `qveris_finance.*`, capability IDs, or `/capabilities/query`.
+
 Standalone installs should either run in a Codex runtime that exposes native `qveris_finance.*` tools or include `qveris-official`. The repository CLI fallback (`qveris-official/scripts/qveris_tool.mjs`) is a repo-root development path; a copied QVeris finance skill folder alone is not enough for that fallback.
 
 Example prompts:
@@ -73,6 +87,9 @@ Use qveris-alphaear-market-intelligence to make a TSLA market-intelligence note 
 Use qveris-daymade-financial-data-suite to collect an NVDA QVeris-only financial data pack with missing_fields and data_quality.
 Use qveris-uzi-equity-research to audit valuation-method input coverage for 600519.SH without target output or trading action.
 Use qveris-crypto-market-radar to compare BTC, ETH, and SOL over one aligned 30-day window without transaction actions or forecasts.
+Use qveris-a-share-data-direct to make a direct-QVeris 30-day data read for 600519.SH.
+Use qveris-a-share-factor-screen-direct to run a direct-QVeris research screen for 600519.SH, 000001.SZ, and 000858.SZ.
+Use qveris-alphaear-market-intelligence-direct to make a direct-QVeris TSLA market-intelligence note.
 ```
 
 Current beta caveat: A-share CAP coverage is partial. Live verification on 2026-07-08 showed usable evidence for quotes, EOD bars, industry classification, calendar events, lock-up, stock-level order-size flow, top movers, IPO calendar context, share structure, and tagged news. Some routes still degraded or failed in smoke tests, including LHB, northbound/cross-border flow, concept heat, CN ETF option chain, CAP-based sentiment score, CAP-based technical indicators, non-empty research reports, and non-empty news clusters. The skills are designed to mark these fields missing instead of inventing data.

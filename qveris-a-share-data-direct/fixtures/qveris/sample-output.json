@@ -1,0 +1,108 @@
+{
+  "skill": "qveris-a-share-data-direct",
+  "source_record": {
+    "candidate_number": 57,
+    "original_repository": "A-Share Skill",
+    "github_url": "https://github.com/shouldnotappearcalm/a-share-skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-24",
+    "local_source_snapshot": "third_party/source_repos/57-a-share-skill",
+    "snapshot_latest_commit": "8494623 on 2026-06-24"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 4,
+    "max_age": "P1D",
+    "budget_note": "identity and daily-bar fixture"
+  },
+  "analysis": {
+    "summary": "Identity and daily bars passed the direct QVeris evidence gate.",
+    "technical_context": {
+      "status": "complete",
+      "calculated_from": "validated daily bars"
+    }
+  },
+  "risk_notes": [
+    "Technical indicators are descriptive and are not trade triggers.",
+    "Trading and paper-trading modules from the source repository are removed."
+  ],
+  "missing_fields": [
+    "sector_fund_flow",
+    "a_h_mapping",
+    "text_sentiment"
+  ],
+  "data_quality": {
+    "status": "partial",
+    "warnings": [],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "paper_trading",
+      "entry_exit_trigger",
+      "position_size",
+      "stop_loss",
+      "buy_sell"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "request_kind": "search",
+      "query": "China A-share security master symbol lookup API",
+      "tool_id": "fixture.cn.security-master.lookup.v1",
+      "params": {
+        "limit": 5
+      },
+      "status": "success",
+      "search_id": "fixture-search-identity-001",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "fixture.cn.security-master.lookup.v1",
+      "params": {
+        "symbol": "300750.SZ"
+      },
+      "status": "success",
+      "search_id": "fixture-search-identity-001",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "search",
+      "query": "China A-share historical daily price bars API",
+      "tool_id": "fixture.cn.daily-bars.history.v1",
+      "params": {
+        "limit": 5
+      },
+      "status": "success",
+      "search_id": "fixture-search-bars-001",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "fixture.cn.daily-bars.history.v1",
+      "params": {
+        "symbol": "300750.SZ",
+        "frequency": "1d",
+        "count": 120
+      },
+      "status": "success",
+      "search_id": "fixture-search-bars-001",
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "paper_trading",
+    "entry_exit_trigger",
+    "position_size",
+    "stop_loss",
+    "buy_sell"
+  ],
+  "observed_call_count": 4
+}

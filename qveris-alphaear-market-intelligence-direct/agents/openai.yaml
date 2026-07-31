@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris AlphaEar Market Intelligence Direct"
+  short_description: "Direct QVeris stock, news, sentiment, and signal-monitor reports"
+  default_prompt: "Use $qveris-alphaear-market-intelligence-direct for TSLA to produce a Markdown direct-QVeris market-intelligence report with validated evidence, data quality, missing fields, exact direct-call trace, and no investment advice."

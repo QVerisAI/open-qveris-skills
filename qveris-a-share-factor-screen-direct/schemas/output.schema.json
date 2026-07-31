@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Direct QVeris A-Share Factor Screen Output",
+  "$defs": {
+    "sanitizedParamValue": {
+      "oneOf": [
+        {
+          "type": ["string", "number", "boolean", "null"]
+        },
+        {
+          "type": "array",
+          "items": {"$ref": "#/$defs/sanitizedParamValue"}
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "not": {
+              "pattern": "(^|[-_])(authorization|credential|api[-_]?key|signed[-_]?url|cookie|header)($|[-_])"
+            }
+          },
+          "additionalProperties": {"$ref": "#/$defs/sanitizedParamValue"}
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "required": [
+    "skill",
+    "source_record",
+    "controls",
+    "analysis",
+    "risk_notes",
+    "missing_fields",
+    "data_quality",
+    "observed_call_count",
+    "qveris_trace",
+    "disclaimer",
+    "suppressed_fields"
+  ],
+  "properties": {
+    "skill": {
+      "const": "qveris-a-share-factor-screen-direct"
+    },
+    "source_record": {
+      "type": "object",
+      "required": [
+        "candidate_number",
+        "original_repository",
+        "github_url",
+        "license",
+        "evaluation_recent_activity",
+        "local_source_snapshot",
+        "snapshot_latest_commit"
+      ],
+      "properties": {
+        "candidate_number": {"const": 32},
+        "original_repository": {"const": "Alphasift"},
+        "github_url": {"const": "https://github.com/ZhuLinsen/alphasift"},
+        "license": {"const": "Apache-2.0"},
+        "evaluation_recent_activity": {"type": "string"},
+        "local_source_snapshot": {"type": "string"},
+        "snapshot_latest_commit": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "controls": {
+      "type": "object",
+      "required": ["dry_run", "max_calls", "max_age", "budget_note"],
+      "properties": {
+        "dry_run": {"type": "boolean"},
+        "max_calls": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "max_age": {"type": "string"},
+        "budget_note": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "analysis": {"type": "object"},
+    "risk_notes": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "observed_call_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "qveris_trace": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "request_kind",
+          "query",
+          "tool_id",
+          "params",
+          "status",
+          "search_id",
+          "fallback_used",
+          "missing_fields"
+        ],
+        "properties": {
+          "request_kind": {
+            "enum": ["search", "tools/execute", "tools/by-ids"]
+          },
+          "query": {
+            "type": ["string", "null"]
+          },
+          "tool_id": {
+            "type": ["string", "null"]
+          },
+          "params": {
+            "type": "object",
+            "propertyNames": {
+              "not": {
+                "pattern": "(^|[-_])(authorization|credential|api[-_]?key|signed[-_]?url|cookie|header)($|[-_])"
+              }
+            },
+            "additionalProperties": {"$ref": "#/$defs/sanitizedParamValue"}
+          },
+          "status": {
+            "enum": ["success", "failed", "rejected"]
+          },
+          "search_id": {
+            "type": ["string", "null"]
+          },
+          "fallback_used": {
+            "type": "boolean"
+          },
+          "missing_fields": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {"request_kind": {"const": "search"}},
+              "required": ["request_kind"]
+            },
+            "then": {
+              "properties": {
+                "query": {"type": "string", "minLength": 1},
+                "tool_id": {"type": "null"}
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {"request_kind": {"const": "tools/execute"}},
+              "required": ["request_kind"]
+            },
+            "then": {
+              "properties": {
+                "query": {"type": "null"},
+                "tool_id": {"type": "string", "minLength": 1},
+                "search_id": {"type": "string", "minLength": 1}
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {"request_kind": {"const": "tools/by-ids"}},
+              "required": ["request_kind"]
+            },
+            "then": {
+              "properties": {
+                "query": {"type": "null"},
+                "tool_id": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "disclaimer": {
+      "const": "Not investment advice."
+    },
+    "data_quality": {
+      "type": "object",
+      "required": [
+        "status",
+        "warnings",
+        "stale_fields",
+        "out_of_window_events",
+        "suppressed_fields"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "ok",
+            "limited",
+            "insufficient",
+            "complete",
+            "partial",
+            "proxy_only",
+            "budget_limited"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "stale_fields": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "out_of_window_events": {
+          "type": "array",
+          "items": {"type": ["string", "object"]}
+        },
+        "suppressed_fields": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "suppressed_fields": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris A-Share Data Direct"
+  short_description: "Direct QVeris A-share market-data research"
+  default_prompt: "Use $qveris-a-share-data-direct for 600519.SH to produce a direct-QVeris Markdown data read with validated identity, quote, bars, events, missing fields, and the exact direct Trace table."

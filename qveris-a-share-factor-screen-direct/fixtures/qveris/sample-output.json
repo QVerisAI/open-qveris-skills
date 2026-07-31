@@ -1,0 +1,114 @@
+{
+  "skill": "qveris-a-share-factor-screen-direct",
+  "source_record": {
+    "candidate_number": 32,
+    "original_repository": "Alphasift",
+    "github_url": "https://github.com/ZhuLinsen/alphasift",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-07-03",
+    "local_source_snapshot": "third_party/source_repos/32-alphasift",
+    "snapshot_latest_commit": "9f52274 on 2026-07-03"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 6,
+    "max_age": "P1D",
+    "budget_note": "illustrative small-universe direct request fixture"
+  },
+  "analysis": {
+    "summary": "Illustrative contract fixture: identity and bar inputs are represented, but financial and text-signal factors are missing, so no rank is supported.",
+    "comparable_subset": [],
+    "ranking_status": "withheld_no_complete_comparable_subset",
+    "screen_results": [
+      {
+        "security": "600519.SH",
+        "coverage_tier": "partial_not_ranked",
+        "component_coverage": "2/5",
+        "evidence_status": "partial",
+        "factor_gaps": ["valuation_quality", "stability", "text_signal"]
+      },
+      {
+        "security": "300750.SZ",
+        "coverage_tier": "partial_not_ranked",
+        "component_coverage": "2/5",
+        "evidence_status": "partial",
+        "factor_gaps": ["valuation_quality", "stability", "text_signal"]
+      },
+      {
+        "security": "002594.SZ",
+        "coverage_tier": "partial_not_ranked",
+        "component_coverage": "2/5",
+        "evidence_status": "partial",
+        "factor_gaps": ["valuation_quality", "stability", "text_signal"]
+      }
+    ]
+  },
+  "risk_notes": [
+    "Coverage tier is not a rank, forecast, or preference order.",
+    "Fixture identifiers are illustrative and do not assert a live run."
+  ],
+  "missing_fields": [
+    "valuation_quality",
+    "stability",
+    "text_signal",
+    "cross_sectional_rank"
+  ],
+  "data_quality": {
+    "status": "partial",
+    "warnings": ["illustrative_fixture_not_live", "incomplete_factor_set"],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": ["operation_advice", "target_price", "buy_sell", "rebalance"]
+  },
+  "qveris_trace": [
+    {
+      "request_kind": "search",
+      "query": "China A-share security master and exchange lookup API",
+      "tool_id": null,
+      "params": {"limit": 10},
+      "status": "success",
+      "search_id": "search_fixture_identity_001",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "qv.fixture.cn_security_lookup.v1",
+      "params": {"symbols": ["600519.SH", "300750.SZ", "002594.SZ"], "market": "CN"},
+      "status": "success",
+      "search_id": "search_fixture_identity_001",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "search",
+      "query": "China A-share historical adjusted daily price and volume bars API",
+      "tool_id": null,
+      "params": {"limit": 10},
+      "status": "success",
+      "search_id": "search_fixture_bars_001",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "qv.fixture.cn_adjusted_bars.v2",
+      "params": {
+        "symbols": ["600519.SH", "300750.SZ", "002594.SZ"],
+        "start_date": "2026-01-01",
+        "end_date": "2026-06-30",
+        "interval": "1d",
+        "adjustment": "forward"
+      },
+      "status": "success",
+      "search_id": "search_fixture_bars_001",
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["operation_advice", "target_price", "buy_sell", "rebalance"],
+  "observed_call_count": 4
+}

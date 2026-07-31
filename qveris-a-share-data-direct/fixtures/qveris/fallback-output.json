@@ -1,0 +1,98 @@
+{
+  "skill": "qveris-a-share-data-direct",
+  "source_record": {
+    "candidate_number": 57,
+    "original_repository": "A-Share Skill",
+    "github_url": "https://github.com/shouldnotappearcalm/a-share-skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-06-24",
+    "local_source_snapshot": "third_party/source_repos/57-a-share-skill",
+    "snapshot_latest_commit": "8494623 on 2026-06-24"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 3,
+    "max_age": "P1D",
+    "budget_note": "daily-bar fallback fixture"
+  },
+  "analysis": {
+    "report_mode": "Latest Snapshot And Coverage Notes",
+    "summary": "The multi-day technical read is unavailable because the primary result was thin and the secondary candidate failed."
+  },
+  "risk_notes": [
+    "Do not calculate indicators from one observation.",
+    "Do not replace missing QVeris data with original direct-source scripts."
+  ],
+  "missing_fields": [
+    "bars insufficient_observations",
+    "technical_context insufficient_observations"
+  ],
+  "data_quality": {
+    "status": "insufficient",
+    "warnings": [
+      "insufficient_observations",
+      "fallback_failed"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "entry_exit_trigger",
+      "position_size",
+      "buy_sell"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "request_kind": "search",
+      "query": "China A-share historical daily price bars API",
+      "tool_id": "fixture.cn.daily-bars.primary.v1",
+      "params": {
+        "limit": 5
+      },
+      "status": "success",
+      "search_id": "fixture-search-bars-002",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "fixture.cn.daily-bars.primary.v1",
+      "params": {
+        "symbol": "300750.SZ",
+        "frequency": "1d",
+        "count": 120
+      },
+      "status": "rejected",
+      "search_id": "fixture-search-bars-002",
+      "fallback_used": false,
+      "missing_fields": [
+        "insufficient_observations"
+      ]
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "fixture.cn.daily-bars.secondary.v1",
+      "params": {
+        "symbol": "300750.SZ",
+        "frequency": "1d",
+        "count": 120
+      },
+      "status": "failed",
+      "search_id": "fixture-search-bars-002",
+      "fallback_used": true,
+      "missing_fields": [
+        "bars",
+        "technical_context"
+      ]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "entry_exit_trigger",
+    "position_size",
+    "buy_sell"
+  ],
+  "observed_call_count": 3
+}
