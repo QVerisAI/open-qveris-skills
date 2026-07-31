@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 import {
   DirectContractError,
@@ -20,6 +22,22 @@ import {
 test("uses the configured approved QVeris base URL", () => {
   assert.equal(resolveDirectBaseUrl({ QVERIS_BASE_URL: "https://qveris.cn/api/v1/" }), "https://qveris.cn/api/v1");
   assert.equal(resolveDirectBaseUrl({ QVERIS_BASE_URL: "https://api.qveris.cloud/api/v1" }), "https://api.qveris.cloud/api/v1");
+});
+
+test("CLI automatically enables Node environment-proxy support", () => {
+  const runtimePath = fileURLToPath(new URL("../scripts/qveris_direct_runtime.mjs", import.meta.url));
+  const result = spawnSync(process.execPath, [runtimePath, "preflight", "--params", "{}", "--schema", "{}"], {
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      HTTP_PROXY: "http://127.0.0.1:7897",
+      HTTPS_PROXY: "http://127.0.0.1:7897",
+      QVERIS_BASE_URL: "https://qveris.ai/api/v1",
+      QVERIS_PROXY_REEXEC: "",
+    },
+  });
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(JSON.parse(result.stdout).transport.env_proxy_enabled, true);
 });
 
 test("rejects unsafe base URLs and redirects-by-origin", () => {
@@ -69,6 +87,52 @@ test("adapts canonical parameters to a discovered provider schema", () => {
   assert.ok(result.audit.some((entry) => entry.source === "ignored" && entry.action === "dropped_unsupported"));
 });
 
+test("adapts Shanghai symbols to a discovered provider's .SS suffix", () => {
+  const result = adaptDirectParameters({
+    parameters: { symbol: "600519.SH" },
+    schema: {
+      required: ["symbol"],
+      properties: {
+        symbol: {
+          type: "string",
+          description: "Shanghai uses .SS (for example 600519.SS); .SH is not supported.",
+        },
+      },
+    },
+  });
+  assert.deepEqual(result.final_parameters, { symbol: "600519.SS" });
+});
+
+test("adapts a canonical multi-symbol bars request to a discovered batch schema", () => {
+  const result = adaptDirectParameters({
+    parameters: {
+      symbols: ["600519.SH", "300750.SZ", "002594.SZ"],
+      start_date: "2026-06-01",
+      end_date: "2026-07-30",
+      interval: "1d",
+      adjustment: "forward",
+    },
+    schema: {
+      required: ["codes", "startdate", "enddate"],
+      properties: {
+        codes: { type: "string", description: "Security codes, comma-separated; e.g. 600030.SH,300750.SZ" },
+        startdate: { type: "string" },
+        enddate: { type: "string" },
+        interval: { type: "string", enum: ["D", "W", "M"] },
+        cps: { type: "string", enum: ["1", "2", "3", "6", "7"] },
+      },
+    },
+    enumMaps: { interval: { "1d": "D" }, cps: { forward: "2" } },
+  });
+  assert.deepEqual(result.final_parameters, {
+    codes: "600519.SH,300750.SZ,002594.SZ",
+    startdate: "2026-06-01",
+    enddate: "2026-07-30",
+    interval: "D",
+    cps: "2",
+  });
+});
+
 test("preserves canonical fiscal periods when the selected schema accepts them", () => {
   const result = adaptDirectParameters({
     parameters: { symbol: "TSLA", fiscal_period: "FY" },
@@ -97,6 +161,24 @@ test("normalizes adjusted bars and enforces an exact trailing count", () => {
   assert.equal(result.window_start, "2026-07-03");
   assert.equal(result.window_end, "2026-07-22");
   assert.equal(result.bars[0].adj_close, 92);
+});
+
+test("normalizes the camelCase adjusted-close field returned by a live direct tool", () => {
+  const result = normalizeAdjustedBars([
+    { symbol: "600519.SS", date: "2026-06-10", adjClose: 1246.38, volume: 3_924_414 },
+  ], { startDate: "2026-06-01", endDate: "2026-07-30", adjustment: "forward" });
+  assert.equal(result.status, "complete");
+  assert.equal(result.bars[0].adj_close, 1246.38);
+  assert.equal(result.bars[0].adjustment_basis, "explicit_adjusted_close");
+});
+
+test("normalizes the time field returned by a live batch-bars tool", () => {
+  const result = normalizeAdjustedBars([
+    { thscode: "300750.SZ", time: "2026-07-30", adjusted_close: 543.2, volume: 12_345 },
+  ], { startDate: "2026-07-01", endDate: "2026-07-31", requestedCount: 1 });
+  assert.equal(result.status, "complete");
+  assert.equal(result.window_start, "2026-07-30");
+  assert.equal(result.bars[0].date, "2026-07-30");
 });
 
 test("rejects ambiguous adjusted-close semantics instead of using raw close", () => {
@@ -208,6 +290,17 @@ test("builds a sanitized observed-calls sidecar and exact trace projection", () 
   assert.match(artifact.observed_calls[0].response_sha256, /^[a-f0-9]{64}$/);
   assert.deepEqual(artifact.qveris_trace, [call.trace]);
   assert.equal(call.trace.tool_id, "raw.tool.v1");
+});
+
+test("records the search ID returned by a direct discovery response", () => {
+  const call = createObservedCall({
+    requestKind: "search",
+    query: "A-share adjusted bars",
+    status: "success",
+    response: { search_id: "search-live-1", results: [] },
+  });
+  assert.equal(call.search_id, "search-live-1");
+  assert.equal(call.trace.search_id, "search-live-1");
 });
 
 test("reports the actual timeout layer and elapsed time", () => {

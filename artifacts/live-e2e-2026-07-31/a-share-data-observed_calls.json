@@ -1,0 +1,1384 @@
+{
+  "artifact_version": "observed_calls.v1",
+  "skill": "qveris-a-share-data-direct",
+  "case_id": "maotai-adjusted-bars",
+  "recorded_at": "2026-07-31T09:38:29.289Z",
+  "observed_call_count": 3,
+  "observed_calls": [
+    {
+      "request_kind": "search",
+      "query": "China A-share historical daily adjusted price and volume bars by stock code and date range",
+      "tool_id": null,
+      "params": null,
+      "status": "success",
+      "search_id": null,
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-31T09:28:29.311Z",
+      "elapsed_ms": 896,
+      "timeout": null,
+      "billing": {
+        "cost": null
+      },
+      "response_sha256": "e6f129b9f30e403fbc350bab0d4413f730faca21792cee9f6ee74d0f859743b2",
+      "response": {
+        "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+        "total": 3,
+        "results": [
+          {
+            "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+            "name": "Dividend Adjusted Price Chart",
+            "description": "Retrieve dividend-adjusted historical end-of-day stock price data with adjusted open, high, low, close, and volume fields. Supports common China A-share / A股 historical quote scenarios and Chinese queries such as A股历史行情、A股日线、日K线、日线成交量、历史收盘价. Use FMP exchange suffixes: Shanghai uses .SS (for example 600519.SS 贵州茅台, 601318.SS 中国平安) and Shenzhen uses .SZ (for example 000001.SZ 平安银行, 300750.SZ 宁德时代); .SH is not supported.",
+            "categories": [
+              {
+                "slug": "dividends",
+                "name": "dividends",
+                "description": ""
+              },
+              {
+                "slug": "finance",
+                "name": "finance",
+                "description": ""
+              },
+              {
+                "slug": "fmp",
+                "name": "fmp",
+                "description": ""
+              },
+              {
+                "slug": "market-data",
+                "name": "market-data",
+                "description": ""
+              },
+              {
+                "slug": "market_data",
+                "name": "Market Data",
+                "description": "Market Data related tools and APIs."
+              },
+              {
+                "slug": "commerce_finance",
+                "name": "Commerce & Finance",
+                "description": "Commerce & Finance related tools and APIs."
+              },
+              {
+                "slug": "stock_market_data",
+                "name": "Stock Market Data",
+                "description": "Stock Market Data related tools and APIs."
+              }
+            ],
+            "capabilities": [
+              {
+                "id": "MKT.BARS.ADJUSTED",
+                "tag": [
+                  {
+                    "id": "US",
+                    "name": "United States",
+                    "type": "market",
+                    "description": "United States market or data coverage."
+                  },
+                  {
+                    "id": "CN",
+                    "name": "Mainland China",
+                    "type": "market",
+                    "description": "Mainland China market or data coverage."
+                  },
+                  {
+                    "id": "HK",
+                    "name": "Hong Kong",
+                    "type": "market",
+                    "description": "Hong Kong market or data coverage."
+                  },
+                  {
+                    "id": "JP",
+                    "name": "Jp",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "UK",
+                    "name": "Uk",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "DE",
+                    "name": "De",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "KR",
+                    "name": "Kr",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "IN",
+                    "name": "In",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "AU",
+                    "name": "Au",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "SG",
+                    "name": "Sg",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  }
+                ],
+                "name": "Split & Dividend Adjusted Prices",
+                "grade": "good",
+                "description": "Historical price time series adjusted for stock splits and dividends, including adjusted OHLC, adjustment factors, and dividend data."
+              },
+              {
+                "id": "MKT.BARS.EOD",
+                "tag": [
+                  {
+                    "id": "US",
+                    "name": "United States",
+                    "type": "market",
+                    "description": "United States market or data coverage."
+                  },
+                  {
+                    "id": "CN",
+                    "name": "Mainland China",
+                    "type": "market",
+                    "description": "Mainland China market or data coverage."
+                  },
+                  {
+                    "id": "HK",
+                    "name": "Hong Kong",
+                    "type": "market",
+                    "description": "Hong Kong market or data coverage."
+                  },
+                  {
+                    "id": "JP",
+                    "name": "Jp",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "UK",
+                    "name": "Uk",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "DE",
+                    "name": "De",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "KR",
+                    "name": "Kr",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "IN",
+                    "name": "In",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "AU",
+                    "name": "Au",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "SG",
+                    "name": "Sg",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  }
+                ],
+                "name": "End-of-Day OHLCV Bars",
+                "grade": "good",
+                "description": "Daily closing OHLCV bar time series for equities/ETFs, with optional adjusted prices and dividend/split data."
+              }
+            ],
+            "why_recommended": "Recommended because it matched both semantic and keyword relevance signals, ranked highly after fusion ranking, has a strong recent success rate.",
+            "params": [
+              {
+                "name": "symbol",
+                "type": "string",
+                "required": true,
+                "description": "query parameter from FMP documentation: symbol"
+              },
+              {
+                "name": "from",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: from"
+              },
+              {
+                "name": "to",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: to"
+              }
+            ],
+            "examples": {
+              "sample_parameters": {
+                "symbol": "AAPL"
+              }
+            },
+            "stats": {
+              "avg_execution_time_ms": 1191.49,
+              "success_rate": 0.805732,
+              "success_rate_type": "usable_7d",
+              "window_days": 7,
+              "sample_size": 314,
+              "last_updated": "2026-07-31T00:42:13.781969+00:00"
+            },
+            "expected_cost": "24.2",
+            "billing_rule": {
+              "metering_mode": "call_count",
+              "billing_unit": "call",
+              "billing_unit_label": "call",
+              "price": {
+                "amount_credits": 24.2,
+                "per": 1
+              },
+              "snapshot_id": 0,
+              "snapshot_version": "website-default",
+              "description": "Charged 24.2 credits per call"
+            }
+          },
+          {
+            "tool_id": "financialmodelingprep.stable.historicalpriceeod.nonsplitadjusted.retrieve.v1.b04e1927",
+            "name": "Unadjusted Stock Price",
+            "description": "Retrieve non-split-adjusted historical end-of-day stock price data with adjusted open, high, low, close, and volume fields. Supports common China A-share / A股 historical quote scenarios and Chinese queries such as A股历史行情、A股日线、日K线、日线成交量、历史收盘价. Use FMP exchange suffixes: Shanghai uses .SS (for example 600519.SS 贵州茅台, 601318.SS 中国平安) and Shenzhen uses .SZ (for example 000001.SZ 平安银行, 300750.SZ 宁德时代); .SH is not supported.",
+            "categories": [
+              {
+                "slug": "finance",
+                "name": "finance",
+                "description": ""
+              },
+              {
+                "slug": "fmp",
+                "name": "fmp",
+                "description": ""
+              },
+              {
+                "slug": "market-data",
+                "name": "market-data",
+                "description": ""
+              },
+              {
+                "slug": "market_data",
+                "name": "Market Data",
+                "description": "Market Data related tools and APIs."
+              },
+              {
+                "slug": "commerce_finance",
+                "name": "Commerce & Finance",
+                "description": "Commerce & Finance related tools and APIs."
+              },
+              {
+                "slug": "stock_market_data",
+                "name": "Stock Market Data",
+                "description": "Stock Market Data related tools and APIs."
+              }
+            ],
+            "capabilities": [
+              {
+                "id": "MKT.BARS.ADJUSTED",
+                "tag": [
+                  {
+                    "id": "US",
+                    "name": "United States",
+                    "type": "market",
+                    "description": "United States market or data coverage."
+                  },
+                  {
+                    "id": "CN",
+                    "name": "Mainland China",
+                    "type": "market",
+                    "description": "Mainland China market or data coverage."
+                  },
+                  {
+                    "id": "HK",
+                    "name": "Hong Kong",
+                    "type": "market",
+                    "description": "Hong Kong market or data coverage."
+                  },
+                  {
+                    "id": "JP",
+                    "name": "Jp",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "UK",
+                    "name": "Uk",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "DE",
+                    "name": "De",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "KR",
+                    "name": "Kr",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "IN",
+                    "name": "In",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "AU",
+                    "name": "Au",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "SG",
+                    "name": "Sg",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  }
+                ],
+                "name": "Split & Dividend Adjusted Prices",
+                "grade": "good",
+                "description": "Historical price time series adjusted for stock splits and dividends, including adjusted OHLC, adjustment factors, and dividend data."
+              },
+              {
+                "id": "MKT.BARS.EOD",
+                "tag": [
+                  {
+                    "id": "US",
+                    "name": "United States",
+                    "type": "market",
+                    "description": "United States market or data coverage."
+                  },
+                  {
+                    "id": "CN",
+                    "name": "Mainland China",
+                    "type": "market",
+                    "description": "Mainland China market or data coverage."
+                  },
+                  {
+                    "id": "HK",
+                    "name": "Hong Kong",
+                    "type": "market",
+                    "description": "Hong Kong market or data coverage."
+                  },
+                  {
+                    "id": "JP",
+                    "name": "Jp",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "UK",
+                    "name": "Uk",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "DE",
+                    "name": "De",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "KR",
+                    "name": "Kr",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "IN",
+                    "name": "In",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "AU",
+                    "name": "Au",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "SG",
+                    "name": "Sg",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  }
+                ],
+                "name": "End-of-Day OHLCV Bars",
+                "grade": "good",
+                "description": "Daily closing OHLCV bar time series for equities/ETFs, with optional adjusted prices and dividend/split data."
+              }
+            ],
+            "why_recommended": "Recommended because it matched both semantic and keyword relevance signals, ranked highly after fusion ranking, has a strong recent success rate.",
+            "params": [
+              {
+                "name": "symbol",
+                "type": "string",
+                "required": true,
+                "description": "query parameter from FMP documentation: symbol"
+              },
+              {
+                "name": "from",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: from"
+              },
+              {
+                "name": "to",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: to"
+              }
+            ],
+            "examples": {
+              "sample_parameters": {
+                "symbol": "AAPL"
+              }
+            },
+            "stats": {
+              "avg_execution_time_ms": 1199.35,
+              "success_rate": 0.893617,
+              "success_rate_type": "usable_7d",
+              "window_days": 7,
+              "sample_size": 47,
+              "last_updated": "2026-07-31T00:42:13.781969+00:00"
+            },
+            "expected_cost": "24.2",
+            "billing_rule": {
+              "metering_mode": "call_count",
+              "billing_unit": "call",
+              "billing_unit_label": "call",
+              "price": {
+                "amount_credits": 24.2,
+                "per": 1
+              },
+              "snapshot_id": 0,
+              "snapshot_version": "website-default",
+              "description": "Charged 24.2 credits per call"
+            }
+          },
+          {
+            "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+            "name": "Full Chart",
+            "description": "Retrieve full historical end-of-day stock price data with OHLCV, price change, change percentage, and VWAP. Supports common China A-share / A股 historical quote scenarios and Chinese queries such as A股历史行情、A股日线、日K线、日线成交量、历史收盘价. Use FMP exchange suffixes: Shanghai uses .SS (for example 600519.SS 贵州茅台, 601318.SS 中国平安) and Shenzhen uses .SZ (for example 000001.SZ 平安银行, 300750.SZ 宁德时代); .SH is not supported.",
+            "categories": [
+              {
+                "slug": "finance",
+                "name": "finance",
+                "description": ""
+              },
+              {
+                "slug": "fmp",
+                "name": "fmp",
+                "description": ""
+              },
+              {
+                "slug": "market-data",
+                "name": "market-data",
+                "description": ""
+              },
+              {
+                "slug": "market_data",
+                "name": "Market Data",
+                "description": "Market Data related tools and APIs."
+              },
+              {
+                "slug": "commerce_finance",
+                "name": "Commerce & Finance",
+                "description": "Commerce & Finance related tools and APIs."
+              },
+              {
+                "slug": "stock_market_data",
+                "name": "Stock Market Data",
+                "description": "Stock Market Data related tools and APIs."
+              }
+            ],
+            "capabilities": [
+              {
+                "id": "MKT.BARS.EOD",
+                "tag": [
+                  {
+                    "id": "US",
+                    "name": "United States",
+                    "type": "market",
+                    "description": "United States market or data coverage."
+                  },
+                  {
+                    "id": "CN",
+                    "name": "Mainland China",
+                    "type": "market",
+                    "description": "Mainland China market or data coverage."
+                  },
+                  {
+                    "id": "HK",
+                    "name": "Hong Kong",
+                    "type": "market",
+                    "description": "Hong Kong market or data coverage."
+                  },
+                  {
+                    "id": "JP",
+                    "name": "Jp",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "UK",
+                    "name": "Uk",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "DE",
+                    "name": "De",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "KR",
+                    "name": "Kr",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "IN",
+                    "name": "In",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "AU",
+                    "name": "Au",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "SG",
+                    "name": "Sg",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  }
+                ],
+                "name": "End-of-Day OHLCV Bars",
+                "grade": "good",
+                "description": "Daily closing OHLCV bar time series for equities/ETFs, with optional adjusted prices and dividend/split data."
+              }
+            ],
+            "why_recommended": "Recommended because it matched both semantic and keyword relevance signals, ranked highly after fusion ranking.",
+            "params": [
+              {
+                "name": "symbol",
+                "type": "string",
+                "required": true,
+                "description": "query parameter from FMP documentation: symbol"
+              },
+              {
+                "name": "from",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: from"
+              },
+              {
+                "name": "to",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: to"
+              }
+            ],
+            "examples": {
+              "sample_parameters": {
+                "symbol": "GOLD"
+              }
+            },
+            "stats": {
+              "avg_execution_time_ms": 1259.64,
+              "success_rate": 0.782353,
+              "success_rate_type": "usable_7d",
+              "window_days": 7,
+              "sample_size": 170,
+              "last_updated": "2026-07-31T00:42:13.781969+00:00"
+            },
+            "expected_cost": "24.2",
+            "billing_rule": {
+              "metering_mode": "call_count",
+              "billing_unit": "call",
+              "billing_unit_label": "call",
+              "price": {
+                "amount_credits": 24.2,
+                "per": 1
+              },
+              "snapshot_id": 0,
+              "snapshot_version": "website-default",
+              "description": "Charged 24.2 credits per call"
+            }
+          }
+        ],
+        "elapsed_time_ms": 550.27,
+        "query": "China A-share historical daily adjusted price and volume bars by stock code and date range"
+      },
+      "trace": {
+        "request_kind": "search",
+        "query": "China A-share historical daily adjusted price and volume bars by stock code and date range",
+        "tool_id": null,
+        "params": null,
+        "status": "success",
+        "search_id": null,
+        "fallback_used": false,
+        "missing_fields": []
+      }
+    },
+    {
+      "request_kind": "tools/by-ids",
+      "query": null,
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+      "params": null,
+      "status": "success",
+      "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-31T09:30:00.657Z",
+      "elapsed_ms": 304,
+      "timeout": null,
+      "billing": {
+        "cost": null
+      },
+      "response_sha256": "7dcfdd479d5b7d12e9c58322cb0f733bb8036f06a23b393608be2e2cb96f568e",
+      "response": {
+        "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+        "total": 1,
+        "results": [
+          {
+            "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+            "name": "Dividend Adjusted Price Chart",
+            "description": "Retrieve dividend-adjusted historical end-of-day stock price data with adjusted open, high, low, close, and volume fields. Supports common China A-share / A股 historical quote scenarios and Chinese queries such as A股历史行情、A股日线、日K线、日线成交量、历史收盘价. Use FMP exchange suffixes: Shanghai uses .SS (for example 600519.SS 贵州茅台, 601318.SS 中国平安) and Shenzhen uses .SZ (for example 000001.SZ 平安银行, 300750.SZ 宁德时代); .SH is not supported.",
+            "categories": [
+              {
+                "slug": "dividends",
+                "name": "dividends",
+                "description": ""
+              },
+              {
+                "slug": "finance",
+                "name": "finance",
+                "description": ""
+              },
+              {
+                "slug": "fmp",
+                "name": "fmp",
+                "description": ""
+              },
+              {
+                "slug": "market-data",
+                "name": "market-data",
+                "description": ""
+              },
+              {
+                "slug": "market_data",
+                "name": "Market Data",
+                "description": "Market Data related tools and APIs."
+              },
+              {
+                "slug": "commerce_finance",
+                "name": "Commerce & Finance",
+                "description": "Commerce & Finance related tools and APIs."
+              },
+              {
+                "slug": "stock_market_data",
+                "name": "Stock Market Data",
+                "description": "Stock Market Data related tools and APIs."
+              }
+            ],
+            "capabilities": [
+              {
+                "id": "MKT.BARS.ADJUSTED",
+                "tag": [
+                  {
+                    "id": "US",
+                    "name": "United States",
+                    "type": "market",
+                    "description": "United States market or data coverage."
+                  },
+                  {
+                    "id": "CN",
+                    "name": "Mainland China",
+                    "type": "market",
+                    "description": "Mainland China market or data coverage."
+                  },
+                  {
+                    "id": "HK",
+                    "name": "Hong Kong",
+                    "type": "market",
+                    "description": "Hong Kong market or data coverage."
+                  },
+                  {
+                    "id": "JP",
+                    "name": "Jp",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "UK",
+                    "name": "Uk",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "DE",
+                    "name": "De",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "KR",
+                    "name": "Kr",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "IN",
+                    "name": "In",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "AU",
+                    "name": "Au",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "SG",
+                    "name": "Sg",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  }
+                ],
+                "name": "Split & Dividend Adjusted Prices",
+                "grade": "good",
+                "description": "Historical price time series adjusted for stock splits and dividends, including adjusted OHLC, adjustment factors, and dividend data."
+              },
+              {
+                "id": "MKT.BARS.EOD",
+                "tag": [
+                  {
+                    "id": "US",
+                    "name": "United States",
+                    "type": "market",
+                    "description": "United States market or data coverage."
+                  },
+                  {
+                    "id": "CN",
+                    "name": "Mainland China",
+                    "type": "market",
+                    "description": "Mainland China market or data coverage."
+                  },
+                  {
+                    "id": "HK",
+                    "name": "Hong Kong",
+                    "type": "market",
+                    "description": "Hong Kong market or data coverage."
+                  },
+                  {
+                    "id": "JP",
+                    "name": "Jp",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "UK",
+                    "name": "Uk",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "DE",
+                    "name": "De",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "KR",
+                    "name": "Kr",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "IN",
+                    "name": "In",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "AU",
+                    "name": "Au",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  },
+                  {
+                    "id": "SG",
+                    "name": "Sg",
+                    "type": "market",
+                    "description": "Market coverage of the capability."
+                  }
+                ],
+                "name": "End-of-Day OHLCV Bars",
+                "grade": "good",
+                "description": "Daily closing OHLCV bar time series for equities/ETFs, with optional adjusted prices and dividend/split data."
+              }
+            ],
+            "params": [
+              {
+                "name": "symbol",
+                "type": "string",
+                "required": true,
+                "description": "query parameter from FMP documentation: symbol"
+              },
+              {
+                "name": "from",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: from"
+              },
+              {
+                "name": "to",
+                "type": "date",
+                "required": false,
+                "description": "query parameter from FMP documentation: to"
+              }
+            ],
+            "examples": {
+              "sample_parameters": {
+                "symbol": "AAPL"
+              }
+            },
+            "stats": {
+              "calls_total": 36024,
+              "calls": 36024,
+              "avg_execution_time_ms": 1191.49,
+              "success_rate": 0.805732,
+              "success_rate_type": "usable_7d",
+              "window_days": 7,
+              "sample_size": 314,
+              "last_updated": "2026-07-31T00:42:13.781969+00:00"
+            },
+            "expected_cost": "24.2",
+            "billing_rule": {
+              "metering_mode": "call_count",
+              "billing_unit": "call",
+              "billing_unit_label": "call",
+              "price": {
+                "amount_credits": 24.2,
+                "per": 1
+              },
+              "snapshot_id": 0,
+              "snapshot_version": "website-default",
+              "description": "Charged 24.2 credits per call"
+            }
+          }
+        ],
+        "elapsed_time_ms": 23.33
+      },
+      "trace": {
+        "request_kind": "tools/by-ids",
+        "query": null,
+        "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+        "params": null,
+        "status": "success",
+        "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+        "fallback_used": false,
+        "missing_fields": []
+      }
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+      "params": {
+        "symbol": "600519.SS",
+        "from": "2026-06-01",
+        "to": "2026-07-30"
+      },
+      "status": "success",
+      "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+      "fallback_used": false,
+      "missing_fields": [],
+      "observed_at": "2026-07-31T09:38:27.830Z",
+      "elapsed_ms": 1455,
+      "timeout": null,
+      "billing": {
+        "summary": "Charged 24.2 credits for this call",
+        "list_amount_credits": 24.2
+      },
+      "response_sha256": "1d5de0ff7216ee0ed91e8b67e85d23dccba8283b008bfa242de7c74d1c8120fe",
+      "response": {
+        "execution_id": "a2770263-9c6e-4825-8fd9-7eb6e0531d3f",
+        "result": {
+          "status_code": 200,
+          "data": [
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-30",
+              "adjOpen": 1323,
+              "adjHigh": 1362,
+              "adjLow": 1322,
+              "adjClose": 1361.76,
+              "volume": 7187261
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-29",
+              "adjOpen": 1333.83,
+              "adjHigh": 1343.48,
+              "adjLow": 1312.06,
+              "adjClose": 1321,
+              "volume": 6232985
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-28",
+              "adjOpen": 1299,
+              "adjHigh": 1320,
+              "adjLow": 1289.52,
+              "adjClose": 1320,
+              "volume": 5313457
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-27",
+              "adjOpen": 1308,
+              "adjHigh": 1308,
+              "adjLow": 1279.58,
+              "adjClose": 1289.5,
+              "volume": 3199044
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-24",
+              "adjOpen": 1305,
+              "adjHigh": 1309.21,
+              "adjLow": 1286.2,
+              "adjClose": 1297.41,
+              "volume": 3569892
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-23",
+              "adjOpen": 1299.8,
+              "adjHigh": 1303,
+              "adjLow": 1285.43,
+              "adjClose": 1292.01,
+              "volume": 3391769
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-22",
+              "adjOpen": 1300,
+              "adjHigh": 1308,
+              "adjLow": 1283.24,
+              "adjClose": 1305,
+              "volume": 6518140
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-21",
+              "adjOpen": 1338.98,
+              "adjHigh": 1344.7,
+              "adjLow": 1296.87,
+              "adjClose": 1308,
+              "volume": 7714770
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-20",
+              "adjOpen": 1270,
+              "adjHigh": 1329,
+              "adjLow": 1266,
+              "adjClose": 1327.5,
+              "volume": 10615115
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-17",
+              "adjOpen": 1269.01,
+              "adjHigh": 1269.33,
+              "adjLow": 1238.98,
+              "adjClose": 1253,
+              "volume": 5841730
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-16",
+              "adjOpen": 1252,
+              "adjHigh": 1267.97,
+              "adjLow": 1245.05,
+              "adjClose": 1258.99,
+              "volume": 4761114
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-15",
+              "adjOpen": 1203.66,
+              "adjHigh": 1256.6,
+              "adjLow": 1198.66,
+              "adjClose": 1251.06,
+              "volume": 7194371
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-14",
+              "adjOpen": 1208.99,
+              "adjHigh": 1226.87,
+              "adjLow": 1205,
+              "adjClose": 1214.88,
+              "volume": 4352726
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-13",
+              "adjOpen": 1197.12,
+              "adjHigh": 1215,
+              "adjLow": 1190.19,
+              "adjClose": 1210.99,
+              "volume": 4198257
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-10",
+              "adjOpen": 1182.2,
+              "adjHigh": 1204.98,
+              "adjLow": 1170.28,
+              "adjClose": 1204.98,
+              "volume": 5221255
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-09",
+              "adjOpen": 1191,
+              "adjHigh": 1191.99,
+              "adjLow": 1178,
+              "adjClose": 1182.19,
+              "volume": 3409634
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-08",
+              "adjOpen": 1188.77,
+              "adjHigh": 1200.98,
+              "adjLow": 1177,
+              "adjClose": 1199.3,
+              "volume": 2577602
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-07",
+              "adjOpen": 1200,
+              "adjHigh": 1202,
+              "adjLow": 1188.11,
+              "adjClose": 1188.8,
+              "volume": 2736500
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-06",
+              "adjOpen": 1186,
+              "adjHigh": 1215,
+              "adjLow": 1180,
+              "adjClose": 1206.91,
+              "volume": 4097001
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-03",
+              "adjOpen": 1205.24,
+              "adjHigh": 1210.14,
+              "adjLow": 1185,
+              "adjClose": 1194.45,
+              "volume": 3426755
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-02",
+              "adjOpen": 1193.01,
+              "adjHigh": 1215.52,
+              "adjLow": 1190.51,
+              "adjClose": 1203,
+              "volume": 5087015
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-07-01",
+              "adjOpen": 1180.1,
+              "adjHigh": 1196.8,
+              "adjLow": 1166.33,
+              "adjClose": 1193.01,
+              "volume": 4247381
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-30",
+              "adjOpen": 1187,
+              "adjHigh": 1195.67,
+              "adjLow": 1176,
+              "adjClose": 1185.49,
+              "volume": 3960779
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-29",
+              "adjOpen": 1169,
+              "adjHigh": 1215,
+              "adjLow": 1151.01,
+              "adjClose": 1194.96,
+              "volume": 6687812
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-26",
+              "adjOpen": 1199,
+              "adjHigh": 1199,
+              "adjLow": 1168.1,
+              "adjClose": 1168.63,
+              "volume": 5006647
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-25",
+              "adjOpen": 1179.1,
+              "adjHigh": 1198.64,
+              "adjLow": 1172.26,
+              "adjClose": 1184.08,
+              "volume": 4844649
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-24",
+              "adjOpen": 1194.38,
+              "adjHigh": 1213.16,
+              "adjLow": 1179.59,
+              "adjClose": 1179.76,
+              "volume": 4533528
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-23",
+              "adjOpen": 1210.36,
+              "adjHigh": 1234.78,
+              "adjLow": 1188.87,
+              "adjClose": 1194.19,
+              "volume": 5800405
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-22",
+              "adjOpen": 1186.24,
+              "adjHigh": 1223.84,
+              "adjLow": 1177.14,
+              "adjClose": 1212.71,
+              "volume": 5825131
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-18",
+              "adjOpen": 1206.45,
+              "adjHigh": 1210.23,
+              "adjLow": 1183.22,
+              "adjClose": 1186.91,
+              "volume": 5747173
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-17",
+              "adjOpen": 1228.91,
+              "adjHigh": 1230.64,
+              "adjLow": 1209.92,
+              "adjClose": 1211.33,
+              "volume": 4480330
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-16",
+              "adjOpen": 1237.72,
+              "adjHigh": 1238.57,
+              "adjLow": 1225.99,
+              "adjClose": 1226.64,
+              "volume": 3496974
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-15",
+              "adjOpen": 1262.81,
+              "adjHigh": 1262.81,
+              "adjLow": 1240.73,
+              "adjClose": 1241.71,
+              "volume": 4158556
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-12",
+              "adjOpen": 1241.79,
+              "adjHigh": 1265.06,
+              "adjLow": 1235.76,
+              "adjClose": 1262.04,
+              "volume": 5049478
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-11",
+              "adjOpen": 1242.71,
+              "adjHigh": 1253.22,
+              "adjLow": 1237.62,
+              "adjClose": 1249.43,
+              "volume": 2535198
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-10",
+              "adjOpen": 1223.13,
+              "adjHigh": 1252.36,
+              "adjLow": 1221.3,
+              "adjClose": 1246.38,
+              "volume": 3924414
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-09",
+              "adjOpen": 1233.79,
+              "adjHigh": 1233.8,
+              "adjLow": 1223.59,
+              "adjClose": 1226.96,
+              "volume": 2786012
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-08",
+              "adjOpen": 1242.59,
+              "adjHigh": 1248.45,
+              "adjLow": 1230.87,
+              "adjClose": 1233.78,
+              "volume": 3082836
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-05",
+              "adjOpen": 1248.45,
+              "adjHigh": 1253.34,
+              "adjLow": 1238.43,
+              "adjClose": 1243.43,
+              "volume": 3130397
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-04",
+              "adjOpen": 1249.42,
+              "adjHigh": 1259.18,
+              "adjLow": 1237.4,
+              "adjClose": 1238.68,
+              "volume": 3350617
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-03",
+              "adjOpen": 1273.85,
+              "adjHigh": 1273.85,
+              "adjLow": 1246.5,
+              "adjClose": 1252.27,
+              "volume": 5247652
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-02",
+              "adjOpen": 1275.81,
+              "adjHigh": 1295.7,
+              "adjLow": 1270.92,
+              "adjClose": 1277,
+              "volume": 3636185
+            },
+            {
+              "symbol": "600519.SS",
+              "date": "2026-06-01",
+              "adjOpen": 1296.32,
+              "adjHigh": 1296.32,
+              "adjLow": 1271.22,
+              "adjClose": 1279.32,
+              "volume": 4384460
+            }
+          ]
+        },
+        "success": true,
+        "execution_time": 1.1265528202056885,
+        "elapsed_time_ms": 1097.13,
+        "billing": {
+          "summary": "Charged 24.2 credits for this call",
+          "list_amount_credits": 24.2
+        },
+        "cost": 24.2
+      },
+      "trace": {
+        "request_kind": "tools/execute",
+        "query": null,
+        "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+        "params": {
+          "symbol": "600519.SS",
+          "from": "2026-06-01",
+          "to": "2026-07-30"
+        },
+        "status": "success",
+        "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+        "fallback_used": false,
+        "missing_fields": []
+      }
+    }
+  ],
+  "qveris_trace": [
+    {
+      "request_kind": "search",
+      "query": "China A-share historical daily adjusted price and volume bars by stock code and date range",
+      "tool_id": null,
+      "params": null,
+      "status": "success",
+      "search_id": null,
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/by-ids",
+      "query": null,
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+      "params": null,
+      "status": "success",
+      "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "request_kind": "tools/execute",
+      "query": null,
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.dividendadjusted.retrieve.v1.1e0b27c9",
+      "params": {
+        "symbol": "600519.SS",
+        "from": "2026-06-01",
+        "to": "2026-07-30"
+      },
+      "status": "success",
+      "search_id": "88552a4a-f102-4c4b-a74c-602549ee3f99",
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ]
+}

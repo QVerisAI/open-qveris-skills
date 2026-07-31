@@ -22,6 +22,8 @@ Set `QVERIS_BASE_URL` for the active deployment. The default is `https://qveris.
 
 Never hardcode a deployment-specific host in a Skill workflow. Read `QVERIS_API_KEY` only from the environment.
 
+When a standard `HTTP_PROXY`, `HTTPS_PROXY`, or `ALL_PROXY` variable is present and the active Node runtime supports `--use-env-proxy`, the CLI relaunches itself with environment-proxy support. `preflight` reports `transport.proxy_configured` and `transport.env_proxy_enabled` so transport readiness can be audited without printing proxy credentials.
+
 ## Parameter Preflight
 
 Run preflight with the exact selected-tool schema:
@@ -46,6 +48,8 @@ Every live request must have these controls:
 - `max_billable_quantity`
 
 Use billing metadata from discovery or inspection to estimate rows, billable quantity, and credits before execution. If a bounded dimension cannot be estimated, stop with `budget_estimate_unknown`. Never treat one HTTP request as one credit.
+
+For quantity-priced tools, bind the estimate to the selected indicator or field set as well as the logical row count. A broad field preset can multiply billable quantity even when the requested security count and date window are unchanged.
 
 Do not silently raise a limit. Split the request, narrow the window, or ask the user to approve a larger budget.
 
@@ -87,7 +91,7 @@ Trace rows must equal the sidecar's `qveris_trace` projection exactly.
 
 Use `normalizeAdjustedBars` from the runtime before computing returns, volatility, momentum, or indicators.
 
-- Prefer a returned `adj_close`, `adjusted_close`, or documented equivalent.
+- Prefer a returned `adj_close`, `adjusted_close`, `adjClose`, `adjustedClose`, or another documented equivalent.
 - If only `close` plus `adjustment_factor` exists, convert only with a formula explicitly documented by the selected tool and covered by a regression test.
 - Otherwise reject with `adjustment_basis_unclear`.
 - For “last N trading days,” return exactly N sorted, deduplicated observations or reject with `insufficient_observations`.

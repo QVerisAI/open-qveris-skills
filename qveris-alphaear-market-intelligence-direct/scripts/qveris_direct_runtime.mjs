@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import { readFile, rename, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -56,6 +57,31 @@ export function resolveDirectBaseUrl(env = process.env) {
   return parsed.toString().replace(/\/$/, "");
 }
 
+function hasConfiguredProxy(env = process.env) {
+  return Boolean(env.HTTPS_PROXY || env.https_proxy || env.HTTP_PROXY || env.http_proxy || env.ALL_PROXY || env.all_proxy);
+}
+
+function relaunchWithEnvProxyIfNeeded() {
+  if (!hasConfiguredProxy()
+      || process.execArgv.includes("--use-env-proxy")
+      || process.env.QVERIS_PROXY_REEXEC
+      || !process.allowedNodeEnvironmentFlags.has("--use-env-proxy")) {
+    return false;
+  }
+  const child = spawnSync(process.execPath, [
+    "--use-env-proxy",
+    ...process.execArgv,
+    resolve(process.argv[1]),
+    ...process.argv.slice(2),
+  ], {
+    stdio: "inherit",
+    env: { ...process.env, QVERIS_PROXY_REEXEC: "1" },
+  });
+  if (child.error) throw child.error;
+  process.exitCode = child.status ?? 1;
+  return true;
+}
+
 export function normalizeAshareSymbol(value) {
   const symbol = String(value ?? "").trim().toUpperCase();
   if (!symbol) return symbol;
@@ -98,7 +124,17 @@ function adaptIdentifierForSchema(symbol, descriptor = {}) {
   if (/six[- ]?digit|6[- ]?digit|\\d\{6\}|without\s+(?:exchange|suffix)/i.test(pattern)) {
     return canonical.replace(/\.(?:SH|SZ|BJ)$/i, "");
   }
+  if (/\.SH\s+is\s+not\s+supported|Shanghai\s+(?:uses|requires)\s+\.SS/i.test(pattern)) {
+    return canonical.replace(/\.SH$/i, ".SS");
+  }
   return canonical;
+}
+
+function adaptIdentifierValueForSchema(value, descriptor = {}) {
+  if (!Array.isArray(value)) return adaptIdentifierForSchema(value, descriptor);
+  const adapted = value.map((symbol) => adaptIdentifierForSchema(symbol, descriptor));
+  const description = String(descriptor.description ?? "");
+  return descriptor.type === "string" || /comma[- ]separated/i.test(description) ? adapted.join(",") : adapted;
 }
 
 export function adaptDirectParameters({ parameters = {}, schema, enumMaps = {} } = {}) {
@@ -111,8 +147,10 @@ export function adaptDirectParameters({ parameters = {}, schema, enumMaps = {} }
   const audit = [];
   const aliases = {
     symbol: ["symbol", "ticker", "code", "security_code"],
-    start_date: ["start_date", "begin_date", "from_date", "start"],
-    end_date: ["end_date", "stop_date", "to_date", "end"],
+    symbols: ["symbols", "codes", "tickers", "security_codes"],
+    start_date: ["start_date", "startdate", "begin_date", "from_date", "sdate", "from", "start"],
+    end_date: ["end_date", "enddate", "stop_date", "to_date", "edate", "to", "end"],
+    adjustment: ["adjustment", "cps"],
     fiscal_period: ["fiscal_period", "period", "report_period"],
     statement_type: ["statement_type", "type", "report_type"],
   };
@@ -126,7 +164,7 @@ export function adaptDirectParameters({ parameters = {}, schema, enumMaps = {} }
       continue;
     }
     let targetValue = sourceValue;
-    if (sourceName === "symbol") targetValue = adaptIdentifierForSchema(sourceValue, properties[targetName]);
+    if (sourceName === "symbol" || sourceName === "symbols") targetValue = adaptIdentifierValueForSchema(sourceValue, properties[targetName]);
     if (targetName === "period") targetValue = normalizeFiscalPeriod(sourceValue);
     const enumMap = enumMaps[targetName] ?? enumMaps[sourceName];
     if (enumMap && Object.hasOwn(enumMap, String(targetValue))) targetValue = enumMap[String(targetValue)];
@@ -234,7 +272,7 @@ export function normalizeAdjustedBars(rows, {
   if (!Array.isArray(rows)) throw new DirectContractError("invalid_bars", "bars must be an array");
   const byDate = new Map();
   for (const row of rows) {
-    const date = String(row?.date ?? row?.trade_date ?? row?.timestamp ?? "").slice(0, 10);
+    const date = String(row?.date ?? row?.trade_date ?? row?.time ?? row?.timestamp ?? "").slice(0, 10);
     if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
     if (startDate && date < startDate) continue;
     if (endDate && date > endDate) continue;
@@ -252,7 +290,7 @@ export function normalizeAdjustedBars(rows, {
 
   const normalized = [];
   for (const row of filtered) {
-    const explicitAdjusted = row.adj_close ?? row.adjusted_close ?? row.qfq_close;
+    const explicitAdjusted = row.adj_close ?? row.adjusted_close ?? row.adjClose ?? row.adjustedClose ?? row.qfq_close;
     const rawClose = row.close;
     let adjClose;
     let basis;
@@ -371,13 +409,14 @@ export function createObservedCall({
     throw new DirectContractError("invalid_status", `Unsupported status ${status}`);
   }
   const sanitizedResponse = sanitizeDirectResponse(response);
+  const observedSearchId = searchId ?? sanitizedResponse?.search_id ?? null;
   const trace = {
     request_kind: requestKind,
     query,
     tool_id: toolId,
     params: params === null ? null : sanitizeDirectResponse(params),
     status,
-    search_id: searchId,
+    search_id: observedSearchId,
     fallback_used: Boolean(fallbackUsed),
     missing_fields: [...missingFields],
   };
@@ -562,7 +601,16 @@ HTTP uses QVERIS_BASE_URL (approved QVeris /api/v1 hosts only) and QVERIS_API_KE
     const adaptation = adaptDirectParameters({ parameters: jsonFlag(flags, "--params"), schema: requiredJsonFlag(flags, "--schema"), enumMaps: jsonFlag(flags, "--enum-maps", {}) });
     const estimate = estimateDirectBudget(jsonFlag(flags, "--estimate", {}));
     const budget = enforceDirectBudget({ budget: jsonFlag(flags, "--budget", {}), estimate });
-    console.log(JSON.stringify({ base_url: resolveDirectBaseUrl(), adaptation, estimate, budget }, null, 2));
+    console.log(JSON.stringify({
+      base_url: resolveDirectBaseUrl(),
+      transport: {
+        proxy_configured: hasConfiguredProxy(),
+        env_proxy_enabled: process.execArgv.includes("--use-env-proxy"),
+      },
+      adaptation,
+      estimate,
+      budget,
+    }, null, 2));
     return;
   }
 
@@ -655,8 +703,10 @@ HTTP uses QVERIS_BASE_URL (approved QVeris /api/v1 hosts only) and QVERIS_API_KE
 
 const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : null;
 if (invokedPath === import.meta.url) {
-  runCli(process.argv.slice(2)).catch((error) => {
-    console.error(JSON.stringify(sanitizeDirectResponse({ code: error?.code ?? "runtime_error", message: error?.message ?? String(error), details: error?.details ?? null, timeout: error?.timeout ?? null })));
-    process.exit(1);
-  });
+  if (!relaunchWithEnvProxyIfNeeded()) {
+    runCli(process.argv.slice(2)).catch((error) => {
+      console.error(JSON.stringify(sanitizeDirectResponse({ code: error?.code ?? "runtime_error", message: error?.message ?? String(error), details: error?.details ?? null, timeout: error?.timeout ?? null })));
+      process.exit(1);
+    });
+  }
 }

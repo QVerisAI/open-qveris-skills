@@ -1,0 +1,56 @@
+{
+  "artifact_version": "observed_calls.v1",
+  "skill": "qveris-a-share-data-direct",
+  "case_id": "maotai-adjusted-bars",
+  "recorded_at": "2026-07-31T09:26:01.098Z",
+  "observed_call_count": 1,
+  "observed_calls": [
+    {
+      "request_kind": "search",
+      "query": "China A-share historical daily adjusted price and volume bars by stock code and date range",
+      "tool_id": null,
+      "params": null,
+      "status": "failed",
+      "search_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "request_failed"
+      ],
+      "observed_at": "2026-07-31T09:25:50.496Z",
+      "elapsed_ms": null,
+      "timeout": null,
+      "billing": null,
+      "response_sha256": "0caf5a559a1684c6da919689da9de88cc21b5ed152ca0ee3bcb0966e65b028d5",
+      "response": {
+        "error": "fetch failed",
+        "timeout": null
+      },
+      "trace": {
+        "request_kind": "search",
+        "query": "China A-share historical daily adjusted price and volume bars by stock code and date range",
+        "tool_id": null,
+        "params": null,
+        "status": "failed",
+        "search_id": null,
+        "fallback_used": false,
+        "missing_fields": [
+          "request_failed"
+        ]
+      }
+    }
+  ],
+  "qveris_trace": [
+    {
+      "request_kind": "search",
+      "query": "China A-share historical daily adjusted price and volume bars by stock code and date range",
+      "tool_id": null,
+      "params": null,
+      "status": "failed",
+      "search_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "request_failed"
+      ]
+    }
+  ]
+}
