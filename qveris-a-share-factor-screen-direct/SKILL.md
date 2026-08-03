@@ -32,11 +32,12 @@ Source record:
 - Use only direct QVeris discovery, inspection, and execution with `QVERIS_API_KEY`; never expose the credential.
 - Prefer the bundled audited HTTP runtime `node scripts/qveris_direct_runtime.mjs` when `exec` and Node.js are available. Otherwise use native `qveris_discover` / `qveris_call`, then direct HTTP `POST /search`, `POST /tools/by-ids`, and `POST /tools/execute` through an available HTTP request tool.
 - If neither runtime tier exists, mark `tool_runtime_missing`. Do not use the repository script for finance-like raw tool execution.
-- Read `references/qveris-direct-runtime-contract.md` before any live request. Resolve the configured `QVERIS_BASE_URL`; never hardcode or guess a deployment host.
+- Read `references/qveris-direct-runtime-contract.md` before any live request. Resolve `QVERIS_BASE_URL` or desktop `QVERIS_API_BASE_URL`; never hardcode or guess a deployment host.
 - Default natural-language output to a Markdown report, not a JSON object.
 - Accept `dry_run`, `max_calls`, `max_credits`, `max_rows`, `max_billable_quantity`, `max_age`, and `budget_note`. Default to `dry_run=false`, `max_calls=12`, `max_credits=25`, `max_rows=300`, `max_billable_quantity=600`, `max_age=P1D`, and a conservative budget note, then echo the controls.
 - Count every observed `/search`, `/tools/by-ids`, and `/tools/execute` attempt against `max_calls`, including failures, retries, alternative tools, and session-cache inspection. A local calculation does not consume the QVeris call budget.
-- Estimate credits, rows, and billable quantity from inspected billing metadata before execution. Stop on an unknown bounded estimate or any exceeded limit; one batch request is not one credit.
+- Estimate credits, rows, and billable quantity from inspected billing metadata before execution. Keep one sidecar for the whole report so actual cumulative usage is enforced; stop on an unknown bounded estimate or any exceeded limit. One batch request is not one credit.
+- Pass an explicit `--validation` contract to every audited-runtime execution. Use `adjusted_bar_groups` for multi-security bar evidence; a transport success is rejected unless every requested security passes.
 - Stop before a request that would exceed `max_calls`. List it as a required next tool type, not as an observed call or Trace row.
 - Read `references/qveris-direct-data-quality-rubric.md` before accepting any payload as factor evidence.
 - Use `references/qveris-direct-retry-policy.md` for failed searches, invalid parameters, payload truncation, and semantic mismatches.

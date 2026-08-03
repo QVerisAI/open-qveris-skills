@@ -1,11 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
+import { mkdir, mkdtemp, readFile, rm, utimes, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
   DirectContractError,
   adaptDirectParameters,
+  appendObservedCall,
   classifyTimeout,
   createObservedCall,
   createObservedCallsArtifact,
@@ -16,12 +20,26 @@ import {
   normalizeFiscalPeriod,
   resolveDirectBaseUrl,
   sanitizeDirectResponse,
+  summarizeObservedUsage,
+  validateDirectResponse,
+  validateQuote,
   validateFactorComparability,
 } from "../scripts/qveris_direct_runtime.mjs";
 
 test("uses the configured approved QVeris base URL", () => {
   assert.equal(resolveDirectBaseUrl({ QVERIS_BASE_URL: "https://qveris.cn/api/v1/" }), "https://qveris.cn/api/v1");
   assert.equal(resolveDirectBaseUrl({ QVERIS_BASE_URL: "https://api.qveris.cloud/api/v1" }), "https://api.qveris.cloud/api/v1");
+});
+
+test("accepts the desktop API base URL variable without a launch-time translation", () => {
+  assert.equal(resolveDirectBaseUrl({ QVERIS_API_BASE_URL: "https://qveris.cn/api/v1/" }), "https://qveris.cn/api/v1");
+  assert.equal(
+    resolveDirectBaseUrl({
+      QVERIS_BASE_URL: "https://qveris.ai/api/v1",
+      QVERIS_API_BASE_URL: "https://qveris.cn/api/v1",
+    }),
+    "https://qveris.ai/api/v1",
+  );
 });
 
 test("CLI automatically enables Node environment-proxy support", () => {
@@ -103,6 +121,17 @@ test("adapts Shanghai symbols to a discovered provider's .SS suffix", () => {
   assert.deepEqual(result.final_parameters, { symbol: "600519.SS" });
 });
 
+test("uses structured schema examples for the Shanghai suffix adaptation", () => {
+  const result = adaptDirectParameters({
+    parameters: { symbol: "600519.SH" },
+    schema: {
+      required: ["symbol"],
+      properties: { symbol: { type: "string", examples: ["600519.SS", "300750.SZ"] } },
+    },
+  });
+  assert.deepEqual(result.final_parameters, { symbol: "600519.SS" });
+});
+
 test("adapts a canonical multi-symbol bars request to a discovered batch schema", () => {
   const result = adaptDirectParameters({
     parameters: {
@@ -133,12 +162,36 @@ test("adapts a canonical multi-symbol bars request to a discovered batch schema"
   });
 });
 
+test("adapts a canonical symbol to the compact s parameter used by quote tools", () => {
+  const result = adaptDirectParameters({
+    parameters: { symbol: "TSLA" },
+    schema: { required: ["s"], properties: { s: { type: "string", description: "One or more symbols separated by commas" } } },
+  });
+  assert.deepEqual(result.final_parameters, { s: "TSLA" });
+});
+
 test("preserves canonical fiscal periods when the selected schema accepts them", () => {
   const result = adaptDirectParameters({
     parameters: { symbol: "TSLA", fiscal_period: "FY" },
     schema: { required: ["symbol", "fiscal_period"], properties: { symbol: {}, fiscal_period: { enum: ["FY", "Q1", "Q2", "Q3", "Q4"] } } },
   });
   assert.deepEqual(result.final_parameters, { symbol: "TSLA", fiscal_period: "FY" });
+});
+
+test("fails closed when an adapted value is outside the discovered enum", () => {
+  assert.throws(
+    () => adaptDirectParameters({
+      parameters: { symbol: "TSLA", fiscal_period: "FY" },
+      schema: { required: ["symbol", "period"], properties: { symbol: {}, period: { enum: ["annual", "quarter"] } } },
+    }),
+    (error) => error.code === "unsupported_enum_value" && error.details.parameter === "period",
+  );
+  const mapped = adaptDirectParameters({
+    parameters: { symbol: "TSLA", fiscal_period: "FY" },
+    schema: { required: ["symbol", "period"], properties: { symbol: {}, period: { enum: ["annual", "quarter"] } } },
+    enumMaps: { period: { FY: "annual" } },
+  });
+  assert.deepEqual(mapped.final_parameters, { symbol: "TSLA", period: "annual" });
 });
 
 test("refuses a call when discovered required parameters remain unresolved", () => {
@@ -179,6 +232,167 @@ test("normalizes the time field returned by a live batch-bars tool", () => {
   assert.equal(result.status, "complete");
   assert.equal(result.window_start, "2026-07-30");
   assert.equal(result.bars[0].date, "2026-07-30");
+});
+
+test("rejects adjusted bars that belong to a different security", () => {
+  const result = normalizeAdjustedBars([
+    { symbol: "300750.SZ", date: "2026-07-30", adjClose: 543.2 },
+  ], {
+    expectedSymbol: "600519.SH",
+    startDate: "2026-07-01",
+    endDate: "2026-07-31",
+  });
+  assert.equal(result.status, "rejected");
+  assert.equal(result.reason_code, "entity_mismatch");
+  assert.deepEqual(result.bars, []);
+});
+
+test("rejects conflicting duplicate bars instead of silently taking the last value", () => {
+  const result = normalizeAdjustedBars([
+    { symbol: "600519.SH", date: "2026-07-30", adjClose: 1361.76 },
+    { symbol: "600519.SS", date: "2026-07-30", adjClose: 1300.00 },
+  ], { expectedSymbol: "600519.SH" });
+  assert.equal(result.status, "rejected");
+  assert.equal(result.reason_code, "conflicting_duplicate_observation");
+  assert.deepEqual(result.bars, []);
+});
+
+test("rejects stale or mismatched quote evidence", () => {
+  const stale = validateQuote({ symbol: "TSLA", price: 308.85, timestamp: "2026-07-30T20:00:00Z", currency: "USD" }, {
+    expectedSymbol: "TSLA",
+    expectedCurrency: "USD",
+    observedAt: "2026-07-31T09:49:00Z",
+    maxAgeMs: 60 * 60 * 1000,
+  });
+  assert.equal(stale.status, "rejected");
+  assert.equal(stale.reason_code, "stale_quote");
+
+  const mismatch = validateQuote({ symbol: "NVDA", price: 180, timestamp: "2026-07-31T09:48:00Z", currency: "USD" }, {
+    expectedSymbol: "TSLA",
+    observedAt: "2026-07-31T09:49:00Z",
+    maxAgeMs: 60 * 60 * 1000,
+  });
+  assert.equal(mismatch.reason_code, "entity_mismatch");
+});
+
+test("keeps the latest Friday US close fresh before the next market session opens", () => {
+  const marketSession = { timeZone: "America/New_York", openTime: "09:30", holidays: [] };
+  const beforeOpen = validateQuote({ symbol: "TSLA", price: 311.21, timestamp: "2026-07-31T20:00:00Z" }, {
+    expectedSymbol: "TSLA",
+    observedAt: "2026-08-03T04:49:12Z",
+    maxAgeMs: 96 * 60 * 60 * 1000,
+    marketSession,
+  });
+  assert.equal(beforeOpen.status, "complete");
+  assert.equal(beforeOpen.freshness_basis, "market_session");
+
+  const afterOpen = validateQuote({ symbol: "TSLA", price: 311.21, timestamp: "2026-07-31T20:00:00Z" }, {
+    expectedSymbol: "TSLA",
+    observedAt: "2026-08-03T15:00:00Z",
+    maxAgeMs: 96 * 60 * 60 * 1000,
+    marketSession,
+  });
+  assert.equal(afterOpen.status, "rejected");
+  assert.equal(afterOpen.reason_code, "stale_quote");
+});
+
+test("does not classify an execute transport response as successful without semantic validation", () => {
+  const unvalidated = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: { success: true, result: { status_code: 200, data: [{ symbol: "600519.SS", date: "2026-07-30", adjClose: 1361.76 }] } },
+  });
+  assert.equal(unvalidated.status, "rejected");
+  assert.equal(unvalidated.reason_code, "semantic_validation_required");
+
+  const validated = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: { success: true, result: { status_code: 200, data: [{ symbol: "600519.SS", date: "2026-07-30", adjClose: 1361.76 }] } },
+    validation: { kind: "adjusted_bars", expectedSymbol: "600519.SH", requestedCount: 1, adjustment: "forward" },
+  });
+  assert.equal(validated.status, "success");
+  assert.equal(validated.reason_code, null);
+  assert.equal(validated.evidence.bars[0].adj_close, 1361.76);
+});
+
+test("accepts a structurally valid cached-tool inspection without a search ID", () => {
+  const inspected = validateDirectResponse({
+    requestKind: "tools/by-ids",
+    payload: { total: 1, results: [{ tool_id: "tool.v1", params: [] }] },
+  });
+  assert.equal(inspected.status, "success");
+});
+
+test("validates every requested security in a batch of adjusted bars", () => {
+  const validated = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: {
+      success: true,
+      result: { status_code: 200, data: [
+        [{ thscode: "600519.SH", time: "2026-07-30", adjusted_close: 1361.76 }],
+        [{ thscode: "300750.SZ", time: "2026-07-30", adjusted_close: 543.2 }],
+      ] },
+    },
+    validation: { kind: "adjusted_bar_groups", expectedSymbols: ["600519.SH", "300750.SZ"], requestedCount: 1 },
+  });
+  assert.equal(validated.status, "success");
+  assert.deepEqual(validated.evidence.observed_symbols, ["300750.SZ", "600519.SH"]);
+
+  const ambiguous = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: { success: true, result: { status_code: 200, data: [[{ thscode: "600519.SH", time: "2026-07-30", close: 1361.76 }]] } },
+    validation: { kind: "adjusted_bar_groups", expectedSymbols: ["600519.SH"], requestedCount: 1, adjustment: "forward" },
+  });
+  assert.equal(ambiguous.status, "rejected");
+  assert.equal(ambiguous.reason_code, "adjustment_basis_unclear");
+});
+
+test("validates financial statement identity, currency, and required report collection", () => {
+  const validated = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: {
+      success: true,
+      result: {
+        status_code: 200,
+        data: { symbol: "TSLA", annualReports: [{ fiscalDateEnding: "2025-12-31", reportedCurrency: "USD", totalRevenue: "94827000000" }] },
+      },
+    },
+    validation: {
+      kind: "records",
+      expectedSymbol: "TSLA",
+      expectedCurrency: "USD",
+      requiredFields: ["symbol", "annualReports"],
+      recordPath: "annualReports",
+      minRecords: 1,
+    },
+  });
+  assert.equal(validated.status, "success");
+  assert.equal(validated.evidence.observed_count, 1);
+
+  const wrongCurrency = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: { success: true, result: { status_code: 200, data: { symbol: "TSLA", annualReports: [{ reportedCurrency: "CNY" }] } } },
+    validation: { kind: "records", expectedSymbol: "TSLA", expectedCurrency: "USD", recordPath: "annualReports", minRecords: 1 },
+  });
+  assert.equal(wrongCurrency.status, "rejected");
+  assert.equal(wrongCurrency.reason_code, "currency_mismatch");
+});
+
+test("can bind a symbol-less quote response to its audited request identity", () => {
+  const validated = validateDirectResponse({
+    requestKind: "tools/execute",
+    params: { symbol: "TSLA" },
+    observedAt: "2026-07-31T09:49:00Z",
+    payload: { success: true, result: { status_code: 200, data: { c: 308.85, t: 1785441600 } } },
+    validation: {
+      kind: "quote",
+      expectedSymbol: "TSLA",
+      identitySource: "request",
+      maxAgeMs: 14 * 60 * 60 * 1000,
+    },
+  });
+  assert.equal(validated.status, "success");
+  assert.equal(validated.evidence.identity_source, "request");
+  assert.equal(validated.evidence.quote.symbol, "TSLA");
 });
 
 test("rejects ambiguous adjusted-close semantics instead of using raw close", () => {
@@ -250,6 +464,73 @@ test("blocks a request when a bounded cost estimate is unknown", () => {
   );
 });
 
+test("derives cumulative budget usage from observed calls instead of trusting reset counters", () => {
+  const observedCalls = [
+    createObservedCall({ requestKind: "search", status: "success", response: { results: [] } }),
+    createObservedCall({
+      requestKind: "tools/execute",
+      status: "success",
+      billing: {
+        summary: "Billed by quantity. This call used 3870 quantitys and costs 5.11 credits",
+        list_amount_credits: 5.11,
+      },
+      response: { success: true, result: { data: [[{ date: "2026-07-29" }, { date: "2026-07-30" }], [{ date: "2026-07-30" }]] } },
+    }),
+  ];
+  assert.deepEqual(summarizeObservedUsage(observedCalls), {
+    calls: 2,
+    credits: 5.11,
+    rows: 3,
+    billable_quantity: 3870,
+  });
+  assert.throws(
+    () => enforceDirectBudget({
+      budget: {
+        max_calls: 10,
+        used_calls: 0,
+        max_credits: 10,
+        used_credits: 0,
+        max_rows: 10,
+        used_rows: 0,
+        max_billable_quantity: 3870,
+        used_billable_quantity: 0,
+      },
+      estimate: { calls: 1, credits: 1, rows: 1, billable_quantity: 1 },
+      observedCalls,
+    }),
+    (error) => error.code === "budget_limited"
+      && error.details.used.calls === 2
+      && error.details.used.billable_quantity === 3870
+      && error.details.exceeded.includes("max_billable_quantity_exceeded"),
+  );
+});
+
+test("CLI preflight enforces cumulative usage from its audit artifact", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "qveris-direct-budget-"));
+  const artifactPath = join(directory, "observed_calls.json");
+  const runtimePath = fileURLToPath(new URL("../scripts/qveris_direct_runtime.mjs", import.meta.url));
+  const artifact = createObservedCallsArtifact({
+    skill: "test-skill",
+    calls: [createObservedCall({ requestKind: "search", status: "success", response: { results: [] } })],
+  });
+  await writeFile(artifactPath, JSON.stringify(artifact), "utf8");
+  try {
+    const result = spawnSync(process.execPath, [
+      runtimePath,
+      "preflight",
+      "--params", "{}",
+      "--schema", "{}",
+      "--artifact", artifactPath,
+      "--estimate", JSON.stringify({ expectedRows: 0, expectedBillableQuantity: 0, creditsPerUnit: 0 }),
+      "--budget", JSON.stringify({ max_calls: 1, max_credits: 1, max_rows: 1, max_billable_quantity: 1 }),
+    ], { encoding: "utf8", env: { ...process.env, QVERIS_PROXY_REEXEC: "1" } });
+    assert.equal(result.status, 1);
+    assert.equal(JSON.parse(result.stderr).code, "budget_limited");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
 test("recursively sanitizes provider, routing, credentials, and signed URLs", () => {
   const sanitized = sanitizeDirectResponse({
     data: [{ symbol: "600519.SH", close: 100 }],
@@ -290,6 +571,47 @@ test("builds a sanitized observed-calls sidecar and exact trace projection", () 
   assert.match(artifact.observed_calls[0].response_sha256, /^[a-f0-9]{64}$/);
   assert.deepEqual(artifact.qveris_trace, [call.trace]);
   assert.equal(call.trace.tool_id, "raw.tool.v1");
+});
+
+test("preserves every observed call when concurrent writers share one artifact", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "qveris-direct-artifact-"));
+  const artifactPath = join(directory, "observed_calls.json");
+  try {
+    await Promise.all(Array.from({ length: 12 }, (_, index) => appendObservedCall(artifactPath, {
+      skill: "test-skill",
+      caseId: "concurrent-writes",
+      call: createObservedCall({
+        requestKind: "search",
+        status: "success",
+        response: { search_id: `search-${index}`, results: [] },
+      }),
+    })));
+    const artifact = JSON.parse(await readFile(artifactPath, "utf8"));
+    assert.equal(artifact.observed_call_count, 12);
+    assert.deepEqual(new Set(artifact.observed_calls.map((call) => call.search_id)).size, 12);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("recovers an abandoned artifact lock before appending a new call", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "qveris-direct-stale-lock-"));
+  const artifactPath = join(directory, "observed_calls.json");
+  const lockPath = `${artifactPath}.lock`;
+  await mkdir(lockPath);
+  const staleTime = new Date(Date.now() - 60_000);
+  await utimes(lockPath, staleTime, staleTime);
+  try {
+    const artifact = await appendObservedCall(artifactPath, {
+      skill: "test-skill",
+      caseId: "stale-lock",
+      call: createObservedCall({ requestKind: "search", status: "success", response: { search_id: "recovered", results: [] } }),
+    });
+    assert.equal(artifact.observed_call_count, 1);
+    assert.equal(artifact.observed_calls[0].search_id, "recovered");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test("records the search ID returned by a direct discovery response", () => {

@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
+import { validateDirectResponse } from "../scripts/qveris_direct_runtime.mjs";
+
 const artifactRoot = new URL("../../artifacts/live-e2e-2026-07-31/", import.meta.url);
 
 async function readArtifact(name) {
@@ -36,6 +38,19 @@ test("captured factor-screen live E2E rejects ambiguous adjusted-close semantics
   assert.equal(groups.reduce((count, rows) => count + rows.length, 0), 129);
   assert.equal(execute.response.result.metadata.result_count_for_billing, 3870);
   assert.equal(execute.billing.list_amount_credits, 5.11);
+  const validation = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: execute.response,
+    params: execute.params,
+    observedAt: execute.observed_at,
+    validation: {
+      kind: "adjusted_bar_groups",
+      expectedSymbols: ["600519.SH", "300750.SZ", "002594.SZ"],
+      adjustment: "forward",
+    },
+  });
+  assert.equal(validation.status, "rejected");
+  assert.equal(validation.reason_code, "adjustment_basis_unclear");
 });
 
 test("captured AlphaEar live E2E contains a TSLA quote and one FY2025 annual record", async () => {
@@ -49,4 +64,33 @@ test("captured AlphaEar live E2E contains a TSLA quote and one FY2025 annual rec
   assert.equal(fy2025.reportedCurrency, "USD");
   assert.equal(fy2025.totalRevenue, "94827000000");
   assert.equal(executes[0].billing.list_amount_credits + executes[1].billing.list_amount_credits, 3);
+  const quoteValidation = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: executes[0].response,
+    params: executes[0].params,
+    observedAt: executes[0].observed_at,
+    validation: {
+      kind: "quote",
+      expectedSymbol: "TSLA",
+      identitySource: "request",
+      maxAgeMs: 96 * 60 * 60 * 1000,
+      marketSession: { timeZone: "America/New_York", openTime: "09:30", holidays: [] },
+    },
+  });
+  assert.equal(quoteValidation.status, "success");
+  const statementValidation = validateDirectResponse({
+    requestKind: "tools/execute",
+    payload: executes[1].response,
+    params: executes[1].params,
+    observedAt: executes[1].observed_at,
+    validation: {
+      kind: "records",
+      expectedSymbol: "TSLA",
+      expectedCurrency: "USD",
+      requiredFields: ["symbol", "annualReports"],
+      recordPath: "annualReports",
+      minRecords: 1,
+    },
+  });
+  assert.equal(statementValidation.status, "success");
 });

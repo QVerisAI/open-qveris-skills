@@ -34,12 +34,13 @@ Source record:
   2. Native `qveris_discover` and `qveris_call` when the bundled runtime cannot run.
   3. Direct HTTP through `http_request`: `POST /api/v1/search`, `POST /api/v1/tools/execute?tool_id=...`, and `POST /api/v1/tools/by-ids` for same-session inspection.
 - If neither tier exists, return `tool_runtime_missing`. Do not use web pages, original vendor endpoints, local finance packages, or invented values as structured-data substitutes.
-- Read `references/qveris-direct-runtime-contract.md` before any live request. Resolve the configured `QVERIS_BASE_URL`; never hardcode or guess a deployment host.
+- Read `references/qveris-direct-runtime-contract.md` before any live request. Resolve `QVERIS_BASE_URL` or desktop `QVERIS_API_BASE_URL`; never hardcode or guess a deployment host.
 - Write every discovery query in English as a tool-type description. Never send an issuer name, ticker, or factual question as the discovery query.
 - Preserve the returned `search_id`, or normalize a native `discovery_id` to `search_id` in Trace, and pair it with the selected `tool_id` for execution.
 - Accept `dry_run`, `max_calls`, `max_credits`, `max_rows`, `max_billable_quantity`, `max_age`, and `budget_note`. Default to `dry_run=false`, `max_calls=8`, `max_credits=20`, `max_rows=250`, `max_billable_quantity=500`, `max_age=P1D`, and a conservative budget note.
 - Count every observed discovery, inspection, execution, and retry against `max_calls`. Never hide discovery overhead.
-- Estimate credits, rows, and billable quantity from inspected billing metadata before execution. Stop on an unknown bounded estimate or any exceeded limit.
+- Estimate credits, rows, and billable quantity from inspected billing metadata before execution. Keep one sidecar for the whole report so actual cumulative usage is enforced; stop on an unknown bounded estimate or any exceeded limit.
+- Pass an explicit `--validation` contract to every audited-runtime execution. An execution without successful semantic validation is rejected even when transport succeeds.
 - Read `references/qveris-direct-data-quality-rubric.md` before accepting payloads. Read `references/qveris-direct-retry-policy.md` after any failed, rejected, thin, or truncated response.
 - Build trace rows and call counts only from observed requests. Never add planned, skipped, or budget-blocked requests to Trace.
 - Never expose credentials, authorization headers, cookies, secrets, or raw responses that contain them.
@@ -54,9 +55,9 @@ Source record:
 3. Save the returned search token and chosen tool identifier together. Validate required parameter names, types, formats, date rules, market coverage, and examples before execution.
 4. Execute with structured values extracted from the request. For native tools, pass the selected identifier and its matching discovery token to `qveris_call`. For HTTP, send the same pair to `/tools/execute`.
 5. Cache a successful tool only in the current session. Before reuse, inspect it through `/tools/by-ids` when that route is available and budgeted; reuse only if the schema and market coverage still match. If inspection is unavailable, rediscover instead of trusting a stale cache.
-6. Validate the returned issuer, listing, market, exchange, asset type, window, timestamp, row count, units, and text encoding. Mark a transport-success payload `rejected` when it fails semantic validation.
+6. Validate the returned issuer, listing, market, exchange, asset type, window, timestamp, row count, units, and text encoding in the audited runtime's execution step. It records a transport-success payload as `rejected` when semantic validation fails.
 7. Record one Trace row for every observed `search`, `tools/by-ids`, and `tools/execute` attempt. Normalize native discovery and call operations to those request kinds.
-8. When the audited runtime is available, annotate semantic rejection in the saved sidecar instead of editing report Trace by hand.
+8. Use `annotate` only to downgrade additional post-hoc failures; it cannot upgrade a rejected or failed row to success.
 
 ## Evidence Gate
 

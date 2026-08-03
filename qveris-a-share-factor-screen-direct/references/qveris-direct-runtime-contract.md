@@ -6,19 +6,20 @@ Use this contract for direct QVeris discovery and execution. It aligns direct ou
 
 When `exec` and Node.js are available, use `scripts/qveris_direct_runtime.mjs` for the HTTP tier. The script:
 
-- resolves `QVERIS_BASE_URL` and permits only approved HTTPS QVeris `/api/v1` hosts;
+- resolves `QVERIS_BASE_URL`, or desktop-compatible `QVERIS_API_BASE_URL`, and permits only approved HTTPS QVeris `/api/v1` hosts;
 - rejects redirects;
 - adapts canonical parameters against the selected tool's observed schema;
-- blocks calls that exceed call, credit, row, or billable-quantity limits;
+- derives cumulative actual usage from the shared sidecar and blocks calls that exceed call, credit, row, or billable-quantity limits;
+- validates every execution response atomically before it can be recorded as successful;
 - recursively removes provider, route, failover, credential, and signed-URL metadata;
-- writes an `observed_calls.v1` sidecar with sanitized response hashes and an exact Trace projection;
+- writes an `observed_calls.v1` sidecar with sanitized response hashes and an exact Trace projection, using an inter-process lock to preserve concurrent writes;
 - reports client, QVeris-execution, and upstream timeout layers separately.
 
 Use native `qveris_discover` / `qveris_call` only when the audited script cannot run. Apply the same preflight and semantic gates manually. Do not label output live, fresh, or E2E without an independently verified sidecar.
 
 ## Host Contract
 
-Set `QVERIS_BASE_URL` for the active deployment. The default is `https://qveris.ai/api/v1`; approved configured hosts are `qveris.ai`, `qveris.cn`, and `api.qveris.cloud`, all with the exact `/api/v1` path. Reject HTTP, credentials in URLs, custom ports, query strings, fragments, redirects, and other hosts.
+Set `QVERIS_BASE_URL` or the desktop variable `QVERIS_API_BASE_URL` for the active deployment. `QVERIS_BASE_URL` takes precedence. The default is `https://qveris.ai/api/v1`; approved configured hosts are `qveris.ai`, `qveris.cn`, and `api.qveris.cloud`, all with the exact `/api/v1` path. Reject HTTP, credentials in URLs, custom ports, query strings, fragments, redirects, and other hosts.
 
 Never hardcode a deployment-specific host in a Skill workflow. Read `QVERIS_API_KEY` only from the environment.
 
@@ -33,7 +34,8 @@ node scripts/qveris_direct_runtime.mjs preflight \
   --params '{"symbol":"600519","fiscal_period":"FY"}' \
   --schema '{"required":["code","period"],"properties":{"code":{"description":"six-digit code without exchange suffix"},"period":{"enum":["0331","0630","0930","1231"]}}}' \
   --estimate '{"expectedRows":43,"expectedBillableQuantity":473,"creditsPerUnit":1,"unitsPerCredit":25}' \
-  --budget '{"max_calls":8,"used_calls":2,"max_credits":20,"max_rows":250,"max_billable_quantity":500}'
+  --budget '{"max_calls":8,"max_credits":20,"max_rows":250,"max_billable_quantity":500}' \
+  --artifact ./observed-calls.json
 ```
 
 The adapter normalizes unambiguous A-share symbols and maps `FY/Q1/Q2/Q3/Q4` to `1231/0331/0630/0930/1231`. Supply `--enum-maps` only when discovery or inspection metadata explicitly documents a provider enum. Never guess enum meaning.
@@ -47,7 +49,7 @@ Every live request must have these controls:
 - `max_rows`
 - `max_billable_quantity`
 
-Use billing metadata from discovery or inspection to estimate rows, billable quantity, and credits before execution. If a bounded dimension cannot be estimated, stop with `budget_estimate_unknown`. Never treat one HTTP request as one credit.
+Use billing metadata from discovery or inspection to estimate rows, billable quantity, and credits before execution. If a bounded dimension cannot be estimated, stop with `budget_estimate_unknown`. Never treat one HTTP request as one credit. Reuse one sidecar for the whole report: the runtime recomputes cumulative calls and actual billed usage from it and treats caller-supplied `used_*` values only as a higher external floor.
 
 For quantity-priced tools, bind the estimate to the selected indicator or field set as well as the logical row count. A broad field preset can multiply billable quantity even when the requested security count and date window are unchanged.
 
@@ -69,21 +71,26 @@ node scripts/qveris_direct_runtime.mjs execute \
   --search-id '<paired-search-id>' \
   --params '{"symbol":"600519.SH","start_date":"2026-06-01","end_date":"2026-07-30"}' \
   --schema '<selected-tool-json-schema>' \
+  --validation '{"kind":"adjusted_bars","expectedSymbol":"600519.SH","startDate":"2026-06-01","endDate":"2026-07-30","adjustment":"forward"}' \
   --estimate '{"expectedRows":43,"expectedBillableQuantity":473,"creditsPerUnit":1,"unitsPerCredit":25}' \
-  --budget '{"max_calls":8,"used_calls":1,"max_credits":20,"max_rows":250,"max_billable_quantity":500}' \
+  --budget '{"max_calls":8,"max_credits":20,"max_rows":250,"max_billable_quantity":500}' \
   --skill qveris-a-share-data-direct \
   --artifact ./observed-calls.json
 ```
 
-After semantic validation, change a transport-success row to `rejected` when necessary:
+`execute` requires `--validation`. Supported validators are `adjusted_bars`, `adjusted_bar_groups`, `quote`, and `records`. A transport response without a successful validator is recorded as `rejected`, never `success`. The legacy `annotate` command can only downgrade a row to `failed` or `rejected`; it cannot upgrade evidence to success.
+
+For quotes, use both an absolute `maxAgeMs` and, when the market is known, `marketSession` with an IANA time zone, local open time, and an explicit holiday list. This permits the latest close across a weekend before the next session opens while rejecting it once a newer session is expected.
+
+If execution returns `truncated_content` without `result.data`, record `response_data_missing`; never parse a partial JSON string as evidence. Retry with a larger, bounded `--max-response-size` only when the inspected response shape, expected byte size, and remaining call/credit/quantity budgets justify it.
+
+For a reproducible bounded live run covering all three direct Skills:
 
 ```bash
-node scripts/qveris_direct_runtime.mjs annotate \
-  --artifact ./observed-calls.json \
-  --index -1 \
-  --status rejected \
-  --missing-fields '["adjustment_basis_unclear"]'
+make run-finance-direct-live-e2e
 ```
+
+Use `--only case-id-a,case-id-b` with the underlying script to rerun failed cases without repeating successful paid cases.
 
 Trace rows must equal the sidecar's `qveris_trace` projection exactly.
 

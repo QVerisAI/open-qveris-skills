@@ -2,7 +2,7 @@ COMPOSE := docker compose -f dev-infra/stock-copilot-pro/docker-compose.yml
 PYTHON ?= python3
 NODE ?= node
 
-.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e validate-qveris-sanitizer validate-finance-business-adapters validate-finance-direct-contracts validate-crypto-radar validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
+.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e run-finance-direct-live-e2e validate-qveris-sanitizer validate-finance-business-adapters validate-finance-direct-contracts validate-crypto-radar validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
 
 up:
 	$(COMPOSE) up -d skill-dev
@@ -96,6 +96,9 @@ validate-finance-reports: validate-finance-fixtures validate-finance-contract-se
 
 run-finance-live-e2e:
 	$(NODE) scripts/run_qveris_finance_live_e2e.mjs
+
+run-finance-direct-live-e2e:
+	$(NODE) scripts/run_qveris_finance_direct_live_e2e.mjs
 
 validate-qveris-sanitizer:
 	$(NODE) --test qveris-official/tests/*.test.mjs
