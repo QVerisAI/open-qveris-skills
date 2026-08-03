@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
@@ -152,6 +152,7 @@ export function adaptDirectParameters({ parameters = {}, schema, enumMaps = {} }
   const hasSchema = Object.keys(properties).length > 0;
   const adapted = {};
   const audit = [];
+  const targetSources = new Map();
   const aliases = {
     symbol: ["symbol", "ticker", "code", "security_code", "s"],
     symbols: ["symbols", "codes", "tickers", "security_codes", "s"],
@@ -184,7 +185,21 @@ export function adaptDirectParameters({ parameters = {}, schema, enumMaps = {} }
         supported_values: supportedValues,
       });
     }
+    if (Object.hasOwn(adapted, targetName)) {
+      const sources = [...(targetSources.get(targetName) ?? []), sourceName];
+      if (canonicalJson(adapted[targetName]) !== canonicalJson(targetValue)) {
+        throw new DirectContractError(
+          "conflicting_parameter_aliases",
+          `Multiple request parameters resolve to ${targetName} with different values`,
+          { target: targetName, sources },
+        );
+      }
+      targetSources.set(targetName, sources);
+      audit.push({ source: sourceName, target: targetName, action: "duplicate_alias" });
+      continue;
+    }
     adapted[targetName] = targetValue;
+    targetSources.set(targetName, [sourceName]);
     audit.push({
       source: sourceName,
       target: targetName,
@@ -214,9 +229,25 @@ function finiteNumber(value, fallback = undefined) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function budgetNumber(value, field, { integer = false, minimum = 0, fallback = undefined } = {}) {
+  if (value === undefined || value === null || value === "") return fallback;
+  const number = typeof value === "boolean" ? Number.NaN : Number(value);
+  if (!Number.isFinite(number) || number < minimum || (integer && !Number.isInteger(number))) {
+    throw new DirectContractError("invalid_budget_value", `${field} must be ${integer ? "an integer" : "a finite number"} >= ${minimum}`, {
+      field,
+      value,
+    });
+  }
+  return number;
+}
+
 function countResponseRows(value) {
   if (Array.isArray(value)) return value.reduce((total, item) => total + countResponseRows(item), 0);
-  return value && typeof value === "object" ? 1 : 0;
+  if (!value || typeof value !== "object") return 0;
+  const nestedValues = Object.values(value).filter((child) => child && typeof child === "object");
+  return nestedValues.length > 0
+    ? nestedValues.reduce((total, child) => total + countResponseRows(child), 0)
+    : 1;
 }
 
 function billedQuantity(call) {
@@ -256,16 +287,17 @@ export function estimateDirectBudget({
   fixedCredits = 0,
   calls = 1,
 } = {}) {
-  const rows = finiteNumber(expectedRows);
-  const billableQuantity = finiteNumber(expectedBillableQuantity, rows);
-  const rate = finiteNumber(creditsPerUnit);
-  const per = finiteNumber(unitsPerCredit, 1);
-  const fixed = finiteNumber(fixedCredits, 0);
+  const rows = budgetNumber(expectedRows, "expectedRows", { integer: true });
+  const billableQuantity = budgetNumber(expectedBillableQuantity, "expectedBillableQuantity", { fallback: rows });
+  const rate = budgetNumber(creditsPerUnit, "creditsPerUnit");
+  const per = budgetNumber(unitsPerCredit, "unitsPerCredit", { minimum: Number.EPSILON, fallback: 1 });
+  const fixed = budgetNumber(fixedCredits, "fixedCredits", { fallback: 0 });
+  const callCount = budgetNumber(calls, "calls", { integer: true, fallback: 1 });
   const estimatedCredits = rate === undefined || billableQuantity === undefined
     ? undefined
     : fixed + ((billableQuantity / per) * rate);
   return {
-    calls: finiteNumber(calls, 1),
+    calls: callCount,
     rows,
     billable_quantity: billableQuantity,
     credits: estimatedCredits,
@@ -273,38 +305,58 @@ export function estimateDirectBudget({
   };
 }
 
-export function enforceDirectBudget({ budget = {}, estimate = {}, observedCalls = [] } = {}) {
+function summarizeReservedUsage(reservations = []) {
+  if (!Array.isArray(reservations)) throw new DirectContractError("invalid_budget_reservations", "budget reservations must be an array");
+  return reservations.reduce((usage, reservation) => {
+    const estimate = reservation?.estimate ?? {};
+    return {
+      calls: usage.calls + budgetNumber(estimate.calls, "reservation.estimate.calls", { integer: true, fallback: 0 }),
+      credits: usage.credits + budgetNumber(estimate.credits, "reservation.estimate.credits", { fallback: 0 }),
+      rows: usage.rows + budgetNumber(estimate.rows, "reservation.estimate.rows", { integer: true, fallback: 0 }),
+      billable_quantity: usage.billable_quantity + budgetNumber(estimate.billable_quantity, "reservation.estimate.billable_quantity", { fallback: 0 }),
+    };
+  }, { calls: 0, credits: 0, rows: 0, billable_quantity: 0 });
+}
+
+export function enforceDirectBudget({ budget = {}, estimate = {}, observedCalls = [], reservations = [] } = {}) {
   const limits = {
-    calls: finiteNumber(budget.max_calls),
-    credits: finiteNumber(budget.max_credits),
-    rows: finiteNumber(budget.max_rows),
-    billable_quantity: finiteNumber(budget.max_billable_quantity),
+    calls: budgetNumber(budget.max_calls, "max_calls", { integer: true }),
+    credits: budgetNumber(budget.max_credits, "max_credits"),
+    rows: budgetNumber(budget.max_rows, "max_rows", { integer: true }),
+    billable_quantity: budgetNumber(budget.max_billable_quantity, "max_billable_quantity"),
+  };
+  const validatedEstimate = {
+    calls: budgetNumber(estimate.calls, "estimate.calls", { integer: true }),
+    credits: budgetNumber(estimate.credits, "estimate.credits"),
+    rows: budgetNumber(estimate.rows, "estimate.rows", { integer: true }),
+    billable_quantity: budgetNumber(estimate.billable_quantity, "estimate.billable_quantity"),
   };
   const observed = summarizeObservedUsage(observedCalls);
+  const reserved = summarizeReservedUsage(reservations);
   const used = {
-    calls: Math.max(finiteNumber(budget.used_calls, 0), observed.calls),
-    credits: Math.max(finiteNumber(budget.used_credits, 0), observed.credits),
-    rows: Math.max(finiteNumber(budget.used_rows, 0), observed.rows),
-    billable_quantity: Math.max(finiteNumber(budget.used_billable_quantity, 0), observed.billable_quantity),
+    calls: Math.max(budgetNumber(budget.used_calls, "used_calls", { integer: true, fallback: 0 }), observed.calls) + reserved.calls,
+    credits: Math.max(budgetNumber(budget.used_credits, "used_credits", { fallback: 0 }), observed.credits) + reserved.credits,
+    rows: Math.max(budgetNumber(budget.used_rows, "used_rows", { integer: true, fallback: 0 }), observed.rows) + reserved.rows,
+    billable_quantity: Math.max(budgetNumber(budget.used_billable_quantity, "used_billable_quantity", { fallback: 0 }), observed.billable_quantity) + reserved.billable_quantity,
   };
   const exceeded = [];
   for (const key of Object.keys(limits)) {
     if (limits[key] === undefined) continue;
-    if (estimate[key] === undefined) {
+    if (validatedEstimate[key] === undefined) {
       exceeded.push(`${key}_estimate_unknown`);
       continue;
     }
-    if (used[key] + estimate[key] > limits[key]) exceeded.push(`max_${key}_exceeded`);
+    if (used[key] + validatedEstimate[key] > limits[key]) exceeded.push(`max_${key}_exceeded`);
   }
   if (exceeded.length > 0) {
     throw new DirectContractError("budget_limited", "Direct request is blocked by the preflight budget", {
       exceeded,
       limits,
       used,
-      estimate,
+      estimate: validatedEstimate,
     });
   }
-  return { allowed: true, limits, used, estimate };
+  return { allowed: true, limits, used, reserved, estimate: validatedEstimate };
 }
 
 function numberOrReject(value, field) {
@@ -800,8 +852,8 @@ export function createObservedCall({
   };
 }
 
-export function createObservedCallsArtifact({ skill, caseId = null, calls = [], recordedAt = new Date().toISOString() } = {}) {
-  return {
+export function createObservedCallsArtifact({ skill, caseId = null, calls = [], reservations = [], recordedAt = new Date().toISOString() } = {}) {
+  const artifact = {
     artifact_version: "observed_calls.v1",
     skill,
     case_id: caseId,
@@ -810,6 +862,8 @@ export function createObservedCallsArtifact({ skill, caseId = null, calls = [], 
     observed_calls: calls,
     qveris_trace: calls.map((call) => call.trace),
   };
+  if (reservations.length > 0) artifact.budget_reservations = reservations;
+  return artifact;
 }
 
 export function classifyTimeout(error, {
@@ -904,7 +958,9 @@ async function writeArtifact(path, artifact) {
 async function readObservedArtifact(path) {
   try {
     const artifact = JSON.parse(await readFile(resolve(path), "utf8"));
-    if (artifact?.artifact_version !== "observed_calls.v1" || !Array.isArray(artifact.observed_calls)) {
+    if (artifact?.artifact_version !== "observed_calls.v1"
+        || !Array.isArray(artifact.observed_calls)
+        || (artifact.budget_reservations !== undefined && !Array.isArray(artifact.budget_reservations))) {
       throw new DirectContractError("invalid_artifact", "Existing artifact is not observed_calls.v1");
     }
     return artifact;
@@ -912,6 +968,16 @@ async function readObservedArtifact(path) {
     if (error?.code === "ENOENT") return null;
     throw error;
   }
+}
+
+function activeBudgetReservations(artifact, now = Date.now()) {
+  return (artifact?.budget_reservations ?? []).filter((reservation) => {
+    const expiresAt = Date.parse(String(reservation?.expires_at ?? ""));
+    if (!reservation?.reservation_id || !Number.isFinite(expiresAt)) {
+      throw new DirectContractError("invalid_budget_reservation", "Observed-call artifact contains an invalid budget reservation");
+    }
+    return expiresAt > now;
+  });
 }
 
 async function withArtifactLock(path, callback, { timeoutMs = 5_000, staleAfterMs = 30_000 } = {}) {
@@ -950,9 +1016,103 @@ export async function appendObservedCall(path, { skill, caseId, call }) {
   return withArtifactLock(path, async () => {
     const existing = await readObservedArtifact(path);
     const calls = existing?.observed_calls ?? [];
-    const artifact = createObservedCallsArtifact({ skill, caseId, calls: [...calls, call] });
+    const artifact = createObservedCallsArtifact({
+      skill,
+      caseId,
+      calls: [...calls, call],
+      reservations: activeBudgetReservations(existing),
+    });
     await writeArtifact(path, artifact);
     return artifact;
+  });
+}
+
+export async function reserveObservedBudget(path, {
+  skill,
+  caseId,
+  budget,
+  estimate,
+  timeoutMs,
+} = {}) {
+  return withArtifactLock(path, async () => {
+    const existing = await readObservedArtifact(path);
+    const calls = existing?.observed_calls ?? [];
+    const reservations = activeBudgetReservations(existing);
+    const preflight = enforceDirectBudget({ budget, estimate, observedCalls: calls, reservations });
+    const now = Date.now();
+    const reservation = {
+      reservation_id: randomUUID(),
+      created_at: new Date(now).toISOString(),
+      expires_at: new Date(now + Math.max(finiteNumber(timeoutMs, 0) + 60_000, 300_000)).toISOString(),
+      estimate,
+    };
+    const artifact = createObservedCallsArtifact({
+      skill,
+      caseId,
+      calls,
+      reservations: [...reservations, reservation],
+      recordedAt: existing?.recorded_at ?? new Date(now).toISOString(),
+    });
+    await writeArtifact(path, artifact);
+    return { reservation, preflight };
+  });
+}
+
+export async function settleObservedBudget(path, {
+  skill,
+  caseId,
+  reservationId,
+  budget,
+  call,
+} = {}) {
+  return withArtifactLock(path, async () => {
+    const existing = await readObservedArtifact(path);
+    if (!existing) throw new DirectContractError("budget_reservation_missing", "Observed-call artifact disappeared before budget settlement");
+    const reservations = activeBudgetReservations(existing);
+    if (!reservations.some((reservation) => reservation.reservation_id === reservationId)) {
+      throw new DirectContractError("budget_reservation_missing", "Budget reservation expired or disappeared before settlement");
+    }
+    const remainingReservations = reservations.filter((reservation) => reservation.reservation_id !== reservationId);
+    const calls = existing.observed_calls;
+    const actualUsage = summarizeObservedUsage([call]);
+    let settledCall = call;
+    let postflightError = null;
+    try {
+      enforceDirectBudget({
+        budget,
+        estimate: actualUsage,
+        observedCalls: calls,
+        reservations: remainingReservations,
+      });
+    } catch (error) {
+      if (error?.code !== "budget_limited") throw error;
+      postflightError = error;
+      settledCall = {
+        ...call,
+        status: "rejected",
+        missing_fields: ["actual_budget_exceeded"],
+        validation: {
+          kind: call?.validation?.kind ?? null,
+          status: "rejected",
+          reason_code: "actual_budget_exceeded",
+          budget: error.details,
+        },
+        trace: {
+          ...call.trace,
+          status: "rejected",
+          missing_fields: ["actual_budget_exceeded"],
+        },
+      };
+    }
+    const artifact = createObservedCallsArtifact({
+      skill,
+      caseId,
+      calls: [...calls, settledCall],
+      reservations: remainingReservations,
+      recordedAt: existing.recorded_at ?? new Date().toISOString(),
+    });
+    await writeArtifact(path, artifact);
+    return { artifact, call: settledCall, postflightError };
   });
 }
 
@@ -1009,7 +1169,12 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
     const estimate = estimateDirectBudget(jsonFlag(flags, "--estimate", {}));
     const artifactPath = flags.get("--artifact");
     const artifact = artifactPath ? await readObservedArtifact(String(artifactPath)) : null;
-    const budget = enforceDirectBudget({ budget: jsonFlag(flags, "--budget", {}), estimate, observedCalls: artifact?.observed_calls ?? [] });
+    const budget = enforceDirectBudget({
+      budget: jsonFlag(flags, "--budget", {}),
+      estimate,
+      observedCalls: artifact?.observed_calls ?? [],
+      reservations: activeBudgetReservations(artifact),
+    });
     console.log(JSON.stringify({
       base_url: resolveDirectBaseUrl(),
       transport: {
@@ -1045,6 +1210,7 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
         skill: artifact.skill,
         caseId: artifact.case_id ?? null,
         calls: artifact.observed_calls,
+        reservations: activeBudgetReservations(artifact),
         recordedAt: artifact.recorded_at ?? new Date().toISOString(),
       });
       await writeArtifact(String(artifactPath), nextArtifact);
@@ -1058,8 +1224,6 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
   const caseId = flags.get("--case-id") === undefined ? null : String(flags.get("--case-id"));
   const artifactPath = flags.get("--artifact");
   if (!artifactPath) throw new DirectContractError("artifact_required", "--artifact is required for observed-call integrity");
-  const existingArtifact = await readObservedArtifact(String(artifactPath));
-  const observedCalls = existingArtifact?.observed_calls ?? [];
   const timeoutMs = Number(flags.get("--timeout-ms") ?? (command === "execute" ? 120_000 : 30_000));
   const apiKey = process.env.QVERIS_API_KEY;
   const budgetInput = requiredBudget(flags);
@@ -1069,18 +1233,19 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
   let searchId = flags.get("--search-id") ?? null;
   let params = null;
   let validation = null;
+  let estimate;
   let request;
 
   if (command === "search") {
     requestKind = "search";
     query = String(flags.get("--query") ?? "").trim();
     if (!query) throw new DirectContractError("query_required", "--query is required");
-    enforceDirectBudget({ budget: budgetInput, estimate: { calls: 1, credits: 0, rows: 0, billable_quantity: 0 }, observedCalls });
+    estimate = { calls: 1, credits: 0, rows: 0, billable_quantity: 0 };
     request = () => requestJson("/search", { apiKey, body: { query, limit: Number(flags.get("--limit") ?? 10) }, timeoutMs });
   } else if (command === "inspect") {
     requestKind = "tools/by-ids";
     if (!toolId) throw new DirectContractError("tool_id_required", "--tool-id is required");
-    enforceDirectBudget({ budget: budgetInput, estimate: { calls: 1, credits: 0, rows: 0, billable_quantity: 0 }, observedCalls });
+    estimate = { calls: 1, credits: 0, rows: 0, billable_quantity: 0 };
     request = () => requestJson("/tools/by-ids", { apiKey, body: { tool_ids: [toolId], ...(searchId ? { search_id: searchId } : {}) }, timeoutMs });
   } else if (command === "execute") {
     requestKind = "tools/execute";
@@ -1088,8 +1253,7 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
     const adaptation = adaptDirectParameters({ parameters: jsonFlag(flags, "--params"), schema: requiredJsonFlag(flags, "--schema"), enumMaps: jsonFlag(flags, "--enum-maps", {}) });
     params = adaptation.final_parameters;
     validation = requiredJsonFlag(flags, "--validation");
-    const estimate = estimateDirectBudget(requiredJsonFlag(flags, "--estimate"));
-    enforceDirectBudget({ budget: budgetInput, estimate, observedCalls });
+    estimate = estimateDirectBudget(requiredJsonFlag(flags, "--estimate"));
     request = () => requestJson("/tools/execute", {
       apiKey,
       query: { tool_id: toolId },
@@ -1101,13 +1265,20 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
   }
 
   const observedAt = new Date().toISOString();
+  const { reservation } = await reserveObservedBudget(String(artifactPath), {
+    skill,
+    caseId,
+    budget: budgetInput,
+    estimate,
+    timeoutMs,
+  });
   try {
     const { payload, elapsedMs } = await request();
     const outcome = validateDirectResponse({ requestKind, payload, validation, params, observedAt });
     const missingFields = outcome.reason_code ? [outcome.reason_code] : [];
     const billing = payload?.billing ?? { cost: payload?.cost ?? null };
     const usage = summarizeObservedUsage([{ request_kind: requestKind, billing, response: payload }]);
-    let call = createObservedCall({
+    const call = createObservedCall({
       requestKind,
       query,
       toolId,
@@ -1128,35 +1299,15 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
         evidence: compactValidationEvidence(outcome.evidence),
       },
     });
-    let postflightError = null;
-    try {
-      enforceDirectBudget({
-        budget: budgetInput,
-        estimate: { calls: 0, credits: 0, rows: 0, billable_quantity: 0 },
-        observedCalls: [...observedCalls, call],
-      });
-    } catch (error) {
-      if (error?.code !== "budget_limited") throw error;
-      postflightError = error;
-      call = createObservedCall({
-        requestKind,
-        query,
-        toolId,
-        params,
-        status: "rejected",
-        searchId,
-        fallbackUsed: flags.has("--fallback"),
-        missingFields: ["actual_budget_exceeded"],
-        response: payload,
-        observedAt,
-        elapsedMs,
-        billing,
-        usage,
-        validation: { kind: validation?.kind ?? null, status: "rejected", reason_code: "actual_budget_exceeded", budget: error.details },
-      });
-    }
-    const artifact = await appendObservedCall(String(artifactPath), { skill, caseId, call });
-    console.log(JSON.stringify({ response: call.response, observed_call: call, observed_call_count: artifact.observed_call_count }, null, 2));
+    const settlement = await settleObservedBudget(String(artifactPath), {
+      skill,
+      caseId,
+      reservationId: reservation.reservation_id,
+      budget: budgetInput,
+      call,
+    });
+    console.log(JSON.stringify({ response: settlement.call.response, observed_call: settlement.call, observed_call_count: settlement.artifact.observed_call_count }, null, 2));
+    const postflightError = settlement.postflightError;
     if (postflightError) {
       postflightError.recorded = true;
       throw postflightError;
@@ -1165,7 +1316,13 @@ HTTP uses QVERIS_BASE_URL (or desktop QVERIS_API_BASE_URL) and QVERIS_API_KEY. R
     if (error?.recorded) throw error;
     const timeout = error?.timeout ?? null;
     const call = createObservedCall({ requestKind, query, toolId, params, status: "failed", searchId, fallbackUsed: flags.has("--fallback"), missingFields: [timeout?.reason_code ?? error?.code ?? "request_failed"], response: { error: error?.message ?? String(error), timeout }, observedAt, timeout });
-    await appendObservedCall(String(artifactPath), { skill, caseId, call });
+    await settleObservedBudget(String(artifactPath), {
+      skill,
+      caseId,
+      reservationId: reservation.reservation_id,
+      budget: budgetInput,
+      call,
+    });
     throw error;
   }
 }

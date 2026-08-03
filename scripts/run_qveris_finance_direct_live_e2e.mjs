@@ -2,7 +2,7 @@
 /** Run the three audited direct-finance Skills with one cumulative budget ledger. */
 
 import { spawnSync } from "node:child_process";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -97,7 +97,7 @@ export function buildDirectLiveE2ePlan({ dateTag = new Date().toISOString().slic
         params: { symbol: "600519.SH", start_date: startDate, end_date: dateTag },
         enum_maps: {},
         estimate: { expectedRows: 45, expectedBillableQuantity: 1, creditsPerUnit: 0, fixedCredits: 30 },
-        validation: { kind: "adjusted_bars", expectedSymbol: "600519.SH", startDate, endDate: dateTag, adjustment: "forward" },
+        validation: { kind: "adjusted_bars", expectedSymbol: "600519.SH", startDate, endDate: dateTag, requestedCount: 20, adjustment: "forward" },
       },
       {
         skill: "qveris-a-share-factor-screen-direct",
@@ -121,6 +121,7 @@ export function buildDirectLiveE2ePlan({ dateTag = new Date().toISOString().slic
           expectedSymbols: ["600519.SH", "300750.SZ", "002594.SZ"],
           startDate,
           endDate: dateTag,
+          requestedCount: 20,
           adjustment: "forward",
         },
       },
@@ -310,11 +311,15 @@ async function main(argv = process.argv.slice(2)) {
   if (!process.env.QVERIS_API_KEY) throw new Error("QVERIS_API_KEY environment variable not set");
   const outputDir = resolve(argValue(argv, "--output-dir", join(rootDir, "artifacts", `direct-live-e2e-${dateTag}`)));
   await mkdir(outputDir, { recursive: true });
-  const artifactPaths = plan.cases.map((testCase) => join(outputDir, `${testCase.case_id}-observed_calls.json`));
+  const caseArtifactPaths = plan.cases.map((testCase) => join(outputDir, `${testCase.case_id}-observed_calls.json`));
+  const priorArtifactPaths = (await readdir(outputDir, { withFileTypes: true }))
+    .filter((entry) => entry.isFile() && entry.name.endsWith("-observed_calls.json"))
+    .map((entry) => join(outputDir, entry.name));
+  const artifactPaths = [...new Set([...priorArtifactPaths, ...caseArtifactPaths])];
   const results = [];
   for (let index = 0; index < plan.cases.length; index += 1) {
     try {
-      const result = await runCase(plan.cases[index], { limits: plan.budget, artifactPaths, artifactPath: artifactPaths[index] });
+      const result = await runCase(plan.cases[index], { limits: plan.budget, artifactPaths, artifactPath: caseArtifactPaths[index] });
       results.push(result);
       console.log(`${result.case_id}: ${result.status} (${result.missing_fields.join(",") || "validated"})`);
     } catch (error) {
@@ -324,7 +329,7 @@ async function main(argv = process.argv.slice(2)) {
         status: "failed",
         missing_fields: ["runner_error"],
         error: error instanceof Error ? error.message : String(error),
-        artifact: artifactPaths[index],
+        artifact: caseArtifactPaths[index],
       };
       results.push(result);
       console.error(`${result.case_id}: failed (runner_error)`);
@@ -334,7 +339,7 @@ async function main(argv = process.argv.slice(2)) {
   const summary = { ...plan, recorded_at: new Date().toISOString(), usage, results };
   await writeFile(join(outputDir, "summary.json"), `${JSON.stringify(summary, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
   console.log(`summary: ${join(outputDir, "summary.json")}`);
-  if (results.some((result) => result.status === "failed")) throw new Error("One or more direct live E2E cases failed; see summary.json");
+  if (results.some((result) => result.status !== "success")) throw new Error("One or more direct live E2E cases did not pass semantic validation; see summary.json");
 }
 
 const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : null;

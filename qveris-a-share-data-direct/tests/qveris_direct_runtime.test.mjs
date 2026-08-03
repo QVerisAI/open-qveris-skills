@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, utimes, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -20,6 +20,7 @@ import {
   normalizeFiscalPeriod,
   resolveDirectBaseUrl,
   sanitizeDirectResponse,
+  settleObservedBudget,
   summarizeObservedUsage,
   validateDirectResponse,
   validateQuote,
@@ -168,6 +169,19 @@ test("adapts a canonical symbol to the compact s parameter used by quote tools",
     schema: { required: ["s"], properties: { s: { type: "string", description: "One or more symbols separated by commas" } } },
   });
   assert.deepEqual(result.final_parameters, { s: "TSLA" });
+});
+
+test("rejects conflicting canonical and provider-specific parameters that target the same field", () => {
+  assert.throws(
+    () => adaptDirectParameters({
+      parameters: { symbol: "600519.SH", code: "300750.SZ" },
+      schema: { required: ["code"], properties: { code: { type: "string" } } },
+    }),
+    (error) => error.code === "conflicting_parameter_aliases"
+      && error.details.target === "code"
+      && error.details.sources.includes("symbol")
+      && error.details.sources.includes("code"),
+  );
 });
 
 test("preserves canonical fiscal periods when the selected schema accepts them", () => {
@@ -464,6 +478,25 @@ test("blocks a request when a bounded cost estimate is unknown", () => {
   );
 });
 
+test("rejects negative budget estimates instead of letting them create headroom", () => {
+  assert.throws(
+    () => estimateDirectBudget({
+      expectedRows: -100,
+      expectedBillableQuantity: -100,
+      creditsPerUnit: 1,
+      calls: -1,
+    }),
+    (error) => error.code === "invalid_budget_value",
+  );
+  assert.throws(
+    () => enforceDirectBudget({
+      budget: { max_calls: -1 },
+      estimate: { calls: 0, credits: 0, rows: 0, billable_quantity: 0 },
+    }),
+    (error) => error.code === "invalid_budget_value",
+  );
+});
+
 test("derives cumulative budget usage from observed calls instead of trusting reset counters", () => {
   const observedCalls = [
     createObservedCall({ requestKind: "search", status: "success", response: { results: [] } }),
@@ -505,6 +538,21 @@ test("derives cumulative budget usage from observed calls instead of trusting re
   );
 });
 
+test("counts nested financial-statement records instead of only their response wrapper", () => {
+  const usage = summarizeObservedUsage([{
+    request_kind: "tools/execute",
+    response: {
+      result: {
+        data: {
+          annualReports: [{ fiscalDateEnding: "2025-12-31" }, { fiscalDateEnding: "2024-12-31" }],
+          quarterlyReports: [{ fiscalDateEnding: "2026-03-31" }],
+        },
+      },
+    },
+  }]);
+  assert.equal(usage.rows, 3);
+});
+
 test("CLI preflight enforces cumulative usage from its audit artifact", async () => {
   const directory = await mkdtemp(join(tmpdir(), "qveris-direct-budget-"));
   const artifactPath = join(directory, "observed_calls.json");
@@ -514,6 +562,37 @@ test("CLI preflight enforces cumulative usage from its audit artifact", async ()
     calls: [createObservedCall({ requestKind: "search", status: "success", response: { results: [] } })],
   });
   await writeFile(artifactPath, JSON.stringify(artifact), "utf8");
+  try {
+    const result = spawnSync(process.execPath, [
+      runtimePath,
+      "preflight",
+      "--params", "{}",
+      "--schema", "{}",
+      "--artifact", artifactPath,
+      "--estimate", JSON.stringify({ expectedRows: 0, expectedBillableQuantity: 0, creditsPerUnit: 0 }),
+      "--budget", JSON.stringify({ max_calls: 1, max_credits: 1, max_rows: 1, max_billable_quantity: 1 }),
+    ], { encoding: "utf8", env: { ...process.env, QVERIS_PROXY_REEXEC: "1" } });
+    assert.equal(result.status, 1);
+    assert.equal(JSON.parse(result.stderr).code, "budget_limited");
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("CLI preflight includes an in-flight budget reservation from its audit artifact", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "qveris-direct-reserved-budget-"));
+  const artifactPath = join(directory, "observed_calls.json");
+  const runtimePath = fileURLToPath(new URL("../scripts/qveris_direct_runtime.mjs", import.meta.url));
+  await writeFile(artifactPath, JSON.stringify({
+    artifact_version: "observed_calls.v1",
+    observed_calls: [],
+    budget_reservations: [{
+      reservation_id: "in-flight",
+      created_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 60_000).toISOString(),
+      estimate: { calls: 1, credits: 0, rows: 0, billable_quantity: 0 },
+    }],
+  }), "utf8");
   try {
     const result = spawnSync(process.execPath, [
       runtimePath,
@@ -589,6 +668,86 @@ test("preserves every observed call when concurrent writers share one artifact",
     const artifact = JSON.parse(await readFile(artifactPath, "utf8"));
     assert.equal(artifact.observed_call_count, 12);
     assert.deepEqual(new Set(artifact.observed_calls.map((call) => call.search_id)).size, 12);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("atomically reserves a shared call budget before concurrent network requests", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "qveris-direct-budget-race-"));
+  const artifactPath = join(directory, "observed_calls.json");
+  const runtimePath = fileURLToPath(new URL("../scripts/qveris_direct_runtime.mjs", import.meta.url));
+  const mockFetch = `globalThis.fetch=async()=>{await new Promise(resolve=>setTimeout(resolve,200));return new Response(JSON.stringify({search_id:"race",results:[]}),{status:200,headers:{"content-type":"application/json"}})}`;
+  const args = [
+    runtimePath,
+    "search", "--query", "race",
+    "--budget", JSON.stringify({ max_calls: 1, max_credits: 0, max_rows: 0, max_billable_quantity: 0 }),
+    "--skill", "test-skill",
+    "--artifact", artifactPath,
+  ];
+  const run = () => new Promise((resolveRun) => {
+    const child = spawn(process.execPath, args, {
+      env: {
+        ...process.env,
+        QVERIS_API_KEY: "test",
+        QVERIS_PROXY_REEXEC: "1",
+        NODE_OPTIONS: `--import=data:text/javascript,${encodeURIComponent(mockFetch)}`,
+      },
+      stdio: "ignore",
+    });
+    child.on("exit", (code) => resolveRun(code));
+  });
+  try {
+    const exitCodes = await Promise.all([run(), run()]);
+    const artifact = JSON.parse(await readFile(artifactPath, "utf8"));
+    assert.deepEqual(exitCodes.sort(), [0, 1]);
+    assert.equal(artifact.observed_call_count, 1);
+    assert.equal(artifact.budget_reservations, undefined);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("postflight settlement adds actual usage on top of an external cumulative floor", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "qveris-direct-postflight-"));
+  const artifactPath = join(directory, "observed_calls.json");
+  await writeFile(artifactPath, JSON.stringify({
+    artifact_version: "observed_calls.v1",
+    observed_calls: [],
+    budget_reservations: [{
+      reservation_id: "reservation-1",
+      created_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 60_000).toISOString(),
+      estimate: { calls: 1, credits: 1, rows: 0, billable_quantity: 0 },
+    }],
+  }), "utf8");
+  const call = createObservedCall({
+    requestKind: "tools/execute",
+    toolId: "test.tool",
+    searchId: "search-1",
+    status: "success",
+    usage: { credits: 2, rows: 0, billable_quantity: 0 },
+    response: { result: { data: [] } },
+  });
+  try {
+    const settlement = await settleObservedBudget(artifactPath, {
+      skill: "test-skill",
+      caseId: "postflight",
+      reservationId: "reservation-1",
+      budget: {
+        max_calls: 10,
+        max_credits: 120,
+        max_rows: 10,
+        max_billable_quantity: 10,
+        used_credits: 119,
+      },
+      call,
+    });
+    assert.equal(settlement.call.status, "rejected");
+    assert.deepEqual(settlement.call.missing_fields, ["actual_budget_exceeded"]);
+    assert.equal(settlement.call.validation.budget.used.credits, 119);
+    assert.equal(settlement.call.validation.budget.estimate.credits, 2);
+    assert.equal(settlement.artifact.budget_reservations, undefined);
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

@@ -38,7 +38,7 @@ node scripts/qveris_direct_runtime.mjs preflight \
   --artifact ./observed-calls.json
 ```
 
-The adapter normalizes unambiguous A-share symbols and maps `FY/Q1/Q2/Q3/Q4` to `1231/0331/0630/0930/1231`. Supply `--enum-maps` only when discovery or inspection metadata explicitly documents a provider enum. Never guess enum meaning.
+The adapter normalizes unambiguous A-share symbols and maps `FY/Q1/Q2/Q3/Q4` to `1231/0331/0630/0930/1231`. Supply `--enum-maps` only when discovery or inspection metadata explicitly documents a provider enum. Never guess enum meaning. If canonical and provider-specific inputs resolve to the same schema field, conflicting values are rejected before any network call rather than silently overwriting one another.
 
 ## Budget Preflight
 
@@ -50,6 +50,10 @@ Every live request must have these controls:
 - `max_billable_quantity`
 
 Use billing metadata from discovery or inspection to estimate rows, billable quantity, and credits before execution. If a bounded dimension cannot be estimated, stop with `budget_estimate_unknown`. Never treat one HTTP request as one credit. Reuse one sidecar for the whole report: the runtime recomputes cumulative calls and actual billed usage from it and treats caller-supplied `used_*` values only as a higher external floor.
+
+Every limit, used counter, and estimate must be finite and non-negative; call and row counts must also be integers. Nested response collections are counted by their leaf records rather than as one wrapper row.
+
+Before a network request starts, the runtime atomically writes an expiring estimate reservation to the sidecar. Concurrent processes sharing that sidecar therefore cannot all spend the same remaining allowance. Settlement removes the reservation and appends the sanitized observed call under the same lock, using actual usage for the postflight check. A sidecar may transiently contain `budget_reservations` while a request is in flight; abandoned reservations expire after a bounded recovery interval.
 
 For quantity-priced tools, bind the estimate to the selected indicator or field set as well as the logical row count. A broad field preset can multiply billable quantity even when the requested security count and date window are unchanged.
 
@@ -90,7 +94,7 @@ For a reproducible bounded live run covering all three direct Skills:
 make run-finance-direct-live-e2e
 ```
 
-Use `--only case-id-a,case-id-b` with the underlying script to rerun failed cases without repeating successful paid cases.
+Use `--only case-id-a,case-id-b` with the underlying script to rerun failed cases without repeating successful paid cases. Selective reruns still scan every `*-observed_calls.json` ledger already present in the output directory, so prior cases remain part of the cumulative budget. The command exits nonzero unless every selected case reaches semantic `success`; `rejected` is never a passing E2E result. Historical-bar cases require at least 20 valid observations per requested security.
 
 Trace rows must equal the sidecar's `qveris_trace` projection exactly.
 
