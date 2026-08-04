@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Market Research"
+  short_description: "Build auditable cross-market research drafts"
+  default_prompt: "Use $qveris-market-research to build an auditable cross-market research draft from standardized QVeris evidence."

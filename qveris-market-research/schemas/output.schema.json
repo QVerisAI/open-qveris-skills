@@ -1,0 +1,251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qveris.ai/schemas/market-research-packet-v1.json",
+  "title": "QVeris market research packet",
+  "type": "object",
+  "required": [
+    "schema_version", "status", "workflow_stage", "distribution_status", "controls", "research_question", "as_of", "cutoff",
+    "scope", "planned_universe", "evidence_matrix", "planned_calls", "universe", "sources", "claims", "calculations", "peer_comps",
+    "research_candidates", "gaps", "review_gates", "workflow_guard_status",
+    "observed_call_count", "qveris_trace", "web_trace", "artifacts", "disclaimer"
+  ],
+  "properties": {
+    "schema_version": {"const": "qveris.market-research-packet.v1"},
+    "status": {"enum": ["complete_draft", "partial", "budget_limited", "blocked"]},
+    "workflow_stage": {"enum": ["planned", "awaiting_comps_review", "awaiting_draft_review", "complete"]},
+    "distribution_status": {"const": "not_authorized"},
+    "controls": {
+      "type": "object",
+      "required": ["dry_run", "max_calls", "max_web_operations", "max_age", "budget_note", "source_mode"],
+      "properties": {
+        "dry_run": {"type": "boolean"},
+        "max_calls": {"type": "integer", "minimum": 0},
+        "max_web_operations": {"type": "integer", "minimum": 0},
+        "max_age": {"type": "string"},
+        "budget_note": {"type": "string"},
+        "source_mode": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "research_question": {"type": "string", "minLength": 1},
+    "as_of": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Persisted effective cutoff. A user-supplied input as_of binds to CUT_OFF when CUT_OFF is absent; it never replaces workflow-start T0."
+    },
+    "cutoff": {
+      "type": "object",
+      "required": ["T0", "CUT_OFF", "effective_cutoff"],
+      "properties": {
+        "T0": {"type": "string", "format": "date-time"},
+        "CUT_OFF": {"type": "string", "format": "date-time"},
+        "effective_cutoff": {"type": "string", "format": "date-time"}
+      },
+      "additionalProperties": false
+    },
+    "scope": {"type": "object"},
+    "planned_universe": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["lead", "status"],
+        "properties": {
+          "lead": {"type": "string", "minLength": 1},
+          "status": {"enum": ["discovered_lead", "user_supplied_unverified", "planned_identity_check"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "evidence_matrix": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "required"],
+        "properties": {
+          "field": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"},
+          "status": {"enum": ["observed", "calculated", "estimated", "not_applicable", "missing"]}
+        },
+        "additionalProperties": true
+      }
+    },
+    "planned_calls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tool_name", "purpose", "required", "call_estimate", "batch_assumption"],
+        "properties": {
+          "tool_name": {"type": "string", "pattern": "^qveris_finance\\.[a-z0-9_]+$"},
+          "purpose": {"type": "string", "minLength": 1},
+          "required": {"type": "boolean"},
+          "call_estimate": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Worst-case capabilities/query attempt reserve under batch_assumption, including the initial attempt and every allowed retry or documented correction."
+          },
+          "batch_assumption": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "universe": {"type": "array", "items": {"$ref": "#/$defs/universeRow"}},
+    "sources": {"type": "array", "items": {"$ref": "#/$defs/source"}},
+    "claims": {"type": "array", "items": {"$ref": "#/$defs/claim"}},
+    "calculations": {"type": "array", "items": {"$ref": "#/$defs/calculation"}},
+    "peer_comps": {"type": "array", "items": {"$ref": "#/$defs/peer"}},
+    "research_candidates": {"type": "array", "items": {"$ref": "#/$defs/candidate"}},
+    "gaps": {"type": "array"},
+    "review_gates": {
+      "type": "object",
+      "required": ["comps_review", "draft_review"],
+      "properties": {
+        "comps_review": {"$ref": "#/$defs/gate"},
+        "draft_review": {"$ref": "#/$defs/gate"}
+      },
+      "additionalProperties": false
+    },
+    "workflow_guard_status": {"type": "string"},
+    "observed_call_count": {"type": "integer", "minimum": 0},
+    "qveris_trace": {"type": "array", "items": {"$ref": "#/$defs/trace"}},
+    "web_trace": {"type": "array"},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "disclaimer": {"const": "Not investment advice."}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "coverage": {"enum": ["complete_comparable", "partial_not_ranked", "proxy_only", "insufficient"]},
+    "universeRow": {
+      "type": "object",
+      "required": ["symbol", "issuer", "market", "exchange", "asset_type", "currency", "inclusion_reason", "identity_status"],
+      "properties": {
+        "symbol": {"type": "string", "minLength": 1},
+        "issuer": {"type": "string", "minLength": 1},
+        "market": {"type": "string", "minLength": 1},
+        "exchange": {"type": "string", "minLength": 1},
+        "asset_type": {"type": "string", "minLength": 1},
+        "currency": {"type": "string", "minLength": 1},
+        "inclusion_reason": {"type": "string", "minLength": 1},
+        "identity_status": {"const": "accepted"}
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["source_id", "source_type", "tool_name", "execution_id"],
+          "properties": {
+            "source_id": {"type": "string", "minLength": 1},
+            "source_type": {"const": "qveris_finance"},
+            "tool_name": {"type": "string", "pattern": "^qveris_finance\\.[a-z0-9_]+$"},
+            "execution_id": {"type": ["string", "null"]},
+            "as_of": {"type": "string"}
+          },
+          "additionalProperties": true
+        },
+        {
+          "type": "object",
+          "required": ["source_id", "source_type", "final_url", "publisher", "publisher_owner", "published_at", "accessed_at", "body_sha256", "issuer_or_topic_match", "window_match", "independence_result", "supported_claim_ids"],
+          "properties": {
+            "source_id": {"type": "string", "minLength": 1},
+            "source_type": {"const": "web"},
+            "final_url": {"type": "string", "pattern": "^https://"},
+            "publisher": {"type": "string", "minLength": 1},
+            "publisher_owner": {"type": "string", "minLength": 1},
+            "published_at": {"type": "string"},
+            "accessed_at": {"type": "string"},
+            "body_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+            "issuer_or_topic_match": {"const": true},
+            "window_match": {"const": true},
+            "independence_result": {"type": "string", "minLength": 1},
+            "supported_claim_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+          },
+          "additionalProperties": true
+        }
+      ]
+    },
+    "claim": {
+      "type": "object",
+      "required": ["claim_id", "type", "status", "text", "source_ids", "calculation_ids"],
+      "properties": {
+        "claim_id": {"type": "string", "minLength": 1},
+        "type": {"enum": ["fact", "calculation", "assumption", "judgment"]},
+        "status": {"enum": ["supported", "partially_supported", "unsupported", "conflicted"]},
+        "text": {"type": "string"},
+        "source_ids": {"type": "array", "items": {"type": "string"}},
+        "calculation_ids": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": true
+    },
+    "calculation": {
+      "type": "object",
+      "required": ["calculation_id", "formula", "inputs", "result", "currency", "unit", "period_end", "rounding", "check_status"],
+      "properties": {
+        "calculation_id": {"type": "string", "minLength": 1},
+        "formula": {"type": "string", "minLength": 1},
+        "inputs": {"type": "array", "minItems": 1},
+        "result": {"type": "object", "required": ["value"]},
+        "currency": {"type": "string", "minLength": 1},
+        "unit": {"type": "string", "minLength": 1},
+        "period_end": {"type": "string", "minLength": 1},
+        "rounding": {"type": "string", "minLength": 1},
+        "check_status": {"enum": ["passed", "failed", "pending"]}
+      },
+      "additionalProperties": true
+    },
+    "peer": {
+      "type": "object",
+      "required": ["symbol", "coverage_tier"],
+      "properties": {
+        "symbol": {"type": "string", "minLength": 1},
+        "coverage_tier": {"$ref": "#/$defs/coverage"}
+      },
+      "additionalProperties": true
+    },
+    "candidate": {
+      "type": "object",
+      "required": ["coverage_tier", "support_claim_ids", "counterevidence", "main_risk", "next_check"],
+      "properties": {
+        "coverage_tier": {"$ref": "#/$defs/coverage"},
+        "support_claim_ids": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+        "counterevidence": {"type": "string", "minLength": 1},
+        "main_risk": {"type": "string", "minLength": 1},
+        "next_check": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "gate": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"enum": ["pending", "approved", "changes_requested", "waived"]},
+        "reviewer": {"type": "string"},
+        "reviewed_at": {"type": "string"},
+        "notes": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "trace": {
+      "type": "object",
+      "required": ["tool_name", "params", "status", "execution_id", "fallback_used", "missing_fields"],
+      "properties": {
+        "tool_name": {"type": "string", "pattern": "^qveris_finance\\.[a-z0-9_]+$"},
+        "params": {"type": "object"},
+        "status": {"enum": ["success", "failed", "rejected"]},
+        "execution_id": {"type": ["string", "null"]},
+        "fallback_used": {"type": "boolean"},
+        "missing_fields": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "artifact": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"}
+      },
+      "additionalProperties": true
+    }
+  }
+}

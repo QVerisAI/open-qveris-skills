@@ -1,0 +1,51 @@
+{
+  "schema_version": "qveris.serenity-research-output.v1",
+  "status": "initial_pass",
+  "workflow_stage": "evidence_acquired",
+  "controls": {
+    "workflow": "theme_scan",
+    "dry_run": false,
+    "max_calls": 2,
+    "max_web_operations": 2,
+    "max_age": "P1D",
+    "budget_note": "CAP identity unavailable; Web leads remain unvalidated",
+    "source_mode": "hybrid_cap_audited_web"
+  },
+  "as_of": "2026-08-03T10:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-08-03T10:00:00+08:00",
+    "effective_cutoff": "2026-08-03T10:00:00+08:00"
+  },
+  "scope": {"theme": "example supply chain"},
+  "planned_universe": [],
+  "evidence_matrix": [],
+  "planned_calls": [],
+  "required_factors": [
+    "demand_pressure",
+    "system_coupling",
+    "scarcity_mechanism",
+    "supplier_concentration",
+    "expansion_difficulty",
+    "evidence_quality",
+    "valuation_context",
+    "event_visibility"
+  ],
+  "evidence": [],
+  "layers": [],
+  "candidates": [],
+  "validity": {
+    "schema_version": "qveris.serenity-research-validity.v1",
+    "status": "degraded",
+    "layer_ranking_allowed": false,
+    "layer_ranking": [],
+    "candidate_ranking_allowed": false,
+    "comparable_candidate_count": 0,
+    "violations": [{"code": "identity_unavailable", "message": "discovered leads cannot enter scoring"}]
+  },
+  "data_quality": {"status": "initial_pass", "missing_fields": ["validated security identities"]},
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "web_trace": [{"status": "discovered_lead", "accepted_as_evidence": false}],
+  "disclaimer": "Not investment advice."
+}
