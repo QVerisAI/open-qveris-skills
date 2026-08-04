@@ -1,0 +1,66 @@
+{
+  "schema_version": "qveris.serenity-research-output.v1",
+  "status": "initial_pass",
+  "workflow_stage": "planned",
+  "controls": {
+    "workflow": "candidate_compare",
+    "dry_run": true,
+    "max_calls": 6,
+    "max_web_operations": 10,
+    "max_age": "P1D",
+    "budget_note": "catalog/detail and local planning only; no finance or Web evidence calls",
+    "source_mode": "hybrid_cap_audited_web"
+  },
+  "as_of": "2026-07-31T16:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-07-31T16:00:00+08:00",
+    "effective_cutoff": "2026-07-31T16:00:00+08:00"
+  },
+  "scope": {"theme": "AI data-center power", "markets": []},
+  "planned_universe": [
+    {"lead": "Company A", "status": "user_supplied_unverified"},
+    {"lead": "Company B", "status": "user_supplied_unverified"}
+  ],
+  "evidence_matrix": [
+    {"field": "security_identity", "required": true},
+    {"field": "scarcity_mechanism", "required": true},
+    {"field": "positive_comparison_denominator", "required": true}
+  ],
+  "planned_calls": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "purpose": "resolve two candidate identities",
+      "required": true,
+      "call_estimate": 2,
+      "batch_assumption": "one call per candidate until live cap-detail proves batching"
+    }
+  ],
+  "required_factors": [
+    "demand_pressure",
+    "system_coupling",
+    "scarcity_mechanism",
+    "supplier_concentration",
+    "expansion_difficulty",
+    "evidence_quality",
+    "valuation_context",
+    "event_visibility"
+  ],
+  "evidence": [],
+  "layers": [],
+  "candidates": [],
+  "validity": {
+    "schema_version": "qveris.serenity-research-validity.v1",
+    "status": "accepted",
+    "layer_ranking_allowed": false,
+    "layer_ranking": [],
+    "candidate_ranking_allowed": false,
+    "comparable_candidate_count": 0,
+    "violations": []
+  },
+  "data_quality": {"status": "initial_pass", "missing_fields": ["all planned identities and evidence"]},
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "web_trace": [],
+  "disclaimer": "Not investment advice."
+}

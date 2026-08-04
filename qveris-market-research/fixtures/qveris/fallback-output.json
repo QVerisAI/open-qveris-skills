@@ -1,0 +1,66 @@
+{
+  "schema_version": "qveris.market-research-packet.v1",
+  "status": "partial",
+  "workflow_stage": "awaiting_comps_review",
+  "distribution_status": "not_authorized",
+  "controls": {
+    "dry_run": false,
+    "max_calls": 2,
+    "max_web_operations": 2,
+    "max_age": "P1D",
+    "budget_note": "structured identity unavailable; qualitative context only",
+    "source_mode": "hybrid_cap_audited_web"
+  },
+  "research_question": "What qualitative public evidence exists for the example theme?",
+  "as_of": "2026-08-03T10:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-08-03T10:00:00+08:00",
+    "effective_cutoff": "2026-08-03T10:00:00+08:00"
+  },
+  "scope": {"sector_or_theme": "contract example"},
+  "planned_universe": [],
+  "evidence_matrix": [],
+  "planned_calls": [],
+  "universe": [],
+  "sources": [
+    {
+      "source_id": "src-web-001",
+      "source_type": "web",
+      "final_url": "https://example.com/primary-document",
+      "publisher": "Example Standards Body",
+      "publisher_owner": "Example Standards Body",
+      "published_at": "2026-08-01T00:00:00+08:00",
+      "accessed_at": "2026-08-03T09:30:00+08:00",
+      "body_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "issuer_or_topic_match": true,
+      "window_match": true,
+      "independence_result": "issuer_primary",
+      "supported_claim_ids": ["clm-web-001"]
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "clm-web-001",
+      "type": "fact",
+      "status": "supported",
+      "text": "An opened public document discusses the example topic.",
+      "source_ids": ["src-web-001"],
+      "calculation_ids": []
+    }
+  ],
+  "calculations": [],
+  "peer_comps": [],
+  "research_candidates": [],
+  "gaps": ["security_identity", "structured_financials", "peer_comparability"],
+  "review_gates": {
+    "comps_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""},
+    "draft_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""}
+  },
+  "workflow_guard_status": "degraded",
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "web_trace": [{"status": "accepted", "source_id": "src-web-001"}],
+  "artifacts": [],
+  "disclaimer": "Not investment advice."
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "qveris.market-research-packet.v1",
+  "status": "budget_limited",
+  "workflow_stage": "planned",
+  "distribution_status": "not_authorized",
+  "controls": {
+    "dry_run": false,
+    "max_calls": 0,
+    "max_web_operations": 0,
+    "max_age": "P1D",
+    "budget_note": "no calls authorized",
+    "source_mode": "cap_only"
+  },
+  "research_question": "Can the requested peer study fit the authorized budget?",
+  "as_of": "2026-08-03T10:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-08-03T10:00:00+08:00",
+    "effective_cutoff": "2026-08-03T10:00:00+08:00"
+  },
+  "scope": {"sector_or_theme": "contract example"},
+  "planned_universe": [],
+  "evidence_matrix": [{"field": "security_identity", "required": true}],
+  "planned_calls": [
+    {
+      "tool_name": "qveris_finance.ref_security_master",
+      "purpose": "resolve the required security identity",
+      "required": true,
+      "call_estimate": 3,
+      "batch_assumption": "single-security request; reserve includes the initial attempt and two allowed retries"
+    }
+  ],
+  "universe": [],
+  "sources": [],
+  "claims": [],
+  "calculations": [],
+  "peer_comps": [],
+  "research_candidates": [],
+  "gaps": ["identity calls do not fit max_calls"],
+  "review_gates": {
+    "comps_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""},
+    "draft_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""}
+  },
+  "workflow_guard_status": "not_run",
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "web_trace": [],
+  "artifacts": [],
+  "disclaimer": "Not investment advice."
+}

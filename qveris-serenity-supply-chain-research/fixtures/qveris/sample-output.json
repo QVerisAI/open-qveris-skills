@@ -1,0 +1,103 @@
+{
+  "schema_version": "qveris.serenity-research-output.v1",
+  "status": "initial_pass",
+  "workflow_stage": "validated",
+  "controls": {
+    "workflow": "theme_scan",
+    "dry_run": false,
+    "max_calls": 4,
+    "max_web_operations": 2,
+    "max_age": "P1D",
+    "budget_note": "static contract fixture",
+    "source_mode": "hybrid_cap_audited_web"
+  },
+  "as_of": "2026-08-03T10:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-08-03T10:00:00+08:00",
+    "effective_cutoff": "2026-08-03T10:00:00+08:00"
+  },
+  "scope": {"theme": "example cooling system", "markets": ["US"]},
+  "planned_universe": [],
+  "evidence_matrix": [],
+  "planned_calls": [],
+  "required_factors": [
+    "demand_pressure",
+    "system_coupling",
+    "scarcity_mechanism",
+    "supplier_concentration",
+    "expansion_difficulty",
+    "evidence_quality",
+    "valuation_context",
+    "event_visibility"
+  ],
+  "evidence": [
+    {
+      "evidence_id": "ev-cap-001",
+      "status": "accepted",
+      "source_type": "qveris_finance",
+      "evidence_owner": "Example issuer",
+      "entity_or_topic": "EXAMPLE",
+      "as_of": "2026-08-03T09:00:00+08:00",
+      "tool_name": "qveris_finance.alt_supply_chain",
+      "symbol": "EXAMPLE",
+      "execution_id": "fixture-exec-001"
+    },
+    {
+      "evidence_id": "ev-web-001",
+      "status": "accepted",
+      "source_type": "web",
+      "evidence_owner": "Example Standards Body",
+      "entity_or_topic": "example cooling system",
+      "published_at": "2026-08-01T00:00:00+08:00",
+      "accessed_at": "2026-08-03T09:30:00+08:00",
+      "query": "example cooling system technical standard",
+      "final_url": "https://example.com/technical-standard",
+      "title": "Example cooling system technical standard",
+      "publisher_owner": "Example Standards Body",
+      "independence_result": "independent",
+      "body_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "issuer_or_topic_match": true,
+      "window_match": true
+    }
+  ],
+  "layers": [
+    {
+      "layer_id": "cooling-control",
+      "constrained_function": "control coolant flow",
+      "scarcity_mechanisms": ["qualification time"],
+      "evidence_ids": ["ev-cap-001", "ev-web-001"],
+      "criteria": {
+        "constrained_function_criticality": {"rating": 4, "evidence_ids": ["ev-cap-001", "ev-web-001"]},
+        "scarcity_mechanism_strength": {"rating": 4, "evidence_ids": ["ev-cap-001", "ev-web-001"]},
+        "substitution_difficulty": {"rating": 3, "evidence_ids": ["ev-cap-001", "ev-web-001"]},
+        "evidence_quality": {"rating": 4, "evidence_ids": ["ev-cap-001", "ev-web-001"]}
+      },
+      "status": "accepted"
+    }
+  ],
+  "candidates": [],
+  "validity": {
+    "schema_version": "qveris.serenity-research-validity.v1",
+    "status": "accepted",
+    "layer_ranking_allowed": false,
+    "layer_ranking": [],
+    "candidate_ranking_allowed": false,
+    "comparable_candidate_count": 0,
+    "violations": []
+  },
+  "data_quality": {"status": "initial_pass", "missing_fields": ["second accepted layer", "comparable company pool"]},
+  "observed_call_count": 1,
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.alt_supply_chain",
+      "params": {"symbol": "EXAMPLE"},
+      "status": "success",
+      "execution_id": "fixture-exec-001",
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ],
+  "web_trace": [{"source_id": "ev-web-001", "status": "accepted"}],
+  "disclaimer": "Not investment advice."
+}

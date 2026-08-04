@@ -1,0 +1,64 @@
+{
+  "schema_version": "qveris.market-research-packet.v1",
+  "status": "partial",
+  "workflow_stage": "planned",
+  "distribution_status": "not_authorized",
+  "controls": {
+    "dry_run": true,
+    "max_calls": 8,
+    "max_web_operations": 20,
+    "max_age": "P1D",
+    "budget_note": "catalog/detail and local planning only; no capability query or Web operation",
+    "source_mode": "hybrid_cap_audited_web"
+  },
+  "research_question": "How would a cross-market example peer study be executed?",
+  "as_of": "2026-06-30T16:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-06-30T16:00:00+08:00",
+    "effective_cutoff": "2026-06-30T16:00:00+08:00"
+  },
+  "scope": {"sector_or_theme": "contract example", "markets": ["CN", "HK", "US"]},
+  "planned_universe": [
+    {"lead": "User-supplied issuer A", "status": "user_supplied_unverified"},
+    {"lead": "User-supplied issuer B", "status": "planned_identity_check"}
+  ],
+  "evidence_matrix": [
+    {"field": "security_identity", "required": true},
+    {"field": "aligned_financials", "required": true},
+    {"field": "valuation_context", "required": false}
+  ],
+  "planned_calls": [
+    {
+      "tool_name": "qveris_finance.ref_security_master",
+      "purpose": "resolve planned securities",
+      "required": true,
+      "call_estimate": 3,
+      "batch_assumption": "one batch for both securities; reserve includes the initial attempt and two allowed retries"
+    },
+    {
+      "tool_name": "qveris_finance.fundamentals_is",
+      "purpose": "collect aligned income-statement fields",
+      "required": true,
+      "call_estimate": 3,
+      "batch_assumption": "one batch for both issuers; reserve includes the initial attempt and two allowed retries"
+    }
+  ],
+  "universe": [],
+  "sources": [],
+  "claims": [],
+  "calculations": [],
+  "peer_comps": [],
+  "research_candidates": [],
+  "gaps": ["all planned identities and evidence remain unobserved"],
+  "review_gates": {
+    "comps_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""},
+    "draft_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""}
+  },
+  "workflow_guard_status": "not_run",
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "web_trace": [],
+  "artifacts": [],
+  "disclaimer": "Not investment advice."
+}
