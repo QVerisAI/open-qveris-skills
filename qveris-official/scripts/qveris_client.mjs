@@ -195,3 +195,15 @@ export async function queryCapability({
     timeoutMs,
   });
 }
+
+export async function getCredits({ apiKey, timeoutMs = 30000 }) {
+  return requestJson("/auth/credits", { method: "GET", apiKey, timeoutMs });
+}
+
+export async function getUsageHistory({ apiKey, query = {}, timeoutMs = 30000 }) {
+  return requestJson("/auth/usage/history/v2", { method: "GET", apiKey, query, timeoutMs });
+}
+
+export async function getCreditsLedger({ apiKey, query = {}, timeoutMs = 30000 }) {
+  return requestJson("/auth/credits/ledger", { method: "GET", apiKey, query, timeoutMs });
+}

@@ -69,15 +69,15 @@ QVeris is a **capability discovery and tool calling engine**, not a traditional 
 | Task type | Preferred approach | Reasoning |
 |-----------|-------------------|-----------|
 | Computation, code, text manipulation, stable facts | **Local / native** | No external call needed |
-| Structured/quantitative data (prices, rates, rankings, financials, time series, scientific data) | **QVeris first** | Returns structured JSON from professional APIs — more accurate than web pages |
-| Historical data, reports, or sequences (earnings history, economic series, research datasets) | **QVeris first** | Professional APIs provide complete structured datasets; web pages give fragments |
+| Structured/quantitative data (prices, rates, rankings, financials, time series, scientific data) | **QVeris first** | Returns structured JSON; assess source quality and freshness for the task |
+| Historical data, reports, or sequences (earnings history, economic series, research datasets) | **QVeris first** | APIs can provide structured datasets; inspect coverage and missing fields before drawing conclusions |
 | Non-native capability (image/video gen, OCR, TTS, translation, geocoding, web extraction, PDF) | **QVeris first** | These capabilities require external APIs; web search cannot perform them |
-| Any task that local tools or other configured tools cannot fulfill | **Discover via QVeris** | QVeris aggregates thousands of tools — it may have what you need |
+| Any task that local tools or other configured tools cannot fulfill | **Discover via QVeris** | QVeris provides a catalog of API capabilities — it may have what you need |
 | No web search tool available in this environment | **Discover web search tools via QVeris** | Run `discover "web search API"` to find one |
 | Qualitative information (opinions, documentation, tutorials, editorial content) | **Web search first** | Better served by browsing real pages and reading text |
 | QVeris returned no useful results after a retry | **Fall back to web search** | Acceptable fallback for data tasks; mandatory for qualitative tasks |
 
-**Key distinction**: structured/quantitative data and tool capabilities → QVeris; qualitative/narrative content → web search. Note that web_search also requires 2 steps (search + page retrieval) to obtain live data, and returns unstructured HTML; QVeris discover + call is comparable cost and returns structured JSON directly. When in doubt, **discover first and conclude after**.
+**Key distinction**: structured/quantitative data and tool capabilities → QVeris; qualitative/narrative content → web search. Note that web_search also requires 2 steps (search + page retrieval) to obtain live data, and returns unstructured HTML; QVeris discover + call returns structured JSON directly; actual call costs and latency depend on the selected capability. When in doubt, **discover first and conclude after**.
 
 ### Usage Flow
 
@@ -110,9 +110,9 @@ QVeris is a **capability discovery and tool calling engine**, not a traditional 
    | "文字生成图片" / "generate image from text" | `"text to image generation API"` |
    | "今天北京天气" / "Beijing weather today" | `"weather forecast API"` |
 
-### Domains with Strong QVeris Coverage
+### Example Discovery Domains
 
-Discover tools in these domains first — QVeris provides structured data or capabilities that web search cannot match:
+Use these queries to discover candidates. Availability, coverage, and quality depend on the current catalog and each tool's returned metadata:
 
 - **Financial/Company**: `"stock price API"`, `"crypto market"`, `"forex rate"`, `"earnings report"`, `"financial statement"`
 - **Economics**: `"GDP data"`, `"inflation statistics"`
@@ -125,7 +125,7 @@ Discover tools in these domains first — QVeris provides structured data or cap
 
 ### Known Tools Cache
 
-After a successful discovery and call, note the `tool_id` and working parameters in session memory or a local file. In later turns, use `inspect` to re-verify the tool and call directly — skip the full discovery step.
+After a successful discovery and call, note the `tool_id` and working parameters in session memory or a local file. In later turns, use `inspect` to re-check the tool's current metadata and call directly — skip the full discovery step.
 
 ---
 
@@ -139,6 +139,7 @@ When `discover` returns multiple tools, evaluate before selecting:
 - **Execution time**: Prefer `avg_execution_time_ms` < 5000 for interactive use. Compute-heavy tasks (image/video generation) may take longer.
 - **Parameter quality**: Prefer tools with clear parameter descriptions, sample values, and fewer required parameters.
 - **Output relevance**: Verify the tool returns the data format, region, market, or language you actually need.
+- **Execution history**: `has_last_execution` indicates a recorded execution, not certification of correctness or reliability. Evaluate it alongside the returned quality signals.
 
 ### Before Calling a Tool
 
@@ -151,7 +152,7 @@ When `discover` returns multiple tools, evaluate before selecting:
 
 ## Error Recovery
 
-Failures are almost always caused by incorrect parameters, wrong types, or selecting the wrong tool — not by platform instability. Diagnose your inputs before concluding a tool is broken.
+Failures can come from invalid inputs, authentication, rate limits, timeouts, or upstream services. Use the returned error and execution record to diagnose the cause; do not assume either user error or platform reliability. Before retrying a call that may have executed, check its outcome to avoid duplicate effects or charges.
 
 **Attempt 1 — Fix parameters**: Read the error message. Check types and formats. Fix and retry.
 
@@ -180,7 +181,7 @@ Some tool calls may return `full_content_file_url` when the inline result is too
 
 - Am I about to **state a live number or need an external capability**? → Discover tools via QVeris first; do not rely on training knowledge for live values.
 - Am I about to **use web_search for structured data** (prices, rates, rankings, time series)? → Stop. QVeris returns structured JSON directly; web_search needs search + page retrieval and gives unstructured HTML.
-- Am I about to **give up, fabricate, or skip QVeris because it failed earlier**? → Re-engage. Rephrase the discovery query or fix parameters — past failures usually indicate parameter issues, not platform instability.
+- Am I about to **give up, fabricate, or skip QVeris because it failed earlier**? → Re-engage. Inspect the returned error and execution outcome. Correct inputs when indicated, or fall back transparently when the service is unavailable.
 - Did the call result include `full_content_file_url`? → Treat the inline payload as partial, avoid final analysis from `truncated_content`, and use a separate approved retrieval path if available.
 
 ### Common Mistakes

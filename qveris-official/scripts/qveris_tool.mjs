@@ -7,7 +7,7 @@
  *
  * SECURITY MANIFEST:
  *   Credential used: QVERIS_API_KEY (only)
- *   External endpoint: https://qveris.ai/api/v1 (only)
+ *   External endpoint: approved HTTPS QVeris API root, explicitly configured
  *   Local file reads: none
  *   Local file writes: none
  *
@@ -205,6 +205,10 @@ function displayDiscoveryResults(result) {
     console.log(`    ID: ${toolId}`);
     console.log(`    ${desc.length > 100 ? desc.slice(0, 100) + "..." : desc}`);
     console.log(`    Success: ${successRate} | Avg Time: ${avgTime}`);
+    const billing = formatBillingRuleBrief(tool.billing_rule, stats.cost);
+    if (billing) {
+      console.log(`    Billing: ${billing}`);
+    }
 
     const params = tool.params ?? [];
     if (params.length > 0) {
@@ -231,10 +235,15 @@ function displayDiscoveryResults(result) {
 function displayCallResult(result) {
   const success = result.success ?? false;
   const execTime = result.elapsed_time_ms ?? "N/A";
-  const cost = result.cost ?? 0;
+  const billing = result.billing ?? result.pre_settlement_bill ?? null;
+  const billingText = formatCallBilling(billing, result.cost ?? result.credits_used);
 
   console.log(`\n${success ? "Success" : "Failed"}`);
-  console.log(`Time: ${execTime}ms | Cost: ${cost}`);
+  console.log(`Time: ${execTime}ms${billingText ? ` | Billing: ${billingText}` : ""}`);
+  if (result.execution_id) {
+    console.log(`Execution ID: ${result.execution_id}`);
+    console.log(`Final charge status: use the separate QVeris CLI: qveris usage --mode search --execution-id ${result.execution_id} --json`);
+  }
 
   if (!success) {
     const error = result.error_message ?? "Unknown error";
@@ -258,6 +267,33 @@ function displayCallResult(result) {
     console.log("\nResult:");
     console.log(JSON.stringify(data, null, 2));
   }
+}
+
+function formatBillingRuleBrief(rule, legacyCost) {
+  if (rule && typeof rule === "object") {
+    if (typeof rule.description === "string" && rule.description.trim()) {
+      return rule.description.trim();
+    }
+    const price = rule.price && typeof rule.price === "object" ? rule.price : null;
+    if (price && price.amount_credits !== undefined) {
+      const unit = price.unit_label || price.unit || "request";
+      return `${price.amount_credits} credits per ${unit}`;
+    }
+  }
+  return legacyCost !== undefined && legacyCost !== null ? `${legacyCost} credits (legacy estimate)` : "";
+}
+
+function formatCallBilling(billing, legacyCost) {
+  if (billing && typeof billing === "object") {
+    if (typeof billing.summary === "string" && billing.summary.trim()) {
+      return billing.summary.trim();
+    }
+    const amount = billing.list_amount_credits ?? billing.amount_credits;
+    if (amount !== undefined && amount !== null) {
+      return `${amount} credits pre-settlement`;
+    }
+  }
+  return legacyCost !== undefined && legacyCost !== null ? `${legacyCost} credits (legacy estimate)` : "";
 }
 
 function displayCapabilityResults(result) {
@@ -404,7 +440,10 @@ Notes:
   cap-query is preferred for qveris_finance.* workflows because it uses capability_id + parameters
   cap-query accepts known finance aliases such as qveris_finance.mkt_l1_rt and normalizes them to CAP IDs
   discover returns tool candidates and metadata, not final data results
-  call returns the execution result
+  call returns the execution result and may include pre-settlement billing
+  this script has no usage-history, ledger, or export commands
+  audit with an already configured separate QVeris CLI: qveris usage --mode search --execution-id <execution_id> --json
+  if no audit tool is available, check the execution_id in your account history
   all requests are routed to ${baseUrl}
 
 Options:

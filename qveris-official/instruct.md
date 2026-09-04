@@ -77,7 +77,7 @@ All of these files should exist after the download.
 
 ```bash
 curl -fSL https://qveris.ai/skills/qveris-official/scripts/qveris_env.mjs -o ~/.openclaw/skills/qveris-official/scripts/qveris_env.mjs
-curl -fSL https://qveris.ai/skills/qveris-official/scripts/qveris_client.mjs -o ~/.openclaw/skills/qveris-offical/scripts/qveris_client.mjs
+curl -fSL https://qveris.ai/skills/qveris-official/scripts/qveris_client.mjs -o ~/.openclaw/skills/qveris-official/scripts/qveris_client.mjs
 curl -fSL https://qveris.ai/skills/qveris-official/scripts/qveris_tool.mjs -o ~/.openclaw/skills/qveris-official/scripts/qveris_tool.mjs
 ```
 
