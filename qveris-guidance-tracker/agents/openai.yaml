@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Guidance tracker"
+  short_description: "Run guidance tracker with QVeris data."
+  default_prompt: "Use QVeris to track guidance changes after this earnings season."

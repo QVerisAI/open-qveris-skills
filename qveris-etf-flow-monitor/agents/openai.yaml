@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris ETF flow monitor"
+  short_description: "Run etf flow monitor with QVeris data."
+  default_prompt: "Use QVeris to monitor ETF flows for AI, semiconductors, and broad market ETFs."

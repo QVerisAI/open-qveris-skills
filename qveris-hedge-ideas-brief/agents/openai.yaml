@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Hedge ideas brief"
+  short_description: "Run hedge ideas brief with QVeris data."
+  default_prompt: "Use QVeris to suggest hedge ideas for a concentrated AI portfolio."

@@ -1,0 +1,264 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-earnings-call-brief",
+  "status": "published",
+  "name": "qveris-earnings-call-brief",
+  "title": {
+    "en": "Earnings call brief",
+    "zh": "财报电话会简报"
+  },
+  "description": {
+    "en": "Turn earnings releases, transcripts, guidance, analyst questions, news, and market reaction into an analyst-ready brief with QVeris evidence.",
+    "zh": "把财报、电话会 transcript、指引、分析师问答、新闻和市场反应转成带 QVeris 证据的分析师简报。"
+  },
+  "overview": {
+    "en": "Use this skill when an agent needs to summarize an earnings event quickly without relying on stale model memory. It discovers transcript, filing, financial, quote, and news capabilities, calls only the requested event window, and returns a structured brief.",
+    "zh": "当 Agent 需要快速总结财报事件而不能依赖过期模型记忆时使用。它发现 transcript、公告、财务、行情和新闻能力，只调用指定事件窗口，并返回结构化简报。"
+  },
+  "icon": "FileBarChart",
+  "accent": "sky",
+  "scenarios": [
+    "finance"
+  ],
+  "platforms": [
+    "openclaw",
+    "cursor",
+    "claude-code",
+    "cli"
+  ],
+  "tags": [
+    "Finance",
+    "Earnings",
+    "Transcripts",
+    "Guidance",
+    "Brief"
+  ],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-earnings-call-brief"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-earnings-call-brief",
+  "official": true,
+  "prompts": [
+    {
+      "id": "earnings-brief",
+      "title": {
+        "en": "Earnings brief",
+        "zh": "财报简报"
+      },
+      "description": {
+        "en": "Summarize one earnings event.",
+        "zh": "总结一次财报事件。"
+      },
+      "prompt": {
+        "en": "Use QVeris to create an earnings call brief for MSFT. Include reported numbers, guidance, transcript themes, analyst Q&A, market reaction, risks, QVeris capabilities used, paid Call count, and missing evidence.",
+        "zh": "用 QVeris 为 MSFT 生成财报电话会简报。包含披露数据、指引、电话会主题、分析师问答、市场反应、风险、使用的 QVeris 能力、付费 Call 次数和缺失证据。"
+      }
+    },
+    {
+      "id": "guidance-change",
+      "title": {
+        "en": "Guidance change",
+        "zh": "指引变化"
+      },
+      "description": {
+        "en": "Find what changed versus prior expectations.",
+        "zh": "找出相对此前预期的变化。"
+      },
+      "prompt": {
+        "en": "Use QVeris to compare this quarter earnings guidance with prior quarter commentary and recent analyst expectations. Highlight changed assumptions and market reaction.",
+        "zh": "用 QVeris 对比本季度财报指引、上季度管理层表述和近期分析师预期。突出变化假设和市场反应。"
+      }
+    },
+    {
+      "id": "qa-risk",
+      "title": {
+        "en": "Q&A risk scan",
+        "zh": "问答风险扫描"
+      },
+      "description": {
+        "en": "Extract risks from analyst questions and management answers.",
+        "zh": "从分析师问题和管理层回答提取风险。"
+      },
+      "prompt": {
+        "en": "Use QVeris to scan the earnings transcript Q&A for demand, margin, competition, regulation, and capital allocation risks. Cite exact source types and separate management claims from evidence.",
+        "zh": "用 QVeris 扫描财报电话会 Q&A 里的需求、利润率、竞争、监管和资本配置风险。注明来源类型，并区分管理层说法和证据。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and screening workflows.",
+        "zh": "为全球研究和筛选工作流补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for source-backed A-share monitoring.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find earnings event data",
+        "zh": "寻找财报事件数据"
+      },
+      "purpose": {
+        "en": "Find transcripts, earnings releases, financial statements, filings, quote reaction, calendar, and news capabilities.",
+        "zh": "寻找 transcript、财报新闻稿、财务报表、公告、价格反应、日历和新闻能力。"
+      },
+      "sources": [
+        "transcript providers",
+        "FMP",
+        "Twelve Data",
+        "filing providers",
+        "news providers"
+      ],
+      "sample_query": "earnings transcript financial results guidance quote reaction API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Inspect event coverage",
+        "zh": "检查事件覆盖"
+      },
+      "purpose": {
+        "en": "Verify transcript availability, event date, fields, pagination, and billing before execution.",
+        "zh": "执行前确认 transcript 可用性、事件日期、字段、分页和计费。"
+      },
+      "sources": [
+        "Capability schemas",
+        "Provider metrics",
+        "Billing rules"
+      ]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call earnings evidence",
+        "zh": "调用财报证据"
+      },
+      "purpose": {
+        "en": "Call selected earnings sources and turn them into a concise analyst brief with source trace.",
+        "zh": "调用选定财报来源，并转成带来源记录的简洁分析师简报。"
+      },
+      "sources": [
+        "Transcript providers",
+        "Financial data providers",
+        "Market data providers",
+        "News providers"
+      ]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Expected QVeris usage",
+      "zh": "预计 QVeris 使用量"
+    },
+    "summary": {
+      "en": "This workflow usually needs 5-15 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 5-15 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
+    },
+    "typical_calls": "5-15",
+    "estimated_credits": "5-160 credits",
+    "free_actions": [
+      "Discover",
+      "Inspect"
+    ],
+    "paid_actions": [
+      "Call"
+    ],
+    "note": {
+      "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
+      "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Scope event",
+        "zh": "确定事件"
+      },
+      "description": {
+        "en": "Set ticker, quarter, event window, and whether to focus on results, guidance, or Q&A risk.",
+        "zh": "设定股票、季度、事件窗口，以及重点是业绩、指引还是 Q&A 风险。"
+      }
+    },
+    {
+      "title": {
+        "en": "Discover sources",
+        "zh": "发现来源"
+      },
+      "description": {
+        "en": "Use QVeris to find transcript, filing, financial, quote, and news capabilities.",
+        "zh": "用 QVeris 寻找 transcript、公告、财务、行情和新闻能力。"
+      }
+    },
+    {
+      "title": {
+        "en": "Call event window",
+        "zh": "调用事件窗口"
+      },
+      "description": {
+        "en": "Call only the relevant event window and keep source trace for every claim.",
+        "zh": "只调用相关事件窗口，并为每个判断保留来源记录。"
+      }
+    },
+    {
+      "title": {
+        "en": "Brief and compare",
+        "zh": "简报并比较"
+      },
+      "description": {
+        "en": "Return numbers, changed guidance, Q&A risk, market reaction, and follow-up checks.",
+        "zh": "返回数据、指引变化、Q&A 风险、市场反应和后续检查。"
+      }
+    }
+  ]
+}

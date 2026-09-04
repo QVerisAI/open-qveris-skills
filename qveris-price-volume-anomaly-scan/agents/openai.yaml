@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Price volume anomaly scan"
+  short_description: "Run price volume anomaly scan with QVeris data."
+  default_prompt: "Use QVeris to scan today's price-volume anomalies in US tech stocks."

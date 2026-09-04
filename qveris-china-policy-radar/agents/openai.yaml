@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris China policy radar"
+  short_description: "Run china policy radar with QVeris data."
+  default_prompt: "Use QVeris to scan China policy changes affecting A-share AI and consumer names."

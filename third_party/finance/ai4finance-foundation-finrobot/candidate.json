@@ -1,0 +1,11 @@
+{
+  "schema_version": "2026-06-22",
+  "source_repository": "AI4Finance-Foundation/FinRobot",
+  "source_url": "https://github.com/AI4Finance-Foundation/FinRobot",
+  "license": "Apache-2.0",
+  "stars_at_review": 7344,
+  "category": "finance",
+  "adoption_status": "methodology-reference",
+  "qveris_adaptation": "Use as workflow inspiration only; replace direct data/API calls with QVeris Discover, Inspect, and Call before publishing a Featured Skill.",
+  "notes": "Equity research automation, report generation, multi-agent financial analysis, and risk assessment patterns."
+}

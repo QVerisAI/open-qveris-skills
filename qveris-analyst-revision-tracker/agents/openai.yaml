@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Analyst revision tracker"
+  short_description: "Run analyst revision tracker with QVeris data."
+  default_prompt: "Use QVeris to track analyst revisions for the Magnificent Seven."

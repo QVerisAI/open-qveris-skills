@@ -1,0 +1,263 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-investment-committee",
+  "status": "published",
+  "name": "qveris-investment-committee",
+  "title": {
+    "en": "Investment committee",
+    "zh": "投资委员会辩论"
+  },
+  "description": {
+    "en": "Run a multi-lens investment committee workflow that compares quality, value, growth, sentiment, technical, macro, and risk evidence through QVeris.",
+    "zh": "通过 QVeris 运行多视角投资委员会流程，对比质量、价值、成长、情绪、技术、宏观和风险证据。"
+  },
+  "overview": {
+    "en": "Use this skill when a user wants a debate-style investment memo instead of a one-shot stock summary. The agent assigns lenses, calls QVeris evidence for each lens, scores disagreements, and produces a decision-ready committee note.",
+    "zh": "当用户需要辩论式投资 memo，而不是一次性股票摘要时使用。Agent 会分配不同分析视角，为每个视角调用 QVeris 证据，评分分歧并生成可供决策的委员会纪要。"
+  },
+  "icon": "TrendingUp",
+  "accent": "indigo",
+  "scenarios": [
+    "finance"
+  ],
+  "platforms": [
+    "openclaw",
+    "cursor",
+    "claude-code",
+    "cli"
+  ],
+  "tags": [
+    "Finance",
+    "Committee",
+    "Multi-Agent",
+    "Risk",
+    "Thesis"
+  ],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-investment-committee"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-investment-committee",
+  "official": true,
+  "prompts": [
+    {
+      "id": "committee-debate",
+      "title": {
+        "en": "Committee debate",
+        "zh": "委员会辩论"
+      },
+      "description": {
+        "en": "Run a buy/hold/sell debate with multiple evidence lenses.",
+        "zh": "用多个证据视角做买入/持有/卖出辩论。"
+      },
+      "prompt": {
+        "en": "Use QVeris to run an investment committee debate for AAPL. Include quality, value, growth, sentiment, technical, macro, and risk lenses. Each lens must cite the QVeris capabilities called, then produce a final buy/hold/sell view with dissenting evidence.",
+        "zh": "用 QVeris 为 AAPL 运行投资委员会辩论。包含质量、价值、成长、情绪、技术、宏观和风险视角。每个视角说明调用的 QVeris 能力，最后给出买入/持有/卖出观点和反对证据。"
+      }
+    },
+    {
+      "id": "two-name-debate",
+      "title": {
+        "en": "Two-name debate",
+        "zh": "双标的辩论"
+      },
+      "description": {
+        "en": "Compare two candidates and expose where analysts disagree.",
+        "zh": "比较两个候选标的并暴露分歧。"
+      },
+      "prompt": {
+        "en": "Use QVeris to compare MSFT and GOOGL as committee candidates. Assign bull and bear views, call the evidence needed for each, and end with a ranked decision and open questions.",
+        "zh": "用 QVeris 比较 MSFT 和 GOOGL。分配多头和空头视角，为每个视角调用必要证据，最后给出排序决策和待确认问题。"
+      }
+    },
+    {
+      "id": "risk-veto",
+      "title": {
+        "en": "Risk veto",
+        "zh": "风险否决"
+      },
+      "description": {
+        "en": "Let risk evidence overrule the investment case when needed.",
+        "zh": "在必要时让风险证据推翻投资观点。"
+      },
+      "prompt": {
+        "en": "Use QVeris to test whether TSLA has a risk veto today. Call market data, recent news, fundamentals, filings, and sentiment, then decide whether risk overrides the thesis.",
+        "zh": "用 QVeris 测试 TSLA 今天是否存在风险否决项。调用行情、近期新闻、基本面、公告和情绪数据，然后判断风险是否推翻 thesis。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and screening workflows.",
+        "zh": "为全球研究和筛选工作流补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for source-backed A-share monitoring.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find committee evidence",
+        "zh": "寻找委员会证据"
+      },
+      "purpose": {
+        "en": "Find finance, news, filings, sentiment, technical, macro, and risk capabilities for each debate lens.",
+        "zh": "为每个辩论视角寻找财务、新闻、公告、情绪、技术、宏观和风险能力。"
+      },
+      "sources": [
+        "FMP",
+        "Twelve Data",
+        "filing providers",
+        "news providers",
+        "social providers"
+      ],
+      "sample_query": "stock fundamentals news sentiment technical indicators macro risk API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Inspect lens coverage",
+        "zh": "检查视角覆盖"
+      },
+      "purpose": {
+        "en": "Confirm every committee lens has adequate coverage and visible billing before execution.",
+        "zh": "执行前确认每个委员会视角都有足够覆盖和清晰计费。"
+      },
+      "sources": [
+        "Capability schemas",
+        "Provider metrics",
+        "Billing rules"
+      ]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call debate evidence",
+        "zh": "调用辩论证据"
+      },
+      "purpose": {
+        "en": "Call selected capabilities, attach evidence to each lens, and produce a traceable committee memo.",
+        "zh": "调用选定能力，把证据挂到每个视角，并生成可追踪的委员会 memo。"
+      },
+      "sources": [
+        "Financial data providers",
+        "Market data providers",
+        "News and social providers"
+      ]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Expected QVeris usage",
+      "zh": "预计 QVeris 使用量"
+    },
+    "summary": {
+      "en": "This workflow usually needs 10-30 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 10-30 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
+    },
+    "typical_calls": "10-30",
+    "estimated_credits": "10-300 credits",
+    "free_actions": [
+      "Discover",
+      "Inspect"
+    ],
+    "paid_actions": [
+      "Call"
+    ],
+    "note": {
+      "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
+      "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Assign lenses",
+        "zh": "分配视角"
+      },
+      "description": {
+        "en": "Define the committee lenses and what evidence would change each view.",
+        "zh": "定义委员会视角，以及什么证据会改变每个观点。"
+      }
+    },
+    {
+      "title": {
+        "en": "Discover source plan",
+        "zh": "发现来源计划"
+      },
+      "description": {
+        "en": "Use QVeris to find data capabilities for each lens and inspect costs before calls.",
+        "zh": "用 QVeris 为每个视角寻找数据能力，并在调用前检查成本。"
+      }
+    },
+    {
+      "title": {
+        "en": "Debate with evidence",
+        "zh": "基于证据辩论"
+      },
+      "description": {
+        "en": "Call evidence, score confidence, and record disagreement between lenses.",
+        "zh": "调用证据、评分信心，并记录视角之间的分歧。"
+      }
+    },
+    {
+      "title": {
+        "en": "Decide with dissent",
+        "zh": "带分歧给决策"
+      },
+      "description": {
+        "en": "Return final view, dissenting evidence, risk vetoes, and usage trace.",
+        "zh": "返回最终观点、反对证据、风险否决项和使用记录。"
+      }
+    }
+  ]
+}

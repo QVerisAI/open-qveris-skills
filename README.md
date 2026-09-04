@@ -21,6 +21,21 @@ This repository hosts **QVeris** ([`qveris.ai`](https://qveris.ai)) related bot/
   - `qveris-crypto-market-radar/`: Read-only adaptation of #23 GMGN Skills for crypto identity, spot, history, descriptive technical context, rankings, market mood, and whale monitoring. Wallet, swap, order, and signing features are removed.
 - `stock-copilot-pro/`: A **standalone global stock analysis skill** for ClawHub/OpenClaw style agents.
   - Includes multi-source routing (quote, fundamentals, technicals, sentiment), quality checks, and structured reports.
+- `qveris-supply-chain-research/`: A **QVeris-powered supply-chain bottleneck research skill**.
+  - Maps value-chain layers, calls QVeris finance/filings/news/company data capabilities, and ranks source-backed public-company research priorities.
+- `qveris-equity-research-report/`: A **QVeris-powered equity research report skill**.
+  - Builds source-backed company reports with fundamentals, valuation, filings, news, risks, and usage trace.
+- `qveris-investment-committee/`: A **multi-lens investment committee skill**.
+  - Debates quality, value, growth, sentiment, technical, macro, and risk evidence before producing a decision memo.
+- `qveris-news-sentiment-radar/`: A **news and sentiment monitoring skill**.
+  - Separates confirmed catalysts from noisy attention with QVeris news, social, filing, and quote calls.
+- `qveris-quant-factor-screen/`: A **transparent factor-screening skill**.
+  - Ranks stock universes by quality, momentum, valuation, liquidity, volatility, and news risk.
+- `qveris-portfolio-risk-monitor/`: A **portfolio risk monitoring skill**.
+  - Reviews concentration, drawdown, volatility, catalyst, news, and liquidity risks.
+- `qveris-earnings-call-brief/`: A **financial results and transcript briefing skill**.
+  - Summarizes earnings releases, transcripts, guidance, Q&A, market reaction, and missing evidence.
+- **Additional QVeris finance skill pack**: 38 focused workflows covering macro, rates, inflation, yield curves, sector rotation, ETF flows, options volatility, insider transactions, SEC filings, short interest, dividends, credit spreads, commodities, FX, crypto, bank earnings, biotech catalysts, REITs, energy inventories, China policy, HK markets, emerging markets, analyst revisions, anomalies, liquidity stress, merger arbitrage, buybacks, guidance, earnings readthroughs, customer exposure, valuation comps, scenarios, factor regimes, hedging, risk parity, IPO lockups, ESG controversy, and alternative demand signals.
 - `third_party/`: Evaluation area for third-party skills being adapted into QVeris Featured Skills.
   - Candidates must have a permissive license, visible quality/traction, and a clear QVeris data-acquisition path.
   - Discovery and tracking are handled by `qcli skill third-party` from the `quaestio-cli` repository.

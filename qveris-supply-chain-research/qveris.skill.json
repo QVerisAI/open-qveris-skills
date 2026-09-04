@@ -1,0 +1,231 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-supply-chain-research",
+  "status": "published",
+  "name": "qveris-supply-chain-research",
+  "title": {
+    "en": "Supply chain bottleneck research",
+    "zh": "产业链卡点研究助手"
+  },
+  "description": {
+    "en": "A QVeris-powered investment research workflow that maps value chains, finds scarce layers, ranks public-company research priorities, and cites live data capabilities.",
+    "zh": "用 QVeris 数据能力拆产业链、找稀缺卡点、排序上市公司研究优先级，并输出可核查证据链。"
+  },
+  "overview": {
+    "en": "Use this skill when an agent needs to turn a market theme into a source-backed supply-chain research workflow. It discovers finance, filings, company, news, and social capabilities through QVeris, inspects coverage and billing rules, then calls selected providers before ranking scarce layers and candidate companies.",
+    "zh": "当 Agent 需要把市场主题转成有来源证据的产业链研究流程时使用。它通过 QVeris 发现行情、公告、公司、新闻和社媒能力，先检查覆盖范围和计费规则，再调用所选数据源，最后排序稀缺层级和候选公司。"
+  },
+  "icon": "TrendingUp",
+  "accent": "green",
+  "scenarios": ["finance", "operations"],
+  "platforms": ["openclaw", "cursor", "claude-code", "cli"],
+  "tags": ["Finance", "Supply Chain", "Filings", "Research", "QVeris"],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-supply-chain-research"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-supply-chain-research",
+  "official": true,
+  "prompts": [
+    {
+      "id": "ai-infra-bottlenecks",
+      "title": {
+        "en": "AI infrastructure bottlenecks",
+        "zh": "AI 基建产业链卡点"
+      },
+      "description": {
+        "en": "Map scarce layers and rank public-company research priorities.",
+        "zh": "拆解稀缺层级并排序上市公司研究优先级。"
+      },
+      "prompt": {
+        "en": "Use QVeris to deeply research AI infrastructure supply-chain bottlenecks. Map the value chain, discover and inspect finance, filings, news, and company data capabilities, call the needed sources, rank the top 5 public-company research priorities, cite QVeris capabilities used, estimate paid Call count, and explain what could weaken each view.",
+        "zh": "用 QVeris 深度调研 AI 基建产业链卡点。先拆产业链层级，再发现并检查行情、公告、新闻和公司数据能力，调用必要数据源，给出 5 个上市公司优先研究标的，说明用了哪些 QVeris 能力、预计付费 Call 次数，以及什么情况会削弱每个判断。"
+      }
+    },
+    {
+      "id": "a-share-ai-semiconductor",
+      "title": {
+        "en": "A-share AI semiconductor scan",
+        "zh": "A 股 AI 半导体扫描"
+      },
+      "description": {
+        "en": "Build an A-share candidate universe, verify evidence, and rank scarce-layer exposure.",
+        "zh": "建立 A 股候选池，验证证据，并排序卡点暴露。"
+      },
+      "prompt": {
+        "en": "Use QVeris to scan the A-share AI semiconductor value chain. Build at least 20 candidates if data coverage allows, rank layers before companies, call QVeris data for announcements, financial statements, company profiles, and news, then return a top 5 research priority list with evidence strength and main risks.",
+        "zh": "用 QVeris 扫描 A 股 AI 半导体产业链。如果数据覆盖允许，先建立至少 20 个候选公司，先排产业链层级再排公司，调用 QVeris 的公告、财务报表、公司资料和新闻数据，最后给出前 5 个研究优先级、证据强度和主要风险。"
+      }
+    },
+    {
+      "id": "challenge-company-thesis",
+      "title": {
+        "en": "Challenge a company thesis",
+        "zh": "挑战单家公司 thesis"
+      },
+      "description": {
+        "en": "Use QVeris evidence to test whether a company truly controls a scarce layer.",
+        "zh": "用 QVeris 证据验证公司是否真正控制稀缺层。"
+      },
+      "prompt": {
+        "en": "Challenge the thesis that this company is a core supplier in its supply chain. Use QVeris to call filings, company profile, financials, quote, news, and relevant social or trade signals. Explain the exact value-chain position, evidence strength, missing proof, and what would make the thesis wrong.",
+        "zh": "挑战这家公司是产业链核心供应商的 thesis。用 QVeris 调用公告、公司资料、财务、行情、新闻以及相关社媒或行业信号。说明它准确处在哪个产业链位置、证据强度、缺失证明，以及什么情况说明这个判断错了。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities for thesis verification.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力，用于 thesis 验证。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for A-share monitoring and source-backed market research.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and candidate screening.",
+        "zh": "为全球研究和候选公司筛选补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find research data capabilities",
+        "zh": "发现研究数据能力"
+      },
+      "purpose": {
+        "en": "Search for market data, financial statements, company profiles, filings, transcripts, announcements, news, and social signal capabilities.",
+        "zh": "搜索行情、财务报表、公司资料、公告、电话会、交易所公告、新闻和社媒信号能力。"
+      },
+      "sources": ["FMP", "Twelve Data", "THS iFinD", "Caidazi", "Finnhub", "X"],
+      "sample_query": "stock filings financial statements company news API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Inspect coverage and billing",
+        "zh": "检查覆盖范围和计费"
+      },
+      "purpose": {
+        "en": "Verify market coverage, ticker parameters, output schema, latency, success rate, and billing_rule before the agent calls a provider.",
+        "zh": "在 Agent 调用供应商前确认市场覆盖、股票代码参数、输出结构、延迟、成功率和 billing_rule。"
+      },
+      "sources": ["Capability schemas", "Provider metrics", "Billing rules"]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call evidence sources",
+        "zh": "调用证据来源"
+      },
+      "purpose": {
+        "en": "Execute selected data capabilities and compose results into a value-chain bottleneck ranking with source-backed evidence.",
+        "zh": "调用选定数据能力，并把结果组织成有来源证据的产业链卡点排序。"
+      },
+      "sources": ["Market data providers", "Financial data providers", "News and social providers"]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Theme scan usage estimate",
+      "zh": "主题扫描使用量估算"
+    },
+    "summary": {
+      "en": "A single-company challenge typically needs a small set of paid calls; a broad theme scan may call several market, filing, financial, news, and company-profile capabilities after free discovery and inspection.",
+      "zh": "单家公司 thesis 挑战通常只需要少量付费调用；宽主题扫描会在免费 Discover 和 Inspect 后调用多类行情、公告、财务、新闻和公司资料能力。"
+    },
+    "typical_calls": "8-25",
+    "estimated_credits": "8-250 credits",
+    "free_actions": ["Discover", "Inspect"],
+    "paid_actions": ["Call"],
+    "note": {
+      "en": "Ask for user approval before running paid Calls. Inspect each selected capability's billing_rule and reduce scope if the estimated cost is too high.",
+      "zh": "执行付费 Call 前先请求用户确认。检查每个所选能力的 billing_rule；如果预计成本过高，先缩小研究范围。"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Scope the research question",
+        "zh": "确定研究问题"
+      },
+      "description": {
+        "en": "Clarify market, theme, time window, and whether the task is a theme scan, company challenge, or candidate comparison.",
+        "zh": "明确市场、主题、时间窗口，以及任务是主题扫描、单家公司挑战还是候选对比。"
+      }
+    },
+    {
+      "title": {
+        "en": "Discover and inspect QVeris data",
+        "zh": "发现并检查 QVeris 数据"
+      },
+      "description": {
+        "en": "Find required data capabilities, inspect coverage and billing, and ask approval before paid execution.",
+        "zh": "寻找所需数据能力，检查覆盖范围和计费，并在付费执行前请求确认。"
+      }
+    },
+    {
+      "title": {
+        "en": "Call sources and map layers",
+        "zh": "调用来源并拆层级"
+      },
+      "description": {
+        "en": "Call selected providers, map value-chain layers, and separate strong evidence from leads.",
+        "zh": "调用选定供应商，拆解产业链层级，并区分强证据和线索。"
+      }
+    },
+    {
+      "title": {
+        "en": "Rank and challenge",
+        "zh": "排序并反证"
+      },
+      "description": {
+        "en": "Rank scarce layers and public-company priorities, then explain risks, missing proof, QVeris calls used, and next verification steps.",
+        "zh": "排序稀缺层级和上市公司优先级，并说明风险、缺失证据、使用的 QVeris 调用和下一步验证。"
+      }
+    }
+  ]
+}

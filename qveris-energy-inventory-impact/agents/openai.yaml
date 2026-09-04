@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Energy inventory impact"
+  short_description: "Run energy inventory impact with QVeris data."
+  default_prompt: "Use QVeris to explain the latest energy inventory report impact."

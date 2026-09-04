@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Earnings readthrough"
+  short_description: "Run earnings readthrough with QVeris data."
+  default_prompt: "Use QVeris to map NVDA earnings readthroughs to suppliers and competitors."

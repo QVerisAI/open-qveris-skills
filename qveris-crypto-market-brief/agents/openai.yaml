@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Crypto market brief"
+  short_description: "Run crypto market brief with QVeris data."
+  default_prompt: "Use QVeris to brief BTC and ETH market structure today."
