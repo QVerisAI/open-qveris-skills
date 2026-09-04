@@ -1,0 +1,66 @@
+{
+  "skill": "qveris-crypto-market-radar",
+  "source_record": {
+    "candidate_number": 23,
+    "original_repository": "GMGN Skills",
+    "github_url": "https://github.com/GMGNAI/gmgn-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-23",
+    "local_source_snapshot": "third_party/source_repos/23-gmgn-skills",
+    "snapshot_latest_commit": "7205bf2 on 2026-07-23"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": {
+      "spot": "PT15M",
+      "history": "P1D",
+      "rankings": "PT15M",
+      "market_mood": "P1D",
+      "whale": "PT1H",
+      "news_social": "P1D"
+    },
+    "budget_note": "Static fallback-policy fixture; no failed or successful call is claimed."
+  },
+  "analysis": {
+    "workflow": "whale_monitor",
+    "summary": "The fixture defines how a whale-monitor request must degrade when activity, direction, or technical evidence is unavailable in a real run.",
+    "evidence_status": "unsupported",
+    "as_of": null,
+    "assets": ["ETH"],
+    "quote_currencies": [],
+    "window": {
+      "start": null,
+      "end": null,
+      "interval": null,
+      "timezone": "UTC",
+      "requested_observations": 0,
+      "accepted_observations": 0
+    },
+    "planned_calls": [
+      "qveris_finance.crypto_ref_master",
+      "qveris_finance.crypto_whale",
+      "qveris_finance.crypto_spot_rt"
+    ],
+    "fallback_plan": "If whale evidence fails semantic validation, retain only independently accepted identity or spot evidence and mark every whale interpretation unsupported.",
+    "sections": ["market_snapshot", "whale_context"],
+    "interpretation_limits": ["no_accumulation_inference", "no_distribution_inference"],
+    "rejections": [],
+    "evidence": []
+  },
+  "risk_notes": [
+    "A static fallback fixture cannot claim that a transport failure or fallback occurred."
+  ],
+  "missing_fields": ["asset_identity", "spot_snapshot", "whale_activity", "whale_direction"],
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": ["static_contract_fixture", "not_called_due_to_max_calls"],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": ["accumulation_claim", "distribution_claim", "transaction_instruction", "return_prediction"]
+  },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["accumulation_claim", "distribution_claim", "transaction_instruction", "return_prediction"]
+}

@@ -67,7 +67,8 @@ node scripts/qveris_tool.mjs call <tool_id> --discovery-id <discovery_id> --para
 - Write discovery queries as English capability descriptions for best results
 - Do not construct API URLs manually; use the provided script
 - Keep sensitive credentials and PII out of discovery queries and tool parameters
-- Do not dump full usage or ledger history into Agent context. Use summaries first, precise filters second, and local JSONL exports for large analysis.
+- The bundled script has no usage-history, ledger, or export commands. For audit, use an already configured external QVeris CLI/MCP tool: `qveris usage --mode search --execution-id <execution_id> --json` checks a call; `qveris ledger` summarizes balance movements. If unavailable, give the user the execution ID to inspect in their account history.
+- Use summaries and precise filters instead of dumping full history. This skill does not grant filesystem read/write access. Local exports require a separate host-authorized export/file-analysis workflow; they are not a capability of `qveris_tool.mjs`.
 - Treat legacy `cost` as a fallback signal. Final charge status comes from `usage_history.charge_outcome` and balance movement comes from `credits_ledger`.
 
 ## License

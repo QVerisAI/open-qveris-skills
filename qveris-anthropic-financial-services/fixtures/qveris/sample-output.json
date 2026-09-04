@@ -1,0 +1,95 @@
+{
+  "skill": "qveris-anthropic-financial-services",
+  "source_record": {
+    "candidate_number": 1,
+    "original_repository": "Anthropic Financial Services",
+    "github_url": "https://github.com/anthropics/financial-services",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-06-26",
+    "local_source_snapshot": "third_party/source_repos/01-anthropic-financial-services",
+    "snapshot_latest_commit": "4aa51ed 2026-06-26"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 12,
+    "max_age": "P1D",
+    "budget_note": "Stop after core earnings, fundamentals, and market calls; list omitted sections."
+  },
+  "analysis": {
+    "workflow": "earnings_analysis",
+    "entity": "NVDA",
+    "summary": "Fallback earnings memo skeleton based on consensus, event, market, and news context only.",
+    "fallback_context": {
+      "primary_tool": "qveris_finance.earnings_actual_surprise",
+      "fallback_tool": "qveris_finance.estimates_consensus",
+      "beat_miss_allowed": false,
+      "management_quotes_allowed": false
+    },
+    "sections": [
+      "earnings_context",
+      "consensus_snapshot",
+      "fundamental_drivers",
+      "market_reaction",
+      "uncertainties"
+    ]
+  },
+  "risk_notes": [
+    "Do not state beat/miss without actual and consensus evidence from QVeris.",
+    "Scenario analysis only; no buy/sell instruction or target price commitment."
+  ],
+  "missing_fields": [
+    "primary_tool_unavailable",
+    "qveris_finance.earnings_actual_surprise: provider_error",
+    "earnings_actual",
+    "earnings_surprise",
+    "beat_miss",
+    "management_quotes"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.estimates_consensus",
+      "capability_id": "qveris_finance.estimates_consensus",
+      "entity": "NVDA",
+      "market": "US",
+      "params": {
+        "symbol": "NVDA",
+        "market": "US"
+      },
+      "as_of": "2026-07-07",
+      "retrieved_at": "2026-07-07T02:45:26Z",
+      "fallback_used": true,
+      "missing_fields": [
+        "primary_tool_unavailable",
+        "qveris_finance.earnings_actual_surprise: provider_error",
+        "earnings_actual",
+        "earnings_surprise",
+        "beat_miss"
+      ],
+      "quality_note": "Consensus fallback only; do not convert this into actual-surprise evidence."
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Primary earnings surprise route was unavailable; memo must remain a fallback context note.",
+      "Transcript evidence is absent; do not invent management quotes."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "analyst_target_price",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "analyst_target_price",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ]
+}

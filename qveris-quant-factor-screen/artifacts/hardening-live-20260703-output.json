@@ -1,0 +1,209 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-quant-factor-screen",
+  "generated_at": "2026-07-03T06:55:33.729Z",
+  "mode": "live",
+  "scope": {
+    "universe": [
+      "AAPL",
+      "MSFT",
+      "NVDA",
+      "AMD",
+      "AVGO"
+    ],
+    "market": "US",
+    "window_days": 90,
+    "factor_set": [
+      "momentum",
+      "valuation",
+      "liquidity",
+      "volatility",
+      "quality",
+      "news_risk"
+    ]
+  },
+  "findings": [
+    "Screen universe contains 5 tickers: AAPL, MSFT, NVDA, AMD, AVGO.",
+    "Factor coverage attempted: valuation_ratios, liquidity_float, quote_snapshot, momentum_or_volatility.",
+    "Generated a 5-row ranking table with 1 scored ticker(s).",
+    "Ranking exposes raw fields, normalized scores, missing-field flags, factor weights, and tie-break rules."
+  ],
+  "evidence": [
+    {
+      "role": "valuation_ratios",
+      "tool_id": "financialmodelingprep.stable.ratios.retrieve.v1.bd1624ef",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "354836bf-efc6-4fd4-9494-7b629f764212",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "liquidity_float",
+      "tool_id": "financialmodelingprep.stable.sharesfloat.retrieve.v1.9fdd1e4f",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": "12566c61-8cc1-48bf-bd90-5c0b728f8715",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "quote_snapshot",
+      "tool_id": "eodhd.live_v2.us_quote_delayed.retrieve.v1.f0e13d45",
+      "ok": true,
+      "cost": 2.81,
+      "execution_id": "1e798482-8966-4ca5-a096-f9fffec8f3ab",
+      "record_count": 3,
+      "error": null
+    },
+    {
+      "role": "momentum_or_volatility",
+      "tool_id": "alphavantage.technical-indicators.bbands.v1",
+      "ok": true,
+      "cost": 2,
+      "execution_id": "0e816a4d-225e-446a-a178-c547edf4bd57",
+      "record_count": 6702,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Do not rank missing fundamentals as neutral without flagging the gap.",
+    "Provider coverage can vary by market and ticker.",
+    "This is a research screen, not a buy/sell recommendation."
+  ],
+  "usage": {
+    "paid_calls": 4,
+    "estimated_credits": 53.21
+  },
+  "result": {
+    "universe": [
+      "AAPL",
+      "MSFT",
+      "NVDA",
+      "AMD",
+      "AVGO"
+    ],
+    "factor_set": [
+      "momentum",
+      "valuation",
+      "liquidity",
+      "volatility",
+      "quality",
+      "news_risk"
+    ],
+    "coverage_roles": [
+      "valuation_ratios",
+      "liquidity_float",
+      "quote_snapshot",
+      "momentum_or_volatility"
+    ],
+    "scoring_version": "deterministic-preview-2026-07-03",
+    "ranking_ready": false,
+    "coverage_level": "partial",
+    "ranking_table": [
+      {
+        "rank": 1,
+        "symbol": "AAPL",
+        "score": 0.684,
+        "data_status": "partial",
+        "raw_fields": {
+          "pe": 34.1068090787717,
+          "roe": null,
+          "float_shares": 14662534368,
+          "quote_change_pct": null,
+          "technical": null
+        },
+        "normalized_scores": {
+          "valuation": 0.43155318202047177,
+          "quality": null,
+          "liquidity": 1,
+          "momentum": null,
+          "quote_reaction": null
+        },
+        "missing_factors": [
+          "quality",
+          "momentum",
+          "quote_reaction"
+        ]
+      },
+      {
+        "rank": null,
+        "symbol": "MSFT",
+        "score": null,
+        "data_status": "not_fetched_under_budget",
+        "raw_fields": {},
+        "normalized_scores": {},
+        "missing_factors": [
+          "valuation",
+          "quality",
+          "liquidity",
+          "momentum",
+          "quote_reaction"
+        ]
+      },
+      {
+        "rank": null,
+        "symbol": "NVDA",
+        "score": null,
+        "data_status": "not_fetched_under_budget",
+        "raw_fields": {},
+        "normalized_scores": {},
+        "missing_factors": [
+          "valuation",
+          "quality",
+          "liquidity",
+          "momentum",
+          "quote_reaction"
+        ]
+      },
+      {
+        "rank": null,
+        "symbol": "AMD",
+        "score": null,
+        "data_status": "not_fetched_under_budget",
+        "raw_fields": {},
+        "normalized_scores": {},
+        "missing_factors": [
+          "valuation",
+          "quality",
+          "liquidity",
+          "momentum",
+          "quote_reaction"
+        ]
+      },
+      {
+        "rank": null,
+        "symbol": "AVGO",
+        "score": null,
+        "data_status": "not_fetched_under_budget",
+        "raw_fields": {},
+        "normalized_scores": {},
+        "missing_factors": [
+          "valuation",
+          "quality",
+          "liquidity",
+          "momentum",
+          "quote_reaction"
+        ]
+      }
+    ],
+    "factor_weights": {
+      "valuation": 0.25,
+      "quality": 0.25,
+      "liquidity": 0.2,
+      "momentum": 0.2,
+      "quote_reaction": 0.1
+    },
+    "tie_break_rules": [
+      "Prefer higher total score.",
+      "If scores tie, prefer more non-missing factors.",
+      "If still tied, prefer higher liquidity score.",
+      "Do not promote a ticker with missing fundamentals above a fully covered ticker on model judgement alone."
+    ],
+    "missing_outputs": [
+      "complete_universe_factor_panel",
+      "news_risk_factor"
+    ],
+    "missing_data": []
+  }
+}

@@ -1,0 +1,1296 @@
+{
+  "skill_id": "qveris-news-sentiment-radar",
+  "mode": "dry-run",
+  "generated_at": "2026-07-02T09:33:21.930Z",
+  "usage": {
+    "paid_calls": 0,
+    "estimated_credits": 0
+  },
+  "preflight": {
+    "news_sentiment": {
+      "key": "news_sentiment",
+      "query": "stock news sentiment filings quote reaction API",
+      "search_id": "9ebe2438-c5b5-4056-b37b-96fd73dca7d1",
+      "discovered": [
+        {
+          "tool_id": "finnhub.stock.insidersentiment.retrieve.v1.dff02940",
+          "name": "Insider Sentiment",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0.548,
+          "avg_execution_time_ms": 363.12,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+          "name": "Market News & Sentiment Trending",
+          "provider": "alphavantage",
+          "expected_cost": "2",
+          "success_rate": 0.944,
+          "avg_execution_time_ms": 593.15,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2 credits per call"
+          },
+          "params": [
+            {
+              "name": "function",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "NEWS_SENTIMENT"
+              ]
+            },
+            {
+              "name": "tickers",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "topics",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "time_from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "time_to",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "sort",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "LATEST",
+                "EARLIEST",
+                "RELEVANCE"
+              ]
+            },
+            {
+              "name": "limit",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.insidersentiment.retrieve.v1.73d5f376",
+          "name": "Insider Sentiment",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 1,
+          "avg_execution_time_ms": 363.11,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "eodhd.sentiments.list.v1.9ba159a0",
+          "name": "Sentiment Data API",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 1,
+          "avg_execution_time_ms": 884.71,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "s",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.filings.retrieve.v1.b6619ba1",
+          "name": "SEC Filings",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "accessNumber",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "form",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      ],
+      "inspected": [
+        {
+          "tool_id": "finnhub.stock.insidersentiment.retrieve.v1.dff02940",
+          "name": "Insider Sentiment",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0.548,
+          "avg_execution_time_ms": 363.12,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+          "name": "Market News & Sentiment Trending",
+          "provider": "alphavantage",
+          "expected_cost": "2",
+          "success_rate": 0.944,
+          "avg_execution_time_ms": 593.15,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2 credits per call"
+          },
+          "params": [
+            {
+              "name": "function",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "NEWS_SENTIMENT"
+              ]
+            },
+            {
+              "name": "tickers",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "topics",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "time_from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "time_to",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "sort",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "LATEST",
+                "EARLIEST",
+                "RELEVANCE"
+              ]
+            },
+            {
+              "name": "limit",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.insidersentiment.retrieve.v1.73d5f376",
+          "name": "Insider Sentiment",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 1,
+          "avg_execution_time_ms": 363.11,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "eodhd.sentiments.list.v1.9ba159a0",
+          "name": "Sentiment Data API",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 1,
+          "avg_execution_time_ms": 884.71,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "s",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.filings.retrieve.v1.b6619ba1",
+          "name": "SEC Filings",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "accessNumber",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "form",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    "market_reaction": {
+      "key": "market_reaction",
+      "query": "real-time stock quote and historical OHLCV data API",
+      "search_id": "debbdfa6-bbb6-4eca-91a1-143f150c5afa",
+      "discovered": [
+        {
+          "tool_id": "eodhd.live_data.real_time.retrieve.v1.b60a4285",
+          "name": "Retrieve Live (Delayed) OHLCV Stock and Currency Data",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 0.995,
+          "avg_execution_time_ms": 1215.04,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "fmt",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "json",
+                "csv"
+              ]
+            },
+            {
+              "name": "s",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub_io_api.stock.quote",
+          "name": "Quote",
+          "provider": "finnhub_io_api",
+          "expected_cost": "1",
+          "success_rate": 0.916,
+          "avg_execution_time_ms": 476.89,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 1 credits per call; Free allowance: 60 callss/minute"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.quote.retrieve.v1.f72cf5ef",
+          "name": "Quote",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0.96,
+          "avg_execution_time_ms": 485.96,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+          "name": "Full Chart",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0.777,
+          "avg_execution_time_ms": 1048.84,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "date",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "date",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "alphavantage.time-series.intraday.v1",
+          "name": "Time Series Intraday",
+          "provider": "alphavantage",
+          "expected_cost": "2",
+          "success_rate": 0.99,
+          "avg_execution_time_ms": 448.92,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2 credits per call"
+          },
+          "params": [
+            {
+              "name": "function",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "TIME_SERIES_INTRADAY"
+              ]
+            },
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "interval",
+              "type": "string",
+              "required": true,
+              "enum": [
+                "1min",
+                "5min",
+                "15min",
+                "30min",
+                "60min"
+              ]
+            },
+            {
+              "name": "adjusted",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "name": "extended_hours",
+              "type": "boolean",
+              "required": false
+            },
+            {
+              "name": "month",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "outputsize",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "compact",
+                "full"
+              ]
+            },
+            {
+              "name": "datatype",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "json",
+                "csv"
+              ]
+            }
+          ]
+        }
+      ],
+      "inspected": [
+        {
+          "tool_id": "eodhd.live_data.real_time.retrieve.v1.b60a4285",
+          "name": "Retrieve Live (Delayed) OHLCV Stock and Currency Data",
+          "provider": "eodhd",
+          "expected_cost": "2.81",
+          "success_rate": 0.995,
+          "avg_execution_time_ms": 1215.04,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 2.81,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 2.81 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "fmt",
+              "type": "string",
+              "required": false,
+              "enum": [
+                "json",
+                "csv"
+              ]
+            },
+            {
+              "name": "s",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub_io_api.stock.quote",
+          "name": "Quote",
+          "provider": "finnhub_io_api",
+          "expected_cost": "1",
+          "success_rate": 0.916,
+          "avg_execution_time_ms": 476.89,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 1 credits per call; Free allowance: 60 callss/minute"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.quote.retrieve.v1.f72cf5ef",
+          "name": "Quote",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0.96,
+          "avg_execution_time_ms": 485.96,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+          "name": "Full Chart",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 0.777,
+          "avg_execution_time_ms": 1048.84,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "from",
+              "type": "date",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "date",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    "filings": {
+      "key": "filings",
+      "query": "SEC filings company announcements stock API",
+      "search_id": "ed706f4d-9c6a-483a-8d6c-af301e434854",
+      "discovered": [
+        {
+          "tool_id": "tradefeeds.secfilings.retrieve.v1.73a97bcb",
+          "name": "getSecFilings",
+          "provider": "tradefeeds",
+          "expected_cost": "3",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 3,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 3 credits per call"
+          },
+          "params": [
+            {
+              "name": "key",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "ticker",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "isin",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "date_from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "date_to",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "formtype",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "page",
+              "type": "integer",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.filings.retrieve.v1",
+          "name": "SEC Filings",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 1,
+          "avg_execution_time_ms": 353.5,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "accessNumber",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "form",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.filings.retrieve.v1.b6619ba1",
+          "name": "SEC Filings",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "accessNumber",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "form",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.secfilingscompanysearch.symbol.retrieve.v1.5cf7397d",
+          "name": "SEC Filings Company Search By Symbol",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1115.47,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.filings.retrieve.v1.27aa1125",
+          "name": "SEC Filings",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0.75,
+          "avg_execution_time_ms": 477.51,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "accessNumber",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "form",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      ],
+      "inspected": [
+        {
+          "tool_id": "tradefeeds.secfilings.retrieve.v1.73a97bcb",
+          "name": "getSecFilings",
+          "provider": "tradefeeds",
+          "expected_cost": "3",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 3,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 3 credits per call"
+          },
+          "params": [
+            {
+              "name": "key",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "ticker",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "isin",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "date_from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "date_to",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "formtype",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "page",
+              "type": "integer",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.filings.retrieve.v1",
+          "name": "SEC Filings",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 1,
+          "avg_execution_time_ms": 353.5,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "accessNumber",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "form",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "finnhub.stock.filings.retrieve.v1.b6619ba1",
+          "name": "SEC Filings",
+          "provider": "finnhub",
+          "expected_cost": "1",
+          "success_rate": 0,
+          "avg_execution_time_ms": 0,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 1,
+              "per": 1
+            },
+            "description": "Charged 1 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "cik",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "accessNumber",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "form",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "from",
+              "type": "string",
+              "required": false
+            },
+            {
+              "name": "to",
+              "type": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "tool_id": "financialmodelingprep.stable.secfilingscompanysearch.symbol.retrieve.v1.5cf7397d",
+          "name": "SEC Filings Company Search By Symbol",
+          "provider": "financialmodelingprep",
+          "expected_cost": "24.2",
+          "success_rate": 1,
+          "avg_execution_time_ms": 1115.47,
+          "billing_rule": {
+            "metering_mode": "call_count",
+            "billing_unit": "call",
+            "billing_unit_label": "call",
+            "price": {
+              "amount_credits": 24.2,
+              "per": 1
+            },
+            "snapshot_id": 0,
+            "snapshot_version": "website-default",
+            "description": "Charged 24.2 credits per call"
+          },
+          "params": [
+            {
+              "name": "symbol",
+              "type": "string",
+              "required": true
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "calls": [],
+  "trace": [
+    {
+      "type": "preflight",
+      "category": "news_sentiment",
+      "query": "stock news sentiment filings quote reaction API",
+      "search_id": "9ebe2438-c5b5-4056-b37b-96fd73dca7d1",
+      "started_at": "2026-07-02T09:33:21.930Z",
+      "finished_at": "2026-07-02T09:33:35.404Z",
+      "inspected_tool_ids": [
+        "finnhub.stock.insidersentiment.retrieve.v1.dff02940",
+        "alphavantage.news_sentiment.query.v1.467a92c0",
+        "finnhub.stock.insidersentiment.retrieve.v1.73d5f376",
+        "eodhd.sentiments.list.v1.9ba159a0",
+        "finnhub.stock.filings.retrieve.v1.b6619ba1"
+      ]
+    },
+    {
+      "type": "preflight",
+      "category": "market_reaction",
+      "query": "real-time stock quote and historical OHLCV data API",
+      "search_id": "debbdfa6-bbb6-4eca-91a1-143f150c5afa",
+      "started_at": "2026-07-02T09:33:35.404Z",
+      "finished_at": "2026-07-02T09:33:36.750Z",
+      "inspected_tool_ids": [
+        "eodhd.live_data.real_time.retrieve.v1.b60a4285",
+        "finnhub_io_api.stock.quote",
+        "finnhub.quote.retrieve.v1.f72cf5ef",
+        "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22"
+      ]
+    },
+    {
+      "type": "preflight",
+      "category": "filings",
+      "query": "SEC filings company announcements stock API",
+      "search_id": "ed706f4d-9c6a-483a-8d6c-af301e434854",
+      "started_at": "2026-07-02T09:33:36.750Z",
+      "finished_at": "2026-07-02T09:33:37.725Z",
+      "inspected_tool_ids": [
+        "tradefeeds.secfilings.retrieve.v1.73a97bcb",
+        "finnhub.stock.filings.retrieve.v1",
+        "finnhub.stock.filings.retrieve.v1.b6619ba1",
+        "financialmodelingprep.stable.secfilingscompanysearch.symbol.retrieve.v1.5cf7397d"
+      ]
+    }
+  ]
+}

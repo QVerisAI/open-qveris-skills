@@ -1,0 +1,82 @@
+{
+  "schema_version": "qveris.finance-capability-fallback-policy.v1",
+  "verified_at": "2026-07-19",
+  "max_capabilities_per_chain": 3,
+  "rules": [
+    {
+      "requested": "qveris_finance.mkt_l1_rt",
+      "fallback": "qveris_finance.mkt_bars_adjusted",
+      "evidence_status": "proxy_only",
+      "degradation_reason": "latest_completed_session_close_not_realtime",
+      "requirements": ["same security", "explicit latest completed trading date", "nonempty adjusted close and volume", "label adjusted basis and delayed/close status"],
+      "forbidden_claims": ["real-time quote", "intraday change", "live bid/ask", "current open-market status"]
+    },
+    {
+      "requested": "qveris_finance.analytics_tech_indicators",
+      "fallback": "qveris_finance.mkt_bars_adjusted",
+      "evidence_status": "complete",
+      "degradation_reason": "indicator_calculated_from_validated_adjusted_bars",
+      "requirements": ["same security", "requested end date", "enough observations and warm-up", "record formula, sample count and adjusted basis"],
+      "forbidden_claims": ["provider-calculated indicator", "trading signal"]
+    },
+    {
+      "requested": "qveris_finance.mkt_bars_eod",
+      "fallback": "qveris_finance.mkt_bars_adjusted",
+      "evidence_status": "partial",
+      "degradation_reason": "adjusted_bars_substitute_for_unadjusted_eod",
+      "requirements": ["same security", "same requested window", "explicitly label adjusted basis", "do not combine adjusted and unadjusted prices"],
+      "forbidden_claims": ["unadjusted EOD", "raw close"]
+    },
+    {
+      "requested": "qveris_finance.ref_security_master",
+      "fallback": "qveris_finance.ref_symbology",
+      "evidence_status": "partial",
+      "degradation_reason": "symbology_supports_identity_subset_only",
+      "requirements": ["same requested security", "use only nonempty symbol, ISIN, name and currency fields"],
+      "forbidden_claims": ["exchange", "asset type", "listing class", "A/H issuer relationship unless explicitly returned"]
+    },
+    {
+      "requested": "qveris_finance.ref_company_profile",
+      "fallback": "qveris_finance.ref_symbology",
+      "evidence_status": "partial",
+      "degradation_reason": "symbology_supports_identity_not_company_profile",
+      "requirements": ["same requested security", "use only nonempty identity fields"],
+      "forbidden_claims": ["business description", "registered address", "listing date", "share counts", "market capitalization"]
+    },
+    {
+      "requested": "qveris_finance.event_calendar_corp",
+      "fallback": "qveris_finance.news_fin_tagged",
+      "evidence_status": "proxy_only",
+      "degradation_reason": "tagged_news_is_event_context_not_calendar_or_announcement",
+      "requirements": ["same issuer", "explicit publication window", "nonempty relevant title and publication date"],
+      "forbidden_claims": ["complete event calendar", "announcement full text", "scheduled event date unless explicitly returned"]
+    },
+    {
+      "requested": "qveris_finance.event_calendar_earnings",
+      "fallback": "qveris_finance.news_fin_tagged",
+      "evidence_status": "proxy_only",
+      "degradation_reason": "tagged_news_is_earnings_context_not_earnings_calendar",
+      "requirements": ["same issuer", "explicit publication window", "earnings relevance"],
+      "forbidden_claims": ["confirmed earnings date", "calendar completeness", "beat or miss"]
+    },
+    {
+      "requested": "qveris_finance.ref_classification_industry",
+      "fallback": "qveris_finance.ref_company_profile",
+      "evidence_status": "partial",
+      "degradation_reason": "company_profile_may_supply_explicit_industry_fields",
+      "requirements": ["same issuer", "explicit nonempty industry or sector field", "identify the classification label as provider-neutral context"],
+      "forbidden_claims": ["classification hierarchy not returned", "industry cycle", "sector flow", "theme heat"]
+    }
+  ],
+  "no_equivalent_cap_fallback": [
+    "qveris_finance.fundamentals_is",
+    "qveris_finance.fundamentals_bs",
+    "qveris_finance.fundamentals_cf",
+    "qveris_finance.mkt_top_movers",
+    "qveris_finance.ownership_share_structure",
+    "qveris_finance.flow_dragon_tiger",
+    "qveris_finance.flow_northbound_for_stock_level_claims",
+    "qveris_finance.opt_chain",
+    "qveris_finance.investor_qa"
+  ]
+}

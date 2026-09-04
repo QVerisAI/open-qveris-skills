@@ -1,0 +1,77 @@
+{
+  "skill": "qveris-uzi-equity-research",
+  "source_record": {
+    "candidate_number": 34,
+    "original_repository": "UZI-Skill",
+    "github_url": "https://github.com/wbh604/UZI-Skill",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-07",
+    "local_source_snapshot": "third_party/source_repos/34-uzi-skill",
+    "snapshot_latest_commit": "fce996c on 2026-07-07"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 8,
+    "max_age": "P1D",
+    "budget_note": "Use cap-detail before specialty LHB or flow calls; degrade when unavailable."
+  },
+  "analysis": {
+    "workflow": "lhb_flow_fallback",
+    "entity": "002594.SZ",
+    "evidence_status": "proxy_only",
+    "summary": "Specialty flow evidence was not usable; the report falls back to identity, bars, and qualitative news context.",
+    "action_language_allowed": false
+  },
+  "risk_notes": [
+    "Missing LHB evidence cannot support hot-money conclusions.",
+    "Tagged news cannot prove trap risk or manipulation by itself."
+  ],
+  "missing_fields": [
+    "qveris_finance.flow_dragon_tiger: capability_unavailable",
+    "validated_lhb_rows",
+    "validated_large_order_flow",
+    "trap_risk_social_evidence"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "params": {
+        "symbol": "002594.SZ",
+        "market": "CN",
+        "limit": 5
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": true,
+      "missing_fields": [
+        "numeric_sentiment_score",
+        "validated_lhb_rows"
+      ]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "LHB and flow conclusions are not supported without validated specialty rows.",
+      "Trap-risk review remains incomplete because social-promotion evidence is unavailable."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell",
+      "safe_to_trade"
+    ]
+  },
+  "suppressed_fields": [
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell",
+    "safe_to_trade"
+  ],
+  "observed_call_count": 1
+}

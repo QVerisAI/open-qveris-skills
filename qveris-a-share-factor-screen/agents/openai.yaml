@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris A-Share Factor Screen"
+  short_description: "QVeris-backed A-share factor coverage screens without advice"
+  default_prompt: "Use $qveris-a-share-factor-screen for 600519.SH, 300750.SZ, and 002594.SZ to produce Markdown coverage notes with QVeris structured-data evidence, audited Web news/sentiment, separate traces, and no ranks unless comparability gates pass."

@@ -1,0 +1,58 @@
+{
+  "skill": "qveris-daymade-financial-data-suite",
+  "source_record": {
+    "candidate_number": 37,
+    "original_repository": "Daymade Financial Suite",
+    "github_url": "https://github.com/daymade/claude-code-skills",
+    "license": "MIT",
+    "evaluation_recent_activity": "2026-07-06",
+    "local_source_snapshot": "third_party/source_repos/37-daymade-claude-code-skills",
+    "snapshot_latest_commit": "d2d566f on 2026-07-06"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": "P1D",
+    "budget_note": "No live QVeris calls allowed."
+  },
+  "analysis": {
+    "workflow": "budget_limited_data_pack",
+    "summary": "No QVeris calls were made because max_calls=0; no data-pack or daily-report conclusions are supported.",
+    "next_calls": [
+      "qveris_finance.ref_symbology",
+      "qveris_finance.ref_security_master",
+      "qveris_finance.fundamentals_is"
+    ]
+  },
+  "risk_notes": [
+    "Budget-limited output cannot validate issuer identity, statement periods, or sector evidence."
+  ],
+  "missing_fields": [
+    "issuer_identity",
+    "market_data",
+    "financial_statements",
+    "news_context",
+    "daily_report_universe"
+  ],
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": [
+      "not_called_due_to_max_calls"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "target_price",
+      "upside",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "target_price",
+    "upside",
+    "buy_sell"
+  ],
+  "observed_call_count": 0
+}

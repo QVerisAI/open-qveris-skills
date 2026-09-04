@@ -1,0 +1,102 @@
+# QVeris Tool Map
+
+Source: Tradermonty Trading Skills, https://github.com/tradermonty/claude-trading-skills, MIT, evaluation recent activity 2026-07-06. Local snapshot: `third_party/source_repos/10-tradermonty-trading-skills`, commit `4d63990` on 2026-07-05.
+
+## Runtime Policy
+
+- Runtime data source: `qveris_finance.*` CAP tools only.
+- Credential: `QVERIS_API_KEY` only.
+- Controls: accept `dry_run`, `max_calls`, `max_age`, and `budget_note`; when omitted in natural language, default to `dry_run=false`, no hard `max_calls` limit, `max_age=P1D`, and a conservative budget note.
+- Required trace fields: `tool_name`, `capability_id`, `entity`, `market`, `params`, `as_of`, `retrieved_at`, `fallback_used`, `missing_fields`.
+- Treat raw QVeris response metadata as internal provenance only. `--safe-json` can still expose `_meta.routing_decision`, candidate route IDs, provider IDs, and failover details; never paste raw CAP script output into final reports or schema traces. Build sanitized trace rows that keep only `qveris_finance.*` names, normalized params, success/failure, retry/fallback status, validation result, and missing fields.
+- Suppress target-price, upside, recommendation, and buy/sell fields from QVeris payloads.
+- Validate requested entity, market, date window, benchmark, and payload shape before using a payload as evidence.
+- Treat failed, rejected, unavailable, or weak-relevance CAPs as trace/data-quality facts only. Do not list them in `Primary Evidence` as supporting evidence.
+- Summarize long or truncated payloads in full-workflow reports; mark `payload_summarized` or `payload_truncated` instead of expanding raw rows.
+- Apply the bundled rubric in this references directory: `qveris-finance-data-quality-rubric.md`; transport-success payloads that fail identity, window, benchmark, or proxy checks are hard rejects.
+- Apply the bundled `qveris-finance-retry-policy.md` for retry/no-retry decisions and `qveris-finance-cap-registry-snapshot-2026-07-07.md` for primary-path freshness.
+
+## Direct CAP Invocation
+
+Prefer standardized CAP query over legacy tool discovery:
+
+- Native route: call the exposed `qveris_finance.*` function directly, if present.
+- Script route: run `node {baseDir}/scripts/qveris_finance_tool.mjs cap-query qveris_finance.<name> --param key=value`. Use repeatable `--param` flags for shell-safe parameters; reserve `--params '<json>'` for complex nested payloads.
+- HTTP route: `POST /api/v1/capabilities/query` with `capability_id`, structured `parameters`, and `strategy: "best"`.
+- Discovery route: use `cap-search` and `cap-detail` only to verify unknown capability IDs or params.
+- Legacy route: use `/search` plus `/tools/execute` only if CAP query is unavailable; add `legacy_cap_shim_used` to `data_quality.warnings`.
+
+Use only the logical `qveris_finance.*` names listed in the workflow tables below. The Skill-owned adapter resolves their current canonical IDs from the live catalog and live cap-detail on every call. Do not copy a historical CAP ID from this document into a request.
+
+## Common Parameter Templates
+
+Use structured parameters; do not pass the user request as a free-text parameter.
+
+| Purpose | Template |
+|---|---|
+| Single-symbol risk/beta | `{"symbol":"AAPL","market":"US","benchmark_symbol":"SPY"}` |
+| Portfolio symbol loop | Run one call per symbol when multi-symbol parameters fail: `{"symbol":"NVDA","market":"US"}` |
+| Index levels | Conditional only: use `cap-detail` before calling; if calling `SPX`, sanity-check returned index identity before use |
+| VIX proxy | `{"symbol":"VIX","region":"US","date":"2026-07-07"}` |
+| Rates proxy | `{"symbol":"US10Y"}`; if rejected, inspect `RATES.GOVT_BENCHMARK` and retry with its documented fields |
+| Liquid ETF proxy bars | Conditional proxy only: use `{"symbol":"SPY","start_date":"2026-06-07","end_date":"2026-07-07","interval":"1day"}` only after accepting proxy status and reject fewer than 2 observations |
+| News and institutional context | `{"symbol":"MSFT","market":"US","limit":5}` |
+
+## Evidence Gate Checklist
+
+- For weighted portfolios, compute concentration before CAP calls: `top1_weight`, `top2_weight`, `hhi = sum(weight^2)`, and `effective_holdings = 1 / hhi`. Label `high` when top1 >= 35%, top2 >= 60%, HHI >= 0.25, or effective holdings <= 4; label `elevated` when top1 is 25%-35%, top2 is 45%-60%, HHI is 0.15-0.25, or effective holdings are 4-7; otherwise label `moderate`. These are monitoring labels, not rebalance instructions.
+- Confirm returned symbol, company name, exchange, market, and asset type match each holding before citing holding-level data.
+- Confirm returned index or benchmark identity before using index payloads. Reject `SPX` or benchmark responses that resolve to a non-index security.
+- Require at least 2 observations for multi-day bars before computing return, trend, correlation, realized volatility, drawdown, liquidity, VaR, or portfolio risk metrics.
+- Use `risk_beta_vol` as beta/vol monitor evidence when it passes identity checks, but do not present it as a full portfolio risk model without bars, benchmark, and correlation evidence.
+- Treat VIX, rates, and liquid ETF bars as proxy-only regime evidence unless primary index and breadth evidence pass validation.
+- Treat `news_fin_tagged` as qualitative context only; do not infer strong risk direction, strong catalysts, or numeric sentiment from tagged news alone.
+- Require news, ownership, and sector proxy rows to match the resolved holding or benchmark by symbol, company name, market, ISIN, asset type, or another explicit identity. Mark broad or wrong-entity rows as `entity_mix`, `weak_relevance`, or `overbroad_news`.
+- Treat monthly/stale rates as lagged proxy evidence only, not same-day market-regime confirmation.
+
+## Cost And Budget Guardrails
+
+- Minimum useful market-regime monitor: index levels, breadth, macro-event context, VIX, rates, and at least one liquid ETF/index proxy if primary evidence fails.
+- Minimum useful portfolio-risk monitor: holdings intake, beta/vol, classification, index/regime proxy, institutional ownership, and news for each major holding.
+- If `max_calls` is too low for the minimum useful set, return a budget-limited report and do not label the market risk-on/risk-off or recommend portfolio action.
+
+## Workflows To Preserve
+
+| Workflow | QVeris tools |
+|---|---|
+| Portfolio risk | Holdings concentration, `qveris_finance.ref_symbology`, `qveris_finance.ref_security_master`, `qveris_finance.ref_classification_industry`, `qveris_finance.risk_beta_vol`; add `qveris_finance.mkt_bars_adjusted` only when enough bars are needed and returned |
+| Market regime | Conditional `qveris_finance.index_levels` and `qveris_finance.mkt_breadth_internals` after `cap-detail`; otherwise validated `qveris_finance.index_vix`, `qveris_finance.event_calendar_macro`, `qveris_finance.rates_govt_benchmark`, or liquid ETF bars as proxy-only |
+| Sector rotation | `qveris_finance.ref_classification_industry`; conditional `qveris_finance.mkt_top_movers` and `qveris_finance.index_constituents` after `cap-detail` confirms params and returned row semantics |
+| Data-quality checker | Validate `as_of`, `missing_fields`, `fallback_used`, and staleness on every QVeris payload |
+| Earnings calendar | `qveris_finance.event_calendar_earnings` |
+
+## Proxy Trace Normalization
+
+When primary regime evidence fails, limited proxies are allowed only through QVeris capability names:
+
+| Proxy evidence | Trace as |
+|---|---|
+| VIX | `qveris_finance.index_vix` |
+| Government yields/rates | `qveris_finance.rates_govt_benchmark` |
+| Liquid ETF or index proxy bars, such as SPY/QQQ/IWM | `qveris_finance.mkt_bars_adjusted` or `qveris_finance.index_levels`, matching the QVeris route used |
+
+If a raw response exposes an internal provider route, normalize it before writing prose, tables, `qveris_trace`, `missing_fields`, or `data_quality.warnings`.
+
+## Live-Tested Quality Rules
+
+| Issue | Output rule |
+|---|---|
+| `qveris_finance.index_levels` and `qveris_finance.mkt_breadth_internals` returned 503 in natural-language forward test on 2026-07-06 | Use VIX/rates/liquid ETF proxies only as limited fallback and lower confidence. |
+| `qveris_finance.index_levels` can return a non-index security for an `SPX` request | Hard reject the payload as `semantic_mismatch`; do not use it as market index evidence. |
+| `qveris_finance.mkt_bars_adjusted` can return only one usable observation for a multi-day request | Hard reject for return, correlation, realized volatility, drawdown, liquidity, VaR, or portfolio risk calculations; mark `insufficient_observations`. |
+| `qveris_finance.macro_actual_vs_forecast` returned 404 / capability not found in no-limit natural-language retest on 2026-07-07 | Do not call as a primary path unless `cap-detail` first confirms availability; use `event_calendar_macro` only as weaker macro-event context and mark actual-vs-forecast missing. |
+| `qveris_finance.flow_sector_capital` returned 404 / capability not found in no-limit natural-language retest on 2026-07-07 | Do not call as a primary path unless `cap-detail` first confirms availability; use `mkt_top_movers`, `index_constituents`, and industry classification as weaker sector context. |
+| `qveris_finance.rates_govt_benchmark` can return monthly/stale rate observations | Use as lagged proxy evidence only; do not treat as same-day macro confirmation. |
+| `qveris_finance.news_fin_tagged` can return broad or truncated news sets when limits are weakly enforced | Use as qualitative context only; mark `overbroad_news` when relevance is weak or truncated. |
+| QVeris `_meta.failover_log` may show internal provider failover | Reflect this in `qveris_trace[].fallback_used` without treating providers as direct dependencies. |
+
+Removed or unavailable capabilities such as `qveris_finance.macro_actual_vs_forecast` and `qveris_finance.flow_sector_capital` must not appear in `Primary Evidence`. Record them only in `Data Quality And Missing Fields`, `missing_fields`, or `Trace Appendix` with `capability_unavailable` or `not_called`.
+
+## Removed Or Replaced
+
+Trading/prep/action semantics and external finance integrations are not runtime dependencies. Do not add direct non-QVeris finance data providers, SEC scraping, browser automation, cookies, login state, third-party keys, automated trading, wallet/swap, buy/sell points, portfolio action instructions, or target price commitments. Provider names are internal migration context; do not repeat them in final output.

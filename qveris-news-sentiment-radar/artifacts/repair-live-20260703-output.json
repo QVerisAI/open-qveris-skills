@@ -1,0 +1,120 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-news-sentiment-radar",
+  "generated_at": "2026-07-03T07:57:00.230Z",
+  "mode": "live",
+  "scope": {
+    "ticker": "NVDA",
+    "market": "US",
+    "window_days": 7,
+    "from": "2026-06-25",
+    "to": "2026-07-02"
+  },
+  "findings": [
+    "Reviewed NVDA over a 7-day window with 6 QVeris call attempts.",
+    "Observed 20 raw records or nested payload rows across selected sources.",
+    "Sentiment text mentions in returned payload: 34 positive, 24 negative, 22 neutral.",
+    "Composite catalyst confidence score is 0.698; scores below 0.65 should stay in watchlist mode.",
+    "Use strong labels only when news, filings, or quote reaction agree; otherwise mark the catalyst as weak or unresolved."
+  ],
+  "evidence": [
+    {
+      "role": "market_news_sentiment",
+      "target": null,
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "execution_id": "09073dee-9d32-4ffe-91fd-794a3f91e42d",
+      "record_count": 8,
+      "error": null
+    },
+    {
+      "role": "aggregate_sentiment",
+      "target": null,
+      "tool_id": "eodhd.sentiments.list.v1.9ba159a0",
+      "ok": true,
+      "cost": 2.81,
+      "execution_id": "93572110-ef82-48b7-b1ca-52455eb57920",
+      "record_count": 8,
+      "error": null
+    },
+    {
+      "role": "filings_check",
+      "target": null,
+      "tool_id": "finnhub.stock.filings.retrieve.v1",
+      "ok": false,
+      "cost": 1,
+      "execution_id": "0278f584-4941-47a7-b2c5-fdf66e83ada5",
+      "record_count": 0,
+      "error": null
+    },
+    {
+      "role": "filings_check",
+      "target": null,
+      "tool_id": "finnhub.stock.filings.retrieve.v1.27aa1125",
+      "ok": false,
+      "cost": 1,
+      "execution_id": "111afea9-71fc-4442-b8d8-c0712e3053fe",
+      "record_count": 0,
+      "error": null
+    },
+    {
+      "role": "price_reaction",
+      "target": null,
+      "tool_id": "eodhd.live_data.real_time.retrieve.v1.b60a4285",
+      "ok": true,
+      "cost": 2.81,
+      "execution_id": "77de25b0-c61a-48d4-814c-f517e253788e",
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "issuer_confirmation",
+      "target": null,
+      "tool_id": "financialmodelingprep.stable.secfilingscompanysearch.symbol.retrieve.v1.5cf7397d",
+      "ok": false,
+      "cost": 24.2,
+      "execution_id": "ab7fd33c-ea77-4392-8a59-205fa002a53b",
+      "record_count": 3,
+      "error": null
+    }
+  ],
+  "risks": [
+    "News volume is not the same as market relevance.",
+    "Social or insider-sentiment signals need confirmation from filings, reputable news, or price reaction.",
+    "Missing provider coverage should be shown explicitly rather than filled by model memory."
+  ],
+  "usage": {
+    "paid_calls": 6,
+    "estimated_credits": 33.82
+  },
+  "result": {
+    "ticker": "NVDA",
+    "sentiment_counts": {
+      "positive": 34,
+      "negative": 24,
+      "neutral": 22
+    },
+    "total_records": 20,
+    "signal_level": "positive",
+    "catalyst_status": "needs_confirmation",
+    "catalyst_confidence_score": 0.698,
+    "corroborating_roles": [
+      "market_news_sentiment",
+      "aggregate_sentiment",
+      "price_reaction"
+    ],
+    "confirmation_roles": [],
+    "evidence_roles": [
+      "market_news_sentiment",
+      "aggregate_sentiment",
+      "filings_check",
+      "filings_check",
+      "price_reaction",
+      "issuer_confirmation"
+    ],
+    "missing_data": [
+      "filings_or_issuer_confirmation: no filings, issuer-news, or press-release confirmation records returned"
+    ]
+  }
+}

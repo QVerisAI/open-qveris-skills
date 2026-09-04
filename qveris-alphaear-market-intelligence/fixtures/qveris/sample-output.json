@@ -1,0 +1,93 @@
+{
+  "skill": "qveris-alphaear-market-intelligence",
+  "source_record": {
+    "candidate_number": 42,
+    "original_repository": "Awesome Finance Skills / AlphaEar",
+    "github_url": "https://github.com/RKiding/Awesome-finance-skills",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-03-29",
+    "local_source_snapshot": "third_party/source_repos/42-awesome-finance-skills",
+    "snapshot_latest_commit": "853f09b on 2026-03-29"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 8,
+    "max_age": "P1D",
+    "budget_note": "Prioritize identity, market data, news, and sentiment; skip optional forecast-like routes."
+  },
+  "analysis": {
+    "workflow": "market_intelligence_note",
+    "report_mode": "coverage_monitor",
+    "entity": "TSLA",
+    "evidence_status": "partial",
+    "summary": "A full market-intelligence note is unavailable because bars, fundamentals, events, and non-empty sentiment signals are missing. This output is a coverage monitor with issuer identity and qualitative tagged-news context only.",
+    "signal_monitoring": {
+      "action_language_allowed": false,
+      "forecast_allowed": false,
+      "read": "Monitoring note only."
+    }
+  },
+  "risk_notes": [
+    "Tagged news is background context only without validated non-empty sentiment rows.",
+    "Signal-monitor wording cannot become a trade trigger."
+  ],
+  "missing_fields": [
+    "validated_numeric_sentiment",
+    "validated_sentiment_signal_fields",
+    "validated_news_cluster",
+    "forecast_output"
+  ],
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "params": {
+        "symbol": "TSLA",
+        "market": "US"
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "params": {
+        "symbol": "TSLA",
+        "market": "US",
+        "limit": 5
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": [
+        "numeric_sentiment_score",
+        "validated_sentiment_signal_fields"
+      ]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "limited",
+    "warnings": [
+      "Numeric sentiment is missing because qveris_finance.sentiment_text_signals was not available with non-empty signal fields in the sample path.",
+      "Forecast-style AlphaEar behavior is suppressed."
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "forecast",
+      "target_price",
+      "upside",
+      "recommendation",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "forecast",
+    "target_price",
+    "upside",
+    "recommendation",
+    "buy_sell"
+  ],
+  "observed_call_count": 2
+}

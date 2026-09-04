@@ -1,0 +1,98 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-sector-rotation-map",
+  "generated_at": "2026-07-03T03:06:10.075Z",
+  "mode": "live",
+  "scope": {
+    "sector_proxies": [
+      "XLK",
+      "XLF",
+      "XLV",
+      "XLE",
+      "XLI",
+      "XLY",
+      "XLP",
+      "XLU"
+    ],
+    "benchmark": "SPY",
+    "market": "US",
+    "window_days": 30,
+    "from": "2026-06-03",
+    "to": "2026-07-03"
+  },
+  "findings": [
+    "Rotation proxy set contains 8 sectors or ETFs.",
+    "Collected 26 raw records or nested payload rows across selected sector/market sources.",
+    "Initial deterministic signals are relative strength, momentum, volatility, drawdown, liquidity, and catalyst context.",
+    "Phase labels should be treated as research labels until verified against benchmark-relative history."
+  ],
+  "evidence": [
+    {
+      "role": "sector_performance_snapshot",
+      "tool_id": "financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 11,
+      "error": null
+    },
+    {
+      "role": "available_sectors",
+      "tool_id": "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 11,
+      "error": null
+    },
+    {
+      "role": "etf_symbol_search",
+      "tool_id": "financialmodelingprep.stable.etflist.retrieve.v1.85cd2c31",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 4,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Sector ETF proxies may not match local-market sector indices.",
+    "Flow, earnings-revision, and valuation coverage can be provider-dependent.",
+    "Rotation labels are not trading instructions."
+  ],
+  "usage": {
+    "paid_calls": 3,
+    "estimated_credits": 72.6
+  },
+  "result": {
+    "sector_proxies": [
+      "XLK",
+      "XLF",
+      "XLV",
+      "XLE",
+      "XLI",
+      "XLY",
+      "XLP",
+      "XLU"
+    ],
+    "benchmark": "SPY",
+    "total_records": 26,
+    "signal_framework": [
+      "relative_strength",
+      "momentum",
+      "volatility",
+      "drawdown",
+      "liquidity",
+      "catalyst_context"
+    ],
+    "phase_labels_ready": false,
+    "evidence_roles": [
+      "sector_performance_snapshot",
+      "available_sectors",
+      "etf_symbol_search"
+    ],
+    "missing_outputs": [
+      "relative_strength_scores",
+      "momentum_scores",
+      "rotation_quadrants"
+    ],
+    "missing_data": []
+  }
+}

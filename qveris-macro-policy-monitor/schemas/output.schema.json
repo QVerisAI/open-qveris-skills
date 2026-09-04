@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QVeris Macro Policy Monitor Output",
+  "$defs": {
+    "safeValue": {
+      "oneOf": [
+        { "type": ["string", "number", "boolean", "null"] },
+        { "type": "array", "items": { "$ref": "#/$defs/safeValue" } },
+        {
+          "type": "object",
+          "propertyNames": { "not": { "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])" } },
+          "additionalProperties": { "$ref": "#/$defs/safeValue" }
+        }
+      ]
+    },
+    "traceRow": {
+      "type": "object",
+      "required": ["tool_name", "params", "status", "execution_id", "fallback_used", "missing_fields"],
+      "properties": {
+        "tool_name": { "type": "string", "pattern": "^qveris_finance\\." },
+        "params": {
+          "type": "object",
+          "propertyNames": { "not": { "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])" } },
+          "additionalProperties": { "$ref": "#/$defs/safeValue" }
+        },
+        "status": { "enum": ["success", "failed", "rejected"] },
+        "execution_id": { "type": ["string", "null"] },
+        "fallback_used": { "type": "boolean" },
+        "missing_fields": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "statusReason": {
+      "type": "object",
+      "required": ["status", "reason"],
+      "properties": {
+        "status": { "type": "string" },
+        "reason": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "type": "object",
+  "required": ["skill", "source_record", "controls", "analysis", "risk_notes", "missing_fields", "data_quality", "observed_call_count", "qveris_trace", "disclaimer", "suppressed_fields"],
+  "properties": {
+    "skill": { "const": "qveris-macro-policy-monitor" },
+    "source_record": {
+      "type": "object",
+      "required": ["original_repository", "github_url", "license", "adapted_components", "upstream_commit", "evaluated_at"],
+      "properties": {
+        "original_repository": { "type": "string" },
+        "github_url": { "type": "string" },
+        "license": { "const": "MIT" },
+        "adapted_components": { "type": "array", "items": { "type": "string" } },
+        "upstream_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "evaluated_at": { "type": "string", "format": "date" }
+      },
+      "additionalProperties": false
+    },
+    "controls": {
+      "type": "object",
+      "required": ["dry_run", "max_calls", "max_age", "budget_note"],
+      "properties": {
+        "dry_run": { "type": "boolean" },
+        "max_calls": { "type": "integer", "minimum": 0 },
+        "max_age": {
+          "type": "object",
+          "required": ["macro", "rates", "market"],
+          "properties": {
+            "macro": { "type": "string", "pattern": "^P" },
+            "rates": { "type": "string", "pattern": "^P" },
+            "market": { "type": "string", "pattern": "^P" }
+          },
+          "additionalProperties": false
+        },
+        "budget_note": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object",
+      "required": ["workflow", "summary", "evidence_status", "geography", "fallback_mode", "comparison_status", "policy_transmission", "curve_proxy", "regime_label", "evidence"],
+      "properties": {
+        "workflow": { "enum": ["macro_policy", "growth_inflation", "rates_fx"] },
+        "summary": { "type": "string" },
+        "evidence_status": { "enum": ["complete", "complete_with_macro_fallback", "macro_only", "rates_only", "limited", "budget_limited"] },
+        "as_of": { "type": ["string", "null"] },
+        "geography": { "type": ["string", "null"] },
+        "window": {
+          "type": ["object", "null"],
+          "properties": { "start": { "type": "string" }, "end": { "type": "string" }, "timezone": { "const": "UTC" } },
+          "required": ["start", "end", "timezone"],
+          "additionalProperties": false
+        },
+        "fallback_mode": { "enum": ["complete", "complete_with_macro_fallback", "macro_only", "rates_only", "limited"] },
+        "comparison_status": { "enum": ["descriptive_change_observed", "snapshot_only"] },
+        "policy_transmission": { "$ref": "#/$defs/statusReason" },
+        "curve_proxy": { "type": "object", "additionalProperties": { "$ref": "#/$defs/safeValue" } },
+        "regime_label": { "$ref": "#/$defs/statusReason" },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["tool_name", "purpose", "status", "fields"],
+            "properties": {
+              "tool_name": { "type": "string", "pattern": "^qveris_finance\\." },
+              "purpose": { "type": "string" },
+              "status": { "const": "accepted" },
+              "fields": { "type": "object", "additionalProperties": { "$ref": "#/$defs/safeValue" } }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "risk_notes": { "type": "array", "items": { "type": "string" } },
+    "missing_fields": { "type": "array", "items": { "type": "string" } },
+    "data_quality": {
+      "type": "object",
+      "required": ["status", "warnings", "stale_fields", "suppressed_fields"],
+      "properties": {
+        "status": { "enum": ["complete", "partial", "insufficient", "budget_limited"] },
+        "warnings": { "type": "array", "items": { "type": "string" } },
+        "stale_fields": { "type": "array", "items": { "type": "string" } },
+        "suppressed_fields": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "observed_call_count": { "type": "integer", "minimum": 0 },
+    "qveris_trace": { "type": "array", "items": { "$ref": "#/$defs/traceRow" } },
+    "disclaimer": { "const": "Not investment advice." },
+    "suppressed_fields": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

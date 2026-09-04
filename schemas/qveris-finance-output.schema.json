@@ -1,0 +1,252 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QVeris Finance Skill Output",
+  "$defs": {
+    "sanitizedParamValue": {
+      "oneOf": [
+        {
+          "type": [
+            "string",
+            "number",
+            "boolean",
+            "null"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/sanitizedParamValue"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "not": {
+              "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])"
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/sanitizedParamValue"
+          }
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "required": [
+    "skill",
+    "source_record",
+    "controls",
+    "analysis",
+    "risk_notes",
+    "missing_fields",
+    "data_quality",
+    "observed_call_count",
+    "qveris_trace",
+    "disclaimer",
+    "suppressed_fields"
+  ],
+  "properties": {
+    "skill": {
+      "type": "string"
+    },
+    "source_record": {
+      "type": "object",
+      "required": [
+        "candidate_number",
+        "original_repository",
+        "github_url",
+        "license",
+        "evaluation_recent_activity",
+        "local_source_snapshot",
+        "snapshot_latest_commit"
+      ],
+      "properties": {
+        "candidate_number": {
+          "type": "integer"
+        },
+        "original_repository": {
+          "type": "string"
+        },
+        "github_url": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "evaluation_recent_activity": {
+          "type": "string"
+        },
+        "local_source_snapshot": {
+          "type": "string"
+        },
+        "snapshot_latest_commit": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "controls": {
+      "type": "object",
+      "required": [
+        "dry_run",
+        "max_calls",
+        "max_age",
+        "budget_note"
+      ],
+      "properties": {
+        "dry_run": {
+          "type": "boolean"
+        },
+        "max_calls": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_age": {
+          "type": "string"
+        },
+        "budget_note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "analysis": {
+      "type": "object"
+    },
+    "risk_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "missing_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "observed_call_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "qveris_trace": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "tool_name",
+          "params",
+          "status",
+          "execution_id",
+          "fallback_used",
+          "missing_fields"
+        ],
+        "properties": {
+          "tool_name": {
+            "type": "string",
+            "pattern": "^qveris_finance\\."
+          },
+          "params": {
+            "type": "object",
+            "propertyNames": {
+              "not": {
+                "pattern": "(^|[-_])(provider|route|routing|candidate|candidates|failover|credential|api[-_]?key|source[-_]?tool[-_]?id|tool[-_]?id|cap[-_]?tool[-_]?id)($|[-_])"
+              }
+            },
+            "additionalProperties": {
+              "$ref": "#/$defs/sanitizedParamValue"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failed",
+              "rejected"
+            ]
+          },
+          "execution_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "fallback_used": {
+            "type": "boolean"
+          },
+          "missing_fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "disclaimer": {
+      "type": "string",
+      "const": "Not investment advice."
+    },
+    "data_quality": {
+      "type": "object",
+      "required": [
+        "status",
+        "warnings",
+        "stale_fields",
+        "out_of_window_events",
+        "suppressed_fields"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "ok",
+            "limited",
+            "insufficient",
+            "complete",
+            "partial",
+            "proxy_only",
+            "budget_limited"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "stale_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "out_of_window_events": {
+          "type": "array",
+          "items": {
+            "type": [
+              "string",
+              "object"
+            ]
+          }
+        },
+        "suppressed_fields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "suppressed_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

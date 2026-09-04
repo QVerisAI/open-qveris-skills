@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris News Sentiment Radar"
+  short_description: "Track market news and sentiment with QVeris calls."
+  default_prompt: "Use QVeris to build a 7-day news and sentiment radar for TSLA. Separate confirmed news, filing events, analyst or media narratives, social momentum, price reaction, and unresolved rumors. Include QVeris calls used and estimated credits."

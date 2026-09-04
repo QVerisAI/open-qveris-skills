@@ -1,0 +1,120 @@
+{
+  "skill": "qveris-a-share-factor-screen",
+  "source_record": {
+    "candidate_number": 32,
+    "original_repository": "Alphasift",
+    "github_url": "https://github.com/ZhuLinsen/alphasift",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-07-03",
+    "local_source_snapshot": "third_party/source_repos/32-alphasift",
+    "snapshot_latest_commit": "9f52274 on 2026-07-03"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 12,
+    "max_age": "P1D",
+    "budget_note": "small universe screen"
+  },
+  "analysis": {
+    "summary": "Only universe identity and qualitative news context are represented by observed calls. No factor values or per-security rank are supported.",
+    "comparable_subset": [],
+    "ranking_status": "withheld_no_complete_comparable_subset",
+    "screen_results": [
+      {
+        "security": "600519",
+        "coverage_tier": "insufficient",
+        "component_coverage": "0/5",
+        "evidence_status": "insufficient",
+        "factor_gaps": [
+          "valuation_quality",
+          "liquidity",
+          "stability",
+          "momentum_60d",
+          "theme_heat"
+        ]
+      },
+      {
+        "security": "300750",
+        "coverage_tier": "insufficient",
+        "component_coverage": "0/5",
+        "evidence_status": "insufficient",
+        "factor_gaps": [
+          "valuation_quality",
+          "liquidity",
+          "stability",
+          "momentum_60d",
+          "theme_heat",
+          "events"
+        ]
+      }
+    ]
+  },
+  "risk_notes": [
+    "Coverage tier is not a rank, expected-return forecast, or preference order.",
+    "Tagged news is qualitative context only."
+  ],
+  "missing_fields": [
+    "theme_heat",
+    "sentiment_score",
+    "validated_bars_for_all_names",
+    "valuation_quality_for_all_names",
+    "cross_sectional_rank"
+  ],
+  "data_quality": {
+    "status": "insufficient",
+    "warnings": [
+      "factor_calls_not_observed",
+      "qualitative_news_not_a_numeric_factor"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "operation_advice",
+      "target_price",
+      "buy_sell",
+      "rebalance"
+    ]
+  },
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "params": {
+        "symbols": [
+          "600519",
+          "300750",
+          "002594"
+        ],
+        "market": "CN"
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": false,
+      "missing_fields": []
+    },
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "params": {
+        "symbols": [
+          "600519",
+          "300750",
+          "002594"
+        ],
+        "lookback_days": 7
+      },
+      "status": "success",
+      "execution_id": null,
+      "fallback_used": true,
+      "missing_fields": [
+        "sentiment_score"
+      ]
+    }
+  ],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": [
+    "operation_advice",
+    "target_price",
+    "buy_sell",
+    "rebalance"
+  ],
+  "observed_call_count": 2
+}

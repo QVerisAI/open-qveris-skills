@@ -1,0 +1,34 @@
+Completed live QVeris run using `qveris-portfolio-risk-monitor`.
+
+Artifacts saved:
+- [Markdown report](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-portfolio-risk-monitor/artifacts/codex-cli-natural-e2e-20260703.md)
+- [JSON output](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-portfolio-risk-monitor/artifacts/codex-cli-natural-e2e-20260703-output.json)
+- [Trace](/home/wjh/matecode/open-qveris-skills-qveris-research/qveris-portfolio-risk-monitor/artifacts/codex-cli-natural-e2e-20260703-trace.json)
+
+Validation: `VALID` against `qveris-portfolio-risk-monitor/schemas/output.schema.json`.
+
+Usage: 5 paid calls, 78.22 credits, within the 5-call and 110-credit budget.
+
+Execution IDs:
+- quote_snapshot: `4ceefbb9-909c-4c48-8aa6-1cdb7174bfd2`
+- historical_prices AAPL: `d12a23c4-1594-4545-a46a-d0db68a89988`
+- historical_prices SPY: `99d32666-b5e3-4117-b279-2fe728e4efc8`
+- profile_sector: `7f18bf5a-428d-429f-b436-ecbc812ffd53`
+- news_catalyst: `0b75ea32-c018-4fad-91a0-f502d5f353b0`
+
+Key metrics:
+- Top holding: AAPL, 25%
+- Concentration HHI: `0.21`, level `medium`
+- Observations: AAPL `22`, SPY benchmark `22`
+- Latest close: `308.63`
+- Daily volatility: `0.0239`
+- Annualized volatility: `0.3786`
+- Max drawdown: `-0.1271`
+- 95% historical VaR: `-0.0364`
+- `correlation_to_benchmark`: `0.1667`
+
+Remaining gaps:
+- `missing_data`: `[]`
+- `missing_metrics`: `[]`
+
+No skipped calls, fallbacks, or call errors appeared in the trace. Not investment advice.

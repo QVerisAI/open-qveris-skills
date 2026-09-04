@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/QVerisAI/open-qveris-skills/qveris-quant-factor-screen/schemas/output.schema.json",
+  "title": "Quant Factor Screen Business Output",
+  "type": "object",
+  "required": ["schema_version", "skill_id", "generated_at", "mode", "scope", "findings", "evidence", "risks", "usage", "result"],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "skill_id": { "type": "string", "enum": ["qveris-quant-factor-screen"] },
+    "generated_at": { "type": "string" },
+    "mode": { "type": "string", "enum": ["dry-run", "fixture", "live"] },
+    "scope": {
+      "type": "object",
+      "required": ["universe", "market", "window_days", "factor_set"],
+      "properties": {
+        "universe": { "type": "array", "items": { "type": "string" } },
+        "market": { "type": "string" },
+        "window_days": { "type": "number" },
+        "factor_set": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "findings": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "risks": { "type": "array", "items": { "type": "string" } },
+    "usage": {
+      "type": "object",
+      "required": ["paid_calls", "estimated_credits"],
+      "properties": {
+        "paid_calls": { "type": "number" },
+        "estimated_credits": { "type": "number" }
+      }
+    },
+    "result": {
+      "type": "object",
+      "required": ["universe", "factor_set", "coverage_roles", "scoring_version", "ranking_ready", "missing_outputs", "missing_data"],
+      "properties": {
+        "universe": { "type": "array", "items": { "type": "string" } },
+        "factor_set": { "type": "array", "items": { "type": "string" } },
+        "coverage_roles": { "type": "array", "items": { "type": "string" } },
+        "scoring_version": { "type": "string" },
+        "ranking_ready": { "type": "boolean" },
+        "coverage_level": { "type": "string", "enum": ["none", "partial", "complete"] },
+        "ranking_table": { "type": "array", "items": { "type": "object" } },
+        "factor_weights": { "type": "object" },
+        "tie_break_rules": { "type": "array", "items": { "type": "string" } },
+        "missing_outputs": { "type": "array", "items": { "type": "string" } },
+        "missing_data": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

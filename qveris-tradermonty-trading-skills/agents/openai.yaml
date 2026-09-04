@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Risk Monitor"
+  short_description: "QVeris-only risk and regime monitoring, not trading"
+  default_prompt: "Use $qveris-tradermonty-trading-skills as a Markdown QVeris risk/regime monitoring report. Compute concentration metrics for weighted portfolios, prefer direct qveris_finance.* CAP query/cap-query evidence, sanitize raw CAP metadata into qveris_finance.* trace labels only, separate primary evidence from VIX/rates/liquid-ETF proxies, include data_quality/missing_fields, suppress target/upside/recommendation fields, and do not give trading or portfolio action instructions."

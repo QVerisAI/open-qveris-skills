@@ -1,0 +1,106 @@
+{
+  "inputs": {
+    "sectors": ["XLK", "XLE"],
+    "market": "US",
+    "benchmark": "SPY",
+    "windowDays": 30,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "sector_performance_snapshot",
+      "tool_id": "financialmodelingprep.stable.sectorperformancesnapshot.retrieve.v1.5ca7b159",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "sector": "Technology", "changesPercentage": 1.2 },
+          { "sector": "Energy", "changesPercentage": -0.4 }
+        ]
+      }
+    },
+    {
+      "role": "available_sectors",
+      "tool_id": "financialmodelingprep.stable.availablesectors.retrieve.v1.becb02d9",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": ["Technology", "Financial Services", "Healthcare", "Energy"]
+      }
+    },
+    {
+      "role": "proxy_price_history",
+      "target": "XLK",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "date": "2026-06-26", "close": 250.0 },
+          { "date": "2026-06-29", "close": 253.5 },
+          { "date": "2026-06-30", "close": 255.0 },
+          { "date": "2026-07-01", "close": 258.2 },
+          { "date": "2026-07-02", "close": 262.0 }
+        ]
+      }
+    },
+    {
+      "role": "proxy_price_history",
+      "target": "XLE",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "date": "2026-06-26", "close": 95.0 },
+          { "date": "2026-06-29", "close": 94.4 },
+          { "date": "2026-06-30", "close": 94.9 },
+          { "date": "2026-07-01", "close": 93.8 },
+          { "date": "2026-07-02", "close": 94.1 }
+        ]
+      }
+    },
+    {
+      "role": "benchmark_price_history",
+      "target": "SPY",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [
+          { "date": "2026-06-26", "close": 610.0 },
+          { "date": "2026-06-29", "close": 612.4 },
+          { "date": "2026-06-30", "close": 611.1 },
+          { "date": "2026-07-01", "close": 615.2 },
+          { "date": "2026-07-02", "close": 618.7 }
+        ]
+      }
+    },
+    {
+      "role": "news_catalyst_confirmation",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "raw_result": {
+        "result": {
+          "feed": [
+            { "title": "Technology sector earnings revisions improve", "overall_sentiment_label": "Bullish" }
+          ]
+        }
+      }
+    },
+    {
+      "role": "etf_symbol_search",
+      "tool_id": "financialmodelingprep.stable.etflist.retrieve.v1.85cd2c31",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [{ "symbol": "XLK" }, { "symbol": "XLE" }, { "symbol": "SPY" }]
+      }
+    }
+  ],
+  "usage": {
+    "paid_calls": 7,
+    "estimated_credits": 147.2
+  }
+}

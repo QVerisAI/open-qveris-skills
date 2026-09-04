@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris UZI Equity Research"
+  short_description: "Equity research with audited Web news and risks"
+  default_prompt: "Use $qveris-uzi-equity-research for 600519.SH to produce an equity research note using QVeris structured data and audited Web news/sentiment, with separate traces and no investment advice."

@@ -11,12 +11,13 @@ const rules = [
   /(?:verified (?:tools|capabilities)|verified in production|99\.99%|<\s*500ms\s+average latency)/i,
   /(?:failures are almost always|past failures usually indicate parameter issues|more accurate than web pages|provide complete structured datasets)/i,
   /(?:available in all OpenClaw environments|comparable cost)/i,
-  /(?:100\s*(?:credits|积分)|26,250\+?\s*credits|zero prompt tokens)/i,
+  /(?:(?:free tier|signup|注册|免费版)[^\n]{0,80}\b100\s*(?:credits|积分)|26,250\+?\s*credits|zero prompt tokens)/i,
 ];
 
 function publicCopy(source) {
   // The permission allowlist is machine metadata, not public navigation copy.
-  // Preserve both hosts while the pinned client still supports both endpoints.
+  // Keep permitted production/test hosts accurate without treating the
+  // machine allowlist as user-facing navigation between sites.
   return source.replace(/^network:\n  outbound_hosts:\n(?:    - [^\n]+\n)+/m, "")
     .replace(/[`*]/g, "");
 }
@@ -34,7 +35,7 @@ test("rejects unsupported catalog, service, and fallback promises", () => {
   for (const text of ["**10,000+** verified tools", "thousands of tools", "99.99% call availability", "<500ms average latency", "Failures are almost always caused by parameters", "Available in all OpenClaw environments", "Free tier: 100 credits"]) {
     assert.ok(violations(text, "README.md").length, text);
   }
-  assert.deepEqual(violations("Node.js 18+; sample success rate: 99.8%; 1,000 credits; has_last_execution", "README.md"), []);
+  assert.deepEqual(violations("Node.js 18+; sample success rate: 99.8%; 1,000 credits; has_last_execution; live call budget: 100 credits", "README.md"), []);
 });
 
 test("site boundaries apply to public copy without falsifying permission metadata", () => {
@@ -77,6 +78,9 @@ test("documented outbound permissions retain the pinned clients' supported hosts
     process.env.QVERIS_API_KEY = key;
     const host = new URL(official.getBaseUrl()).hostname;
     assert.ok(source.includes(`    - ${host}\n`));
+    assert.equal(host, "qveris.ai");
   }
+  process.env.QVERIS_BASE_URL = "https://api.qveris.cloud/api/v1";
+  assert.ok(source.includes(`    - ${new URL(official.getBaseUrl()).hostname}\n`));
   assert.equal(new URL(cn.getBaseUrl()).hostname, "qveris.cn");
 });

@@ -4,6 +4,8 @@ CONTEXT.md
 dev-infra/**/.env*
 !dev-infra/**/.env*.example
 dev-infra/**/reports/
+reports/
+third_party/source_repos/
 
 # macOS
 .DS_Store

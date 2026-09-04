@@ -1,0 +1,38 @@
+{
+  "skill": "qveris-macro-policy-monitor",
+  "source_record": {
+    "original_repository": "LLMQuant Skills",
+    "github_url": "https://github.com/LLMQuant/skills",
+    "license": "MIT",
+    "adapted_components": ["llmquant-macro", "global-macro-dashboard", "fed-policy-preview"],
+    "upstream_commit": "1918237467c2dff4cc97a18ebc0892dfd46e8129",
+    "evaluated_at": "2026-07-24"
+  },
+  "controls": {
+    "dry_run": false,
+    "max_calls": 1,
+    "max_age": { "macro": "P400D", "rates": "P120D", "market": "P7D" },
+    "budget_note": "max_calls counts observed capabilities/query attempts, including retries."
+  },
+  "analysis": {
+    "workflow": "macro_policy",
+    "summary": "The minimum macro/rates plan did not fit the call budget; no data call was made.",
+    "evidence_status": "budget_limited",
+    "as_of": "2026-07-24",
+    "geography": "US",
+    "window": { "start": "2024-07-24", "end": "2026-07-24", "timezone": "UTC" },
+    "fallback_mode": "limited",
+    "comparison_status": "snapshot_only",
+    "policy_transmission": { "status": "unsupported", "reason": "No data call was made." },
+    "curve_proxy": { "status": "unsupported", "reason": "No data call was made." },
+    "regime_label": { "status": "unsupported", "reason": "No data call was made." },
+    "evidence": []
+  },
+  "risk_notes": ["No evidence was collected because the minimum plan exceeded max_calls."],
+  "missing_fields": ["macro_layers", "rates_layers"],
+  "data_quality": { "status": "budget_limited", "warnings": ["minimum_plan_exceeds_max_calls"], "stale_fields": [], "suppressed_fields": ["forecast", "causal_policy_transmission"] },
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "suppressed_fields": ["provider", "route", "candidate", "failover", "credential"]
+}

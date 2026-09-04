@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Macro Policy Monitor"
+  short_description: "Audit macro and rates context with strict QVeris evidence"
+  default_prompt: "Use $qveris-macro-policy-monitor to build a dated macro-policy snapshot with explicit fallbacks and Trace."

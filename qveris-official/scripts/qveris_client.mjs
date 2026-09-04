@@ -1,19 +1,34 @@
-const REGION_URLS = {
-  global: "https://qveris.ai/api/v1",
-  cn: "https://qveris.cn/api/v1",
-};
+const DEFAULT_BASE_URL = "https://qveris.ai/api/v1";
 
-function resolveBaseUrl(apiKey) {
-  if (process.env.QVERIS_BASE_URL) {
-    return process.env.QVERIS_BASE_URL.replace(/\/+$/, "");
+function baseUrl() {
+  const configured = String(process.env.QVERIS_BASE_URL ?? DEFAULT_BASE_URL).replace(/\/+$/, "");
+  const parsed = new URL(configured);
+  if (parsed.protocol !== "https:") throw new Error("QVERIS_BASE_URL must use HTTPS");
+  if (!new Set(["qveris.ai", "api.qveris.cloud"]).has(parsed.hostname)
+      || parsed.pathname !== "/api/v1"
+      || parsed.username
+      || parsed.password
+      || parsed.port) {
+    throw new Error("QVERIS_BASE_URL must use an approved QVeris /api/v1 host");
   }
-  if (process.env.QVERIS_REGION) {
-    const region = process.env.QVERIS_REGION.toLowerCase();
-    return REGION_URLS[region] ?? REGION_URLS.global;
+  return configured;
+}
+
+export class QVerisHttpError extends Error {
+  constructor({ status, method, path, payload, responseText }) {
+    const code = payload?.error?.code ?? payload?.code ?? null;
+    const serverMessage = payload?.error?.message ?? payload?.message ?? payload?.detail ?? null;
+    super(
+      `HTTP ${status}${code ? ` (${code})` : ""} for ${method} ${path}${serverMessage ? `: ${serverMessage}` : ""}`,
+    );
+    this.name = "QVerisHttpError";
+    this.status = status;
+    this.method = method;
+    this.path = path;
+    this.code = code ?? `http_${status}`;
+    this.payload = payload;
+    this.responseText = responseText;
   }
-  return typeof apiKey === "string" && apiKey.startsWith("sk-cn-")
-    ? REGION_URLS.cn
-    : REGION_URLS.global;
 }
 
 async function requestJson(path, { method = "POST", query = {}, body, timeoutMs = 30000, apiKey }) {
@@ -21,7 +36,7 @@ async function requestJson(path, { method = "POST", query = {}, body, timeoutMs 
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const url = new URL(`${resolveBaseUrl(apiKey)}${path}`);
+    const url = new URL(`${baseUrl()}${path}`);
     for (const [key, value] of Object.entries(query)) {
       if (value !== undefined && value !== null) {
         url.searchParams.set(key, String(value));
@@ -40,7 +55,19 @@ async function requestJson(path, { method = "POST", query = {}, body, timeoutMs 
 
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(`HTTP ${response.status}: ${text}`);
+      let payload = null;
+      try {
+        payload = text ? JSON.parse(text) : null;
+      } catch {
+        payload = null;
+      }
+      throw new QVerisHttpError({
+        status: response.status,
+        method,
+        path,
+        payload,
+        responseText: text,
+      });
     }
 
     return await response.json();
@@ -50,7 +77,7 @@ async function requestJson(path, { method = "POST", query = {}, body, timeoutMs 
 }
 
 export function getBaseUrl() {
-  return resolveBaseUrl(process.env.QVERIS_API_KEY);
+  return baseUrl();
 }
 
 export async function discoverTools({ apiKey, query, limit = 10, timeoutMs = 30000 }) {
@@ -94,28 +121,89 @@ export async function callTool({
   });
 }
 
-export async function getCredits({ apiKey, timeoutMs = 30000 }) {
-  return requestJson("/auth/credits", {
+export async function listCapabilities({
+  apiKey,
+  domain,
+  page = 1,
+  pageSize = 50,
+  timeoutMs = 30000,
+}) {
+  return requestJson("/capabilities", {
+    method: "GET",
+    apiKey,
+    query: {
+      domain,
+      page,
+      page_size: pageSize,
+    },
+    timeoutMs,
+  });
+}
+
+export async function searchCapabilities({
+  apiKey,
+  query,
+  domain = "finance",
+  limit = 5,
+  timeoutMs = 30000,
+}) {
+  return requestJson("/capabilities/search", {
+    method: "GET",
+    apiKey,
+    query: {
+      q: query,
+      domain,
+      limit,
+    },
+    timeoutMs,
+  });
+}
+
+export async function getCapability({
+  apiKey,
+  capabilityId,
+  timeoutMs = 30000,
+}) {
+  return requestJson(`/capabilities/${encodeURIComponent(capabilityId)}`, {
     method: "GET",
     apiKey,
     timeoutMs,
   });
+}
+
+export async function queryCapability({
+  apiKey,
+  capabilityId,
+  parameters,
+  strategy = "best",
+  searchId,
+  timeoutMs = 120000,
+}) {
+  const body = {
+    capability_id: capabilityId,
+    parameters,
+    strategy,
+  };
+  if (searchId) {
+    body.search_id = searchId;
+  }
+
+  return requestJson("/capabilities/query", {
+    method: "POST",
+    apiKey,
+    body,
+    timeoutMs,
+  });
+}
+
+export async function getCredits({ apiKey, timeoutMs = 30000 }) {
+  return requestJson("/auth/credits", { method: "GET", apiKey, timeoutMs });
 }
 
 export async function getUsageHistory({ apiKey, query = {}, timeoutMs = 30000 }) {
-  return requestJson("/auth/usage/history/v2", {
-    method: "GET",
-    apiKey,
-    query,
-    timeoutMs,
-  });
+  return requestJson("/auth/usage/history/v2", { method: "GET", apiKey, query, timeoutMs });
 }
 
 export async function getCreditsLedger({ apiKey, query = {}, timeoutMs = 30000 }) {
-  return requestJson("/auth/credits/ledger", {
-    method: "GET",
-    apiKey,
-    query,
-    timeoutMs,
-  });
+  return requestJson("/auth/credits/ledger", { method: "GET", apiKey, query, timeoutMs });
 }

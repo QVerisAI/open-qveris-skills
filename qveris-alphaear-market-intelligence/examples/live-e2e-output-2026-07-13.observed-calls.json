@@ -1,0 +1,101 @@
+{
+  "artifact_version": "observed_calls.v1",
+  "skill": "qveris-alphaear-market-intelligence",
+  "case_id": "alphaear-news-coverage-monitor",
+  "recorded_at": "2026-07-13T02:53:15.527Z",
+  "observed_calls": [
+    {
+      "tool_name": "qveris_finance.news_fin_tagged",
+      "request_kind": "capabilities/query",
+      "capability_id": "NEWS.FIN.TAGGED",
+      "params": {
+        "symbol": "NVDA",
+        "market": "US",
+        "limit": 5
+      },
+      "status": "failed",
+      "execution_id": "5e5640e6-fa5c-418e-ad1d-6e4eebb68587",
+      "fallback_used": false,
+      "missing_fields": [
+        "cap_call_failed"
+      ],
+      "observed_at": "2026-07-13T02:53:15.440066+00:00",
+      "response_sha256": "3d0d69b9d9e062e4cdade6a7ee0bf6314a434e11e526b3d39fb921dabae3a1f8",
+      "response": {
+        "execution_id": "5e5640e6-fa5c-418e-ad1d-6e4eebb68587",
+        "capability_id": "NEWS.FIN.TAGGED",
+        "parameters": {
+          "symbol": "NVDA",
+          "market": "US",
+          "limit": 5
+        },
+        "result": {
+          "status_code": 503,
+          "data": null,
+          "_meta": {
+            "capability_id": "NEWS.FIN.TAGGED",
+            "elapsed_time_ms": 69,
+            "synced_at": "2026-07-12T20:30:01.428800+00:00"
+          },
+          "_defaults_applied": [],
+          "error_type": "all_candidates_failed",
+          "error_details": "20 candidates exhausted; dominant_error=missing_required_input:market",
+          "parameter_help": {
+            "message": "The call did not return valid data. Please verify the request parameters against this tool's parameter definitions and try again.",
+            "provided_parameters": {
+              "symbol": "NVDA",
+              "market": "US",
+              "limit": 5
+            },
+            "params": []
+          }
+        },
+        "success": false,
+        "error_message": "20 candidates exhausted; dominant_error=missing_required_input:market The call did not return valid data. Please verify the request parameters against this tool's parameter definitions and try again.",
+        "elapsed_time_ms": 143.76,
+        "created_at": "2026-07-13T02:53:15.440066+00:00",
+        "cost": 0,
+        "execution_outcome": {
+          "schema_version": "execution_outcome.v1",
+          "raw_success": false,
+          "transport_success": true,
+          "result_valid": false,
+          "billable_success": false,
+          "outcome": "provider_error",
+          "status": "not_charged",
+          "reason_code": "provider.http_error",
+          "message": "The call did not return valid data. Please verify the request parameters against this tool's parameter definitions and try again.",
+          "http_status_code": 503,
+          "valid_result_count": 0,
+          "raw_result_count": 0,
+          "raw_success_rate_excluded": false,
+          "retryable": true,
+          "display_severity": "error"
+        },
+        "billing": {
+          "price": {
+            "amount_credits": 1,
+            "per": 1,
+            "unit": "call",
+            "unit_label": "call"
+          },
+          "list_amount_credits": 0,
+          "summary": "Execution failed; Provider returned an HTTP error; this call was not charged",
+          "execution_outcome": "failure"
+        },
+        "extra_info": {
+          "parameter_help": {
+            "message": "The call did not return valid data. Please verify the request parameters against this tool's parameter definitions and try again.",
+            "provided_parameters": {
+              "symbol": "NVDA",
+              "market": "US",
+              "limit": 5
+            },
+            "params": []
+          }
+        },
+        "remaining_credits": 886836.75
+      }
+    }
+  ]
+}

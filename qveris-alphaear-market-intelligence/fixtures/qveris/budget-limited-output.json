@@ -1,0 +1,59 @@
+{
+  "skill": "qveris-alphaear-market-intelligence",
+  "source_record": {
+    "candidate_number": 42,
+    "original_repository": "Awesome Finance Skills / AlphaEar",
+    "github_url": "https://github.com/RKiding/Awesome-finance-skills",
+    "license": "Apache-2.0",
+    "evaluation_recent_activity": "2026-03-29",
+    "local_source_snapshot": "third_party/source_repos/42-awesome-finance-skills",
+    "snapshot_latest_commit": "853f09b on 2026-03-29"
+  },
+  "controls": {
+    "dry_run": true,
+    "max_calls": 0,
+    "max_age": "P1D",
+    "budget_note": "No live QVeris calls allowed."
+  },
+  "analysis": {
+    "workflow": "budget_limited_market_intelligence",
+    "report_mode": "coverage_monitor",
+    "summary": "No QVeris calls were made because max_calls=0; no market-intelligence conclusions are supported.",
+    "next_calls": [
+      "qveris_finance.ref_symbology",
+      "qveris_finance.ref_security_master",
+      "qveris_finance.news_fin_tagged"
+    ]
+  },
+  "risk_notes": [
+    "Budget-limited output cannot validate issuer identity, news, sentiment, or market data."
+  ],
+  "missing_fields": [
+    "issuer_identity",
+    "market_data",
+    "news_context",
+    "sentiment",
+    "signal_monitoring_evidence"
+  ],
+  "qveris_trace": [],
+  "disclaimer": "Not investment advice.",
+  "data_quality": {
+    "status": "budget_limited",
+    "warnings": [
+      "not_called_due_to_max_calls"
+    ],
+    "stale_fields": [],
+    "out_of_window_events": [],
+    "suppressed_fields": [
+      "forecast",
+      "target_price",
+      "buy_sell"
+    ]
+  },
+  "suppressed_fields": [
+    "forecast",
+    "target_price",
+    "buy_sell"
+  ],
+  "observed_call_count": 0
+}

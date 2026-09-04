@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris A-Share Data"
+  short_description: "A-share data reads with audited Web news fallback"
+  default_prompt: "Use $qveris-a-share-data for 600519.SH to produce a Markdown data read using QVeris for structured finance data and audited Web Search only for issuer news and qualitative sentiment."

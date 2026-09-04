@@ -1,0 +1,83 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-news-sentiment-radar",
+  "generated_at": "2026-07-03T03:06:01.976Z",
+  "mode": "live",
+  "scope": {
+    "ticker": "NVDA",
+    "market": "US",
+    "window_days": 7,
+    "from": "2026-06-26",
+    "to": "2026-07-03"
+  },
+  "findings": [
+    "Reviewed NVDA over a 7-day window with 4 QVeris call attempts.",
+    "Observed 17 raw records or nested payload rows across selected sources.",
+    "Sentiment text mentions in returned payload: 26 positive, 34 negative, 20 neutral.",
+    "Use strong labels only when news, filings, or quote reaction agree; otherwise mark the catalyst as weak or unresolved."
+  ],
+  "evidence": [
+    {
+      "role": "market_news_sentiment",
+      "tool_id": "alphavantage.news_sentiment.query.v1.467a92c0",
+      "ok": true,
+      "cost": 2,
+      "record_count": 8,
+      "error": null
+    },
+    {
+      "role": "aggregate_sentiment",
+      "tool_id": "eodhd.sentiments.list.v1.9ba159a0",
+      "ok": true,
+      "cost": 2.81,
+      "record_count": 8,
+      "error": null
+    },
+    {
+      "role": "filings_check",
+      "tool_id": "finnhub.stock.filings.retrieve.v1.b6619ba1",
+      "ok": false,
+      "cost": 1,
+      "record_count": 0,
+      "error": null
+    },
+    {
+      "role": "price_reaction",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": false,
+      "cost": 1,
+      "record_count": 1,
+      "error": null
+    }
+  ],
+  "risks": [
+    "News volume is not the same as market relevance.",
+    "Social or insider-sentiment signals need confirmation from filings, reputable news, or price reaction.",
+    "Missing provider coverage should be shown explicitly rather than filled by model memory."
+  ],
+  "usage": {
+    "paid_calls": 4,
+    "estimated_credits": 6.81
+  },
+  "result": {
+    "ticker": "NVDA",
+    "sentiment_counts": {
+      "positive": 26,
+      "negative": 34,
+      "neutral": 20
+    },
+    "total_records": 17,
+    "signal_level": "negative",
+    "catalyst_status": "needs_confirmation",
+    "evidence_roles": [
+      "market_news_sentiment",
+      "aggregate_sentiment",
+      "filings_check",
+      "price_reaction"
+    ],
+    "missing_data": [
+      "filings_check: no returned records or provider returned unsuccessful status",
+      "price_reaction: no returned records or provider returned unsuccessful status"
+    ]
+  }
+}

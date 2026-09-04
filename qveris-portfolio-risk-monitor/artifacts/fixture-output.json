@@ -1,0 +1,130 @@
+{
+  "schema_version": "2026-07-03",
+  "skill_id": "qveris-portfolio-risk-monitor",
+  "generated_at": "2026-07-03T08:07:22.971Z",
+  "mode": "fixture",
+  "scope": {
+    "holdings": [
+      {
+        "symbol": "AAPL",
+        "weight": 25
+      },
+      {
+        "symbol": "NVDA",
+        "weight": 25
+      },
+      {
+        "symbol": "MSFT",
+        "weight": 20
+      },
+      {
+        "symbol": "TSLA",
+        "weight": 15
+      },
+      {
+        "symbol": "CASH",
+        "weight": 15
+      }
+    ],
+    "market": "US",
+    "benchmark": "SPY",
+    "window_days": 30,
+    "from": "2026-06-02",
+    "to": "2026-07-02"
+  },
+  "findings": [
+    "Largest non-cash holding is AAPL at 25%.",
+    "Portfolio concentration HHI is 0.210; values above 0.25 deserve concentration review.",
+    "Top holding history produced 5 observations, annualized volatility 0.2671, max drawdown -0.0098, 95% historical VaR -0.0098, and benchmark correlation 0.9946.",
+    "Collected 4 QVeris call attempts across market, profile, historical, and news/catalyst roles.",
+    "Risk interpretation should separate measurable exposure from narrative catalyst risk."
+  ],
+  "evidence": [
+    {
+      "role": "quote_snapshot",
+      "target": null,
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": true,
+      "cost": 1,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "profile_sector",
+      "target": null,
+      "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 1,
+      "error": null
+    },
+    {
+      "role": "historical_prices",
+      "target": "AAPL",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 5,
+      "error": null
+    },
+    {
+      "role": "historical_prices",
+      "target": "SPY",
+      "tool_id": "financialmodelingprep.stable.historicalpriceeod.full.retrieve.v1.b0c32b22",
+      "ok": true,
+      "cost": 24.2,
+      "execution_id": null,
+      "record_count": 5,
+      "error": null
+    }
+  ],
+  "risks": [
+    "Weights must be normalized before comparing portfolios.",
+    "Historical volatility and drawdown depend on lookback window and provider coverage.",
+    "News/catalyst risk can be stale or incomplete without filings and earnings-calendar checks."
+  ],
+  "usage": {
+    "paid_calls": 4,
+    "estimated_credits": 73.6
+  },
+  "result": {
+    "top_holding": {
+      "symbol": "AAPL",
+      "weight": 25
+    },
+    "concentration_hhi": 0.21,
+    "concentration_level": "medium",
+    "evidence_roles": [
+      "quote_snapshot",
+      "profile_sector",
+      "historical_prices",
+      "historical_prices"
+    ],
+    "measurable_risks": [
+      "concentration",
+      "top_holding_exposure",
+      "provider_coverage",
+      "top_holding_volatility",
+      "top_holding_drawdown",
+      "top_holding_historical_var",
+      "benchmark_correlation"
+    ],
+    "risk_metrics": {
+      "observation_count": 5,
+      "latest_close": 180.2,
+      "daily_volatility": 0.0168,
+      "annualized_volatility": 0.2671,
+      "max_drawdown": -0.0098,
+      "historical_var_95": -0.0098,
+      "correlation_to_benchmark": 0.9946,
+      "benchmark_observation_count": 5
+    },
+    "missing_metrics": [],
+    "missing_data": [
+      "news_catalyst: provider returned unsuccessful status"
+    ]
+  }
+}

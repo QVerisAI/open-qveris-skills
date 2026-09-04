@@ -1,0 +1,55 @@
+{
+  "inputs": {
+    "holdings": [
+      { "symbol": "AAPL", "weight": 50 },
+      { "symbol": "MSFT", "weight": 30 },
+      { "symbol": "CASH", "weight": 20 }
+    ],
+    "market": "US",
+    "benchmark": "SPY",
+    "windowDays": 30,
+    "asOf": "2026-07-02"
+  },
+  "calls": [
+    {
+      "role": "quote_snapshot",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": false,
+      "cost": 1,
+      "error": "provider returned unsuccessful quote status",
+      "raw_result": null
+    },
+    {
+      "role": "profile_sector",
+      "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+      "ok": true,
+      "cost": 24.2,
+      "raw_result": {
+        "result": [{ "symbol": "AAPL", "sector": "Technology" }]
+      }
+    }
+  ],
+  "trace": [
+    {
+      "type": "call_error",
+      "role": "quote_snapshot",
+      "tool_id": "finnhub_io_api.stock.quote",
+      "ok": false,
+      "cost": 1,
+      "record_count": 0,
+      "error": "provider returned unsuccessful quote status"
+    },
+    {
+      "type": "call",
+      "role": "profile_sector",
+      "tool_id": "financialmodelingprep.stable.profile.retrieve.v1.0b443195",
+      "ok": true,
+      "cost": 24.2,
+      "record_count": 1
+    }
+  ],
+  "usage": {
+    "paid_calls": 2,
+    "estimated_credits": 25.2
+  }
+}

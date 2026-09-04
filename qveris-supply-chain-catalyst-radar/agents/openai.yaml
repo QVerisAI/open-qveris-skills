@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Supply Chain Catalyst Radar"
+  short_description: "Trace supply-chain catalysts with audited QVeris evidence"
+  default_prompt: "Use $qveris-supply-chain-catalyst-radar to assess a company's supply-chain catalysts and evidence gaps."
