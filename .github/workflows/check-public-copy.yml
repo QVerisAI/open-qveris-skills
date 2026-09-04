@@ -1,0 +1,21 @@
+name: Check public skill copy
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - feat/qveris-billing-audit
+
+permissions:
+  contents: read
+
+jobs:
+  public-copy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node --test tests/public-copy.test.mjs

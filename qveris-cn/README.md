@@ -1,6 +1,6 @@
-# QVeris cn
+# QVeris Skill
 
-QVeris cn skill documentation for OpenClaw and other AI agents.
+QVeris skill documentation for OpenClaw and other AI agents using https://qveris.cn.
 
 QVeris is a capability discovery and tool calling engine. Use `discover` to find specialized external API tools, then use `call` to run the selected tool through QVeris.
 
@@ -27,7 +27,7 @@ export QVERIS_API_KEY="your-api-key-here"
 **Option 1: Via ClawHub (recommended)**
 
 ```bash
-npx clawdhub install qveris-cn
+npx clawhub install qveris-cn
 ```
 
 **Option 2: Manual**
