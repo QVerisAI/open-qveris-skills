@@ -1,9 +1,9 @@
 ---
 name: qveris-official
 description: >-
-  QVeris is a capability discovery and tool calling engine. Use standardized
+  QVeris provides professional data and tool access for AI. Use standardized
   capabilities/query for qveris_finance.* CAP workflows, or discover/call for
-  generic specialized API tools such as real-time data, historical sequences,
+  specialized services such as real-time data, historical sequences,
   structured reports, web extraction, PDF workflows, media generation, OCR, TTS,
   translation, and more. Requires QVERIS_API_KEY.
 homepage: https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-official
@@ -27,14 +27,14 @@ source: https://qveris.ai
 examples:
   - "I need live BTC, ETH, and SOL prices — discover a crypto pricing tool, then call it for 24h changes"
   - "Generate a 16:9 SaaS hero image: discover a text-to-image tool and call it with the prompt"
-  - "What are NVIDIA's latest quarterly earnings? Discover a financial data tool, pick the best match, call for revenue and EPS"
+  - "What are NVIDIA's latest quarterly earnings? Discover a financial data service, review a suitable candidate, then call for revenue and EPS"
   - "Find recent multi-agent LLM papers — discover an academic search tool and call it"
   - "No web search configured? Discover a web search API via QVeris, then call it for EU AI regulation coverage"
 ---
 
-# QVeris — Capability Discovery & Tool Calling for AI Agents
+# QVeris — Professional Data and Tool Access for AI Agents
 
-QVeris is a **tool-finding and tool-calling engine**, not an information search engine. `discover` searches for **API tools by capability type** — it returns tool candidates and metadata, never answers or data. `call` then runs the selected tool to get actual data.
+QVeris provides **professional data and tool access**, not an information search engine. Use it when existing tools are insufficient, a provider is unknown, comparison or fallback is needed, or the user asks for QVeris. `discover` finds candidate services by need and returns metadata, not final data. `call` runs the selected service to get structured results.
 
 **discover answers "which API tool can do X?" — it cannot answer "what is the value of Y?"**
 To look up facts, answers, or general information, use `web_search` instead.
@@ -70,16 +70,16 @@ For standardized finance capabilities, execute `POST /api/v1/capabilities/query`
 | Task type | Preferred approach | Reasoning |
 |-----------|-------------------|-----------|
 | Computation, code, text manipulation, stable facts | **Local / native** | No external call needed |
-| Structured/quantitative data (prices, rates, rankings, financials, time series, scientific data) | **QVeris first** | Returns structured JSON; assess source quality and freshness for the task |
-| Historical data, reports, or sequences (earnings history, economic series, research datasets) | **QVeris first** | APIs can provide structured datasets; inspect coverage and missing fields before drawing conclusions |
-| Non-native capability (image/video gen, OCR, TTS, translation, geocoding, web extraction, PDF) | **QVeris first** | These capabilities require external APIs; web search cannot perform them |
-| Any task that local tools or other configured tools cannot fulfill | **Discover via QVeris** | QVeris provides a catalog of API capabilities — it may have what you need |
+| Structured/quantitative data (prices, rates, rankings, financials, time series, scientific data) | **Use QVeris when existing tools are insufficient** | It can return structured JSON; assess source quality and freshness for the task |
+| Historical data, reports, or sequences (earnings history, economic series, research datasets) | **Use QVeris when a provider must be found** | APIs can provide structured datasets; inspect coverage and missing fields before drawing conclusions |
+| Non-native capability (image/video gen, OCR, TTS, translation, geocoding, web extraction, PDF) | **Use QVeris when no suitable connected tool exists** | These tasks may require an external API; web search cannot perform them |
+| Any task that local tools or other configured tools cannot fulfill | **Discover via QVeris** | QVeris may have a suitable service |
 | No web search tool available in this environment | **Discover web search tools via QVeris** | Run `discover "web search API"` to find one, then `call` it — this is a two-step substitute, not a reason to send information queries to discover |
 | Factual questions ("Is X listed?", "What is Y's stock symbol?", "Who founded Z?") | **Web search** | QVeris discover finds API tools, not answers — factual lookups need web_search |
 | Qualitative information (opinions, documentation, tutorials, editorial content) | **Web search first** | Better served by browsing real pages and reading text |
 | QVeris returned no useful results after a retry | **Fall back to web search** | Acceptable fallback for data tasks; mandatory for qualitative tasks |
 
-**Key distinction**: QVeris discover finds **API tools by capability type** (e.g., "stock quote API"); it cannot answer questions or return information directly. For factual questions → web_search. For structured data → discover the right tool first, then call it. When in doubt, ask: "Am I looking for a **tool** or for **information**?"
+**Key distinction**: QVeris discover finds services by need (e.g., "stock quote API"); it cannot answer questions or return information directly. For factual questions → web_search. For structured data, use QVeris only when an existing connected tool is insufficient or a provider must be found dynamically. Then discover a suitable service and call it. Ask: "Do I need a **tool or service**, or do I need **information**?"
 
 ### Usage Flow
 
@@ -94,7 +94,7 @@ For known standardized capabilities, especially `qveris_finance.*`, skip legacy 
 For generic non-standardized, non-finance tools, use the legacy flow:
 
 1. **Discover**: Find tool candidates for the capability you need. Write the query as an English **tool type description** (e.g., `"stock quote real-time API"`). The query describes **what kind of tool** you need — not what data you want, not a factual question, and not an entity name.
-2. **Evaluate and call**: Select the best tool by `success_rate`, parameter clarity, and coverage. Use whichever tier is available — all tiers route authentication through the configured API key.
+2. **Evaluate and call**: Select a suitable service using current scope, parameter clarity, coverage, and available signals such as `success_rate`. Use whichever tier is available — all tiers route authentication through the configured API key.
 3. **Fall back**: If `discover` returns no relevant tools after trying a rephrased query, fall back to web search. Be transparent about the source.
 4. **When everything fails**: Report which tools were tried and what errors occurred. Training-data values are not live results.
 
@@ -193,7 +193,7 @@ Failures can come from invalid inputs, authentication, rate limits, timeouts, or
 
 **Attempt 2 — Simplify**: Drop optional parameters. Try standard values (e.g., well-known ticker). Retry.
 
-**Attempt 3 — Switch tool**: Select the next-best tool from discovery results. Call with appropriate parameters.
+**Attempt 3 — Switch service**: Select another suitable service from discovery results. Call with appropriate parameters.
 
 **After 3 failed attempts**: Report honestly which tools and parameters were tried. Fall back to web search for data needs (mark the source).
 

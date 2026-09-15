@@ -2,7 +2,7 @@
 
 Official QVeris skill documentation for OpenClaw and other AI agents.
 
-QVeris is a capability discovery and tool calling engine. Use `discover` to find specialized external API tools, then use `call` to run the selected tool through QVeris.
+QVeris provides professional data and tool access for AI. When existing tools are insufficient or a provider must be found dynamically, use `discover` to find specialized services, review scope as needed, then use `call` to run the selected service through QVeris.
 
 ## What It Does
 
