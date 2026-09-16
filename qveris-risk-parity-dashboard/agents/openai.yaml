@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Risk parity dashboard"
+  short_description: "Run risk parity dashboard with QVeris data."
+  default_prompt: "Use QVeris to build a risk-parity dashboard for this week."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Equity Research Report"
+  short_description: "Build source-backed equity reports with QVeris data."
+  default_prompt: "Analyze NVDA using QVeris. Build an equity research report with business summary, latest price action, fundamentals, valuation context, peer comparison, recent filings or news, upside/downside risks, QVeris capabilities used, paid Call count, and what evidence is still missing."

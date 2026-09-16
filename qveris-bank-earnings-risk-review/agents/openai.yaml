@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Bank earnings risk review"
+  short_description: "Run bank earnings risk review with QVeris data."
+  default_prompt: "Use QVeris to review earnings risk for JPM, BAC, and WFC."

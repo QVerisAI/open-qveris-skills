@@ -1,0 +1,32 @@
+{
+  "ticker": "EXAMPLE",
+  "company": "Example Co",
+  "market": "US/HK/A-share/Taiwan/Japan/Korea/Europe",
+  "layer": "advanced packaging equipment",
+  "ratings": {
+    "demand_pressure": 0,
+    "scarce_layer_control": 0,
+    "supplier_concentration": 0,
+    "expansion_difficulty": 0,
+    "qveris_evidence_quality": 0,
+    "valuation_disconnect": 0,
+    "timing": 0
+  },
+  "risk_penalties": {
+    "financing_or_dilution": 0,
+    "governance": 0,
+    "geopolitics": 0,
+    "liquidity": 0,
+    "hype_risk": 0,
+    "substitution_risk": 0
+  },
+  "qveris_evidence": [
+    {
+      "claim": "",
+      "capability": "",
+      "source_type": "filing/financials/news/social/company_profile",
+      "strength": "strong/medium/weak/needs_checking"
+    }
+  ],
+  "what_could_weaken_view": ["", "", ""]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Fed rate watch"
+  short_description: "Run fed rate watch with QVeris data."
+  default_prompt: "Use QVeris to brief today's Fed rate expectations and market impact."

@@ -1,0 +1,11 @@
+{
+  "schema_version": "2026-06-22",
+  "source_repository": "AI4Finance-Foundation/FinGPT",
+  "source_url": "https://github.com/AI4Finance-Foundation/FinGPT",
+  "license": "MIT",
+  "stars_at_review": 20597,
+  "category": "finance",
+  "adoption_status": "methodology-reference",
+  "qveris_adaptation": "Use as workflow inspiration only; replace direct data/API calls with QVeris Discover, Inspect, and Call before publishing a Featured Skill.",
+  "notes": "Financial news, social sentiment, retrieval-augmented financial text analysis, and forecasting input patterns."
+}

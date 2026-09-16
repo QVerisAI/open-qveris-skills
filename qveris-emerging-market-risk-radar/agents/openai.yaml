@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Emerging market risk radar"
+  short_description: "Run emerging market risk radar with QVeris data."
+  default_prompt: "Use QVeris to identify the biggest emerging-market risks this week."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Factor regime watch"
+  short_description: "Run factor regime watch with QVeris data."
+  default_prompt: "Use QVeris to explain the current factor regime."

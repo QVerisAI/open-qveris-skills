@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Dividend safety check"
+  short_description: "Run dividend safety check with QVeris data."
+  default_prompt: "Use QVeris to check dividend safety for these income stocks."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Scenario sensitivity builder"
+  short_description: "Run scenario sensitivity builder with QVeris data."
+  default_prompt: "Use QVeris to build bull/base/bear sensitivity for AMD."

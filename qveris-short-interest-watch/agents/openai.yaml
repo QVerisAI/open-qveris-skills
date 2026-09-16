@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Short interest watch"
+  short_description: "Run short interest watch with QVeris data."
+  default_prompt: "Use QVeris to review short interest and squeeze risk for this ticker list."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris SEC filing digest"
+  short_description: "Run sec filing digest with QVeris data."
+  default_prompt: "Use QVeris to summarize the latest SEC filings for AAPL and NVDA."

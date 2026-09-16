@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Inflation pulse"
+  short_description: "Run inflation pulse with QVeris data."
+  default_prompt: "Use QVeris to explain the latest inflation pulse and affected sectors."

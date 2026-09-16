@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Commodity macro brief"
+  short_description: "Run commodity macro brief with QVeris data."
+  default_prompt: "Use QVeris to create a commodity macro brief for oil, copper, and gold."

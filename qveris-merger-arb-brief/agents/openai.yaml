@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Merger arbitrage brief"
+  short_description: "Run merger arbitrage brief with QVeris data."
+  default_prompt: "Use QVeris to brief the merger-arbitrage setup for this announced deal."

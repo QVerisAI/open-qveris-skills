@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Earnings Call Brief"
+  short_description: "Brief earnings events with QVeris evidence."
+  default_prompt: "Use QVeris to create an earnings call brief for MSFT. Include reported numbers, guidance, transcript themes, analyst Q&A, market reaction, risks, QVeris capabilities used, paid Call count, and missing evidence."

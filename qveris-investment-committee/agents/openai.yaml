@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Investment Committee"
+  short_description: "Run multi-lens investment memos with QVeris evidence."
+  default_prompt: "Use QVeris to run an investment committee debate for AAPL. Include quality, value, growth, sentiment, technical, macro, and risk lenses. Each lens must cite the QVeris capabilities called, then produce a final buy/hold/sell view with dissenting evidence."

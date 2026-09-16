@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Options volatility scan"
+  short_description: "Run options volatility scan with QVeris data."
+  default_prompt: "Use QVeris to scan unusual options volatility for NVDA and TSLA."

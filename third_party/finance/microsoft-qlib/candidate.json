@@ -1,0 +1,11 @@
+{
+  "schema_version": "2026-06-22",
+  "source_repository": "microsoft/qlib",
+  "source_url": "https://github.com/microsoft/qlib",
+  "license": "MIT",
+  "stars_at_review": 44971,
+  "category": "finance",
+  "adoption_status": "methodology-reference",
+  "qveris_adaptation": "Use as workflow inspiration only; replace direct data/API calls with QVeris Discover, Inspect, and Call before publishing a Featured Skill.",
+  "notes": "Quant research pipeline, alpha seeking, factor modeling, backtesting, risk modeling, and portfolio optimization patterns."
+}

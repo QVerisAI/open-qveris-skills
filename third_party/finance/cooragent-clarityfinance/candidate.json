@@ -1,0 +1,11 @@
+{
+  "schema_version": "2026-06-22",
+  "source_repository": "cooragent/ClarityFinance",
+  "source_url": "https://github.com/cooragent/ClarityFinance",
+  "license": "Apache-2.0",
+  "stars_at_review": 58,
+  "category": "finance",
+  "adoption_status": "methodology-reference",
+  "qveris_adaptation": "Use as workflow inspiration only; replace direct data/API calls with QVeris Discover, Inspect, and Call before publishing a Featured Skill.",
+  "notes": "Claude-skill style financial workflow, planning-with-files, multi-market coverage, and screening/dashboard patterns."
+}

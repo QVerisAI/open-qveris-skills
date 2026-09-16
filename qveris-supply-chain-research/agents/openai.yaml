@@ -1,0 +1,9 @@
+interface:
+  display_name: "QVeris Supply Chain Research"
+  short_description: "Finds scarce supply-chain layers and ranks stock research priorities with QVeris data."
+  brand_color: "#0b141f"
+  default_prompt: "Use QVeris to research a market theme, map the value chain, find scarce supply-chain layers, call the needed data capabilities, rank research priorities, and explain what could weaken the view."
+policy:
+  allow_implicit_invocation: true
+dependencies:
+  tools: []

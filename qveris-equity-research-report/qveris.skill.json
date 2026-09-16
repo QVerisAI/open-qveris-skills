@@ -1,0 +1,263 @@
+{
+  "schema_version": "2026-06-17",
+  "id": "qveris-equity-research-report",
+  "status": "published",
+  "name": "qveris-equity-research-report",
+  "title": {
+    "en": "Equity research report",
+    "zh": "股票深度研究报告"
+  },
+  "description": {
+    "en": "Generate a source-backed equity research report with live fundamentals, market data, valuation context, news, risks, and QVeris call trace.",
+    "zh": "用实时基本面、行情、估值语境、新闻、风险和 QVeris 调用链生成有来源依据的股票深度研究报告。"
+  },
+  "overview": {
+    "en": "Use this skill when an agent needs to turn a ticker or company name into a professional equity research draft. It routes through QVeris to discover, inspect, and call financial statement, quote, company profile, peer, filings, and news capabilities before composing the report.",
+    "zh": "当 Agent 需要把股票代码或公司名称转成专业股票研究草稿时使用。它通过 QVeris 发现、检查并调用财务报表、行情、公司资料、可比公司、公告和新闻能力，再生成报告。"
+  },
+  "icon": "FileBarChart",
+  "accent": "green",
+  "scenarios": [
+    "finance"
+  ],
+  "platforms": [
+    "openclaw",
+    "cursor",
+    "claude-code",
+    "cli"
+  ],
+  "tags": [
+    "Finance",
+    "Equity Research",
+    "Valuation",
+    "Filings",
+    "Reports"
+  ],
+  "install_commands": [
+    {
+      "platform": "openclaw",
+      "label": {
+        "en": "Install skill",
+        "zh": "安装技能"
+      },
+      "command": "openclaw skills install qveris-equity-research-report"
+    }
+  ],
+  "github_url": "https://github.com/QVerisAI/open-qveris-skills/tree/main/qveris-equity-research-report",
+  "official": true,
+  "prompts": [
+    {
+      "id": "single-company-report",
+      "title": {
+        "en": "Single-company report",
+        "zh": "单家公司研究报告"
+      },
+      "description": {
+        "en": "Write a full research draft for one public company.",
+        "zh": "为一家上市公司生成完整研究草稿。"
+      },
+      "prompt": {
+        "en": "Analyze NVDA using QVeris. Build an equity research report with business summary, latest price action, fundamentals, valuation context, peer comparison, recent filings or news, upside/downside risks, QVeris capabilities used, paid Call count, and what evidence is still missing.",
+        "zh": "使用 QVeris 分析 NVDA。生成股票研究报告，包含业务摘要、近期价格变化、基本面、估值语境、可比公司、近期公告或新闻、上行/下行风险、使用的 QVeris 能力、付费 Call 次数和缺失证据。"
+      }
+    },
+    {
+      "id": "peer-benchmark",
+      "title": {
+        "en": "Peer benchmark",
+        "zh": "可比公司对比"
+      },
+      "description": {
+        "en": "Compare one company against peers before writing the conclusion.",
+        "zh": "先比较可比公司，再写结论。"
+      },
+      "prompt": {
+        "en": "Use QVeris to compare AMD, NVDA, and INTC across revenue growth, margin trend, valuation, market reaction, news catalysts, and key risks. Rank the evidence quality before giving a view.",
+        "zh": "用 QVeris 对比 AMD、NVDA、INTC 的收入增长、利润率趋势、估值、市场反应、新闻催化和主要风险。先排序证据质量，再给观点。"
+      }
+    },
+    {
+      "id": "bear-case",
+      "title": {
+        "en": "Bear-case review",
+        "zh": "空头视角复核"
+      },
+      "description": {
+        "en": "Pressure-test an optimistic thesis.",
+        "zh": "压力测试乐观 thesis。"
+      },
+      "prompt": {
+        "en": "Use QVeris to challenge the bull case for AAPL. Pull financials, recent news, filings, and peer valuation, then produce the strongest bear-case memo and the evidence that would disprove it.",
+        "zh": "用 QVeris 挑战 AAPL 的多头观点。调用财务、近期新闻、公告和可比估值，生成最强空头 memo，并说明哪些证据会推翻它。"
+      }
+    }
+  ],
+  "cases": [
+    {
+      "slug": "qveris-fmp-finance",
+      "title": {
+        "en": "Use FMP with QVeris",
+        "zh": "用 QVeris 接入 FMP"
+      },
+      "description": {
+        "en": "Turn structured financial data into callable agent capabilities.",
+        "zh": "把结构化金融数据变成 Agent 可调用能力。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "qveris-twelve-data",
+      "title": {
+        "en": "Twelve Data market capabilities",
+        "zh": "Twelve Data 市场能力"
+      },
+      "description": {
+        "en": "Add market data coverage for global research and screening workflows.",
+        "zh": "为全球研究和筛选工作流补充市场数据覆盖。"
+      },
+      "source_label": {
+        "en": "Product article",
+        "zh": "产品案例"
+      }
+    },
+    {
+      "slug": "openclaw-a-shares-finance-assistant",
+      "title": {
+        "en": "OpenClaw A-share finance assistant",
+        "zh": "OpenClaw A 股金融助手"
+      },
+      "description": {
+        "en": "A practical workflow for source-backed A-share monitoring.",
+        "zh": "面向 A 股监控和来源证据研究的实用工作流。"
+      },
+      "source_label": {
+        "en": "Tutorial",
+        "zh": "教程"
+      }
+    }
+  ],
+  "qveris_api": [
+    {
+      "action": "Discover",
+      "endpoint": "POST /search",
+      "title": {
+        "en": "Find equity data capabilities",
+        "zh": "寻找股票研究数据能力"
+      },
+      "purpose": {
+        "en": "Find quotes, financial statements, company profiles, peers, filings, transcripts, and news capabilities.",
+        "zh": "寻找行情、财务报表、公司资料、可比公司、公告、电话会和新闻能力。"
+      },
+      "sources": [
+        "FMP",
+        "Twelve Data",
+        "SEC/filing providers",
+        "news providers"
+      ],
+      "sample_query": "stock financial statements valuation peers news API"
+    },
+    {
+      "action": "Inspect",
+      "endpoint": "POST /tools/by-ids",
+      "title": {
+        "en": "Verify report inputs",
+        "zh": "检查报告输入"
+      },
+      "purpose": {
+        "en": "Check ticker coverage, fields, history length, latency, success rate, and billing_rule before paid calls.",
+        "zh": "付费调用前检查股票覆盖、字段、历史长度、延迟、成功率和 billing_rule。"
+      },
+      "sources": [
+        "Capability schemas",
+        "Provider metrics",
+        "Billing rules"
+      ]
+    },
+    {
+      "action": "Call",
+      "endpoint": "POST /tools/execute",
+      "title": {
+        "en": "Call report evidence",
+        "zh": "调用报告证据"
+      },
+      "purpose": {
+        "en": "Execute selected sources and compose them into a research report with citations and a QVeris call trace.",
+        "zh": "执行选定来源，并把结果组织成带引用和 QVeris 调用链的研究报告。"
+      },
+      "sources": [
+        "Financial data providers",
+        "Filing providers",
+        "Market data providers",
+        "News providers"
+      ]
+    }
+  ],
+  "usage_estimate": {
+    "title": {
+      "en": "Expected QVeris usage",
+      "zh": "预计 QVeris 使用量"
+    },
+    "summary": {
+      "en": "This workflow usually needs 6-18 paid Calls after free Discover and Inspect preflight. Cost depends on providers, ticker count, and time window.",
+      "zh": "该工作流通常在免费 Discover 和 Inspect 预检后需要 6-18 次付费 Call。费用取决于供应商、股票数量和时间窗口。"
+    },
+    "typical_calls": "6-18",
+    "estimated_credits": "6-180 credits",
+    "free_actions": [
+      "Discover",
+      "Inspect"
+    ],
+    "paid_actions": [
+      "Call"
+    ],
+    "note": {
+      "en": "Ask for explicit approval before paid Calls. Inspect billing_rule for every selected capability and reduce scope if the estimate is too high.",
+      "zh": "付费 Call 前必须获得明确确认。检查每个选定能力的 billing_rule；如果预计成本过高，先缩小范围。"
+    }
+  },
+  "execution_flow": [
+    {
+      "title": {
+        "en": "Define report scope",
+        "zh": "确定报告范围"
+      },
+      "description": {
+        "en": "Set ticker, market, peer set, time window, required sections, and whether the output is initiation, update, or challenge memo.",
+        "zh": "设定股票、市场、可比公司、时间窗口、所需章节，以及输出是首次覆盖、更新还是反证 memo。"
+      }
+    },
+    {
+      "title": {
+        "en": "Discover and inspect sources",
+        "zh": "发现并检查来源"
+      },
+      "description": {
+        "en": "Use QVeris Discover and Inspect before paid calls, then show estimated usage.",
+        "zh": "先用 QVeris Discover 和 Inspect，再展示预计使用量。"
+      }
+    },
+    {
+      "title": {
+        "en": "Call evidence",
+        "zh": "调用证据"
+      },
+      "description": {
+        "en": "Call only the data needed for the report and separate facts from interpretation.",
+        "zh": "只调用报告所需数据，并区分事实和判断。"
+      }
+    },
+    {
+      "title": {
+        "en": "Write and audit",
+        "zh": "写作并审计"
+      },
+      "description": {
+        "en": "Return the report, evidence gaps, used capabilities, paid Call count, and not-investment-advice disclaimer.",
+        "zh": "返回报告、证据缺口、使用能力、付费 Call 次数和非投资建议说明。"
+      }
+    }
+  ]
+}

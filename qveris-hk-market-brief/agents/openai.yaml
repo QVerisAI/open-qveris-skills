@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris HK market brief"
+  short_description: "Run hk market brief with QVeris data."
+  default_prompt: "Use QVeris to create today's HK market brief."

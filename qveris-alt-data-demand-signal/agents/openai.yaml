@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Alt data demand signal"
+  short_description: "Run alt data demand signal with QVeris data."
+  default_prompt: "Use QVeris to find alternative data demand signals for consumer AI apps."

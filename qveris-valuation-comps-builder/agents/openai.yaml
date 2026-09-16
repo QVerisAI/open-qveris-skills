@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Valuation comps builder"
+  short_description: "Run valuation comps builder with QVeris data."
+  default_prompt: "Use QVeris to build a valuation comps table for SNOW."
