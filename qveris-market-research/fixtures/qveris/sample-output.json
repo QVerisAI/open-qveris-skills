@@ -1,0 +1,98 @@
+{
+  "schema_version": "qveris.market-research-packet.v1",
+  "status": "partial",
+  "workflow_stage": "awaiting_comps_review",
+  "distribution_status": "not_authorized",
+  "controls": {
+    "dry_run": false,
+    "max_calls": 4,
+    "max_web_operations": 0,
+    "max_age": "P1D",
+    "budget_note": "static contract fixture",
+    "source_mode": "cap_only"
+  },
+  "research_question": "Is the example issuer suitable for a broader comparable-company study?",
+  "as_of": "2026-08-03T10:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-08-03T10:00:00+08:00",
+    "effective_cutoff": "2026-08-03T10:00:00+08:00"
+  },
+  "scope": {"sector_or_theme": "contract example", "markets": ["US"]},
+  "planned_universe": [],
+  "evidence_matrix": [],
+  "planned_calls": [],
+  "universe": [
+    {
+      "symbol": "EXAMPLE",
+      "issuer": "Example Co",
+      "market": "US",
+      "exchange": "NASDAQ",
+      "asset_type": "Common Stock",
+      "currency": "USD",
+      "inclusion_reason": "identity fixture",
+      "identity_status": "accepted"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "src-cap-001",
+      "source_type": "qveris_finance",
+      "tool_name": "qveris_finance.ref_security_master",
+      "execution_id": "fixture-exec-001",
+      "as_of": "2026-08-03T09:00:00+08:00"
+    }
+  ],
+  "claims": [
+    {
+      "claim_id": "clm-001",
+      "type": "fact",
+      "status": "supported",
+      "text": "The fixture security identity was resolved.",
+      "source_ids": ["src-cap-001"],
+      "calculation_ids": []
+    },
+    {
+      "claim_id": "clm-002",
+      "type": "judgment",
+      "status": "partially_supported",
+      "text": "More operating evidence is required before comparison.",
+      "source_ids": ["src-cap-001"],
+      "calculation_ids": []
+    }
+  ],
+  "calculations": [],
+  "peer_comps": [
+    {"symbol": "EXAMPLE", "coverage_tier": "partial_not_ranked"}
+  ],
+  "research_candidates": [
+    {
+      "symbol": "EXAMPLE",
+      "coverage_tier": "partial_not_ranked",
+      "support_claim_ids": ["clm-001", "clm-002"],
+      "counterevidence": "Operating and valuation layers were not called.",
+      "main_risk": "Identity evidence alone does not establish theme exposure.",
+      "next_check": "Validate segment and filing evidence."
+    }
+  ],
+  "gaps": ["operating_metrics", "valuation_context"],
+  "review_gates": {
+    "comps_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""},
+    "draft_review": {"status": "pending", "reviewer": "", "reviewed_at": "", "notes": ""}
+  },
+  "workflow_guard_status": "degraded",
+  "observed_call_count": 1,
+  "qveris_trace": [
+    {
+      "tool_name": "qveris_finance.ref_security_master",
+      "params": {"symbol": "EXAMPLE"},
+      "status": "success",
+      "execution_id": "fixture-exec-001",
+      "fallback_used": false,
+      "missing_fields": []
+    }
+  ],
+  "web_trace": [],
+  "artifacts": [],
+  "disclaimer": "Not investment advice."
+}

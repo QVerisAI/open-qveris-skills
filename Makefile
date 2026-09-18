@@ -2,7 +2,7 @@ COMPOSE := docker compose -f dev-infra/stock-copilot-pro/docker-compose.yml
 PYTHON ?= python3
 NODE ?= node
 
-.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e validate-qveris-sanitizer validate-finance-business-adapters validate-crypto-radar validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
+.PHONY: up down check smoke shell rebuild logs up-full openclaw-logs test-unit test-e2e test-openclaw run-finance-live-e2e validate-qveris-sanitizer validate-finance-business-adapters validate-crypto-radar validate-cap-research-skills validate-finance-contract-self-tests validate-finance-shared-contract validate-finance-reports validate-finance-fixtures
 
 up:
 	$(COMPOSE) up -d skill-dev
@@ -48,7 +48,7 @@ test-openclaw:  ## OpenClaw 端到端测试（8 个 case，需要 openclaw 容�
 	$(COMPOSE) --profile openclaw exec openclaw \
 		node /workspace/dev-infra/stock-copilot-pro/openclaw-e2e.mjs
 
-validate-finance-reports: validate-finance-fixtures validate-finance-contract-self-tests validate-qveris-sanitizer validate-finance-business-adapters validate-crypto-radar
+validate-finance-reports: validate-finance-fixtures validate-finance-contract-self-tests validate-qveris-sanitizer validate-finance-business-adapters validate-crypto-radar validate-cap-research-skills
 	$(PYTHON) scripts/validate_qveris_finance_report.py \
 		qveris-anthropic-financial-services/examples/default-markdown-report.md \
 		qveris-anthropic-financial-services/examples/natural-language-test-output-2026-07-07.md \
@@ -112,6 +112,20 @@ validate-crypto-radar:
 	$(NODE) --test qveris-crypto-market-radar/tests/*.test.mjs
 	$(NODE) --test qveris-supply-chain-catalyst-radar/tests/*.test.mjs
 	$(NODE) --test qveris-macro-policy-monitor/tests/*.test.mjs
+
+validate-cap-research-skills:
+	$(PYTHON) qveris-market-research/scripts/validate_research_packet.py --self-test
+	$(PYTHON) qveris-market-research/scripts/validate_research_packet.py qveris-market-research/fixtures/qveris/sample-output.json --observed-calls qveris-market-research/fixtures/qveris/sample-output.observed-calls.json
+	$(PYTHON) qveris-market-research/scripts/validate_research_packet.py qveris-market-research/fixtures/qveris/fallback-output.json --web-sources qveris-market-research/fixtures/qveris/fallback-output.web-sources.json
+	$(PYTHON) qveris-market-research/scripts/validate_research_packet.py qveris-market-research/fixtures/qveris/dry-run-output.json
+	$(PYTHON) qveris-market-research/scripts/validate_research_packet.py qveris-market-research/fixtures/qveris/budget-limited-output.json
+	$(PYTHON) qveris-serenity-supply-chain-research/scripts/serenity_scorecard.py --self-test
+	$(NODE) qveris-serenity-supply-chain-research/scripts/validate_research_artifact.mjs qveris-serenity-supply-chain-research/fixtures/qveris/sample-output.json --observed-calls qveris-serenity-supply-chain-research/fixtures/qveris/sample-output.observed-calls.json --web-sources qveris-serenity-supply-chain-research/fixtures/qveris/sample-output.web-sources.json
+	$(NODE) qveris-serenity-supply-chain-research/scripts/validate_research_artifact.mjs qveris-serenity-supply-chain-research/fixtures/qveris/dry-run-output.json
+	$(NODE) qveris-serenity-supply-chain-research/scripts/validate_research_artifact.mjs qveris-serenity-supply-chain-research/fixtures/qveris/fallback-output.json
+	$(NODE) qveris-serenity-supply-chain-research/scripts/validate_research_artifact.mjs qveris-serenity-supply-chain-research/fixtures/qveris/budget-limited-output.json
+	PYTHONDONTWRITEBYTECODE=1 $(PYTHON) -m unittest qveris-serenity-supply-chain-research/tests/test_serenity_scorecard.py
+	$(NODE) --test qveris-market-research/tests/*.test.mjs qveris-serenity-supply-chain-research/tests/*.test.mjs
 
 validate-finance-contract-self-tests:
 	$(PYTHON) scripts/validate_qveris_finance_fixtures.py --self-test

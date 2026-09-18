@@ -1,0 +1,4 @@
+interface:
+  display_name: "QVeris Serenity Research"
+  short_description: "Map supply-chain bottlenecks with CAP evidence"
+  default_prompt: "Use $qveris-serenity-supply-chain-research to map a theme, validate scarce layers, and rank research priorities with QVeris evidence."

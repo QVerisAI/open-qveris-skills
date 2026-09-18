@@ -1,0 +1,33 @@
+{
+  "symbol": "EXAMPLE",
+  "validation_input": {
+    "as_of": "2026-01-31T16:00:00Z",
+    "required_factors": [
+      "demand_pressure",
+      "system_coupling",
+      "scarcity_mechanism",
+      "supplier_concentration",
+      "expansion_difficulty",
+      "evidence_quality",
+      "valuation_context",
+      "event_visibility"
+    ],
+    "evidence": [],
+    "layers": [],
+    "candidates": [],
+    "publish_candidate_ranking": true
+  },
+  "penalties": {
+    "dilution_financing": {"rating": 0, "evidence_ids": []},
+    "governance": {"rating": 0, "evidence_ids": []},
+    "geopolitics": {"rating": 0, "evidence_ids": []},
+    "liquidity": {"rating": 0, "evidence_ids": []},
+    "hype_risk": {"rating": 0, "evidence_ids": []},
+    "accounting_quality": {"rating": 0, "evidence_ids": []},
+    "cyclicality": {"rating": 0, "evidence_ids": []},
+    "alternative_design_risk": {"rating": 0, "evidence_ids": []}
+  },
+  "what_could_weaken_view": [
+    "Add an evidence-backed falsification condition"
+  ]
+}

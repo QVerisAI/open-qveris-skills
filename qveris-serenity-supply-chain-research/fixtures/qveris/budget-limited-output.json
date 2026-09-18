@@ -1,0 +1,59 @@
+{
+  "schema_version": "qveris.serenity-research-output.v1",
+  "status": "budget_limited",
+  "workflow_stage": "planned",
+  "controls": {
+    "workflow": "candidate_compare",
+    "dry_run": false,
+    "max_calls": 0,
+    "max_web_operations": 0,
+    "max_age": "P1D",
+    "budget_note": "required identity calls do not fit",
+    "source_mode": "cap_only"
+  },
+  "as_of": "2026-08-03T10:00:00+08:00",
+  "cutoff": {
+    "T0": "2026-08-03T10:00:00+08:00",
+    "CUT_OFF": "2026-08-03T10:00:00+08:00",
+    "effective_cutoff": "2026-08-03T10:00:00+08:00"
+  },
+  "scope": {"theme": "example supply chain"},
+  "planned_universe": [],
+  "evidence_matrix": [{"field": "security_identity", "required": true}],
+  "planned_calls": [
+    {
+      "tool_name": "qveris_finance.ref_symbology",
+      "purpose": "resolve the required candidate identity",
+      "required": true,
+      "call_estimate": 1,
+      "batch_assumption": "no batch support assumed"
+    }
+  ],
+  "required_factors": [
+    "demand_pressure",
+    "system_coupling",
+    "scarcity_mechanism",
+    "supplier_concentration",
+    "expansion_difficulty",
+    "evidence_quality",
+    "valuation_context",
+    "event_visibility"
+  ],
+  "evidence": [],
+  "layers": [],
+  "candidates": [],
+  "validity": {
+    "schema_version": "qveris.serenity-research-validity.v1",
+    "status": "degraded",
+    "layer_ranking_allowed": false,
+    "layer_ranking": [],
+    "candidate_ranking_allowed": false,
+    "comparable_candidate_count": 0,
+    "violations": [{"code": "budget_limited", "message": "no required identity calls were attempted"}]
+  },
+  "data_quality": {"status": "budget_limited", "missing_fields": ["all requested evidence"]},
+  "observed_call_count": 0,
+  "qveris_trace": [],
+  "web_trace": [],
+  "disclaimer": "Not investment advice."
+}

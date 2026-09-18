@@ -1,0 +1,18 @@
+{
+  "artifact_version": "observed_calls.v1",
+  "observed_calls": [
+    {
+      "request_kind": "capabilities/query",
+      "capability_id": "ALT.SUPPLY_CHAIN",
+      "response": {"capability_id": "ALT.SUPPLY_CHAIN"},
+      "trace": {
+        "tool_name": "qveris_finance.alt_supply_chain",
+        "params": {"symbol": "EXAMPLE"},
+        "status": "success",
+        "execution_id": "fixture-exec-001",
+        "fallback_used": false,
+        "missing_fields": []
+      }
+    }
+  ]
+}

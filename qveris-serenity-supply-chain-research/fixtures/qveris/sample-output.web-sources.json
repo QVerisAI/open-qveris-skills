@@ -1,0 +1,20 @@
+{
+  "artifact_version": "web_sources.v1",
+  "web_sources": [
+    {
+      "evidence_id": "ev-web-001",
+      "status": "accepted",
+      "query": "example cooling system technical standard",
+      "final_url": "https://example.com/technical-standard",
+      "title": "Example cooling system technical standard",
+      "publisher_owner": "Example Standards Body",
+      "evidence_owner": "Example Standards Body",
+      "published_at": "2026-08-01T00:00:00+08:00",
+      "accessed_at": "2026-08-03T09:30:00+08:00",
+      "body_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "issuer_or_topic_match": true,
+      "window_match": true,
+      "independence_result": "independent"
+    }
+  ]
+}

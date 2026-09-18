@@ -1,0 +1,20 @@
+{
+  "artifact_version": "web_sources.v1",
+  "web_sources": [
+    {
+      "source_id": "src-web-001",
+      "status": "accepted",
+      "query": "example topic primary standard",
+      "final_url": "https://example.com/primary-document",
+      "publisher_owner": "Example Standards Body",
+      "title": "Example primary document",
+      "published_at": "2026-08-01T00:00:00+08:00",
+      "accessed_at": "2026-08-03T09:30:00+08:00",
+      "body_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "issuer_or_topic_match": true,
+      "window_match": true,
+      "independence_result": "issuer_primary",
+      "supported_claim_ids": ["clm-web-001"]
+    }
+  ]
+}
